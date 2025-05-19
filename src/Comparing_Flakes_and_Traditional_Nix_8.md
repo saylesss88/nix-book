@@ -1,4 +1,4 @@
-# Chapter 7
+# Chapter 8
 
 ## Comparing Flakes and Traditional Nix
 
@@ -331,8 +331,8 @@ When things go wrong, you'll need tools and techniques to inspect the evaluation
 process, identify the source of errors, and understand how your modules and
 derivations are being constructed.
 
-In our next chapter, [Debugging and Tracing Modules](https://saylesss88.github.io/chapter_8.html),
-"\*\* we will delve into the world of Nix debugging. We'll explore various
+In our next chapter, [Debugging and Tracing Modules](https://saylesss88.github.io/Debugging_and_Tracing_NixOS_Modules_9.html),
+we will delve into the world of Nix debugging. We'll explore various
 techniques and tools that can help you understand the evaluation process,
 inspect the values of expressions, and trace the execution of your Nix code,
 enabling you to effectively troubleshoot and resolve issues in both Flake-based

@@ -1,3 +1,8 @@
+---
+pub_date: Mon, 19 May 2025 07:32:00 GMT
+description: Nix Lang Basics
+---
+
 # Chapter 1
 
 ## Getting Started with the Nix Language
@@ -418,7 +423,7 @@ definition and application, including concepts like currying. However, the
 power and flexibility of Nix functions extend far beyond what we've covered
 so far.
 
-In the next chapter, [Understanding Nix Functions](https://saylesss88.github.io/chapter_2.html)
+In the next chapter, [Understanding Nix Functions](https://saylesss88.github.io/Understanding_Nix_Functions_2.html)
 we will peel back the layers and explore the intricacies of function arguments,
 advanced patterns, scope, and how functions play a crucial role in building
 more sophisticated Nix expressions and derivations.

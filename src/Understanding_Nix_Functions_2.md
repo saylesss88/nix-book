@@ -187,7 +187,7 @@ services.nginx.settings."http-port" = "8080";
 
 Having explored the fundamental nature of functions in Nix, we can now see
 this concept applies to more complex areas like NixOS configuration. In the next
-chapter, [NixOS Modules Explained](https://saylesss88.github.io/chapter_3.html).
+chapter, [NixOS Modules Explained](https://saylesss88.github.io/NixOS_Modules_Explained_3.html).
 We will learn about NixOS Modules which are themselves functions most of the
 time.
 

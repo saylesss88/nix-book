@@ -1,4 +1,4 @@
-# Chapter 8
+# Chapter 9
 
 ## Debugging and Tracing NixOS Modules
 
@@ -1136,7 +1136,7 @@ packages and NixOS modules reside, and learning how to navigate and contribute
 to it opens up a whole new level of control and customization within the Nix
 ecosystem.
 
-In the next chapter, [Working with Nixpkgs Locally](https://saylesss88.github.io/chapter_9.html),
+In the next chapter, [Working with Nixpkgs Locally](https://saylesss88.github.io/Working_with_Nixpkgs_Locally_10.html),
 we'll shift our focus to exploring and modifying Nixpkgs. We'll cover how to clone
 Nixpkgs, how to make changes to package definitions, and how to test those changes
 locally before contributing them back upstream. This chapter will empower you to

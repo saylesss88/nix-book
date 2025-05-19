@@ -439,7 +439,7 @@ and reduce the risk of unexpected changes due to upstream updates.
 As we have seen throughout this chapter, modules are the building blocks of your
 NixOS system and are themselves often functions. There are a few different ways
 to use these modules to build your system. In the next chapter, [Nix Flakes
-Explained](https://saylesss88.github.io/chapter_4.html) we will learn about Nix
+Explained](https://saylesss88.github.io/Nix_Flakes_Explained_4.html) we will learn about Nix
 Flakes as a more modern and comprehensive entrypoint for managing your entire
 system and its dependencies.
 

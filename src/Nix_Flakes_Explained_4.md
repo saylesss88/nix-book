@@ -2,7 +2,7 @@
 
 ## Nix Flakes Explained
 
-![gruv15](images/gruv15.png)
+<img src="images/gruv15.png" width="800" height="600">
 
 This explanation highlights common areas of confusion for those new to Nix
 Flakes, aiming to clarify concepts rather than serve as a comprehensive guide.
@@ -279,7 +279,7 @@ nixosConfigurations, and more. These top-level attributes are not arbitrary;
 they follow certain conventions and play specific roles within the Flake
 ecosystem.
 
-In the next chapter, [Understanding Top-Level Attributes](https://saylesss88.github.io/chapter_5.html)
+In the next chapter, [Understanding Top-Level Attributes](https://saylesss88.github.io/Understanding_Top-Level_Attributes_5.html)
 we will delve deeper into the meaning and purpose of these common top-level
 attributes. We'll explore how they are structured, what kind of expressions they
 typically contain, and how they contribute to the overall functionality and

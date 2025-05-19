@@ -2,7 +2,7 @@
 
 ## Understanding Top-Level Attributes in NixOS Modules
 
-![gruv9](images/gruv9.png)
+<img src="images/gruv9.png" width="800" height="600">
 
 This explanation is based on insights from Infinisil, a prominent figure in the
 Nix community, to help clarify the concept of top-level attributes within
@@ -234,26 +234,27 @@ of whether those options are declared in the same module.
 
 ## Conclusion
 
-Understanding the nuances of top-level attributes within NixOS modules,
-particularly imports, options, and config, is fundamental to structuring
-and managing your system's configuration effectively. As we've seen, the
-module system provides a powerful and declarative way to define and evaluate
-system settings, ultimately contributing to the construction of the
-`system.build.toplevel` derivation that represents your entire NixOS environment.
+Understanding the nuances of top-level attributes within NixOS modules, particularly
+`imports`, `options`, and `config`, is fundamental to structuring and managing
+your system's configuration effectively. As we've seen, the module system
+provides a powerful and declarative way to define and evaluate system settings,
+ultimately contributing to the construction of the `system.build.toplevel`
+derivation that represents your entire NixOS environment.
 
 The concepts of option declaration and value assignment, along with the crucial
-rule of organizing non-option attributes under the config attribute when options
-is present, provide a clear framework for building modular and maintainable
-configurations.
+rule of organizing non-option attributes under the `config` attribute when
+`options` is present, provide a clear framework for building modular and
+maintainable configurations.
 
 Now that we have a solid grasp of how NixOS modules are structured and how they
-contribute to the final system derivation, it's a natural next step to delve
-into the fundamental building blocks that these modules often manipulate: Nix
-derivations.
+contribute to the final system derivation, it's a natural next step to explore
+the tangible results of these configurations: the software and system
+components themselves. These are built and managed by a core concept in Nix,
+known as **derivations**.
 
-In our next post, [Introduction to Nix Derivations](https://saylesss88.github.io/chapter_6.html),
-we will take a closer look at what Nix derivations are, how they define the
-process of building software and other artifacts, and how they form the core
-of Nix's reproducible build system. Understanding derivations will provide a
-deeper appreciation for how Nix manages packages and enables the declarative
-configurations we've been exploring.
+In the next chapter, [Package Definitions Explained](https://saylesss88.github.io/Package_Definitions_Explained_6.html)
+we will shift our focus from the abstract configuration to the concrete software
+packages. We will learn how Nix uses _package definitions_ to create
+_derivations_, which are the actual build plans that produce the software
+we use on our NixOS systems. This will bridge the gap between configuring your
+system and understanding how the software within it is managed.

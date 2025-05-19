@@ -1,4 +1,4 @@
-# Chapter 6
+# Chapter 7
 
 ## Introduction to Nix Derivations
 
@@ -165,7 +165,7 @@ managing dependencies is through Nix Flakes. Flakes introduce a standardized
 project structure, explicit input tracking, and a more robust way to ensure
 reproducible builds across different environments.
 
-In our next chapter, [Comparing Flakes to Traditional Nix](https://saylesss88.github.io/chapter_7.html),
+In our next chapter, [Comparing Flakes and Traditional Nix](https://saylesss88.github.io/Comparing_Flakes_and_Traditional_Nix_8.html),
 we will directly compare and contrast these two approaches. We'll examine the strengths and
 weaknesses of traditional Nix practices in contrast to the benefits and features
 offered by Nix Flakes. This comparison will help you understand the motivations

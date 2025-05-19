@@ -1,4 +1,4 @@
-# Chapter 9
+# Chapter 10
 
 ## Working with Nixpkgs Locally: Benefits and Best Practices
 
