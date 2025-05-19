@@ -1,0 +1,6 @@
+[book]
+authors = ["saylesss88"]
+language = "en"
+multilingual = false
+src = "src"
+title = "nix-book"
