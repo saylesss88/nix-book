@@ -86,6 +86,9 @@ This is effectively a chain:
 
 2 **Inner Function:** `name: "${prefix}, ${name}!"`
 
+- The inner function retains access to the outer function's arguments via
+  lexical scope.
+
 - Takes one argument: `name`.
 
 - Its body uses both its own argument (`name`) and the argument from the
@@ -100,7 +103,7 @@ When you call `greeting "Hello" "Alice"`:
 - The `greeting` function is called with `"Hello"` as the `prefix`.
 
 - The outer function returns the inner function:
-  `name: "Hello, ${name}!"` (where `prefix` is now fixed as `"Hello"`` in its
+  `name: "Hello, ${name}!"` (where `prefix` is now fixed as `"Hello"` in its
   scope).
 
 2. `(greeting "Hello") "Alice"`:

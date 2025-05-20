@@ -1,6 +1,6 @@
 ---
-pub_date: Mon, 19 May 2025 07:32:00 GMT
-description: Nix Lang Basics
+pub_date: Wed, 03 Mar 2021 12:00:00 GMT
+description: A helpful example
 ---
 
 # Chapter 1

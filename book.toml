@@ -4,7 +4,7 @@ language = "en"
 multilingual = false
 src = "src"
 title = "nix-book"
-description = "Collection of Nix Articles"
+description = "nix-book"
 [preprocessor.rss]
 files-glob = "src/*.md"
 url-base = "https://saylesss88.github.io/"
