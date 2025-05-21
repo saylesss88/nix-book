@@ -1,8 +1,3 @@
----
-pub_date: Wed, 03 Mar 2021 12:00:00 GMT
-description: A helpful example
----
-
 # Chapter 1
 
 ## Getting Started with the Nix Language
@@ -66,8 +61,12 @@ error: undefined variable `a' at (string):1:1
 ```nix
 nix-repl> "stringDaddy"
 "stringDaddy"
-nix-repl> ''stringMoma''
-"stringMoma"
+nix-repl> ''
+  This is a
+  multi-line
+  string
+''
+"This is a\nmulti-line\nstring.\n"
 ```
 
 **String Interpolation**: Is a language feature where a string, path, or
@@ -104,7 +103,19 @@ let person = { name = "Alice"; age = 30; }; in person.name
 "Alice"
 ```
 
-You will sometimes see attribute sets with `rec` prepended. This allows access to attributes within the set:
+You will sometimes see attribute sets with `rec` prepended. This allows access
+to attributes within the set:
+
+```nix
+rec {
+  x = y;
+  y = 123;
+}.x
+```
+
+**Output**: `123`
+
+or
 
 ```nix
 rec {
@@ -114,7 +125,56 @@ rec {
 }
 ```
 
-- Without `rec`, this command would fail because we are trying to use an attribute that is defined within this attribute set. You would get an undefined variable 'one' error.
+```nix
+# This would fail:
+{
+  one = 1;
+  two = one + 1;  # Error: undefined variable 'one'
+  three = two + 1;
+}
+```
+
+Recursive sets introduce the danger of _infinite recursion_ For example:
+
+```nix
+rec {
+  x = y;
+  y = x;
+}.x
+```
+
+- Will crash with an `infinite recursion encountered` error message.
+
+- The [attribute set update operator](https://nix.dev/manual/nix/2.24/language/operators.html#update)
+  merges two attribute sets.
+
+**Example**:
+
+```nix
+{ a = 1; b = 2; } // { b = 3; c = 4; }
+```
+
+**Output**:
+
+```nix
+{ a = 1; b = 3; c = 4; }
+```
+
+- However, names on the right take precedence, and updates are shallow.
+
+**Example**:
+
+```nix
+{ a = { b = 1; }; } // { a = { c = 3; }; }
+```
+
+**Output**:
+
+```nix
+{ a = { c = 3; }; }
+```
+
+- Above, key `b` was completely removed, because the whole `a` value was replaced.
 
 **Inheriting Attributes**
 
@@ -142,6 +202,16 @@ Both evaluate to:
 { x = 123; y = 456; }
 ```
 
+- `inherit` is commonly used to pick specific variables from the function's
+  arguments, like in:
+
+```nix
+{ pkgs, lib }: ...
+let someVar = ...; in { inherit pkgs lib someVar; ... }
+```
+
+- This shows another common use case beyond just `let` bindings.
+
 > ❗: This works because `x` is added to the lexical scope by the `let` construct.
 
 ## Control Flow with Expressions
@@ -158,36 +228,11 @@ nix-repl> if a > b then "yes" else "no"
 **Let expressions**:
 
 ```nix
-let a = "foo"; b = "fighter"; in a + b
+let
+  a = "foo";
+  b = "fighter";
+in a + b
 "foofighter"
-```
-
-```nix
-# flake.nix
-outputs = my-inputs @ {
-  self,
-  nixpkgs,
-  treefmt-nix,
-  ...
-}: let
-     system = "x86_64-linux";
-     host = "magic";
-in {
-  ## Outputs go here
-}
-```
-
-```nix
-# nvf.nix
-{ pkgs, inputs, config, lib, ... }: let
-  cfg = config.custom.nvfModule;
-in {
-  options.custom.nvfModule.enable = lib.mkOption {
-    type = lib.types.bool;
-    default = false;
-    description = "Enable the nvf nvim configuration";
-  };
-}
 ```
 
 **With expressions**:
@@ -198,17 +243,6 @@ nix-repl> longName.a + longName.b
 7
 nix-repl> with longName; a + b
 7
-```
-
-```nix
-# utils.nix
-{ pkgs, ... }: {
-  environment.systemPackages = with pkgs; [
-    rustup
-    evcxr
-    nix-prefetch-git
-  ];
-}
 ```
 
 **Laziness**:
@@ -225,6 +259,30 @@ nix-repl> let a = builtins.div 4 0; b = 6; in b
   expression is not in need to be evaluated. That's why we can have all the
   packages defined on demand, yet have acces to specific packages very quickly.
   Some of these examples came from the Nix pill series.
+
+**Default Values**:
+
+```nix
+{ x, y ? "foo", z ? "bar" }: z + y + x
+```
+
+- Specifies a function that only requires an attribute named `x`, but optionally
+  accepts `y` and `z`.
+
+**@-patterns**:
+
+- An `@-pattern` provides a means of referring to the whole value being matched:
+
+```nix
+args@{ x, y, z, ... }: z + y + x + args.a
+# or
+{ x, y, z, ... } @ args: z + y + x + args.a
+```
+
+- Here, `args` is bound to the argument as _passed_, which is further matched
+  against the pattern `{ x, y, z, ... }`. The `@-pattern` makes mainly sense with
+  an ellipsis(`...`) as you can access attribute names as `a`, using `args.a`,
+  which was given as an additional attribute to the function.
 
 ## Functions:
 
@@ -249,43 +307,6 @@ into the function:
 - The body of the function automatically returns the result of the function.
   Functions are called by spaces between it and its parameters. No commas are
   needed to separate parameters.
-
-```nix
-let negate = x: !x;
-    concat = x: y: x + y;
-in if negate true then concat "foo" "bar" else ""
-
-negate = x: !x;
-```
-
-This defines a function named `negate` that takes one argument `x` and returns
-its logical negation (using `!`)
-
-- `concat = x: y: x + y` defines a function that takes two arguments, `x` and
-  `y`, and returns their string concatenation. Notice how Nix handles
-  multi-argument functions through currying -- it's a function that returns
-  another function. This was a little confusing to me, I'm thinking how does
-  it return a function if `concat 1 2` returns `3`...
-
-  - `x: ...`: This part says that `concat` takes one argument, which we've
-    named `x`.
-
-  - `y: x + y`: The result of the first part isn't the final value. Instead,
-    it's another function. This inner function takes one argument, which we've
-    named `y`, and then it adds `x` and `y`.
-
-  - When you do `concat 1` you're applying the `concat` function to the argument
-    `1`. This returns the inner function, where `x` is now fixed as `1`. The
-    inner function is essentially waiting for its `y` argument to be provided.
-
-  - It's when you apply the second argument, `2`, to this resulting function
-    `(concat 1) 2` that the addition `1 + 2` finally happens, giving us `3`.
-
-It's like a chain of function applications:
-
-- `concat` takes `x` and returns a new function.
-
-- This new function takes `y` and returns the result of `x + y`.
 
 ### Derivations
 
@@ -340,7 +361,7 @@ software package or any other kind of file or directory.
 
 pkgs.stdenv.mkDerivation {
   name = "hello-world";
-  src = null; # No source code needed
+  src = null; # No external source code needed for this simple example
 
   buildPhase = ''
     echo "Hello, World!" > $out

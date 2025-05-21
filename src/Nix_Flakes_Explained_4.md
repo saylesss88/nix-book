@@ -18,7 +18,7 @@ Flakes, aiming to clarify concepts rather than serve as a comprehensive guide.
 
 ## Key Concepts
 
-** `flake.nix`: The Heart of a Flake**
+`flake.nix`: **The Heart of a Flake**
 
 - The `flake.nix` file is mandatory for any flake. It must contain an attribute
   set with at least one required attribute: `outputs`. It can also optionally
@@ -34,9 +34,32 @@ Flakes, aiming to clarify concepts rather than serve as a comprehensive guide.
 }
 ```
 
+## Nix Flake Commands
+
+> `nix flake` provides subcommands for creating, modifying and querying _Nix
+> Flakes_. Flakes are the unit for packaging Nix code in a reproducible and
+> discoverable way. They can have dependencies on other flakes, making it possible
+> to have multi-repository Nix projects.
+
+— From [nix.dev Reference Manual](https://nix.dev/manual/nix/2.28/command-ref/new-cli/nix3-flake)
+
+- The main thing to note here is that `nix flake` is used to manage Nix flakes
+  and that Flake commands are whitespace separated rather than hyphen `-`
+  separated.
+
+- Flakes do provide some advantages when it comes to discoverability of outputs.
+
+- For Example, two helpful commands to inspect a flake are:
+
+  - [nix flake show](https://nix.dev/manual/nix/2.28/command-ref/new-cli/nix3-flake-show)
+    command: Show the outputs provided by a flake.
+
+  - [nix flake check](https://nix.dev/manual/nix/2.28/command-ref/new-cli/nix3-flake-check)
+    command: check whether the flake evaluates and run its tests.
+
 ## Attribute Sets: The Building Blocks
 
-- Attribute sets are fundamental in Nix. They are simply collections of
+- **Attribute sets** are fundamental in Nix. They are simply collections of
   name-value pairs wrapped in curly braces `{}`.
 
   - Example:
@@ -56,9 +79,9 @@ Flakes, aiming to clarify concepts rather than serve as a comprehensive guide.
 
 - **Top-Level Attributes of a Flake**:
 
-  - Flakes have specific top-level attributes that can be accessed directly
-    (without dot notation). The most common ones are inputs, outputs,
-    and nixConfig.
+  - Flakes have specific **top-level attributes** that can be accessed directly
+    (without dot notation). The most common ones are `inputs`, `outputs`,
+    and `nixConfig`.
 
 ### Anatomy of `flake.nix`
 
@@ -66,10 +89,10 @@ Flakes, aiming to clarify concepts rather than serve as a comprehensive guide.
 
 **`inputs`: Declaring Dependencies**
 
-- The **`inputs`** attribute set specifies the other flakes that your current
+- The `inputs` attribute set specifies the other flakes that your current
   flake depends on.
 
-- Each key in the **`inputs`** set is a name you choose for the dependency, and
+- Each key in the `inputs` set is a name you choose for the dependency, and
   the value is a reference to that flake (usually a URL or a Git Repo).
 
 - To access something from a dependency, you generally go through the `inputs`
@@ -89,7 +112,7 @@ Flakes, aiming to clarify concepts rather than serve as a comprehensive guide.
     evaluated inputs are then passed as an attribute set to the outputs function,
     with the keys matching the names you gave them in the inputs set.
 
-  - The special input self is a reference to the outputs and the source tree of
+  - The special input `self` is a reference to the `outputs` and the source tree of
     the current flake itself.
 
 **`outputs`: Defining What Your Flake Provides**

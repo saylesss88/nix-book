@@ -73,7 +73,7 @@
     across different machines if they are "pure" (don't rely on external
     system state).
 
-#### Our builder Script
+## Our builder Script
 
 - For our first derivation, we'll create a simple `builder.sh` file in the current directory:
 
@@ -125,7 +125,7 @@ this derivation produced the following outputs:
   is a loosely defined term, but a derivation is simply the result of calling
   `builtins.derivation`.
 
-#### Our Second Derivation
+## Our Second Derivation
 
 The following is a simple `hello-drv` derivation:
 
@@ -144,6 +144,128 @@ nix-repl> hello-drv
 
 - Derivations have a `.drv` suffix, as you can see the result of calling
   `hello-drv` is the nix store path to a derivation.
+
+## Our Last Derivation
+
+Create a new directory and a `hello.nix` with the following contents:
+
+```nix
+# hello.nix
+{
+  stdenv,
+  fetchzip,
+}:
+
+stdenv.mkDerivation {
+  pname = "hello";
+  version = "2.12.1";
+
+  src = fetchzip {
+    url = "https://ftp.gnu.org/gnu/hello/hello-2.12.1.tar.gz";
+    sha256 = "";
+  };
+}
+```
+
+Save this file to `hello.nix` and run `nix-build` to observe the build failure:
+
+```nix
+$ nix-build hello.nix
+error: cannot evaluate a function that has an argument without a value ('stdenv')
+       Nix attempted to evaluate a function as a top level expression; in
+       this case it must have its arguments supplied either by default
+       values, or passed explicitly with '--arg' or '--argstr'. See
+       https://nix.dev/manual/nix/stable/language/constructs.html#functions.
+
+       at /home/nix-user/hello.nix:3:3:
+
+            2| {
+            3|   stdenv,
+             |   ^
+            4|   fetchzip,
+```
+
+**Problem**: The expression in `hello.nix` is a _function_, which only produces
+it's intended output if it is passed the correct _arguments_.(i.e. `stdenv` is
+available from `nixpkgs` so we need to import `nixpkgs` before we can use
+`stdenv`):
+
+The recommended way to do this is to create a `default.nix` file in the same
+directory as the `hello.nix` with the following contents:
+
+```nix
+# default.nix
+let
+  nixpkgs = fetchTarball "https://github.com/NixOS/nixpkgs/tarball/nixos-24.05";
+  pkgs = import nixpkgs { config = {}; overlays = []; };
+in
+{
+  hello = pkgs.callPackage ./hello.nix { };
+}
+```
+
+This allows you to run `nix-build -A hello` to realize the derivation in `hello.nix`,
+similar to the current convention used in Nixpkgs:
+
+```nix
+nix-build -A hello
+error: hash mismatch in fixed-output derivation '/nix/store/pd2kiyfa0c06giparlhd1k31bvllypbb-source.drv':
+         specified: sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+            got:    sha256-1kJjhtlsAkpNB7f6tZEs+dbKd8z7KoNHyDHEJ0tmhnc=
+error: 1 dependencies of derivation '/nix/store/b4mjwlv73nmiqgkdabsdjc4zq9gnma1l-hello-2.12.1.drv' failed to build
+```
+
+Lastly replace the empty sha256 placeholder with the returned value from the last
+command:
+
+```nix
+# hello.nix
+{
+  stdenv,
+  fetchzip,
+}:
+
+stdenv.mkDerivation {
+  pname = "hello";
+  version = "2.12.1";
+
+  src = fetchzip {
+    url = "https://ftp.gnu.org/gnu/hello/hello-2.12.1.tar.gz";
+    sha256 = "sha256-1kJjhtlsAkpNB7f6tZEs+dbKd8z7KoNHyDHEJ0tmhnc=";
+  };
+}
+```
+
+Run `nix-build -A hello` again and you'll see the derivation successfully builds.
+
+## Best Practices
+
+**Reproducible source paths**: If we built the following derivation in
+`/home/myuser/myproject` then the store path of `src` will be
+`/nix/store/<hash>-myproject` causing the build to no longer be reproducible:
+
+```nix
+let pkgs = import <nixpkgs> {}; in
+
+pkgs.stdenv.mkDerivation {
+  name = "foo";
+  src = ./.;
+}
+```
+
+> ❗ TIP:
+> Use `builtins.path` with the `name` attribute set to something fixed.
+> This will derive the symbolic name of the store path from the `name` instead
+> of the working directory:
+>
+> ```nix
+> let pkgs = import <nixpkgs> {}; in
+>
+> pkgs.stdenv.mkDerivation {
+>   name = "foo";
+>   src = builtins.path { path = ./.; name = "myproject"; };
+> }
+> ```
 
 ## Conclusion
 

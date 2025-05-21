@@ -4,20 +4,36 @@
 
 <img src="images/nixLogo.png" width="400" height="300">
 
-Functions are a fundamental concept in Nix and are prevalent throughout Nix code. Grasping how they work is crucial for understanding and writing Nix expressions.
+Functions are the building blocks of Nix, appearing everywhere in Nix
+expressions and configurations. Mastering them is essential for writing
+effective Nix code and understanding tools like NixOS and Home Manager.
+This chapter explores how Nix functions work, focusing on their single-argument
+nature, currying, partial application, and their role in modules.
 
-## The Single-Argument Nature of Nix Functions
+## What are Nix Functions?
 
-A key concept to understand is that in Nix, every function conceptually takes **exactly one argument**. What might appear as multi-argument functions are actually achieved through a technique called **currying**, where a series of nested single-argument functions are used.
+A **Nix Function** is a rule that takes an input (called an **argument**) and
+produces an output based on that input. Unlike many programming languages, Nix
+functions are designed to take exactly one argument at a time. This unique
+approach, combined with a technique called currying, allows Nix to simulate
+multi-argument functions in a flexible and reusable way.
 
-## Identifying Function Structure The Colon
+First I wanted to explain the structure of Nix Functions, and then we will talk
+about their "first-class" nature in Nix.
+
+## Understanding Function Structure: The Role of the Colon
 
 The colon (`:`) acts as a clear separator within a function definition:
 
-- **Left of the Colon:** This is the function's **argument**. It's a placeholder name for a value that will be provided when the function is called.
-- **Right of the Colon:** This is the **function body**. It's the expression that will be evaluated when the function is invoked.
+- **Left of the Colon:** This is the function's **argument**. It's a placeholder
+  name for a value that will be provided when the function is called.
 
-**Think of function arguments as naming values that aren't known in advance.** These names are placeholders that get filled with specific values when the function is used.
+- **Right of the Colon:** This is the **function body**. It's the expression
+  that will be evaluated when the function is invoked.
+
+**Think of function arguments as naming values that aren't known in advance.**
+These names are placeholders that get filled with specific values when the
+function is used.
 
 **Example:**
 
@@ -27,8 +43,8 @@ greet = personName: "Hello, ${personName}!";
 
 - Here, `personName` is the **argument** (the placeholder).
 
-- `"Hello, ${personName}!"`, is the **function body** (the expression that
-  uses the placeholder).
+- `"Hello, ${personName}!"`, is the **function body** (which uses the placeholder
+  to create the greeting).
 
 When you call the function:
 
@@ -36,23 +52,36 @@ When you call the function:
 greet "Anonymous"  # Evaluates to "Hello, Anonymous!"
 ```
 
-The value `"Anonymous"` is substituted for the `personName` placeholder within
-the function body.
+- The value `"Anonymous"` is substituted for the `personName` placeholder within
+  the function body.
 
-## Function Declarations Single and "Multiple" Arguments
+- This structure is the foundation of all Nix functions, whether simple or
+  complex.
 
-**Single-Argument Functions**
+## Declaring Functions: Single and Simulated "Multiple" Arguments
+
+**Single-Argument Functions**: The Basics
+
+- In Nix, function definitions like `x: x + 1` or
+  `personName: "Hello, ${personName}!";` are **anonymous lambda functions**.
+  They exist as values until they are assigned to a variable.
 
 The simplest form of a Nix function takes a single argument:
 
 ```nix
-inc = x: x + 1;
+# This is an anonymous lambda function value:
+# x: x + 1
+inc = x: x + 1;          # here we assigned our lambda to a variable `inc`
 inc 5  # Evaluates to 6
 ```
 
 - `x` is the argument.
 
 - `x + 1` is the function body.
+
+- This straightforward design makes single-argument functions easy to understand
+  and use. But what if you need a function that seems to take multiple arguments?
+  That's where **currying** comes in.
 
 **Simulating Multiple Arguments: Currying**
 
@@ -61,57 +90,65 @@ This involves nesting single-argument functions, where each function takes one
 argument and returns another function that takes the next argument, and so on.
 
 ```nix
+# concat is equivalent to:
+# concat = x: (y: x + y);
 concat = x: y: x + y;
 concat 6 6    # Evaluates to 12
 ```
 
-Nix interprets the colons as separators for this chain of single-argument
+Here, `concat` is actually **two nested functions**
+
+1. The **first function** takes `x` and returns another function.
+
+2. The **second function** takes `y` and performs `x + y`
+
+Nix interprets the colons (`:`) as separators for this chain of single-argument
 functions.
 
-**Understanding the Chain:**
+Here's how it works step by step:
 
-Consider the `greeting` function:
+- When you call `concat 6`, the outer function binds `x` to `6` and returns a
+  new function: `y: 6 + y`.
+
+- When you call that function with `6` (i.e., `concat 6 6`), it computes `6 + 6`,
+  resulting in `12`.
+
+This chaining is why Nix functions are so powerful—it allows you to build
+flexible, reusable functions.
+
+**A More Practical Example: Greetings**:
+
+Let's explore currying with a more relatable example in the `nix repl`:
 
 ```nix
-greeting = prefix: name: "${prefix}, ${name}!";
+nix repl
+nix-repl> greeting = prefix: name: "${prefix}, ${name}!";
+
+nix-repl> greeting "Hello"
+<<lambda @ <<string>>:1:10>> # partial application returns a lambda
+
+nix-repl> greeting "Hello" "Alice"
+"Hello, Alice!"         # providing both arguments returns the expected result
 ```
 
-This is effectively a chain:
+This function is a chain of two single-argument functions:
 
-1. **Outer Function**: `prefix: (name: "${prefix}, ${name}!")`
+1. The outer function takes `prefix` (e.g. `"Hello"`) and returns a function that
+   expects `name`.
 
-- Takes one argument: `prefix`.
+2. The inner function takes `name` (e.g. `"Alice"`) and combines it with `prefix`
+   to produce the final string.
 
-- Its body is another function definition: name: `"${prefix}, ${name}!"`.
+Thanks to **lexical scope** (where inner functions can access variables from
+outer functions), the inner function "remembers" the `prefix` value.
 
-2 **Inner Function:** `name: "${prefix}, ${name}!"`
+**Why Currying Matters**
 
-- The inner function retains access to the outer function's arguments via
-  lexical scope.
+- You can partially apply arguments and reuse functions.
 
-- Takes one argument: `name`.
+- The "first-class" aspect of Nix Functions, explained further down.
 
-- Its body uses both its own argument (`name`) and the argument from the
-  outer function's scope (prefix).
-
-**Step-by-Step Evaluation:**
-
-When you call `greeting "Hello" "Alice"`:
-
-1. `greeting "Hello"`:
-
-- The `greeting` function is called with `"Hello"` as the `prefix`.
-
-- The outer function returns the inner function:
-  `name: "Hello, ${name}!"` (where `prefix` is now fixed as `"Hello"` in its
-  scope).
-
-2. `(greeting "Hello") "Alice"`:
-
-- The resulting inner function is then called with `"Alice"` as the `name`.
-
-- The inner function evaluates its body: `"Hello, ${"Alice"}!"`, resulting in
-  `"Hello, Alice!"`.
+- It can help break down complex logic into smaller, manageable functions.
 
 **Key Insight**: Every colon in a function definition separates a single
 argument from its function body, even if that body is another function
@@ -129,23 +166,15 @@ waits for the rest.
 Using our `greeting` function again:
 
 ```nix
-greeting = prefix: name: "${prefix}, ${name}!";
-```
-
-If we only provide the prefix:
-
-```nix
-helloGreeting = greeting "Hello";
+nix repl
+nix-repl> greeting = prefix: name: "${prefix}, ${name}!";
+nix-repl> helloGreeting = greeting "Hello";
+nix-repl> helloGreeting "Alice"
+"Hello, Alice"
 ```
 
 - `helloGreeting` is now a new function. It has already received the `prefix`
-  argument (`"Hello"`) and is waiting for the `name` argument.
-
-Calling `helloGreeting`:
-
-```nix
-helloGreeting "Sally" # Evaluates to "Hello, Sally!"
-```
+  argument (`"Hello"`), when we provide the second argument we get `"Hello, Alice!"`
 
 **Benefits of Partial Application:**
 
@@ -157,6 +186,89 @@ helloGreeting "Sally" # Evaluates to "Hello, Sally!"
   arguments. Partial application allows you to adapt existing functions to fit
   these requirements.
 
+## Nix Functions being "first class citizens"
+
+In the context of Nix, the phrase "Nix treats functions as first-class citizens"
+means that functions in Nix are treated as values, just like numbers, strings,
+or lists. They can be manipulated, passed around, and used in the same flexible
+ways as other data types. This concept comes from functional programming and
+has specific implications in Nix.
+
+**What It Means in Nix**
+
+1. Functions Can Be Assigned to Variables:
+
+- You can store a function in a variable, just like you would store a number
+  or string.
+
+- Example:
+
+```nix
+greet = name: "Hello, ${name}!";
+Here, greet is a variable that holds a function.
+```
+
+2. Functions Can Be Passed as Arguments:
+
+- You can pass a function to another function as an argument, allowing for
+  higher-order functions (functions that operate on other functions).
+
+- Example:
+
+```nix
+applyTwice = f: x: f (f x);
+inc = x: x + 1;
+applyTwice inc 5 # Output: 7 (increments 5 twice: 5 → 6 → 7)
+```
+
+- Here, applyTwice takes a function `f` (in this case, `inc`) and applies it to
+  `x` twice.
+
+3. Functions Can Be Returned from Functions:
+
+- Functions can produce other functions as their output, which is key to
+  currying in Nix.
+
+- Example:
+
+```nix
+greeting = prefix: name: "${prefix}, ${name}!";
+helloGreeting = greeting "Hello";  # Returns a function
+helloGreeting "Alice"  # Output: "Hello, Alice!"
+```
+
+- The greeting function returns another function when partially applied with
+  prefix.
+
+4. Functions Are Values in Expressions:
+
+- Functions can be used anywhere a value is expected, such as in attribute sets or lists.
+
+- Example:
+
+```nix
+myFuncs = {
+  add = x: y: x + y;
+  multiply = x: y: x * y;
+};
+myFuncs.add 3 4  # Output: 7
+```
+
+- Here, functions are stored as values in an attribute set.
+
+- To try this in the `repl` just remove the semi-colon (`;`)
+
+**Why This Matters in Nix**:
+
+- It increases the flexibility of Functions making them very powerful.
+
+- Many NixOS and Home Manager modules are functions, and their first-class
+  status means they can be combined, reused, or passed to other parts of the
+  configuration system.
+
+- Now that we understand the "first-class" nature of Nix Functions let's see how
+  they fit into NixOS and Home Manager modules.
+
 ### The Function Nature of NixOS and Home Manager Modules
 
 It's crucial to understand that most NixOS and Home Manager modules are
@@ -167,22 +279,29 @@ fundamentally **functions**.
 
 **Example**:
 
-A simplified Nginx service module:
+A NixOS module to enable Thunar with some plugins that I'm actually using right
+now:
 
 ```nix
-{ config, lib, pkgs, ... }: {
-services.nginx.enable = true;
-services.nginx.package = pkgs.nginx;
-services.nginx.settings."http-port" = "8080";
+{pkgs, ...}: {
+  programs = {
+    thunar = {
+      enable = true;
+      plugins = with pkgs.xfce; [
+        thunar-archive-plugin
+        thunar-volman
+      ];
+    };
+  };
 }
 ```
 
-- The entire module definition is a function that takes one argument:
-  `{ config, lib, pkgs, ... }`.
+- The entire module definition is a function that takes one argument (an
+  attribute set):
+  `{ pkgs, ... }`.
 
 - When this module is included in your configuration, the NixOS module system
   calls this function with a specific attribute set. This attribute set contains
-  the current system configuration (`config`), the Nix standard library (`lib`),
   the available packages (`pkgs`), and other relevant information. The module
   then uses these values to define parts of your system.
 

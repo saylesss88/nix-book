@@ -12,17 +12,40 @@ define options. As well as how to test modules with the repl.
 
 **Refresher**:
 
-- An **attribute set** is a collection of name-value pairs wrapped in curly
-  braces:
+- An **attribute set** is a collection of name-value pairs called _attributes_:
 
-```nix
-{
-  string = "hello";
-  int = 3;
-}
-```
+- Attribute sets are written enclosed in curly braces `{}`. Attribute names and
+  attribute values are separated by an equal sign `=`. Each value can be an
+  arbitrary expression, terminated by a semicolon `;`.
 
-- A **function** with an attribute set argument:
+> **Example**:[nix.dev reference](https://nix.dev/manual/nix/2.24/language/syntax#attrs-literal)
+> This defines an attribute set with attributes named:
+>
+> - `x` with the value `123`, an integer
+> - `text` with the value `"Hello"`, a string
+> - `y` where the value is the result of applying the function `f` to the
+>   attribute set `{bla = 456; }`
+>
+> ```nix
+> {
+>  x = 123;
+>  text = "Hello";
+>  y = f { bla = 456; };
+> }
+> ```
+>
+> ```nix
+> { a = "Foo"; b = "Bar"}.a   # Output: `"Foo"`
+> ```
+
+- Attributes can appear in any order. An attribute name may only occur once in
+  each attribute set.
+
+> ❗ Remember `{}` is a valid attribute set in Nix.
+
+- The following is a **function** with an attribute set argument, remember that
+  anytime you see a `:` in Nix code it means this is a function. To the left is
+  the **function arguments** and to the right is the **function body**:
 
 ```nix
 { a, b }: a + b
@@ -37,8 +60,8 @@ define options. As well as how to test modules with the repl.
 ```
 
 NixOS produces a full system configuration by combining smaller, more isolated
-and reusable components: **Modules**. In my opinion modules are one of the
-first things you should understand when learning about NixOS.
+and reusable components: **Modules**. If you want to understand Nix and NixOS
+make sure you grasp modules!
 
 - A NixOS module defines configuration options and behaviors for system
   components, allowing users to extend, customize, and compose configurations
@@ -434,6 +457,62 @@ reproducibility of your system configurations. By pinning specific versions
 of Nixpkgs and other resources, you gain greater control over your environment
 and reduce the risk of unexpected changes due to upstream updates.
 
+## Best Practices
+
+You'll see the following all throughout Nix code and is convenient although it
+doesn't follow best practices. One reason is static analysis can't reason about
+the code, because it would have to actually evaluate the files to see which names
+are in scope:
+
+```nix
+# utils.nix
+{ pkgs, ... }: {
+  environment.systemPackages = with pkgs; [
+    rustup
+    evcxr
+    nix-prefetch-git
+  ];
+}
+```
+
+The following follows best practices:
+
+```nix
+{pkgs, ... }: {
+  environment.systemPackages = builtins.attrValues {
+    inherit (pkgs)
+      rustup
+      evcxr
+      nix-prefetch-git;
+  };
+}
+```
+
+- `builtins.attrValues` essentially converts an attribute set into a list.
+
+- The above approach avoids scope pollution, `with pkgs; [...]` brings all
+  attributes of `pkgs` into scope, which can make it harder to track where
+  specific values come from.
+
+- It can lead to unintended name clashes or confusion when debugging.
+
+Upon looking into this a bit further, most people use the following format to
+avoid the "anti-pattern" from using `with pkgs;`:
+
+```nix
+# utils.nix
+{ pkgs, ... }: {
+  environment.systemPackages = [
+    pkgs.rustup
+    pkgs.evcxr
+    pkgs.nix-prefetch-git
+  ];
+}
+```
+
+- While the performance differences might be negligible on modern computers,
+  adopting this best practice from the start is highly recommended.
+
 ## Conclusion
 
 As we have seen throughout this chapter, modules are the building blocks of your
@@ -456,8 +535,6 @@ valuable insights and information.
 - [nix.dev A basic module](https://nix.dev/tutorials/module-system/a-basic-module/index.html)
 
 - [ModuleSystemDeepDive](https://nix.dev/tutorials/module-system/deep-dive#module-system-deep-dive)
-
-- [MakingNixOSModulesForFun](https://xeiaso.net/talks/asg-2023-nixos/)
 
 - [xeiaso Nixos Modules for fun & profit](https://xeiaso.net/talks/asg-2023-nixos/)
 
