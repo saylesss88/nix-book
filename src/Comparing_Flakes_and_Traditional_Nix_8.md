@@ -1,5 +1,17 @@
 # Chapter 8
 
+<!--toc:start-->
+
+- [Comparing Flakes and Traditional Nix](#comparing-flakes-and-traditional-nix)
+- [Building a Simple "hello" Package: Flakes vs. Traditional Nix](#building-a-simple-hello-package-flakes-vs-traditional-nix)
+- [Using Nix Flakes](#using-nix-flakes)
+- [Using Traditional Nix](#using-traditional-nix)
+  - [Updating Nixpkgs](#updating-nixpkgs)
+  - [Updating Traditional Nix (using `niv`)](#updating-traditional-nix-using-niv)
+    - [Adding Home-Manager with Traditional Nix](#adding-home-manager-with-traditional-nix)
+- [Conclusion](#conclusion)
+<!--toc:end-->
+
 ## Comparing Flakes and Traditional Nix
 
 ![nixWinter](images/nixWinter.png)
@@ -9,7 +21,8 @@
   [YouTube video](https://www.youtube.com/watch?v=atmoYyBAhF4) for the original
   content. This guide adapts the information for clarity and ease of understanding.
 
-## What is Purity in Nix?
+<details>
+<summary> What is Purity in Nix? (click here) </summary>
 
 - A key benefit of Nix Flakes is their _default_ enforcement of **pure evaluation**.
 
@@ -22,12 +35,17 @@
 
 - Impurity leads to unpredictable builds that may differ across systems or time.
 
+</details>
+
 ## Building a Simple "hello" Package: Flakes vs. Traditional Nix
 
 - We'll demonstrate building a basic "hello" package using both Flakes and
   Traditional Nix to highlight the differences in handling purity.
 
 ## Using Nix Flakes
+
+<details>
+<summary> Building Hello with Flakes (click here) </summary>
 
 1.  **Setup:**
 
@@ -90,7 +108,12 @@
     nix build .#myHello
     ```
 
+  </details>
+
 ## Using Traditional Nix
+
+<details>
+<summary> Building hello with Traditional Nix </summary>
 
 1.  **Setup:**
 
@@ -213,7 +236,12 @@
 
     - Building with a specific revision and system.
 
+  </details>
+
 ### Updating Nixpkgs
+
+<details>
+<summary> Updating Nixpkgs with Flakes </summary>
 
 ```bash
 nix flake update
@@ -223,7 +251,12 @@ nix flake update
 nix build .#myHello --override-input nixpkgs github:NixOS/nixpkgs/nixos-24.11
 ```
 
+</details>
+
 ### Updating Traditional Nix (using `niv`)
+
+<details>
+<summary> Updating with niv </summary>
 
 ```nix
 nix-shell -p niv
@@ -255,7 +288,8 @@ niv update nixpkgs --branch=nixos-unstable
 nix-build -A myHello
 ```
 
-#### Adding Home-Manager with Flakes
+<details>
+<summary> Adding Home-Manager with Flakes (click here) </summary>
 
 ```nix
 # flake.nix
@@ -286,8 +320,12 @@ nix flake show github:nix-community/home-manager
 home-manager.inputs.follows = "nixpkgs";
 ```
 
+</details>
+
 #### Adding Home-Manager with Traditional Nix
 
+<details>
+<summary> Adding Home-Manager with Traditional Nix (click here) </summary>
 ```nix
 niv add nix-community/home-manager
 ```
@@ -314,6 +352,8 @@ nix-repl> s.home-manager
 ```bash
 nix-build -A homeManagerDocs
 ```
+
+</details>
 
 ## Conclusion
 

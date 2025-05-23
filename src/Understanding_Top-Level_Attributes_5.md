@@ -1,5 +1,15 @@
 # Chapter 5
 
+<!--toc:start-->
+
+- [Understanding Top-Level Attributes in NixOS Modules](#understanding-top-level-attributes-in-nixos-modules)
+- [The Core of a NixOS System: `system.build.toplevel`](#the-core-of-a-nixos-system-systembuildtoplevel)
+- [How Options Relate: A Chain of Influence](#how-options-relate-a-chain-of-influence)
+- [The NixOS Module System: Evaluating Options](#the-nixos-module-system-evaluating-options)
+- [How the Module System Works: A Simplified Overview](#how-the-module-system-works-a-simplified-overview)
+- [Conclusion](#conclusion)
+<!--toc:end-->
+
 ## Understanding Top-Level Attributes in NixOS Modules
 
 <img src="images/gruv9.png" width="800" height="600">
@@ -9,6 +19,9 @@ Nix community, to help clarify the concept of top-level attributes within
 NixOS modules.
 
 ## The Core of a NixOS System: `system.build.toplevel`
+
+<details>
+<summary> ✔️ `system.build.toplevel` Explained (Click to Expand) </summary>
 
 In a NixOS system, everything is built from a single "system derivation." The
 command `nix-build '<nixpkgs/nixos>' -A system` initiates this build process.
@@ -25,9 +38,17 @@ intermediate steps.
 
 **Key Takeaway:** `system.build.toplevel` is the ultimate output that defines your entire NixOS system.
 
+</details>
+
 ## How Options Relate: A Chain of Influence
 
-Options in NixOS are not isolated; they often build upon each other. Here's an example of how a high-level option can lead down to a low-level system configuration:
+Options in NixOS are not isolated; they often build upon each other.
+
+<details>
+<summary>Example: Nginx Option Chain (Click to Expand)</summary>
+
+Here's an example of how a high-level option can lead down to a low-level system
+configuration:
 
 - You enable Nginx with `services.nginx.enable = true;`.
 - This setting influences the lower-level option `systemd.services.nginx`.
@@ -37,6 +58,8 @@ Options in NixOS are not isolated; they often build upon each other. Here's an e
   `environment.etc."systemd/system"`.
 - Finally, this unit file ends up as `result/etc/systemd/system/nginx.service`
   within the final `system.build.toplevel` derivation.
+
+</details>
 
 **Key Takeaway:** Higher-level, user-friendly options are translated into
 lower-level system configurations that are part of the final system build.
@@ -92,6 +115,9 @@ merging option configurations from different modules.
 
 The module system processes a set of "modules" through these general steps:
 
+<details>
+<summary> ✔️ Detailed Steps (Click to Expand)</summary>
+
 1. **Importing Modules**: It recursively finds and includes all modules
    specified in `imports = [ ... ];` statements.
 
@@ -108,6 +134,8 @@ The module system processes a set of "modules" through these general steps:
 > **Important Note**: Option evaluation is lazy, meaning an option's value is
 > only computed when it's actually needed. It can also depend on the values of
 > other options.
+
+</details>
 
 **Key Takeaway**: The module system imports, declares, and then evaluates
 option values from various modules to build the final configuration.
@@ -136,6 +164,9 @@ are the primary ways to structure a NixOS module.
 If you define either an `options` or a `config` attribute at the top level of
 your module, any other attributes that are not option declarations must be
 moved inside the config attribute.
+
+<details>
+<summary> ✔️ Examples of Correct and Incorrect Usage (Click to Expand)</summary>
 
 Let's look at an example of what not to do:
 
@@ -228,6 +259,8 @@ Even if you remove the `options` declaration from a module that has a `config`
 section, the `config = { environment.systemPackages = ... };` part will still
 function correctly, assuming the option it's referencing (`appstream.enable`
 in this case) is defined elsewhere (e.g., in an imported module).
+
+</details>
 
 **Key Takeaway**: The `config` section defines values for options, regardless
 of whether those options are declared in the same module.

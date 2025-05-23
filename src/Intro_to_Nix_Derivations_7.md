@@ -1,5 +1,22 @@
 # Chapter 7
 
+<!--toc:start-->
+
+- [Chapter 7](#chapter-7)
+  - [Introduction to Nix Derivations](#introduction-to-nix-derivations)
+  - [Creating Derivations in Nix](#creating-derivations-in-nix)
+  - [Produce a development shell from a derivation](#produce-a-development-shell-from-a-derivation)
+  - [Our Second Derivation: Understanding the Builder](#our-second-derivation-understanding-the-builder)
+    - [Why a Builder Script?](#why-a-builder-script)
+    - [The Challenge with Shebangs in Nix](#the-challenge-with-shebangs-in-nix)
+    - [The Importance of Statelessness in Nix](#the-importance-of-statelessness-in-nix)
+  - [Our builder Script](#our-builder-script)
+  - [Our Last Derivation](#our-last-derivation)
+  - [Best Practices](#best-practices)
+  - [Conclusion](#conclusion)
+  - [Links To Articles about Derivations](#links-to-articles-about-derivations)
+  <!--toc:end-->
+
 ## Introduction to Nix Derivations
 
 ![gruv10](images/gruv10.png)
@@ -7,6 +24,29 @@
 - A derivation in Nix is a fundamental concept that describes how to build
   a piece of software or a resource (e.g., a package, library, or configuration
   file). Think of it as a recipe for creating something within the Nix ecosystem.
+
+  - Nix building instructions are called “derivations” and are written in the
+    Nix programming language. Derivations can be written for packages or even
+    entire systems. After that, they can then be deterministically “realised”
+    (built) via Nix, the package manager. Derivations can only depend on a
+    pre-defined set of inputs, so they are somewhat reproducible. -- Practical Nix Flakes
+
+  - Most things in NixOS are build around derivations:
+
+    - Programs/Applications: Are derivations
+
+    - Config Files: Are a derivation that takes the nix configuration and produces
+      an appropriate config file for the application.
+
+    - The system configuration (i.e. `/run/current-system`) is a derivation
+
+> ```nix
+>  ls -lsah /run/current-system
+>  0 lrwxrwxrwx 1 root root 85 May 23 12:11 /run/current-system -> /nix/store/cy2c0kxpjrl7ajlg9v3zh898mhj4dyjv-nixos-system-magic-25.11.20250520.2795c50
+> ```
+
+- The `->` indicates a symlink and it's pointing to a **store path** which is
+  the result of a derivation being built (the system closure)
 
 - For beginners, the analogy of a cooking recipe is helpful:
 
@@ -16,6 +56,15 @@
 
 - A Nix derivation encapsulates all this information, telling Nix what inputs
   to use, how to build it, and what the final output should be.
+
+- Nix derivations run in **pure**, **isolated environments**, meaning they
+  **cannot** access the internet during the build phase. This ensures that
+  builds are reproducible -- they don't depend on external sources that might
+  change over time.
+
+  - There are `Fixed-output-derivations` that allow fetching resources during
+    the build process by explicitly specifying the expected hash upfront. Just
+    keep this in mind that normal derivations don't have network access.
 
 ## Creating Derivations in Nix
 
@@ -35,7 +84,129 @@
   3.  **builder:** Defines the program that will execute the build instructions
       (e.g., `bash`).
 
-## Our First Simple Derivation: Understanding the Builder
+> Our First fake derivation
+>
+> ```nix
+> nix-repl> :l <nixpkgs> # Makes Nixpkgs available for ${pkgs.bash}
+> nix-repl> d = derivation { name = "myname"; builder = "${pkgs.bash}/bin/bash"; system = "mysystem"; }
+> nix-repl> :b d
+> [...]
+> these derivations will be built:
+> error: a 'mysystem' with features {} is required to build '/nix/store/fq6843vfzzbhy3s6iwcd0hm10l578883-myname.drv',
+> but I am a 'x86_64-linux' with features {benchmark, big-parallel, kvm, nixos-test}
+> ```
+>
+> - The build failure is expected here due to the inaccurate attributes
+> - The `:b` is a `nix repl` specific command to build a derivation.
+> - To realise this outside of the `nix repl` you can use `nix-store -r`:
+>
+> ```nix
+>  $ nix-store -r /nix/store/z3hhlxbckx4g3n9sw91nnvlkjvyw754p-myname.drv
+> ```
+>
+> - `nix derivation show`: Pretty print the contents of a store derivation:
+>
+> ```nix
+>  $ nix derivation show /nix/store/z3hhlxbckx4g3n9sw91nnvlkjvyw754p-myname.drv
+> ```
+>
+> -- [Nix Pills](https://nixos.org/guides/nix-pills/06-our-first-derivation.html)
+
+- The above example shows the fundamental structure of a Nix derivation, how it's
+  defined within the `nix-repl`, and the importance of correctly specifying attributes
+  like `system`.
+
+## Produce a development shell from a derivation
+
+Building on the concept of a derivation as a recipe, let's create our first
+practical derivation. This example shows how to define a temporary development
+environment (a shell) using stdenv.mkDerivation, which is the primary function
+for defining packages in Nix.
+
+```nix
+# my-shell.nix
+# We use a `let` expression to bring `pkgs` and `stdenv` into scope.
+# This is a recommended practice over `with import <nixpkgs> {}`
+# for clarity and to avoid potential name collisions.
+let
+  pkgs = import <nixpkgs> {};
+  stdenv = pkgs.stdenv; # Access stdenv from the imported nixpkgs
+in
+
+# Make a new "derivation" that represents our shell
+stdenv.mkDerivation {
+  name = "my-environment";
+
+  # The packages in the `buildInputs` list will be added to the PATH in our shell
+  buildInputs = [
+    # cowsay is an arbitrary package
+    # see https://nixos.org/nixos/packages.html to search for more
+    pkgs.cowsay
+    pkgs.fortune
+  ];
+}
+```
+
+**Usage**
+
+```bash
+nix-shell my-shell.nix
+fortune | cowsay
+ _________________________________________
+/ "Lines that are parallel meet at        \
+| Infinity!" Euclid repeatedly, heatedly, |
+| urged.                                  |
+|                                         |
+| Until he died, and so reached that      |
+| vicinity: in it he found that the       |
+| damned things diverged.                 |
+|                                         |
+\ -- Piet Hein                            /
+ -----------------------------------------
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+```
+
+- To exit type: `exit`
+
+This Nix expression defines a temporary development shell. Let's break it down:
+
+- `pkgs = import <nixpkgs> {};`: Standard way to get access to all the packages
+  and helper functions (i.e. `nixpkgs.lib`)
+
+- `stdenv = pkgs.stdenv;`: `stdenv` provides us `mkDerivation` and is from the
+  `nixpkgs` collection.
+
+- `stdenv.mkDerivation { ... };`: This is the core function for creating
+  packages. `stdenv` provides a set of common build tools and conventions.
+  `mkDerivation` takes an attribute set (a collection of key-value pairs) as its argument.
+- `name = "my-environment";`: This gives your derivation a human-readable name.
+- `buildInputs = [ pkgs.cowsay ];`: This is a list of dependencies that will
+  be available in the build environment of this derivation (or in the `PATH` if
+  you enter the shell created by this derivation). `pkgs.cowsay` refers to the
+  `cowsay` package from the imported `pkgs` collection.
+
+The command `nix-instantiate --eval my-shell.nix` evaluates the Nix expression
+in the file. It does not build the derivation. Instead, it returns the Nix value
+that the expression evaluates to.
+
+```bash
+nix-instantiate --eval my-shell.nix
+```
+
+This value is a structured data type that encapsulates all the attributes (like
+`name`, `system`, `buildInputs`, etc.) required to build the derivation. Your
+output shows this detailed internal representation of the derivation's "recipe"
+as understood by Nix. This is useful for debugging and inspecting the
+derivation's definition.
+
+## Our Second Derivation: Understanding the Builder
+
+<details>
+<summary> Understanding the Builder (Click to Expand) </summary>
 
 - To understand how derivations work, let's create a very basic example using a
   bash script as our `builder`.
@@ -118,32 +289,14 @@ this derivation produced the following outputs:
   out -> /nix/store/gczb4qrag22harvv693wwnflqy7lx5pb-foo
 ```
 
-- Boom! The contents of `/nix/store/w024zci0x1hh1wj6gjq0jagkc1sgrf5r-foo`
-  is really foo! We've built our first derivation.
+- The contents of the resulting store path (`/nix/store/...-foo`) now contain the
+  file `foo`, as intended. We have successfully built a derivation!
 
 - Derivations are the primitive that Nix uses to define packages. “Package”
   is a loosely defined term, but a derivation is simply the result of calling
   `builtins.derivation`.
 
-## Our Second Derivation
-
-The following is a simple `hello-drv` derivation:
-
-```nix
-nix-repl> hello-drv = nixpkgs.stdenv.mkDerivation {
-            name = "hello.txt";
-            unpackPhase = "true";
-            installPhase = ''
-              echo -n "Hello World!" > $out
-            '';
-          }
-
-nix-repl> hello-drv
-«derivation /nix/store/ad6c51ia15p9arjmvvqkn9fys9sf1kdw-hello.txt.drv»
-```
-
-- Derivations have a `.drv` suffix, as you can see the result of calling
-  `hello-drv` is the nix store path to a derivation.
+</details>
 
 ## Our Last Derivation
 
@@ -169,20 +322,22 @@ stdenv.mkDerivation {
 
 Save this file to `hello.nix` and run `nix-build` to observe the build failure:
 
+- Click to expand output:
+
 ```nix
 $ nix-build hello.nix
-error: cannot evaluate a function that has an argument without a value ('stdenv')
-       Nix attempted to evaluate a function as a top level expression; in
-       this case it must have its arguments supplied either by default
-       values, or passed explicitly with '--arg' or '--argstr'. See
-       https://nix.dev/manual/nix/stable/language/constructs.html#functions.
-
-       at /home/nix-user/hello.nix:3:3:
-
-            2| {
-            3|   stdenv,
-             |   ^
-            4|   fetchzip,
+~error: cannot evaluate a function that has an argument without a value ('stdenv')
+~       Nix attempted to evaluate a function as a top level expression; in
+~       this case it must have its arguments supplied either by default
+~       values, or passed explicitly with '--arg' or '--argstr'. See
+~       https://nix.dev/manual/nix/stable/language/constructs.html#functions.
+~
+~       at /home/nix-user/hello.nix:3:3:
+~
+~            2| {
+~            3|   stdenv,
+~             |   ^
+~            4|   fetchzip,
 ```
 
 **Problem**: The expression in `hello.nix` is a _function_, which only produces
@@ -207,13 +362,51 @@ in
 This allows you to run `nix-build -A hello` to realize the derivation in `hello.nix`,
 similar to the current convention used in Nixpkgs:
 
+- Click to expand Output:
+
 ```nix
 nix-build -A hello
-error: hash mismatch in fixed-output derivation '/nix/store/pd2kiyfa0c06giparlhd1k31bvllypbb-source.drv':
-         specified: sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
-            got:    sha256-1kJjhtlsAkpNB7f6tZEs+dbKd8z7KoNHyDHEJ0tmhnc=
-error: 1 dependencies of derivation '/nix/store/b4mjwlv73nmiqgkdabsdjc4zq9gnma1l-hello-2.12.1.drv' failed to build
+~error: hash mismatch in fixed-output derivation '/nix/store/pd2kiyfa0c06giparlhd1k31bvllypbb-source.drv':
+~         specified: sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+~            got:    sha256-1kJjhtlsAkpNB7f6tZEs+dbKd8z7KoNHyDHEJ0tmhnc=
+~error: 1 dependencies of derivation '/nix/store/b4mjwlv73nmiqgkdabsdjc4zq9gnma1l-hello-2.12.1.drv' failed to build
 ```
+
+- Another way to do this is with [nix-prefetch-url](https://nix.dev/manual/nix/2.24/command-ref/nix-prefetch-url)
+  It is a utility to calculate the sha beforehand.
+
+```bash
+nix-prefetch-url https://ftp.gnu.org/gnu/hello/hello-2.12.1.tar.gz
+path is '/nix/store/pa10z4ngm0g83kx9mssrqzz30s84vq7k-hello-2.12.1.tar.gz'
+086vqwk2wl8zfs47sq2xpjc9k066ilmb8z6dn0q6ymwjzlm196cd
+```
+
+- When you use `nix-prefetch-url`, you get a Base32 hash when nix needs SRI format.
+
+Run the following command to convert from Base32 to SRI:
+
+```bash
+nix hash to-sri --type sha256 086vqwk2wl8zfs47sq2xpjc9k066ilmb8z6dn0q6ymwjzlm196cd
+sha256-jZkUKv2SV28wsM18tCqNxoCZmLxdYH2Idh9RLibH2yA=
+```
+
+- This actually fetched a different sha than the Nix compiler returned in the
+  example where we replace the empty sha with the one Nix gives us. The difference
+  was that `fetchzip` automatically extracts archives before computing the hash
+  and slight differences in the metadata cause different results. I had to switch
+  from `fetchzip` to `fetchurl` to get the correct results.
+
+  - Extracted archives can differ in timestamps, permissions, or compression
+    details, causing different hash values.
+
+  - A simple takeaway is to use `fetchurl` when you need an exact match, and
+    `fetchzip` when working with extracted contents.
+
+  - [fetchurl](https://nixos.org/manual/nixpkgs/stable/#fetchurl)
+
+  - `fetchurl` returns a `fixed-output derivation`(FOD): A derivation where a
+    cryptographic hash of the output is determined in advance using the outputHash
+    attribute, and where the builder executable has access to the network.
 
 Lastly replace the empty sha256 placeholder with the returned value from the last
 command:
@@ -296,7 +489,10 @@ projects.
 
 As you can see below, there is a ton of information on derivations freely available.
 
-#### Links To Articles about Derivations
+## Links To Articles about Derivations
+
+<details>
+<summary> Click To Expand Resources </summary>
 
 - [NixPillsOurFirstDerivation](https://nixos.org/guides/nix-pills/06-our-first-derivation)
 
@@ -323,3 +519,5 @@ As you can see below, there is a ton of information on derivations freely availa
 - [theNixLectures-Derivations](https://ayats.org/blog/nix-tuto-2)
 
 - [bmcgee-whatAreFixed-OutputDerivations](https://bmcgee.ie/posts/2023/02/nix-what-are-fixed-output-derivations-and-why-use-them/)
+
+</details>

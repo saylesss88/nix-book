@@ -1,19 +1,6 @@
-# Chapter 1
+# Chapter1
 
-<!--toc:start-->
-
-- [Getting Started with the Nix Language](#getting-started-with-the-nix-language)
-- [Why Learn Nix?](#why-learn-nix)
-- [Syntax Basics](#syntax-basics)
-- [Control Flow with Expressions](#control-flow-with-expressions)
-- [Functions:](#functions)
-  - [Derivations](#derivations)
-- [Conclusion](#conclusion)
-- [Resources](#resources)
-
-<!--toc:end-->
-
-## Getting Started with the Nix
+## Getting Started with Nix
 
 ![gruv13](images/gruv13.png)
 
@@ -24,6 +11,12 @@ underpins Nix’s package manager and operating system. By the end, you’ll
 understand Nix’s core concepts, syntax, and how to write simple expressions and
 derivations.
 
+- ✔️: Will indicate an expandable section, click the little triangle to expand.
+
+- The code blocks have an option to hide code, where I find it reasonable I will
+  hide the outputs of the expressions. Click the eye in the right corner of the
+  code block next to the copy clipboard.
+
 - **Nix**: is a package manager and a build system that allows you to write
   declarative scripts for reproducible software builds in the **Nix Language**.
 
@@ -32,9 +25,32 @@ derivations.
   configuration that you can combine into a running system that does what
   you want. Each of those snippets is called a module. -- xeiaso
 
-- **Nixpkgs**: a vast repository of packages for Nix [nixpkgs](https://github.com/nixos/nixpkgs)
+The following bulletpoints can help you get started, they are vast resources
+that take a while to fully absorb. The documentation isn't necessarily bad it's
+just spread out because from my understanding Nix isn't "allowed" to mention
+Flakes in it's manual so you have to look elsewhere.
+
+<details>
+<summary> ✔️ Nix Ecosystem (Click to Expand) </summary>
+
+- [Nix Core Ecosystem](https://wiki.nixos.org/wiki/Nix_ecosystem), Nix, NixOS,
+  Nix Lang, Nixpkgs are all distinctly different; related things which can be
+  confusing for beginners this article explains them.
+
+- [nixpkgs](https://github.com/nixos/nixpkgs): Vast package repository
+
+- [How Nix Works](https://nixos.org/guides/how-nix-works/)
 
 - [Nix Reference Manual Data Types](https://nix.dev/manual/nix/2.26/language/types#type-attrs)
+  The main Data Types you'll come across in the Nix ecosystem
+
+- [NixOS Wiki](https://wiki.nixos.org/wiki/NixOS_Wiki)
+
+- [nix.dev](https://nix.dev/): Has become the top respected source of information
+  in my opinion. There is a lot of great stuff in here, and they actively update
+  the information.
+
+</details>
 
 > ❗ If you're new to Nix, think of it as a recipe book for software: you
 > describe what you want (declarative), and Nix ensures it’s built the same way
@@ -42,17 +58,12 @@ derivations.
 
 ## Why Learn Nix?
 
-<details>
-<summary> ✔️ Why Learn Nix?(Click to Expand)</summary>
-
 Nix is often described as “JSON with functions.” It’s a declarative language
 where you define outcomes, not step-by-step instructions. Instead of writing
 sequential code, you create expressions that describe data structures,
 functions, and dependencies. These expressions are evaluated lazily, meaning Nix
 computes values only when needed, making it efficient for managing large
 systems.
-
-</details>
 
 Let’s dive into the key characteristics of Nix:
 
@@ -71,6 +82,9 @@ Let’s dive into the key characteristics of Nix:
 ## Syntax Basics
 
 ![lambda1](images/lambda1.png)
+
+A few resources to help get you started with the Nix Language, I have actually
+grown to love the language. I find it fairly simple but powerful!
 
 - [Nix Language Overview](https://nix.dev/manual/nix/2.24/language/)
 
@@ -103,7 +117,7 @@ nix-repl> ''
 ```
 
 <details>
-<summary> ✔️ String Interpolation(Click to Expand)</summary>
+<summary> ✔️ String Interpolation (Click to Expand)</summary>
 
 Is a language feature where a string, path, or attribute name can contain
 expressions enclosed in `${ }`. This construct is called _interpolated string_,
@@ -145,7 +159,7 @@ let person = { name = "Alice"; age = 30; }; in person.name
 You will sometimes see attribute sets with `rec` prepended. This allows access
 to attributes within the set:
 
-- Click the 👀 to see the Output:
+- Click to see the Output:
 
 ```nix
 rec {
@@ -241,7 +255,7 @@ rec {
 
 **Inheriting Attributes**
 
-- Click 👁️‍🗨️to see Output:
+- Click to see Output:
 
 ```nix
 let x = 123; in
@@ -286,7 +300,7 @@ let someVar = ...; in { inherit pkgs lib someVar; ... }
 
 **If expressions**:
 
-- Click the 👀 to see the Output:
+- Click to see the Output:
 
 ```nix
 nix-repl> a = 6
@@ -297,7 +311,7 @@ nix-repl> if a > b then "yes" else "no"
 
 **Let expressions**:
 
-- Click the 👁️‍🗨️to see the Output:
+- Click to see the Output:
 
 ```nix
 let
@@ -389,7 +403,10 @@ my_value
 
 ![nix99](images/nix99.png)
 
-- In Nix, the process of managing software starts with package definitions.
+<details>
+<summary> ✔️ Derivation Overview (Click to Expand) </summary>
+
+- In Nix, the process of managing software starts with **package definitions**.
   These are files written in the Nix language that describe how a particular
   piece of software should be built. These package definitions, when processed
   by Nix, are translated into derivations.
@@ -398,15 +415,15 @@ my_value
   to build a specific software package or any other kind of file or directory.
   It's a declarative specification of:
 
-- Inputs: What existing files or other derivations are needed as dependencies.
+- **Inputs**: What existing files or other derivations are needed as dependencies.
 
-- Build Steps: The commands that need to be executed to produce the desired
+- **Build Steps**: The commands that need to be executed to produce the desired
   output.
 
-- Environment: The specific environment (e.g., build tools, environment
+- **Environment**: The specific environment (e.g., build tools, environment
   variables) required for the build process.
 
-- Outputs: The resulting files or directories that the derivation produces.
+- **Outputs**: The resulting files or directories that the derivation produces.
 
 Think of a package definition as the initial instructions, and the derivation as
 the detailed, low-level plan that Nix uses to actually perform the build."
@@ -435,6 +452,8 @@ software package or any other kind of file or directory.
 
 Here's a simple Nix derivation that creates a file named hello in the Nix store
 containing the text "Hello, World!":
+
+</details>
 
 <details>
 <summary> ✔️ Hello World Derivation Example (Click to expand):</summary>

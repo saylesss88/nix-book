@@ -1,5 +1,16 @@
 # Chapter 6
 
+<!--toc:start-->
+
+- [Package Definitions Explained](#package-definitions-explained)
+- [The Journey from Definition to Package](#the-journey-from-definition-to-package)
+- [Example: A Simple "Hello" Package Definition](#example-a-simple-hello-package-definition)
+  - [Swaytools Package Definition](#swaytools-package-definition)
+  - [Breakdown of the Above default.nix](#breakdown-of-the-above-defaultnix)
+- [Conclusion](#conclusion)
+- [Resources](#resources)
+<!--toc:end-->
+
 ## Package Definitions Explained
 
 ![gruv1](images/gruv1.png)
@@ -17,6 +28,9 @@ This definition contains the necessary instructions and metadata about the
 software you intend to "package."
 
 ## The Journey from Definition to Package
+
+<details>
+<summary> ✔️ Click to Expand</summary>
 
 1.  **Package Definition:**
 
@@ -50,6 +64,7 @@ software you intend to "package."
 derivation as the detailed construction plan, and the realized package as the
 finished building.
 
+</details>
 ## Skeleton of a Derivation
 
 The most basic derivation structure in Nix looks like this:
@@ -150,7 +165,7 @@ in
   sha256 hash for the source file. Nix needs this hash for security and
   reproducibility. The error message will provide the correct sha256 value.
 
-- **Example Error**):
+- **Example Error**:
 
 ```bash
   nix-build -A hello
@@ -225,6 +240,9 @@ buildPythonApplication rec {
 
 ### Breakdown of the Above default.nix
 
+<details>
+<summary>Click to Expand</summary>
+
 1 **Function Structure**:
 
 - The file starts with a function taking an attribute set of dependencies from
@@ -276,8 +294,9 @@ swaytools = python3Packages.callPackage ../tools/wayland/swaytools { };
 ```
 
 - `python3Packages.callPackage` is used here because `swaytools` is a Python
-  package, and it ensures the necessary Python-related dependencies are
-  correctly passed to the `swaytools` definition.
+package, and it ensures the necessary Python-related dependencies are
+correctly passed to the `swaytools` definition.
+</details>
 
 ## Conclusion
 
@@ -303,6 +322,6 @@ We will explore the attributes that define a build process, how dependencies
 are managed within a derivation, and how Nix ensures the reproducibility and
 isolation of your software builds through this fundamental concept.
 
-### Resources
+## Resources
 
 - [Packaging Existing Software](https://nix.dev/tutorials/packaging-existing-software.html)

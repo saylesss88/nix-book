@@ -1,4 +1,4 @@
-- [Getting Started with the Nix Language](./Getting_Started_with_Nix_Lang_1.md)
+- [Getting Started with the Nix Ecosystem](./Getting_Started_with_Nix_1.md)
 - [Understanding Nix Functions](./Understanding_Nix_Functions_2.md)
 - [NixOS Modules Explained](./NixOS_Modules_Explained_3.md)
 - [Nix Flakes Explained](./Nix_Flakes_Explained_4.md)

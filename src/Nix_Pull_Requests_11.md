@@ -1,5 +1,13 @@
 # Chapter 11
 
+<!--toc:start-->
+
+- [Nix Pull Requests](#nix-pull-requests)
+- [Build and Test the Changes](#build-and-test-the-changes)
+- [Next Steps](#next-steps)
+- [Conclusion](#conclusion)
+<!--toc:end-->
+
 ## Nix Pull Requests
 
 ![gruv16](images/gruv16.png)
@@ -28,6 +36,9 @@ graph LR
 
 **Explanation of the Diagram**:
 
+<details>
+<summary> ✔️ Click to see Explanation </summary>
+
 - **A[Your Local Repository]**: This represents the copy of the Nixpkgs repo on
   your computer where you make changes.
 
@@ -55,6 +66,8 @@ graph LR
 
 - **E --> F [Nixpkgs Users]**): Eventually, these changes become available to all
   Nixpkgs users through updates to their Nix installations.
+
+</details>
 
 Flakes often rely on having access to the full history of the Git repository
 to correctly determine dependencies, identify specific revisions of inputs,
@@ -127,6 +140,9 @@ git fetch upstream refs/pull/8623/head:pr-8623
 
 **Output**:
 
+<details>
+<summary> ✔️ Output (Click to Enlarge) </summary>
+
 ```
 remote: Enumerating objects: 104651, done.
 remote: Counting objects: 100% (45/45), done.
@@ -157,6 +173,8 @@ From https://github.com/NixOS/nix
  * [new tag]             2.2                 -> 2.2
 ```
 
+</details>
+
 **Step 5 Checkout the Local Branch:**
 
 ```bash
@@ -179,6 +197,9 @@ nix build
 ```
 
 **Output:**
+
+<details>
+<summary> ✔️ Output (Click to Enlarge) </summary>
 
 ```bash
 error: builder for '/nix/store/rk86daqgf6a9v6pdx6vcc5b580lr9f09-nix-2.20.0pre20240115_20b4959.drv' failed with exit code 2;
@@ -212,6 +233,8 @@ error: builder for '/nix/store/rk86daqgf6a9v6pdx6vcc5b580lr9f09-nix-2.20.0pre202
      nix log /nix/store/rk86daqgf6a9v6pdx6vcc5b580lr9f09-nix-2.20.0pre20240115_20b4959.drv
 ```
 
+</details>
+
 - **`nix build`** (Part of the Nix Unified CLI):
 
   - Declarative: when used within a Nix flake (`flake.nix`), `nix build` is a
@@ -233,7 +256,7 @@ error: builder for '/nix/store/rk86daqgf6a9v6pdx6vcc5b580lr9f09-nix-2.20.0pre202
 
 - **Consistency:** Using the unified CLI promotes a more consistent workflow.
 
-### Next Steps
+## Next Steps
 
 As you can see this build failed, as for why the build failed, the key part of
 the error message is:
@@ -290,7 +313,7 @@ Running the following will provide the full logs:
 nix log /nix/store/rk86daqgf6a9v6pdx6vcc5b580lr9f09-nix-2.20.0pre20240115_20b4959.drv
 ```
 
-### Conclusion
+## Conclusion
 
 Testing Nixpkgs pull requests is a vital part of contributing to a healthy and
 reliable Nix ecosystem. By following these steps, you can help ensure that

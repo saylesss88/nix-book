@@ -1,10 +1,7 @@
 [book]
 authors = ["saylesss88"]
 language = "en"
-multilingual = false
 src = "src"
 title = "nix-book"
-description = "nix-book"
-[preprocessor.rss]
-files-glob = "src/*.md"
-url-base = "https://saylesss88.github.io/"
+[output.html.code.hidelines]
+nix = "~"

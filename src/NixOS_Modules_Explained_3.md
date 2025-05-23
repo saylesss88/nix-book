@@ -1,5 +1,17 @@
 # Chapter 3
 
+<!--toc:start-->
+
+- [NixOS Modules Explained](#nixos-modules-explained)
+- [Declaring Options](#declaring-options)
+  - [Module Composition](#module-composition)
+  - [NixOS Modules and Dependency Locking with npins](#nixos-modules-and-dependency-locking-with-npins)
+- [Best Practices](#best-practices)
+- [Conclusion](#conclusion)
+  - [Resources on Modules](#resources-on-modules)
+- [Videos](#videos)
+<!--toc:end-->
+
 ## NixOS Modules Explained
 
 ![gruv3](images/gruv3.png)
@@ -10,7 +22,10 @@ define options. As well as how to test modules with the repl.
 - Most modules are functions that take an attribute set and return an attribute
   set.
 
-**Refresher**:
+<details>
+<summary>
+✔️ Refresher (Click to Expand):
+</summary>
 
 - An **attribute set** is a collection of name-value pairs called _attributes_:
 
@@ -35,7 +50,8 @@ define options. As well as how to test modules with the repl.
 > ```
 >
 > ```nix
-> { a = "Foo"; b = "Bar"}.a   # Output: `"Foo"`
+> { a = "Foo"; b = "Bar"}.a
+> ~ "Foo"
 > ```
 
 - Attributes can appear in any order. An attribute name may only occur once in
@@ -58,6 +74,8 @@ define options. As well as how to test modules with the repl.
 {
 }
 ```
+
+</details>
 
 NixOS produces a full system configuration by combining smaller, more isolated
 and reusable components: **Modules**. If you want to understand Nix and NixOS
@@ -123,6 +141,8 @@ in
 - It provides options to enable Vim, set it as the default editor, and specify
   the Vim package to use.
 
+<details>
+<summary> ✔️ Breakdown of the vim module.(Click to Expand)</summary>
 1. Module Inputs and Structure:
 
 ```nix
@@ -220,7 +240,8 @@ environment = {
 ```
 
 - It adds Vim to your `systemPackages`, sets `$EDITOR` if `defaultEditor` is
-  true, and makes `/share/vim-plugins` available in the environment.
+true, and makes `/share/vim-plugins` available in the environment.
+</details>
 
 The following is a bat home-manager module that I wrote:
 
@@ -302,6 +323,8 @@ custom = {
 
 ### NixOS Modules and Dependency Locking with npins
 
+<details>
+<summary> ✔️ npins example (Click to Expand)</summary>
 As our NixOS configurations grow in complexity, so too does the challenge of
 managing the dependencies they rely on. Ensuring consistency and reproducibility
 not only applies to individual packages but also to the versions of Nixpkgs and
@@ -457,12 +480,15 @@ reproducibility of your system configurations. By pinning specific versions
 of Nixpkgs and other resources, you gain greater control over your environment
 and reduce the risk of unexpected changes due to upstream updates.
 
+</details>
+
 ## Best Practices
 
 You'll see the following all throughout Nix code and is convenient although it
 doesn't follow best practices. One reason is static analysis can't reason about
-the code, because it would have to actually evaluate the files to see which names
-are in scope:
+the code (e.g. Because it implicitly brings all attributes into scope, tools can't
+verify which ones are actually being used), because it would have to actually
+evaluate the files to see which names are in scope:
 
 ```nix
 # utils.nix
@@ -474,6 +500,13 @@ are in scope:
   ];
 }
 ```
+
+- Another reason the above expression is considered an "anti-pattern" is when more
+  then one `with` is used, it's no longer clear where the names are coming from.
+
+- Scoping rules for `with` are not intuitive, see [issue](https://github.com/NixOS/nix/issues/490) --nix.dev
+  This can make debugging harder, as searching for variable origins becomes ambiguous
+  (i.e. open to more than one interpretation).
 
 The following follows best practices:
 
@@ -488,13 +521,51 @@ The following follows best practices:
 }
 ```
 
-- `builtins.attrValues` essentially converts an attribute set into a list.
+- [Noogle builtins.attrValues](https://noogle.dev/f/builtins/attrValues)
 
-- The above approach avoids scope pollution, `with pkgs; [...]` brings all
-  attributes of `pkgs` into scope, which can make it harder to track where
-  specific values come from.
+<details>
+<summary> ✔️ Above Command Summary (Click to Expand) </summary>
 
-- It can lead to unintended name clashes or confusion when debugging.
+```nix
+{
+  inherit (pkgs) rustup evcxr nix-prefetch-git;
+}
+```
+
+is equivalent to:
+
+```nix
+{
+  rustup = pkgs.rustup;
+  evcxr = pkgs.evcxr;
+  nix-prefetch-git = pkgs.nix-prefetch-git;
+}
+```
+
+Applying `builtins.attrValues` produces:
+
+```nix
+[ pkgs.evcxr pkgs.nix-prefetch-git pkgs.rustup ]
+```
+
+- As you can see only the values are included in the list, not the keys. This
+  is more explicit and declarative but can be more complicated, especially for
+  a beginner.
+
+- `builtins.attrValues` returns the values of all attributes in the given set,
+  sorted by attribute name. The above expression turns into something like the
+  following avoiding bringing every attribute name from `nixpkgs` into scope.
+
+A more straightforward example:
+
+```nix
+attrValues {c = 3; a = 1; b = 2;}
+=> [1 2 3]
+```
+
+</details>
+
+- This approach avoids unintended name clashes or confusion when debugging.
 
 Upon looking into this a bit further, most people use the following format to
 avoid the "anti-pattern" from using `with pkgs;`:
@@ -511,7 +582,14 @@ avoid the "anti-pattern" from using `with pkgs;`:
 ```
 
 - While the performance differences might be negligible on modern computers,
-  adopting this best practice from the start is highly recommended.
+  adopting this best practice from the start is highly recommended. The above
+  approach is more explicit, it's clear exactly where each package is coming
+  from.
+
+- If maintaining strict scope control matters, use `builtins.attrValues`.
+
+- If readability and simplicity are more your priority, explicitly referencing
+  `pkgs.<packageName>` might be better. Now you can choose for yourself.
 
 ## Conclusion
 
@@ -527,6 +605,9 @@ of tools and best practices surrounding them, the following resources offer
 valuable insights and information.
 
 ### Resources on Modules
+
+<details>
+<summary> ✔️ Resources (Click to Expand) </summary>
 
 - [WritingNixOsModules](https://nixos.org/manual/nixos/stable/#sec-writing-modules)
 
@@ -546,3 +627,5 @@ valuable insights and information.
 [infinisilModules](https://infinisil.com/modules.mp4)
 
 [tweagModuleSystemRecursion](https://www.youtube.com/watch?v=cZjOzOHb2ow)
+
+</details>

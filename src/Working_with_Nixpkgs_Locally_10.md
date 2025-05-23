@@ -1,5 +1,28 @@
 # Chapter 10
 
+<!--toc:start-->
+
+- [Working with Nixpkgs Locally: Benefits and Best Practices](#working-with-nixpkgs-locally-benefits-and-best-practices)
+- [I. Why Work with Nixpkgs Locally?](#i-why-work-with-nixpkgs-locally)
+  - [A. Faster Development Cycle](#a-faster-development-cycle)
+  - [B. Enhanced Version Control](#b-enhanced-version-control)
+  - [C. Flexible Debugging Capabilities](#c-flexible-debugging-capabilities)
+  - [D. Streamlined Contribution Workflow](#d-streamlined-contribution-workflow)
+  - [E. Up-to-Date Documentation Source](#e-up-to-date-documentation-source)
+  - [F. Optimized Storage and Performance](#f-optimized-storage-and-performance)
+- [II. Flake vs. Non-Flake Syntax for Local Nixpkgs](#ii-flake-vs-non-flake-syntax-for-local-nixpkgs)
+  - [A. Flake Syntax (`nix build .#<package>`)](#a-flake-syntax-nix-build-package)
+  - [B. Non-Flake Syntax (`nix-build -f . <package>` or `nix build -f . <package>`)](#b-non-flake-syntax-nix-build-f-package-or-nix-build-f-package)
+  - [III. Setting Up a Local Nixpkgs Repository Efficiently](#iii-setting-up-a-local-nixpkgs-repository-efficiently)
+  - [A. Initial Clone: Shallow Cloning](#a-initial-clone-shallow-cloning)
+  - [B. Managing Branches with Worktrees](#b-managing-branches-with-worktrees)
+  - [A. Online Search with `search.nixos.org`](#a-online-search-with-searchnixosorg)
+  - [B. Local Source Code Search with `rg` (ripgrep)](#b-local-source-code-search-with-rg-ripgrep)
+- [V. Local Derivation Search with `nix-locate`](#v-local-derivation-search-with-nix-locate)
+- [VI. Key Benefits of Working with Nixpkgs Locally (Recap)](#vi-key-benefits-of-working-with-nixpkgs-locally-recap)
+- [VII. Best Practices and Tips from the Community](#vii-best-practices-and-tips-from-the-community)
+<!--toc:end-->
+
 ## Working with Nixpkgs Locally: Benefits and Best Practices
 
 ![gruv18](images/gruv18.png)
@@ -58,76 +81,89 @@
 
 ## III. Setting Up a Local Nixpkgs Repository Efficiently
 
+<details>
+<summary>Click To See How to set up Nixpkgs Locally</summary>
+
 - Cloning Nixpkgs requires careful consideration due to its size.
 
-  ## A. Initial Clone: Shallow Cloning
+## A. Initial Clone: Shallow Cloning
 
-  - To avoid downloading the entire history, perform a shallow clone:
-    ```bash
-    git clone [https://github.com/NixOS/nixpkgs](https://github.com/NixOS/nixpkgs) --depth 1
-    cd nixpkgs
-    ```
+- To avoid downloading the entire history, perform a shallow clone:
+  ```bash
+  git clone [https://github.com/NixOS/nixpkgs](https://github.com/NixOS/nixpkgs) --depth 1
+  cd nixpkgs
+  ```
 
-  ## B. Managing Branches with Worktrees
+## B. Managing Branches with Worktrees
 
-  - Use Git worktrees to manage different branches efficiently:
+- Use Git worktrees to manage different branches efficiently:
 
-    ```bash
-    git fetch --all --prune --depth=1
-    git worktree add -b nixos-unstable nixos-unstable # For just unstable
-    ```
+  ```bash
+  git fetch --all --prune --depth=1
+  git worktree add -b nixos-unstable nixos-unstable # For just unstable
+  ```
 
-  - **Explanation of `git worktree`:** Allows multiple working directories attached to the same `.git` directory, sharing history and objects but with separate checked-out files.
-  - `git worktree add`: Creates a new working directory for the specified branch (`nixos-unstable` in this case).
+- **Explanation of `git worktree`:** Allows multiple working directories attached to the same `.git` directory, sharing history and objects but with separate checked-out files.
+- `git worktree add`: Creates a new working directory for the specified branch (`nixos-unstable` in this case).
+
+</details>
 
 # IV. Debugging Missing Dependencies: A Practical Example
 
+<details>
+<summary> Click to see icat Example </summary>
+
 - Let's say you're trying to build `icat` locally and encounter a missing dependency error:
 
-  ```nix
-  nix-build -A icat
-  # ... (Error log showing "fatal error: X11/Xlib.h: No such file or directory")
+```nix
+nix-build -A icat
+# ... (Error log showing "fatal error: X11/Xlib.h: No such file or directory")
+```
+
+- The error `fatal error: X11/Xlib.h: No such file or directory` indicates a missing X11 dependency.
+
+## A. Online Search with `search.nixos.org`
+
+- The Nixpkgs package search website ([https://search.nixos.org/packages](https://search.nixos.org/packages)) is a valuable first step.
+- However, broad terms like "x11" can yield many irrelevant results.
+- **Tip:** Utilize the left sidebar to filter by package sets (e.g., "xorg").
+
+## B. Local Source Code Search with `rg` (ripgrep)
+
+- Familiarity with searching the Nixpkgs source code is crucial for finding dependencies.
+- Navigate to your local `nixpkgs/` directory and use `rg`:
+
+  ```bash
+  rg "x11 =" pkgs # Case-sensitive search
   ```
 
-  - The error `fatal error: X11/Xlib.h: No such file or directory` indicates a missing X11 dependency.
+  **Output:**
 
-  ## A. Online Search with `search.nixos.org`
+  ```
+  pkgs/tools/X11/primus/default.nix
+  21:  primus = if useNvidia then primusLib_ else primusLib_.override { nvidia_x11 = null; };
+  22:  primus_i686 = if useNvidia then primusLib_i686_ else primusLib_i686_.override { nvidia_x11 = null; };
 
-  - The Nixpkgs package search website ([https://search.nixos.org/packages](https://search.nixos.org/packages)) is a valuable first step.
-  - However, broad terms like "x11" can yield many irrelevant results.
-  - **Tip:** Utilize the left sidebar to filter by package sets (e.g., "xorg").
+  pkgs/applications/graphics/imv/default.nix
+  38:    x11 = [ libGLU xorg.libxcb xorg.libX11 ];
+  ```
 
-  ## B. Local Source Code Search with `rg` (ripgrep)
+- Refining the search (case-insensitive):
+  ```bash
+  rg -i "libx11 =" pkgs
+  ```
+  **Output:**
+  ```
+  # ... (Output showing "xorg.libX11")
+  ```
+- The key result is `xorg.libX11`, which is likely the missing dependency.
 
-  - Familiarity with searching the Nixpkgs source code is crucial for finding dependencies.
-  - Navigate to your local `nixpkgs/` directory and use `rg`:
-
-    ```bash
-    rg "x11 =" pkgs # Case-sensitive search
-    ```
-
-    **Output:**
-
-    ```
-    pkgs/tools/X11/primus/default.nix
-    21:  primus = if useNvidia then primusLib_ else primusLib_.override { nvidia_x11 = null; };
-    22:  primus_i686 = if useNvidia then primusLib_i686_ else primusLib_i686_.override { nvidia_x11 = null; };
-
-    pkgs/applications/graphics/imv/default.nix
-    38:    x11 = [ libGLU xorg.libxcb xorg.libX11 ];
-    ```
-
-  - Refining the search (case-insensitive):
-    ```bash
-    rg -i "libx11 =" pkgs
-    ```
-    **Output:**
-    ```
-    # ... (Output showing "xorg.libX11")
-    ```
-  - The key result is `xorg.libX11`, which is likely the missing dependency.
+  </details>
 
 # V. Local Derivation Search with `nix-locate`
+
+<details>
+<summary> Click to Expand nix-locate command Example</summary>
 
 - `nix-locate` (from the `nix-index` package) allows searching for derivations
   on the command line.
@@ -142,6 +178,8 @@
 - Combining online and local search tools (`search.nixos.org`, `rg`, `nix-locate`)
   provides a comprehensive approach to finding dependencies.
 
+</details>
+
 # VI. Key Benefits of Working with Nixpkgs Locally (Recap)
 
 - **Speed:** Faster searches and builds compared to remote operations.
@@ -149,6 +187,9 @@
 - **Up-to-Date Information:** Repository source often has the latest details.
 
 # VII. Best Practices and Tips from the Community
+
+<details>
+<summary>Click To Expand Best Practices and Tips from the community</summary>
 
 - **Rebasing over Merging:** Never merge upstream changes into your local branch.
   Always rebase your branch onto the upstream (e.g., `master` or `nixos-unstable`)
@@ -172,3 +213,7 @@
   a Git-compatible alternative that can offer a more intuitive workflow,
   especially for large monorepos like Nixpkgs. While it has a learning curve,
   it can significantly improve parallel work and branch management.
+
+- [Intro-To-Jujutsu](https://tsawyer87.github.io/posts/intro_to_jujutsu/)
+
+</details>

@@ -1,5 +1,21 @@
 # Chapter 9
 
+<!--toc:start-->
+
+- [Debugging and Tracing NixOS Modules](#debugging-and-tracing-nixos-modules)
+- [Example 2](#example-2)
+- [Example 3](#example-3)
+- [Example 4](#example-4)
+- [Summary](#summary)
+- [More Functionality between modules](#more-functionality-between-modules)
+  - [Infinite recursion error](#infinite-recursion-error)
+  - [Example 5](#example-5)
+  - [Tests](#tests)
+  - [Test 2](#test-2)
+  - [Key Takeaways for Debugging NixOS Modules](#key-takeaways-for-debugging-nixos-modules)
+- [Conclusion](#conclusion)
+<!--toc:end-->
+
 ## Debugging and Tracing NixOS Modules
 
 ![gruv17](images/gruv17.png)
@@ -68,6 +84,9 @@ lib.evalModules {
 
 **Output**:
 
+<details>
+<summary> Click to Expand the Output </summary>
+
 ```bash
 { bar = 10; baz = "bar"; list = [ 1 2 3 ]; }
 ```
@@ -93,7 +112,12 @@ It will show you the start of a trace. To get the full trace add:
 nix-instantiate --eval --strict -A config.foo --show-trace
 ```
 
+</details>
+
 ## Example 2
+
+<details>
+<summary> Click to Expand Example 2 </summary>
 
 In the previous example, we looked at a simplified module. Now, let's examine a
 more realistic scenario involving a basic NixOS configuration file
@@ -208,7 +232,12 @@ nix-instantiate '<nixpkgs/nixos>' --arg configuration ./configuration.nix -A sys
 - In the latest nix they actually inverted the error messages so the most relevant
   parts will be at the bottom.
 
+</details>
+
 ## Example 3
+
+<details>
+<summary> Click to Expand Example 3 </summary>
 
 Let's consider another example, this time demonstrating the definition of
 configuration options using `lib.mkOption` within a module structure.
@@ -404,6 +433,8 @@ Use `lib.mkForce value` or `lib.mkDefault value` to change the priority on any o
 shell returned 1
 ```
 
+</details>
+
 ## Summary
 
 - So types in the module system aren't just types in the conventional sense
@@ -534,9 +565,9 @@ in
 1. A common pitfall is to introduce a hard to debug error `infinite recursion`
    when shadowing a name. The simplest example for this is:
 
-```nix
-let a = 1; in rec { a = a; }
-```
+> ```nix
+> let a = 1; in rec { a = a; }
+> ```
 
 > 💡**TIP**: Avoid `rec`. Use `let ... in`
 > Example:
@@ -549,6 +580,9 @@ let a = 1; in rec { a = a; }
 >  b = a + 2;
 > }
 > ```
+
+<details>
+<summary> Click to Expand a more involved infinite recursion error </summary>
 
 We'll separate the logic for this example, this will be the `default.nix` this
 is where having `lib` defined in your inline modules is helpful because you can
@@ -695,7 +729,12 @@ nix-repl> config.etc.foo
   level of recursion here and it would have built `foo` value if it were a
   derivation.
 
+</details>
+
 ### Example 5
+
+<details>
+<summary> Click to Expand Example 5 </summary>
 
 We'll use the same `module.nix` and `default.nix` from the previous example.
 
@@ -836,7 +875,12 @@ information.
 # { name = "foobar"; path = pkgs.stack; } ]
 ```
 
+</details>
+
 ### Tests
+
+<details>
+<summary> Click to Expand Test Example </summary>
 
 - How to create a Derivation with `passthru.tests` outside of Nixpkgs
   and then run tests available to your package set?
@@ -1085,6 +1129,8 @@ building '/nix/store/c3kw4xbdlrig08jrdm5wis1dmv2gnqsd-foo-test-version.drv'...
 1.2
 /nix/store/zsbk5zawak68ailvkwi2gad2bqbqmdz9-foo-test-version
 ```
+
+</details>
 
 ### Key Takeaways for Debugging NixOS Modules
 

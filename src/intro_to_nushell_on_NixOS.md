@@ -1,5 +1,16 @@
 # Chapter 12
 
+<!--toc:start-->
+
+- [Intro to Nushell on NixOS](#intro-to-nushell-on-nixos)
+- [The Good](#the-good)
+- [The Bad](#the-bad)
+- [Key Differences Between Nushell & Bash](#key-differences-between-nushell-bash)
+- [The Beautiful and Powerful](#the-beautiful-and-powerful)
+- [Using Just and Justfiles](#using-just-and-justfiles)
+- [Resources](#resources)
+<!--toc:end-->
+
 ## Intro to Nushell on NixOS
 
 ![Nu](images/nu.png)
@@ -238,6 +249,9 @@ open users.json           # Read JSON file into structured data
 | save filtered_users.json # Save result to a new file
 ```
 
+<details>
+<summary> ✔️ Summary of above Command (Click to Expand)</summary>
+
 1. `open users.json`: Produces a **Nushell table** representing the data.
 
 2. `| where age > 21`: Receives the table, filters rows based on the `age`
@@ -258,9 +272,10 @@ open users.json           # Read JSON file into structured data
   powerful and direct data manipulation.
 
 - While Nushell’s strengths, like its structured data pipelines, make it a
-  game-changer for many tasks, it’s not without its challenges, especially when
-  integrated with NixOS’s Bash-centric ecosystem. Let’s explore some of the
-  limitations you might encounter when adopting Nushell as your default shell.
+game-changer for many tasks, it’s not without its challenges, especially when
+integrated with NixOS’s Bash-centric ecosystem. Let’s explore some of the
+limitations you might encounter when adopting Nushell as your default shell.
+</details>
 
 ## The Bad
 
@@ -384,7 +399,7 @@ $p * 6    # 42
 
 - `Carapace` [Carapace-Bin Install](https://carapace-sh.github.io/carapace-bin/install.html):
 
-  {{< figure src="/images/nu9.png" alt="carapace" width="1000" >}}
+  ![nu9](images/nu9.png)
 
 - `Carapace` man example:
 
@@ -394,6 +409,9 @@ $p * 6    # 42
 
 - The following command allows you to choose which input to update interactively
   with fzf.
+
+<details>
+<summary> ✔️ Click to See Command</summary>
 
 ```nu
 # nix.nu
@@ -436,11 +454,16 @@ def nix-upgrade [
 }
 ```
 
+</details>
+
 ![nu5](images/nu5.png)
 
 - The `ns` command is designed to search for Nix packages using `nix search` and
   present the results in a cleaner format, specifically removing the architecture
   and operating system prefix that nix search often includes.
+
+<details>
+<summary> ✔️ Click To Expand</summary>
 
 ```nu
 def ns [
@@ -462,9 +485,14 @@ def ns [
 }
 ```
 
+</details>
+
 ![nu10](images/nu10.png)
 
 - `nufetch` command:
+
+<details>
+<summary> ✔️ Click To Expand</summary>
 
 ```nu
 # `nufetch` `(nufetch).packages`
@@ -483,6 +511,8 @@ def nufetch [] {
 }
 ```
 
+</details>
+
 ![nu1](images/nu1.png)
 
 - `duf` command, I have mine aliased to `df`:
@@ -495,6 +525,9 @@ def nufetch [] {
 
 - Adding the following to your `configuration.nix` will show you the diff of the
   closures on rebuild:
+
+<details>
+<summary> ✔️ Click To Expand</summary>
 
 ```nix
 # configuration.nix
@@ -515,6 +548,8 @@ system.activationScripts.diff = ''
   fi
 '';
 ```
+
+</details>
 
 ![conf1](images/config1.png)
 
@@ -538,7 +573,7 @@ def nix-list-system []: nothing -> list<string> {
   tools. This is where `just` and `justfiles` come in, simplifying complex
   workflows and bridging gaps in Nushell’s functionality.
 
-### Using Just and Justfiles
+## Using Just and Justfiles
 
 - The following is my `justfile` that I keep right next to my `flake.nix` it
   simplifies some commands and makes things work that weren't working with
@@ -620,7 +655,10 @@ cleanup:
   valuable resources to explore, from official documentation to community-driven
   configurations.
 
-### Resources
+## Resources
+
+<details>
+<summary> ✔️ Click to Expand Resources </summary>
 
 - [Nushell-Book](https://www.nushell.sh/book/)
 
@@ -637,3 +675,5 @@ cleanup:
 
 - [discord](https://discord.com/invite/NtAbbGn) You can find custom commands,
   configurations, etc here.
+
+</details>

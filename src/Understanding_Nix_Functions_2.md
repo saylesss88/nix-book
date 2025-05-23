@@ -1,22 +1,55 @@
 # Chapter 2
 
+<!--toc:start-->
+
+- [Understanding Nix Functions](#understanding-nix-functions)
+- [What are Nix Functions?](#what-are-nix-functions)
+- [Understanding Function Structure: The Role of the Colon](#understanding-function-structure-the-role-of-the-colon)
+- [Declaring Functions: Single and Simulated "Multiple" Arguments](#declaring-functions-single-and-simulated-multiple-arguments)
+- [Nix Functions being "first class citizens"](#nix-functions-being-first-class-citizens)
+  - [The Function Nature of NixOS and Home Manager Modules](#the-function-nature-of-nixos-and-home-manager-modules)
+- [Conclusion](#conclusion)
+- [Resources](#resources)
+<!--toc:end-->
+
 ## Understanding Nix Functions
 
 <img src="images/nixLogo.png" width="400" height="300">
 
-Functions are the building blocks of Nix, appearing everywhere in Nix
+**Functions** are the building blocks of Nix, appearing everywhere in Nix
 expressions and configurations. Mastering them is essential for writing
 effective Nix code and understanding tools like NixOS and Home Manager.
-This chapter explores how Nix functions work, focusing on their single-argument
-nature, currying, partial application, and their role in modules.
+This chapter explores how Nix functions work, focusing on their **single-argument
+nature**, **currying**, **partial application**, and their role in **modules**.
 
 ## What are Nix Functions?
 
 A **Nix Function** is a rule that takes an input (called an **argument**) and
-produces an output based on that input. Unlike many programming languages, Nix
+produces an **output** based on that input. Unlike many programming languages, Nix
 functions are designed to take exactly one argument at a time. This unique
 approach, combined with a technique called currying, allows Nix to simulate
 multi-argument functions in a flexible and reusable way.
+
+## Builtins
+
+<details>
+<summary> ✔️ Nix Builtin Functions (Click to Expand)</summary>
+
+The Nix expression evaluator has a bunch of functions and constants built in:
+
+- `toString e`: (Convert the expression `e` to a string)
+
+- `import path`: (Load, parse and return the Nix expression in the file `path`)
+
+- `throw x`: (Throw an error message `x`. Usually stops evaluation)
+
+- `map f list`: (Apply the function `f` to each element in the `list`)
+
+- [Built-in Functions](https://nix.dev/manual/nix/2.18/language/builtins)
+
+- [Nix Operators](https://nix.dev/manual/nix/2.26/language/operators)
+
+</details>
 
 First I wanted to explain the structure of Nix Functions, and then we will talk
 about their "first-class" nature in Nix.
@@ -46,10 +79,11 @@ greet = personName: "Hello, ${personName}!";
 - `"Hello, ${personName}!"`, is the **function body** (which uses the placeholder
   to create the greeting).
 
-When you call the function:
+When you call the function, (click to see Output):
 
 ```nix
-greet "Anonymous"  # Evaluates to "Hello, Anonymous!"
+greet "Anonymous"
+~ "Hello, Anonymous!"
 ```
 
 - The value `"Anonymous"` is substituted for the `personName` placeholder within
@@ -62,17 +96,19 @@ greet "Anonymous"  # Evaluates to "Hello, Anonymous!"
 
 **Single-Argument Functions**: The Basics
 
-- In Nix, function definitions like `x: x + 1` or
-  `personName: "Hello, ${personName}!";` are **anonymous lambda functions**.
-  They exist as values until they are assigned to a variable.
+The simplest form of a Nix function takes a single argument. In Nix, function
+definitions like `x: x + 1` or `personName: "Hello, ${personName}!";` are
+**anonymous lambda functions**. They exist as values until they are assigned
+to a variable.
 
-The simplest form of a Nix function takes a single argument:
+- Click to see Output:
 
 ```nix
 # This is an anonymous lambda function value:
 # x: x + 1
 inc = x: x + 1;          # here we assigned our lambda to a variable `inc`
-inc 5  # Evaluates to 6
+inc 5
+~ 6
 ```
 
 - `x` is the argument.
@@ -89,11 +125,14 @@ To create functions that appear to take multiple arguments, Nix uses currying.
 This involves nesting single-argument functions, where each function takes one
 argument and returns another function that takes the next argument, and so on.
 
+- Click to see Output:
+
 ```nix
 # concat is equivalent to:
 # concat = x: (y: x + y);
 concat = x: y: x + y;
 concat 6 6    # Evaluates to 12
+~ 12
 ```
 
 Here, `concat` is actually **two nested functions**
@@ -150,14 +189,17 @@ outer functions), the inner function "remembers" the `prefix` value.
 
 - It can help break down complex logic into smaller, manageable functions.
 
-**Key Insight**: Every colon in a function definition separates a single
-argument from its function body, even if that body is another function
+**Key Insight**: Every colon in a function definition separates a **single
+argument** from its **function body**, even if that body is another function
 definition.
 
 **Partial Application: Using Functions Incrementally**
 
-Because of currying, you can apply arguments to a Nix function one at a time.
-This is called partial application. When you provide only some of the expected
+<details>
+<summary> ✔️ Partial Application (Click to Expand)</summary>
+
+Because of **currying**, you can apply arguments to a Nix function one at a time.
+This is called _partial application_. When you provide only some of the expected
 arguments, you get a new function that "remembers" the provided arguments and
 waits for the rest.
 
@@ -186,6 +228,8 @@ nix-repl> helloGreeting "Alice"
   arguments. Partial application allows you to adapt existing functions to fit
   these requirements.
 
+</details>
+
 ## Nix Functions being "first class citizens"
 
 In the context of Nix, the phrase "Nix treats functions as first-class citizens"
@@ -196,7 +240,7 @@ has specific implications in Nix.
 
 **What It Means in Nix**
 
-1. Functions Can Be Assigned to Variables:
+1. Functions Can Be **Assigned to Variables**:
 
 - You can store a function in a variable, just like you would store a number
   or string.
@@ -205,10 +249,11 @@ has specific implications in Nix.
 
 ```nix
 greet = name: "Hello, ${name}!";
-Here, greet is a variable that holds a function.
 ```
 
-2. Functions Can Be Passed as Arguments:
+- Here, greet is a variable that holds a function.
+
+2. Functions Can Be **Passed as Arguments**:
 
 - You can pass a function to another function as an argument, allowing for
   higher-order functions (functions that operate on other functions).
@@ -219,12 +264,13 @@ Here, greet is a variable that holds a function.
 applyTwice = f: x: f (f x);
 inc = x: x + 1;
 applyTwice inc 5 # Output: 7 (increments 5 twice: 5 → 6 → 7)
+~ 7
 ```
 
 - Here, applyTwice takes a function `f` (in this case, `inc`) and applies it to
   `x` twice.
 
-3. Functions Can Be Returned from Functions:
+3. Functions Can Be **Returned from Functions**:
 
 - Functions can produce other functions as their output, which is key to
   currying in Nix.
@@ -235,12 +281,13 @@ applyTwice inc 5 # Output: 7 (increments 5 twice: 5 → 6 → 7)
 greeting = prefix: name: "${prefix}, ${name}!";
 helloGreeting = greeting "Hello";  # Returns a function
 helloGreeting "Alice"  # Output: "Hello, Alice!"
+~ "Hello, Alice!"
 ```
 
 - The greeting function returns another function when partially applied with
   prefix.
 
-4. Functions Are Values in Expressions:
+4. Functions **Are Values in Expressions**:
 
 - Functions can be used anywhere a value is expected, such as in attribute sets or lists.
 
@@ -252,6 +299,7 @@ myFuncs = {
   multiply = x: y: x * y;
 };
 myFuncs.add 3 4  # Output: 7
+~ 7
 ```
 
 - Here, functions are stored as values in an attribute set.
@@ -260,7 +308,15 @@ myFuncs.add 3 4  # Output: 7
 
 **Why This Matters in Nix**:
 
-- It increases the flexibility of Functions making them very powerful.
+- This functional approach is fundamental to Nix's unique build system. In Nix,
+  **package builds (called derivations)** are essentially functions. They take
+  specific **inputs** (source code, dependencies, build scripts) and deterministically
+  produce **outputs** (a built package).
+
+  - This design ensures **atomicity**: if a build does not succeed completely
+    and perfectly, it produces no output at all. This prevents situations common
+    in other package managers where partial updates or corrupted builds can leave
+    your system in an inconsistent or broken state.
 
 - Many NixOS and Home Manager modules are functions, and their first-class
   status means they can be combined, reused, or passed to other parts of the
@@ -274,15 +330,15 @@ myFuncs.add 3 4  # Output: 7
 It's crucial to understand that most NixOS and Home Manager modules are
 fundamentally **functions**.
 
-- These module functions typically accept a single argument: an
-  **attribute set**.
+- These module functions typically accept a single argument:
+  **an attribute set** (remember this, it's important to understand).
 
 **Example**:
 
-A NixOS module to enable Thunar with some plugins that I'm actually using right
-now:
+A practical NixOS module example for Thunar with plugins:
 
 ```nix
+# thunar.nix
 {pkgs, ...}: {
   programs = {
     thunar = {
@@ -295,6 +351,41 @@ now:
   };
 }
 ```
+
+- To use this module I would need to import it into my `configuration.nix` or
+  equivalent, shown here for completeness.
+
+```nix
+# configuration.nix
+# ... snip ...
+imports = [ ../nixos/thunar.nix ];
+# ... snip ...
+```
+
+- This is actually a pretty good example of `with` making it a bit harder to
+  reason where the plugins are from. You might instinctively try to trace a path
+  like `programs.thunar.plugins.pkgs.xfce` because you saw `pkgs.xfce` in the
+  `with` statement. But that's now how `with` works. The `pkgs.xfce` path exists
+  _outside_ the `plugins` list, defining the source of the items, not their
+  nested structure within the list.
+
+- To follow best practices you could write the above plugins section as:
+
+```nix
+plugins = [
+  pkgs.xfce.thunar-archive-plugin
+  pkgs.xfce.thunar-volman
+];
+```
+
+- Now it's clear that each plugin comes directly from `pkgs` and each will
+  resolve to a derivation.
+
+  - To be clear either way is fine, especially in such a small self contained
+    module. If it were in a single file `configuration.nix` it would be a bit
+    more confusing to trace. Explicitness is your friend with Nix and maintaining
+    reproducability. `with` isn't always bad but should be avoided at the top
+    of a file for example to bring `nixpkgs` into scope, use `let` instead.
 
 - The entire module definition is a function that takes one argument (an
   attribute set):
@@ -313,7 +404,10 @@ chapter, [NixOS Modules Explained](https://saylesss88.github.io/NixOS_Modules_Ex
 We will learn about NixOS Modules which are themselves functions most of the
 time.
 
-### Resources
+## Resources
+
+<details>
+<summary> ✔️ Resources (Click to Expand) </summary>
 
 - [nix.dev Nix Lang Basics](https://nix.dev/tutorials/nix-language.html)
 
@@ -326,3 +420,5 @@ time.
 - [learn Nix in y minutes](https://learnxinyminutes.com/nix/)
 
 - [noogle function library](https://noogle.dev/)
+
+</details>
