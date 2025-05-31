@@ -1,37 +1,387 @@
 # Chapter1
 
-## Getting Started with Nix
+<!-- toc -->
 
 ![gruv13](images/gruv13.png)
 
-Welcome to the world of Nix, a powerful tool for reproducible and declarative
-software management. In this chapter, we’ll explore the basics of the Nix
-programming language, a pure, functional, and declarative language that
-underpins Nix’s package manager and operating system. By the end, you’ll
-understand Nix’s core concepts, syntax, and how to write simple expressions and
-derivations.
+## Intro
 
-- ✔️: Will indicate an expandable section, click the little triangle to expand.
+Welcome to _nix-book_, an introductory book about Nix. This book leans more
+towards using Flakes but will contrast traditional Nix where beneficial.
+Originally, this content started as a blog. I'm refining its flow to make it
+more cohesive.
 
-- The code blocks have an option to hide code, where I find it reasonable I will
-  hide the outputs of the expressions. Click the eye in the right corner of the
-  code block next to the copy clipboard.
-
-- **Nix**: is a package manager and a build system that allows you to write
-  declarative scripts for reproducible software builds in the **Nix Language**.
-
-- **NixOS** is the natural consequence of using Nix to build Linux
-  systems. You can think about NixOS as a bunch of prebaked snippets of
-  configuration that you can combine into a running system that does what
-  you want. Each of those snippets is called a module. -- xeiaso
-
-The following bulletpoints can help you get started, they are vast resources
-that take a while to fully absorb. The documentation isn't necessarily bad it's
-just spread out because from my understanding Nix isn't "allowed" to mention
-Flakes in it's manual so you have to look elsewhere.
+In this chapter, I will touch on the different parts of the Nix ecosystem, give
+a quick example of each and explain how they fit together.
 
 <details>
-<summary> ✔️ Nix Ecosystem (Click to Expand) </summary>
+<summary>
+- ✔️: Will indicate an expandable section, click the little triangle to expand.
+</summary>
+
+- These sections are expandable!
+
+</details>
+
+The code blocks have an option to hide code, where I find it reasonable I will
+hide the outputs of the expressions. Click the eye in the right corner of the
+code block next to the copy clipboard.
+
+Example click the eye to see hidden text:
+
+```nix
+{
+  attrset = { a = 2; b = 4; };
+~  hidden_set = { a = hidden; b = set; };
+}
+```
+
+> ❗ If you're new to Nix, think of it as a recipe book for software: you
+> describe what you want (declarative), and Nix ensures it’s built the same way
+> every time (reproducible).
+
+### Why Learn Nix?
+
+The main reason to learn Nix is that it allows you to write declarative scripts
+for reproducible software builds. Rather than mutate the global state and install
+packages to a global location such as `/usr/bin` Nix stores packages in the Nix
+store, usually the directory `/nix/store`, where each package has its own unique
+subdirectory. This paradigm gives you some power features,
+such as:
+
+- Allowing multiple versions or variants of the same package at the same time.
+  This prevents "DLL hell" from different applications having dependencies on
+  different versions of the same package. The Nix store is immutable, preventing
+  package management operations from overwriting other packages.
+
+- Atomic upgrades: Upgrading or uninstalling an application cannot break other
+  applications and either succeed completely or fail completely preventing
+  partial upgrades breaking your system. The nix store is immutable preventing
+  package management operations from overwriting other packages. They wouldn't
+  overwrite each other anyways because the hashing scheme ensures that new
+  versions or repeat packages end up at different paths.
+
+- Nix is designed to provide hermetic builds that aren't affected by the
+  environment, this helps you make sure that when packaging software that the
+  dependencies are complete because they must be explicitly declared as inputs.
+  With other package managers it is more difficult to be sure that an
+  environment variable or something in your `$PATH` isn't affecting your build.
+
+Let’s dive into the key characteristics of Nix:
+
+| Concept          | Description                                                   |
+| ---------------- | ------------------------------------------------------------- |
+| **Pure**         | Functions don't cause side effects.                           |
+| **Functional**   | Functions can be passed as arguments and returned as results. |
+| **Lazy**         | Not evaluated until needed to complete a computation.         |
+| **Declarative**  | Describing a system outcome.                                  |
+| **Reproducible** | Operations that are performed twice return same results       |
+
+> ❗ Important: In Nix, everything is an expression, there are no statements.
+>
+> ❗ Important: Values in Nix are immutable.
+
+### The Nix Ecosystem
+
+The **Nix Language** is the foundation of the ecosystem and is used to write
+**Nix Expressions**.
+
+Example of a simple nix expression:
+
+```nix
+{ hello = "world"; }
+# or
+"foo" + "bar"
+```
+
+While the Nix language provides the foundation for writing expressions, it is
+only part of the ecosystem. These expressions become powerful when used within
+the Nix Package Manager, which evaluates and realizes them into tangible
+software builds and system configurations. This is where Nixpkgs and NixOS
+come into play.
+
+Nix expressions are fundamental, but their true power emerges when paired with
+package management and system-wide configuration.
+
+### The Nix Package Manager, Nixpkgs, and NixOS
+
+At the heart of the Nix ecosystem is **Nix Package Manager**. This powerful
+engine is responsible for orchestrating the entire process: taking
+**Nix expressions** (like _package definitions_ and _configuration modules_),
+evaluating them into precise _derivations_, executing their build steps
+(the _realization phase_), and meticulously managing the immutable Nix store.
+
+A cornerstone of the Nix ecosystem is **Nixpkgs**. This vast collection
+comprises tens of thousands of Nix expressions that describe how to build
+a wide array of software packages from source. Nixpkgs is more than just a
+package repository—it also contains **NixOS Modules**, declarative configurations
+that define system behavior, ensuring a structured and reproducible environment.
+These modules enable users to declaratively describe a Linux system, with each
+module contributing to the desired state of the overall system by leveraging
+_package definitions_ and _derivations_. This is how NixOS emerges: it is
+quite simply the natural consequence of applying the Nix philosophy to building
+an entire Linux operating system.
+
+We will further expand our understanding of modules in [Chapter 3](https://saylesss88.github.io/NixOS_Modules_Explained_3.html)
+
+The following is an example of a NixOS module that is part of the `nixpkgs`
+collection:
+
+```nix
+# nixpkgs/nixos/modules/programs/zmap.nix
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}:
+
+let
+  cfg = config.programs.zmap;
+in
+{
+  options.programs.zmap = {
+    enable = lib.mkEnableOption "ZMap, a network scanner designed for Internet-wide network surveys";
+  };
+
+  config = lib.mkIf cfg.enable {
+    environment.systemPackages = [ pkgs.zmap ];
+
+    environment.etc."zmap/blacklist.conf".source = "${pkgs.zmap}/etc/zmap/blacklist.conf";
+    environment.etc."zmap/zmap.conf".source = "${pkgs.zmap}/etc/zmap.conf";
+  };
+}
+```
+
+- This module, `programs.zmap.nix`, demonstrates how NixOS configurations work.
+  It defines an enable option for the ZMap network scanner. If enabled by the
+  user in their system configuration, the module ensures the `zmap` package is
+  installed and its default configuration files are placed in `/etc`, allowing
+  ZMap to be managed declaratively as part of the operating system.
+
+  - When `nixpkgs` is imported (e.g., in a NixOS configuration), the configuration
+    options and settings defined by its modules (like `programs.zmap.nix`) become
+    available for use, typically accessed via dot notation (e.g., `config.programs.zmap.enable`).
+    This ability to make such a huge set of modules and packages readily
+    available without a significant performance penalty is due to Nix's **lazy
+    evaluation**; only the expressions required for a particular build or
+    configuration are actually evaluated.
+
+  - Most of the time you'll simply [search](https://search.nixos.org/packages)
+    to see if the package is already included in `nixpkgs` and follow the
+    instructions there to get it on your system. It is good practice to first
+    search for the [options](https://search.nixos.org/options?) to see what
+    configurable settings are available, and then proceed to search for the
+    package itself if you know it exists or if you need its specific package
+    definition. When you look up the options for Zmap, `programs.zmap.enable`
+    is all that is listed in this example.
+
+  - Home Manager uses the same underlying Nix module system as NixOS, and when
+    you do something like home.packages = with pkgs; you are referring to the
+    same package derivations from nixpkgs as you would with `environment.systemPackages`.
+    However, Home Manager's own configuration modules (e.g., for `programs.zsh` or
+    `git`) are distinct and reside in the Home Manager repository, designed for
+    user-specific configurations.
+
+One of the main differentiating aspects of Nix, as opposed to traditional
+package managers, is this concept that package builds are treated as pure
+functions. This functional paradigm ensures consistency and reproducibility,
+which are core tenets of the Nix philosophy.
+
+![Nix is not](images/nix_isnot_nixos.png)
+
+**Fig. X:** Conceptual diagram illustrating the distinction between Nix and
+NixOS. Source: xeiaso, from the blog post "Making NixOS modules for fun and
+(hopefully) profit", <https://xeiaso.net/talks/asg-2023-nixos/>.
+
+Nix expressions permeate the ecosystem—everything in Nix is an expression,
+including the next key components: package definitions and derivations.
+
+### Package Definitions & Derivations
+
+**Package Definitions** are specialized expressions that tell Nix how to build
+software.
+
+Example of a package definition:
+
+```nix
+# hello.nix
+{pkgs ? import <nixpkgs> {}}:
+pkgs.stdenv.mkDerivation {
+  pname = "hello";
+  version = "2.12.1";
+
+  src = pkgs.fetchurl {
+    url = "https://ftp.gnu.org/gnu/hello/hello-2.12.1.tar.gz";
+    sha256 = "086vqwk2wl8zfs47sq2xpjc9k066ilmb8z6dn0q6ymwjzlm196cd";
+  };
+
+  nativeBuildInputs = [pkgs.autoconf pkgs.automake pkgs.gcc];
+
+  configurePhase = ''
+    ./configure --prefix=$out
+  '';
+
+  buildPhase = ''
+    make
+  '';
+
+  installPhase = ''
+    make install
+  '';
+}
+```
+
+1. **Evaluation Phase**:
+
+Now when you run something like:
+
+```bash
+nix-instantiate hello.nix
+warning: you did not specify '--add-root'; the result might be removed by the garbage collector
+/nix/store/p2hbg16a9kpqgx2nzcsq39wmnyxyq4jy-hello-2.12.1.drv
+```
+
+- Nix evaluates the expression and produces a `.drv` file (the **derivation**),
+  a precise JSON-like blueprint describing how the package will be built. It
+  does not contain the built software itself.
+
+2. **Realization Phase**:
+
+When you run:
+
+```bash
+nix-build hello.nix
+#...snip...
+shrinking RPATHs of ELF executables and libraries in /nix/store/53hqyw72dijq3wb5kc0ln04g681gk6cp-hello-2.12.1
+shrinking /nix/store/53hqyw72dijq3wb5kc0ln04g681gk6cp-hello-2.12.1/bin/hello
+checking for references to /build/ in /nix/store/53hqyw72dijq3wb5kc0ln04g681gk6cp-hello-2.12.1...
+gzipping man pages under /nix/store/53hqyw72dijq3wb5kc0ln04g681gk6cp-hello-2.12.1/share/man/
+patching script interpreter paths in /nix/store/53hqyw72dijq3wb5kc0ln04g681gk6cp-hello-2.12.1
+stripping (with command strip and flags -S -p) in  /nix/store/53hqyw72dijq3wb5kc0ln04g681gk6cp-hello-2.12.1/bin
+/nix/store/53hqyw72dijq3wb5kc0ln04g681gk6cp-hello-2.12.1
+```
+
+- Nix realizes the derivation by actually executing the build steps, fetching
+  sources, compiling (if needed), and producing the final result (typically stored
+  in e.g. `/nix/store/53hqyw72dijq3wb5kc0ln04g681gk6cp-hello-2.12.1`)
+
+- `nix-build` also creates a symlink named `result` in your current directory,
+  pointing to the final build output in the Nix store.
+
+3. Execute the program:
+
+```bash
+./result/bin/hello
+Hello, world!
+```
+
+`result/bin/hello` points to the executable inside the output of the
+derivation.The derivation describes how the package is built, but does not
+include the final binaries.
+
+To say that another way, the derivation is not the executable. The executable
+is one of the derivations `outputs`. When Nix "realizes" a derivation, it executes
+those build instructions, and the result is the actual built software, which
+gets placed into its own unique path in the Nix store.
+
+A single derivation can produce multiple outputs. The executable is typically
+part of the `out` output, specifically in its `bin` directory.
+
+Here is a small snippet of what a `.drv` file could look like, I got this from
+building the hello derivation and running on the store path:
+
+```bash
+nix show-derivation /nix/store/9na8mwp5zaprikqaqw78v6cdn1rxac7i-hello-2.12.1
+```
+
+```nix
+{
+  "/nix/store/871398c9cbskmzy6bvfnynr8yrlh7nk0-hello-2.12.1.drv": {
+    "args": [
+      "-e",
+      "/nix/store/v6x3cs394jgqfbi0a42pam708flxaphh-default-builder.sh"
+    ],
+    "builder": "/nix/store/1jzhbwq5rjjaqa75z88ws2b424vh7m53-bash-5.2p32/bin/bash",
+    "env": {
+      "__structuredAttrs": "",
+      "buildInputs": "",
+      "builder": "/nix/store/1jzhbwq5rjjaqa75z88ws2b424vh7m53-bash-5.2p32/bin/bash",
+      "cmakeFlags": "",
+      "configureFlags": "",
+      "depsBuildBuild": "",
+      "depsBuildBuildPropagated": "",
+      "depsBuildTarget": "",
+      "depsBuildTargetPropagated": "",
+      "depsHostHost": "",
+      "depsHostHostPropagated": "",
+      "depsTargetTarget": "",
+      "depsTargetTargetPropagated": "",
+      "doCheck": "",
+      "doInstallCheck": "",
+      "mesonFlags": "",
+      "name": "hello-2.12.1",
+      "nativeBuildInputs": "",
+      "out": "/nix/store/9na8mwp5zaprikqaqw78v6cdn1rxac7i-hello-2.12.1",
+      "outputs": "out",
+      "patches": "",
+      "pname": "hello",
+      "propagatedBuildInputs": "",
+      "propagatedNativeBuildInputs": "",
+      "src": "/nix/store/pa10z4ngm0g83kx9mssrqzz30s84vq7k-hello-2.12.1.tar.gz",
+      "stdenv": "/nix/store/80wijs24wjp619zmrasrh805bax02xjm-stdenv-linux",
+      "strictDeps": "",
+      "system": "x86_64-linux",
+      "version": "2.12.1"
+    },
+# ... snip ...
+```
+
+#### Conclusion
+
+In this introductory chapter, we've laid the groundwork for understanding the
+powerful Nix ecosystem. We explored how the Nix Language forms the declarative
+bedrock, enabling us to define desired system states and software builds as
+expressions. You saw how the Nix Package Manager orchestrates this process,
+transforming those expressions into precise derivations during the evaluation
+phase, and then faithfully "realizing" them into reproducible, isolated
+artifacts within the immutable `/nix/store`.
+
+We also introduced the vast Nixpkgs collection, which provides tens of thousands
+of package definitions and forms the foundation for NixOS — a fully declarative
+operating system built on these principles—and even user-level configurations
+like those managed by Home Manager. This unique functional approach, with its
+emphasis on immutability and lazy evaluation, is what enables Nix's promises
+of consistency, atomic upgrades, and truly hermetic builds, fundamentally
+changing how we think about software and system management.
+
+##### Related Sub-Chapters
+
+- The [Nix Language](https://saylesss88.github.io/nix/nix_language.html)
+
+- [Nix Package Manager](https://saylesss88.github.io/nix/nix_package_manager.html)
+
+Now that you have a foundational understanding of the Nix ecosystem and its core
+operational cycle, we are ready to delve deeper into the building blocks of Nix
+expressions. In the next chapter, [Understanding Nix Functions](https://saylesss88.github.io/Understanding_Nix_Functions_2.html),
+we will peel back the layers and explore the intricacies of function arguments,
+advanced patterns, scope, and how functions play a crucial role in building more
+sophisticated Nix expressions and derivations.
+
+Here are some resources that are helpful for getting started:
+
+#### Resources
+
+<details>
+<summary> ✔️ Resources (Click to Expand)</summary>
+
+- [NixOS Search](https://search.nixos.org/packages)
+
+- [NixOS Options](https://search.nixos.org/options?)
+
+- [Extranix Home-Manager Option Search](https://home-manager-options.extranix.com/?query=&release=master)
+
+- [awesome-nix](https://github.com/nix-community/awesome-nix)
 
 - [Nix Core Ecosystem](https://wiki.nixos.org/wiki/Nix_ecosystem), Nix, NixOS,
   Nix Lang, Nixpkgs are all distinctly different; related things which can be
@@ -49,551 +399,5 @@ Flakes in it's manual so you have to look elsewhere.
 - [nix.dev](https://nix.dev/): Has become the top respected source of information
   in my opinion. There is a lot of great stuff in here, and they actively update
   the information.
-
-</details>
-
-> ❗ If you're new to Nix, think of it as a recipe book for software: you
-> describe what you want (declarative), and Nix ensures it’s built the same way
-> every time (reproducible).
-
-## Why Learn Nix?
-
-Nix is often described as “JSON with functions.” It’s a declarative language
-where you define outcomes, not step-by-step instructions. Instead of writing
-sequential code, you create expressions that describe data structures,
-functions, and dependencies. These expressions are evaluated lazily, meaning Nix
-computes values only when needed, making it efficient for managing large
-systems.
-
-Let’s dive into the key characteristics of Nix:
-
-| Concept          | Description                                                   |
-| ---------------- | ------------------------------------------------------------- |
-| **Pure**         | Functions don't cause side effects.                           |
-| **Functional**   | Functions can be passed as arguments and returned as results. |
-| **Lazy**         | Not evaluated until needed to complete a computation.         |
-| **Declarative**  | Describing a system outcome.                                  |
-| **Reproducible** | Operations that are performed twice return same results       |
-
-> ❗ Important: In Nix, everything is an expression, there are no statements.
->
-> ❗ Important: Values in Nix are immutable.
-
-## Syntax Basics
-
-![lambda1](images/lambda1.png)
-
-A few resources to help get you started with the Nix Language, I have actually
-grown to love the language. I find it fairly simple but powerful!
-
-- [Nix Language Overview](https://nix.dev/manual/nix/2.24/language/)
-
-- [Basics of the Language Pill](https://nixos.org/guides/nix-pills/04-basics-of-language)
-
-- Dashes are allowed as identifiers:
-
-```nix
-nix-repl> a-b
-error: undefined variable `a-b' at (string):1:1
-nix-repl> a - b
-error: undefined variable `a' at (string):1:1
-~ testing
-```
-
-> ❗ Tip `a-b` is parsed as an identifier, not as subtraction.
-
-- **Strings**: Strings are enclosed in double quotes (`"`) or two single quotes
-  (`''`).
-
-```nix
-nix-repl> "stringDaddy"
-"stringDaddy"
-nix-repl> ''
-  This is a
-  multi-line
-  string
-''
-"This is a\nmulti-line\nstring.\n"
-```
-
-<details>
-<summary> ✔️ String Interpolation (Click to Expand)</summary>
-
-Is a language feature where a string, path, or attribute name can contain
-expressions enclosed in `${ }`. This construct is called _interpolated string_,
-and the expression inside is an _interpolated expression_.
-
-[string interpolation](https://nix.dev/manual/nix/2.24/language/string-interpolation).
-
-Rather than writing:
-
-```nix
-let path = "/usr/local"; in "--prefix=${path}"
-```
-
-- This evaluates to `"--prefix=/usr/local"`. Interpolated expressions must
-  evaluate to a string, path, or an attribute set with an outPath or
-  `__toString` attribute.
-
-</details>
-
-- **Attribute sets** are all over Nix code, they are name-value pairs wrapped in
-  curly braces, where the names must be unique:
-
-```nix
-{
-  string = "hello";
-  int = 8;
-}
-```
-
-- Attribute names usually don't need quotes.
-
-You can access attributes using dot notation:
-
-```nix
-let person = { name = "Alice"; age = 30; }; in person.name
-"Alice"
-```
-
-You will sometimes see attribute sets with `rec` prepended. This allows access
-to attributes within the set:
-
-- Click to see the Output:
-
-```nix
-rec {
-  x = y;
-  y = 123;
-}.x
-~ 123
-```
-
-**Output**: `123`
-
-or
-
-```nix
-rec {
-  one = 1;
-  two = one + 1;
-  three = two + 1;
-}
-~ {
-~  one = 1;
-~  three = 3;
-~  two = 2;
-~ }
-```
-
-```nix
-# This would fail:
-{
-  one = 1;
-  two = one + 1;  # Error: undefined variable 'one'
-  three = two + 1;
-}
-```
-
-Recursive sets introduce the danger of _infinite recursion_ For example:
-
-```nix
-rec {
-  x = y;
-  y = x;
-}.x
-~ error:
-~       … while evaluating the attribute 'x'
-~         at «string»:2:3:
-~            1| rec {
-~            2|   x = y;
-~             |   ^
-~            3|   y = x;
-~
-~       error: infinite recursion encountered
-~       at «string»:2:7:
-~            1| rec {
-~            2|   x = y;
-~             |       ^
-~            3|   y = x;
-```
-
-- Will crash with an `infinite recursion encountered` error message.
-
-- The
-  [attribute set update operator](https://nix.dev/manual/nix/2.24/language/operators.html#update)
-  merges two attribute sets.
-
-**Example**:
-
-```nix
-{ a = 1; b = 2; } // { b = 3; c = 4; }
-```
-
-**Output**:
-
-```nix
-{ a = 1; b = 3; c = 4; }
-```
-
-- However, names on the right take precedence, and updates are shallow.
-
-**Example**:
-
-```nix
-{ a = { b = 1; }; } // { a = { c = 3; }; }
-```
-
-**Output**:
-
-```nix
-{ a = { c = 3; }; }
-```
-
-- Above, key `b` was completely removed, because the whole `a` value was
-  replaced.
-
-**Inheriting Attributes**
-
-- Click to see Output:
-
-```nix
-let x = 123; in
-{
-  inherit x;
-  y = 456;
-}
-~{
-~  x = 123;
-~  y = 456;
-~}
-```
-
-is equivalent to
-
-```nix
-let x = 123; in
-{
-  x = x;
-  y = 456;
-}
-~{
-~  x = 123;
-~  y = 456;
-~}
-```
-
-> ❗: This works because `x` is added to the lexical scope by the `let`
-> construct.
-
-- `inherit` is commonly used to pick specific variables from the function's
-  arguments, like in:
-
-```nix
-{ pkgs, lib }: ...
-let someVar = ...; in { inherit pkgs lib someVar; ... }
-```
-
-- This shows another common use case beyond just `let` bindings.
-
-## Control Flow with Expressions
-
-**If expressions**:
-
-- Click to see the Output:
-
-```nix
-nix-repl> a = 6
-nix-repl> b = 10
-nix-repl> if a > b then "yes" else "no"
-~ "no"
-```
-
-**Let expressions**:
-
-- Click to see the Output:
-
-```nix
-let
-  a = "foo";
-  b = "fighter";
-in a + b
-~ "foofighter"
-```
-
-**With expressions**:
-
-```nix
-nix-repl> longName = { a = 3; b = 4; }
-nix-repl> longName.a + longName.b
-7
-nix-repl> with longName; a + b
-7
-```
-
-**Laziness**:
-
-- Nix evaluates expressions only when needed. This is a great feature when
-  working with packages.
-
-```nix
-nix-repl> let a = builtins.div 4 0; b = 6; in b
-6
-```
-
-- Since `a` isn't needed, there's no error about division by zero, because the
-  expression is not in need to be evaluated. That's why we can have all the
-  packages defined on demand, yet have acces to specific packages very quickly.
-  Some of these examples came from the Nix pill series.
-
-**Default Values**:
-
-```nix
-{ x, y ? "foo", z ? "bar" }: z + y + x
-~ «lambda @ «string»:1:1»
-```
-
-- Specifies a function that only requires an attribute named `x`, but optionally
-  accepts `y` and `z`.
-
-**@-patterns**:
-
-- An `@-pattern` provides a means of referring to the whole value being matched:
-
-```nix
-args@{ x, y, z, ... }: z + y + x + args.a
-~ «lambda @ «string»:1:1»
-# or
-{ x, y, z, ... } @ args: z + y + x + args.a
-~ «lambda @ «string»:1:1»
-```
-
-- Here, `args` is bound to the argument as _passed_, which is further matched
-  against the pattern `{ x, y, z, ... }`. The `@-pattern` makes mainly sense
-  with an ellipsis(`...`) as you can access attribute names as `a`, using
-  `args.a`, which was given as an additional attribute to the function.
-
-## Functions:
-
-Functions are defined using this syntax, where `x` and `y` are attributes passed
-into the function:
-
-```nix
-{
-  my_function = x: y: x + y;
-}
-```
-
-The code below calls a function called `my_function` with the parameters `2` and
-`3`, and assigns its output to the `my_value` field:
-
-```nix
-{
-  my_value = my_function 2 3;
-}
-my_value
-~ 5
-```
-
-- The body of the function automatically returns the result of the function.
-  Functions are called by spaces between it and its parameters. No commas are
-  needed to separate parameters.
-
-### Derivations
-
-![nix99](images/nix99.png)
-
-<details>
-<summary> ✔️ Derivation Overview (Click to Expand) </summary>
-
-- In Nix, the process of managing software starts with **package definitions**.
-  These are files written in the Nix language that describe how a particular
-  piece of software should be built. These package definitions, when processed
-  by Nix, are translated into derivations.
-
-- At its core, a derivation in Nix is a blueprint or a recipe that describes how
-  to build a specific software package or any other kind of file or directory.
-  It's a declarative specification of:
-
-- **Inputs**: What existing files or other derivations are needed as dependencies.
-
-- **Build Steps**: The commands that need to be executed to produce the desired
-  output.
-
-- **Environment**: The specific environment (e.g., build tools, environment
-  variables) required for the build process.
-
-- **Outputs**: The resulting files or directories that the derivation produces.
-
-Think of a package definition as the initial instructions, and the derivation as
-the detailed, low-level plan that Nix uses to actually perform the build."
-
-Again, a derivation is like a blueprint that describes how to build a specific
-software package or any other kind of file or directory.
-
-**Key Characteristics of Derivations:**
-
-- **Declarative**: You describe the desired outcome and the inputs, not the
-  exact sequence of imperative steps. Nix figures out the necessary steps based
-  on the builder and args.
-
-- **Reproducible**: Given the same inputs and build instructions, a derivation
-  will always produce the same output. This is a cornerstone of Nix's
-  reproducibility.
-
-- **Tracked by Nix**: Nix keeps track of all derivations and their outputs in
-  the Nix store. This allows for efficient management of dependencies and
-  ensures that different packages don't interfere with each other.
-
-- **Content-Addressed**: The output of a derivation is stored in the Nix store
-  under a unique path that is derived from the hash of all its inputs and build
-  instructions. This means that if anything changes in the derivation, the
-  output will have a different path.
-
-Here's a simple Nix derivation that creates a file named hello in the Nix store
-containing the text "Hello, World!":
-
-</details>
-
-<details>
-<summary> ✔️ Hello World Derivation Example (Click to expand):</summary>
-
-```nix
-{pkgs ? import <nixpkgs> {}}:
-pkgs.stdenv.mkDerivation {
-  name = "hello-world";
-
-  dontUnpack = true;
-
-  # No need for src = null; when dontUnpack = true;
-  # src = null;
-
-  buildPhase = ''
-     # Create a shell script that prints "Hello, World!"
-    echo '#!${pkgs.bash}/bin/bash' > hello-output-file # Shebang line
-    echo 'echo "Hello, World!"' >> hello-output-file # The command to execute
-    chmod +x hello-output-file # Make it executable
-  '';
-
-  installPhase = ''
-    mkdir -p $out/bin
-    cp hello-output-file $out/bin/hello # Copy the file from build directory to $out/bin
-  '';
-
-  meta = {
-    description = "A simple Hello World program built with Nix";
-    homepage = null;
-    license = pkgs.lib.licenses.unfree; # Ensure this is pkgs.lib.licenses.unfree
-    maintainers = [];
-  };
-}
-```
-
-And a `default.nix` with the following contents:
-
-```nix
-{ pkgs ? import <nixpkgs> {} }:
-
-import ./hello.nix { pkgs = pkgs; }
-```
-
-- `{ pkgs ? import <nixpkgs> {} }`: This is a function that takes an optional
-  argument `pkgs`. We need Nixpkgs to access standard build environments like
-  `stdenv`.
-
-- `pkgs.stdenv.mkDerivation { ... }:` This calls the mkDerivation function from
-  the standard environment (stdenv). mkDerivation is the most common way to
-  define software packages in Nix.
-
-- `name = "hello-world";`: Human-readable name of the derivation
-
-- The rest are the build phases and package metadata.
-
-To use the above derivation, save it as a `.nix` file (e.g. `hello.nix`). Then
-build the derivation using,:
-
-```bash
-nix-build
-this derivation will be built:
-  /nix/store/9mc855ijjdy3r6rdvrbs90cg2gf2q160-hello-world.drv
-building '/nix/store/9mc855ijjdy3r6rdvrbs90cg2gf2q160-hello-world.drv'...
-Running phase: patchPhase
-Running phase: updateAutotoolsGnuConfigScriptsPhase
-Running phase: configurePhase
-no configure script, doing nothing
-Running phase: buildPhase
-Running phase: installPhase
-Running phase: fixupPhase
-shrinking RPATHs of ELF executables and libraries in /nix/store/2ydxh5pd9a6djv7npaqi9rm6gmz2f73b-hello-world
-checking for references to /build/ in /nix/store/2ydxh5pd9a6djv7npaqi9rm6gmz2f73b-hello-world...
-patching script interpreter paths in /nix/store/2ydxh5pd9a6djv7npaqi9rm6gmz2f73b-hello-world
-stripping (with command strip and flags -S -p) in  /nix/store/2ydxh5pd9a6djv7npaqi9rm6gmz2f73b-hello-world/bin
-/nix/store/2ydxh5pd9a6djv7npaqi9rm6gmz2f73b-hello-world
-```
-
-- Nix will execute the `buildPhase` and `installPhase`
-
-- After a successful build, the output will be in the Nix store. You can find
-  the exact path by looking at the output of the nix build command (it will be
-  something like `/nix/store/your-hash-hello-world`).
-
-Run the "installed" program:
-
-```bash
-./result/bin/hello
-```
-
-- This will execute the `hello` file from the Nix store and print `"Hello,
-World!"`.
-
-</details>
-
-### Evaluating Nix Files
-
-Use `nix-instantiate --eval` to evaluate the expression in a Nix file:
-
-```bash
-echo 1 + 2 > file.nix
-nix-instantiate --eval file.nix
-3
-```
-
-> **Note:** `--eval` is required to evaluate the file and do nothing else. If
-> `--eval` is omitted, `nix-instantiate` expects the expression in the given
-> file to evaluate to a derivation.
-
-If you don't specify an argument, `nix-instantiate --eval` will try to read from
-`default.nix` in the current directory.
-
-## Conclusion
-
-As we have now seen, this chapter touched on the basic syntax of function
-definition and application, including concepts like currying. However, the power
-and flexibility of Nix functions extend far beyond what we've covered so far.
-
-In the next chapter,
-[Understanding Nix Functions](https://saylesss88.github.io/Understanding_Nix_Functions_2.html)
-we will peel back the layers and explore the intricacies of function arguments,
-advanced patterns, scope, and how functions play a crucial role in building more
-sophisticated Nix expressions and derivations.
-
-Here are some resources that I found helpful when learning the Nix Language.
-
-## Resources
-
-<details>
-<summary> ✔️ Resources (Click to Expand)</summary>
-
-- [nix.dev nixlang-basics](https://nix.dev/tutorials/nix-language.html)
-
-- [learn nix in y minutes](https://learnxinyminutes.com/nix/)
-
-- [nix onepager](https://github.com/tazjin/nix-1p)
-
-- [awesome-nix](https://github.com/nix-community/awesome-nix)
-
-- [zero-to-nix nix lang](https://zero-to-nix.com/concepts/nix-language/)
-
-- [nix-pills basics of nixlang](https://nixos.org/guides/nix-pills/04-basics-of-language.html)
 
 </details>

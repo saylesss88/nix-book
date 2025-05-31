@@ -1,20 +1,6 @@
 # Chapter 9
 
-<!--toc:start-->
-
-- [Debugging and Tracing NixOS Modules](#debugging-and-tracing-nixos-modules)
-- [Example 2](#example-2)
-- [Example 3](#example-3)
-- [Example 4](#example-4)
-- [Summary](#summary)
-- [More Functionality between modules](#more-functionality-between-modules)
-  - [Infinite recursion error](#infinite-recursion-error)
-  - [Example 5](#example-5)
-  - [Tests](#tests)
-  - [Test 2](#test-2)
-  - [Key Takeaways for Debugging NixOS Modules](#key-takeaways-for-debugging-nixos-modules)
-- [Conclusion](#conclusion)
-<!--toc:end-->
+<!-- toc -->
 
 ## Debugging and Tracing NixOS Modules
 
@@ -1164,7 +1150,7 @@ building '/nix/store/c3kw4xbdlrig08jrdm5wis1dmv2gnqsd-foo-test-version.drv'...
   Nix expressions and the outputs of derivations, providing insights into the
   structure and values within Nixpkgs.
 
-## Conclusion
+#### Conclusion
 
 This chapter has equipped you with essential techniques for debugging and tracing
 NixOS modules. We've explored how to use `nix-instantiate` and `--show-trace` to

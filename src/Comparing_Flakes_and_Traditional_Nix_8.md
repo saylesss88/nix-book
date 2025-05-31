@@ -1,20 +1,10 @@
 # Chapter 8
 
-<!--toc:start-->
-
-- [Comparing Flakes and Traditional Nix](#comparing-flakes-and-traditional-nix)
-- [Building a Simple "hello" Package: Flakes vs. Traditional Nix](#building-a-simple-hello-package-flakes-vs-traditional-nix)
-- [Using Nix Flakes](#using-nix-flakes)
-- [Using Traditional Nix](#using-traditional-nix)
-  - [Updating Nixpkgs](#updating-nixpkgs)
-  - [Updating Traditional Nix (using `niv`)](#updating-traditional-nix-using-niv)
-    - [Adding Home-Manager with Traditional Nix](#adding-home-manager-with-traditional-nix)
-- [Conclusion](#conclusion)
-<!--toc:end-->
-
-## Comparing Flakes and Traditional Nix
+<!-- toc -->
 
 ![nixWinter](images/nixWinter.png)
+
+## Comparing Flakes and Traditional Nix
 
 - This post is based on notes from Nix-Hour #4, comparing Traditional Nix and
   Flakes, focusing on achieving pure build results. See the
@@ -355,7 +345,7 @@ nix-build -A homeManagerDocs
 
 </details>
 
-## Conclusion
+#### Conclusion
 
 In this chapter, we've explored the key differences between traditional Nix and
 Nix Flakes, particularly focusing on how each approach handles purity, dependency

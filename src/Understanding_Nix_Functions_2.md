@@ -1,20 +1,10 @@
 # Chapter 2
 
-<!--toc:start-->
-
-- [Understanding Nix Functions](#understanding-nix-functions)
-- [What are Nix Functions?](#what-are-nix-functions)
-- [Understanding Function Structure: The Role of the Colon](#understanding-function-structure-the-role-of-the-colon)
-- [Declaring Functions: Single and Simulated "Multiple" Arguments](#declaring-functions-single-and-simulated-multiple-arguments)
-- [Nix Functions being "first class citizens"](#nix-functions-being-first-class-citizens)
-  - [The Function Nature of NixOS and Home Manager Modules](#the-function-nature-of-nixos-and-home-manager-modules)
-- [Conclusion](#conclusion)
-- [Resources](#resources)
-<!--toc:end-->
-
-## Understanding Nix Functions
+<!-- toc -->
 
 <img src="images/nixLogo.png" width="400" height="300">
+
+## Understanding Nix Functions
 
 **Functions** are the building blocks of Nix, appearing everywhere in Nix
 expressions and configurations. Mastering them is essential for writing
@@ -50,9 +40,6 @@ The Nix expression evaluator has a bunch of functions and constants built in:
 - [Nix Operators](https://nix.dev/manual/nix/2.26/language/operators)
 
 </details>
-
-First I wanted to explain the structure of Nix Functions, and then we will talk
-about their "first-class" nature in Nix.
 
 ## Understanding Function Structure: The Role of the Colon
 
@@ -92,9 +79,7 @@ greet "Anonymous"
 - This structure is the foundation of all Nix functions, whether simple or
   complex.
 
-## Declaring Functions: Single and Simulated "Multiple" Arguments
-
-**Single-Argument Functions**: The Basics
+### Single-Argument Functions: The Basics
 
 The simplest form of a Nix function takes a single argument. In Nix, function
 definitions like `x: x + 1` or `personName: "Hello, ${personName}!";` are
@@ -115,11 +100,11 @@ inc 5
 
 - `x + 1` is the function body.
 
-- This straightforward design makes single-argument functions easy to understand
-  and use. But what if you need a function that seems to take multiple arguments?
-  That's where **currying** comes in.
+This straightforward design makes single-argument functions easy to understand
+and use. But what if you need a function that seems to take multiple arguments?
+That's where **currying** comes in.
 
-**Simulating Multiple Arguments: Currying**
+### Simulating Multiple Arguments: Currying
 
 To create functions that appear to take multiple arguments, Nix uses currying.
 This involves nesting single-argument functions, where each function takes one
@@ -155,7 +140,17 @@ Here's how it works step by step:
 This chaining is why Nix functions are so powerful—it allows you to build
 flexible, reusable functions.
 
-**A More Practical Example: Greetings**:
+Currying is a powerful feature in Nix that enables you to partially apply
+arguments to functions, leading to increased reusability. This behavior is a
+direct consequence of Nix functions being "first-class citizens" (a concept
+we'll delve into later), and it proves invaluable for decomposing intricate
+logic into a series of smaller, more focused functions.
+
+**Key Insight**: Every colon in a function definition separates a **single
+argument** from its **function body**, even if that body is another function
+definition.
+
+#### Greeting Example
 
 Let's explore currying with a more relatable example in the `nix repl`:
 
@@ -181,22 +176,7 @@ This function is a chain of two single-argument functions:
 Thanks to **lexical scope** (where inner functions can access variables from
 outer functions), the inner function "remembers" the `prefix` value.
 
-**Why Currying Matters**
-
-- You can partially apply arguments and reuse functions.
-
-- The "first-class" aspect of Nix Functions, explained further down.
-
-- It can help break down complex logic into smaller, manageable functions.
-
-**Key Insight**: Every colon in a function definition separates a **single
-argument** from its **function body**, even if that body is another function
-definition.
-
-**Partial Application: Using Functions Incrementally**
-
-<details>
-<summary> ✔️ Partial Application (Click to Expand)</summary>
+#### Partial Application: Using Functions Incrementally
 
 Because of **currying**, you can apply arguments to a Nix function one at a time.
 This is called _partial application_. When you provide only some of the expected
@@ -220,17 +200,13 @@ nix-repl> helloGreeting "Alice"
 
 **Benefits of Partial Application:**
 
-- **Creating Specialized Functions**: You can create more specific functions
-  from general ones by fixing some of their parameters.
+Partial application provides significant benefits by enabling you to derive
+specialized functions from more general ones through the process of fixing
+certain parameters. Additionally, it serves as a powerful tool for adapting
+existing functions to fit the precise argument requirements of higher-order
+functions like `map` and `filter`.
 
-- **Adapting to Higher-Order Functions**: Many functions that operate on other
-  functions (like `map` and `filter`) expect functions with a certain number of
-  arguments. Partial application allows you to adapt existing functions to fit
-  these requirements.
-
-</details>
-
-## Nix Functions being "first class citizens"
+#### Nix Functions being "first class citizens"
 
 In the context of Nix, the phrase "Nix treats functions as first-class citizens"
 means that functions in Nix are treated as values, just like numbers, strings,
@@ -308,30 +284,30 @@ myFuncs.add 3 4  # Output: 7
 
 **Why This Matters in Nix**:
 
-- This functional approach is fundamental to Nix's unique build system. In Nix,
-  **package builds (called derivations)** are essentially functions. They take
-  specific **inputs** (source code, dependencies, build scripts) and deterministically
-  produce **outputs** (a built package).
+This functional approach is fundamental to Nix's unique build system. In Nix,
+**package builds (called derivations)** are essentially functions. They take
+specific **inputs** (source code, dependencies, build scripts) and deterministically
+produce **outputs** (a built package).
 
-  - This design ensures **atomicity**: if a build does not succeed completely
-    and perfectly, it produces no output at all. This prevents situations common
-    in other package managers where partial updates or corrupted builds can leave
-    your system in an inconsistent or broken state.
+This design ensures **atomicity**: if a build does not succeed completely
+and perfectly, it produces no output at all. This prevents situations common
+in other package managers where partial updates or corrupted builds can leave
+your system in an inconsistent or broken state.
 
-- Many NixOS and Home Manager modules are functions, and their first-class
-  status means they can be combined, reused, or passed to other parts of the
-  configuration system.
+Many NixOS and Home Manager modules are functions, and their first-class
+status means they can be combined, reused, or passed to other parts of the
+configuration system.
 
-- Now that we understand the "first-class" nature of Nix Functions let's see how
-  they fit into NixOS and Home Manager modules.
+Now that we understand the "first-class" nature of Nix Functions let's see how
+they fit into NixOS and Home Manager modules.
 
-### The Function Nature of NixOS and Home Manager Modules
+#### The Function Nature of NixOS and Home Manager Modules
 
 It's crucial to understand that most NixOS and Home Manager modules are
 fundamentally **functions**.
 
-- These module functions typically accept a single argument:
-  **an attribute set** (remember this, it's important to understand).
+These module functions typically accept a single argument:
+**an attribute set** (remember this, it's important to understand).
 
 **Example**:
 
@@ -387,24 +363,182 @@ plugins = [
     reproducability. `with` isn't always bad but should be avoided at the top
     of a file for example to bring `nixpkgs` into scope, use `let` instead.
 
-- The entire module definition is a function that takes one argument (an
-  attribute set):
-  `{ pkgs, ... }`.
+The entire module definition is a function that takes one argument (an
+attribute set):`{ pkgs, ... }`. When this module is included in your
+configuration, the NixOS module system calls this function with a specific
+attribute set. This attribute set contains the available packages (`pkgs`),
+and other relevant information. The module then uses these values to define
+parts of your system.
 
-- When this module is included in your configuration, the NixOS module system
-  calls this function with a specific attribute set. This attribute set contains
-  the available packages (`pkgs`), and other relevant information. The module
-  then uses these values to define parts of your system.
+### Understanding passing and getting back arguments
 
-## Conclusion
+For this example we will build the Hello derivation from the Nix Pills series.
+
+Create an `autotools.nix` with the following contents:
+
+```nix
+pkgs: attrs: let
+  defaultAttrs = {
+    builder = "${pkgs.bash}/bin/bash";
+    args = [./builder.sh];
+    baseInputs = with pkgs; [
+      gnutar
+      gzip
+      gnumake
+      gcc
+      coreutils
+      gawk
+      gnused
+      gnugrep
+      binutils.bintools
+    ];
+    buildInputs = [];
+    system = builtins.currentSystem;
+  };
+in
+  derivation (defaultAttrs // attrs)
+```
+
+Let's create the hello derivation:
+
+```nix
+let
+  pkgs = import <nixpkgs> {};
+  mkDerivation = import ./autotools.nix pkgs;
+in
+  mkDerivation {
+    name = "hello";
+    src = ./hello-2.12.1.tar.gz;
+  }
+```
+
+- You can get the tarball [here](https://ftp.gnu.org/gnu/hello/hello-2.12.1.tar.gz),
+  place it in the same directory as `autotools.nix`
+
+And finally the `builder.sh` that `autotools.nix` declares for the `args`
+attribute:
+
+```bash
+!#/bin/bash
+set -e
+unset PATH
+for p in $buildInputs $baseInputs; do
+    export PATH=$p/bin${PATH:+:}$PATH
+done
+
+tar -xf $src
+
+for d in *; do
+    if [ -d "$d" ]; then
+        cd "$d"
+        break
+    fi
+done
+
+./configure --prefix=$out
+make
+make install
+```
+
+When you write:
+
+```nix
+mkDerivation = import ./autotools.nix pkgs;
+```
+
+- `import ./autotools.nix`: This evaluates the `autotools.nix` file. Because
+  it starts with `pkgs: attrs: ...`, it means that `autotools.nix` evaluates
+  to a function that expects one argument named `pkgs`.
+
+- `... pkgs`: We are immediately calling that function (the one returned by
+  `inport ./autotools.nix`) and passing it our `pkgs` variable (which is the result
+  of `import <nixpkgs> {}`).
+
+**This illustrates the concept of Currying in Nix**:
+
+The function defined in `autotools.nix` (`pkgs: attrs: ...`) is a curried
+function. It's a function that, when given its first argument (`pkgs`), returns
+another function (which then expects `attrs`).
+
+The result of import `./autotools.nix pkgs` is that second, inner function:
+`attrs: derivation (defaultAttrs // attrs)`. This inner function is then bound
+to your `mkDerivation` variable, making it ready to be called with just the
+specific attributes for your package (like `name` and `src`).
+
+**Understanding the `attrs` Argument**
+
+Now let's focus on the second argument of our `autotools.nix` function: `attrs`.
+
+Recall the full function signature in `autotools.nix`:
+
+```nix
+pkgs: attrs: let
+  # ... defaultAttrs definition ...
+in
+  derivation (defaultAttrs // attrs)
+```
+
+1. What `attrs` Represents:
+
+- Once `autotools.nix` has received its `pkgs` argument (and returned the inner
+  function), this inner function is waiting for its final argument, which we call
+  `attrs`.
+
+- `attrs` is simply an attribute set (a key-value map in Nix). It's designed to
+  receive all the specific properties of the individual package you want to build
+  using this helper.
+
+2. How `attrs` is Used:
+
+- Look at the final line of `autotools.nix`: `derivation (defaultAttrs // attrs)`.
+
+- The `//` operator in Nix performs an attribute set merge. It takes all
+  attributes from `defaultAttrs` and combines them with all attributes from `attrs`.
+
+- Crucially, if an attribute exists in both `defaultAttrs` and `attrs`, the value
+  from `attrs` (the second operand) takes precedence and overrides the default
+  value.
+
+3. Applying attrs in the hello Derivation:
+
+- In the `hello` derivation, we call `mkDerivation` like this:
+
+```nix
+        mkDerivation {
+          name = "hello";
+          src = ./hello-2.12.1.tar.gz;
+        }
+```
+
+- The attribute set `{ name = "hello"; src = ./hello-2.12.1.tar.gz; }` is
+  precisely what gets passed as the `attrs` argument to the `mkDerivation`
+  function (which, remember, is the inner function returned by `autotools.nix`).
+
+- When derivation `(defaultAttrs // attrs)` is evaluated for "hello", the `name`
+  and `src` provided in the `attrs` set will be merged with all the `defaultAttrs`
+  (like `builder`, `args`, `baseInputs`, etc.).
+
+In summary:
+
+- The `pkgs` argument configures the general environment and available tools for
+  the builder.
+
+- The `attrs` argument is where you provide the unique details for each specific
+  package you intend to build using this `autotools.nix` helper. It allows you to
+  specify things like the package's name, source code, version, and any custom
+  build flags, while still benefiting from all the sensible defaults provided by
+  `autotools.nix`. This separation makes `autotools.nix` a reusable and flexible
+  "template" for creating derivations.
+
+#### Conclusion
 
 Having explored the fundamental nature of functions in Nix, we can now see
-this concept applies to more complex areas like NixOS configuration. In the next
-chapter, [NixOS Modules Explained](https://saylesss88.github.io/NixOS_Modules_Explained_3.html).
+this concept applies to more complex areas like NixOS configuration and derivations.
+In the next chapter, [NixOS Modules Explained](https://saylesss88.github.io/NixOS_Modules_Explained_3.html).
 We will learn about NixOS Modules which are themselves functions most of the
 time.
 
-## Resources
+#### Resources
 
 <details>
 <summary> ✔️ Resources (Click to Expand) </summary>

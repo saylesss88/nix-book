@@ -1,16 +1,10 @@
 # Chapter 11
 
-<!--toc:start-->
-
-- [Nix Pull Requests](#nix-pull-requests)
-- [Build and Test the Changes](#build-and-test-the-changes)
-- [Next Steps](#next-steps)
-- [Conclusion](#conclusion)
-<!--toc:end-->
-
-## Nix Pull Requests
+<!-- toc -->
 
 ![gruv16](images/gruv16.png)
+
+## Nix Pull Requests
 
 **Pull requests** communicate changes to a branch in a repository. Once a pull
 request is opened, you can review changes with collaborators and add follow-up
@@ -313,7 +307,7 @@ Running the following will provide the full logs:
 nix log /nix/store/rk86daqgf6a9v6pdx6vcc5b580lr9f09-nix-2.20.0pre20240115_20b4959.drv
 ```
 
-## Conclusion
+### Conclusion
 
 Testing Nixpkgs pull requests is a vital part of contributing to a healthy and
 reliable Nix ecosystem. By following these steps, you can help ensure that

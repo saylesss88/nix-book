@@ -1,19 +1,10 @@
 # Chapter 6
 
-<!--toc:start-->
-
-- [Package Definitions Explained](#package-definitions-explained)
-- [The Journey from Definition to Package](#the-journey-from-definition-to-package)
-- [Example: A Simple "Hello" Package Definition](#example-a-simple-hello-package-definition)
-  - [Swaytools Package Definition](#swaytools-package-definition)
-  - [Breakdown of the Above default.nix](#breakdown-of-the-above-defaultnix)
-- [Conclusion](#conclusion)
-- [Resources](#resources)
-<!--toc:end-->
-
-## Package Definitions Explained
+<!-- toc -->
 
 ![gruv1](images/gruv1.png)
+
+## Package Definitions Explained
 
 In Nix, the concept of a **package** can refer to two things:
 

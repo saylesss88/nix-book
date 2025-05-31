@@ -1,19 +1,10 @@
 # Chapter 12
 
-<!--toc:start-->
-
-- [Intro to Nushell on NixOS](#intro-to-nushell-on-nixos)
-- [The Good](#the-good)
-- [The Bad](#the-bad)
-- [Key Differences Between Nushell & Bash](#key-differences-between-nushell-bash)
-- [The Beautiful and Powerful](#the-beautiful-and-powerful)
-- [Using Just and Justfiles](#using-just-and-justfiles)
-- [Resources](#resources)
-<!--toc:end-->
-
-## Intro to Nushell on NixOS
+<!-- toc -->
 
 ![Nu](images/nu.png)
+
+## Intro to Nushell on NixOS
 
 - **TL;DR**:I recently switched default shells from zsh to nushell, this post
   is about some of the challenges and advantages of using nushell with NixOS.
@@ -277,7 +268,7 @@ integrated with NixOS’s Bash-centric ecosystem. Let’s explore some of the
 limitations you might encounter when adopting Nushell as your default shell.
 </details>
 
-## The Bad
+### The Bad
 
 - While the project is still maturing, the active community and ongoing
   improvements are promising. Don't get too discouraged by the following, there
@@ -343,7 +334,7 @@ limitations you might encounter when adopting Nushell as your default shell.
   compare Nushell’s static, structured approach to Bash’s dynamic, text-based
   model.
 
-## Key Differences Between Nushell & Bash
+### Key Differences Between Nushell & Bash
 
 | **Feature**        | **Bash (Dynamic)**        | **Nushell (Static)**                          |
 | ------------------ | ------------------------- | --------------------------------------------- |
@@ -391,7 +382,7 @@ $p * 6    # 42
   it shine. Let’s dive into some of the beautiful and powerful tools and custom
   commands that elevate Nushell for NixOS users.
 
-## The Beautiful and Powerful
+### The Beautiful and Powerful
 
 - `Ctrl+t` List Commands with carapace and fzf:
 
@@ -655,7 +646,7 @@ cleanup:
   valuable resources to explore, from official documentation to community-driven
   configurations.
 
-## Resources
+#### Resources
 
 <details>
 <summary> ✔️ Click to Expand Resources </summary>

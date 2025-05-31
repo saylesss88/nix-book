@@ -1,31 +1,10 @@
 # Chapter 10
 
-<!--toc:start-->
-
-- [Working with Nixpkgs Locally: Benefits and Best Practices](#working-with-nixpkgs-locally-benefits-and-best-practices)
-- [I. Why Work with Nixpkgs Locally?](#i-why-work-with-nixpkgs-locally)
-  - [A. Faster Development Cycle](#a-faster-development-cycle)
-  - [B. Enhanced Version Control](#b-enhanced-version-control)
-  - [C. Flexible Debugging Capabilities](#c-flexible-debugging-capabilities)
-  - [D. Streamlined Contribution Workflow](#d-streamlined-contribution-workflow)
-  - [E. Up-to-Date Documentation Source](#e-up-to-date-documentation-source)
-  - [F. Optimized Storage and Performance](#f-optimized-storage-and-performance)
-- [II. Flake vs. Non-Flake Syntax for Local Nixpkgs](#ii-flake-vs-non-flake-syntax-for-local-nixpkgs)
-  - [A. Flake Syntax (`nix build .#<package>`)](#a-flake-syntax-nix-build-package)
-  - [B. Non-Flake Syntax (`nix-build -f . <package>` or `nix build -f . <package>`)](#b-non-flake-syntax-nix-build-f-package-or-nix-build-f-package)
-  - [III. Setting Up a Local Nixpkgs Repository Efficiently](#iii-setting-up-a-local-nixpkgs-repository-efficiently)
-  - [A. Initial Clone: Shallow Cloning](#a-initial-clone-shallow-cloning)
-  - [B. Managing Branches with Worktrees](#b-managing-branches-with-worktrees)
-  - [A. Online Search with `search.nixos.org`](#a-online-search-with-searchnixosorg)
-  - [B. Local Source Code Search with `rg` (ripgrep)](#b-local-source-code-search-with-rg-ripgrep)
-- [V. Local Derivation Search with `nix-locate`](#v-local-derivation-search-with-nix-locate)
-- [VI. Key Benefits of Working with Nixpkgs Locally (Recap)](#vi-key-benefits-of-working-with-nixpkgs-locally-recap)
-- [VII. Best Practices and Tips from the Community](#vii-best-practices-and-tips-from-the-community)
-<!--toc:end-->
-
-## Working with Nixpkgs Locally: Benefits and Best Practices
+<!-- toc -->
 
 ![gruv18](images/gruv18.png)
+
+## Working with Nixpkgs Locally: Benefits and Best Practices
 
 - Nixpkgs, the package repository for NixOS, is a powerful resource for building and customizing software.
 - Working with a local copy enhances development, debugging, and contribution workflows.

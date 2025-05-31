@@ -1,48 +1,44 @@
 # Chapter 7
 
-<!--toc:start-->
-
-- [Chapter 7](#chapter-7)
-  - [Introduction to Nix Derivations](#introduction-to-nix-derivations)
-  - [Creating Derivations in Nix](#creating-derivations-in-nix)
-  - [Produce a development shell from a derivation](#produce-a-development-shell-from-a-derivation)
-  - [Our Second Derivation: Understanding the Builder](#our-second-derivation-understanding-the-builder)
-    - [Why a Builder Script?](#why-a-builder-script)
-    - [The Challenge with Shebangs in Nix](#the-challenge-with-shebangs-in-nix)
-    - [The Importance of Statelessness in Nix](#the-importance-of-statelessness-in-nix)
-  - [Our builder Script](#our-builder-script)
-  - [Our Last Derivation](#our-last-derivation)
-  - [Best Practices](#best-practices)
-  - [Conclusion](#conclusion)
-  - [Links To Articles about Derivations](#links-to-articles-about-derivations)
-  <!--toc:end-->
+<!-- toc -->
 
 ## Introduction to Nix Derivations
 
 ![gruv10](images/gruv10.png)
 
-- A derivation in Nix is a fundamental concept that describes how to build
-  a piece of software or a resource (e.g., a package, library, or configuration
-  file). Think of it as a recipe for creating something within the Nix ecosystem.
+Nix's build instructions, known as **derivations**, are defined using the Nix
+Language. These derivations can describe anything from individual software
+packages to complete system configurations. The Nix package manager then
+deterministically "realizes" (builds) these derivations, ensuring consistency
+because they rely solely on a predefined set of inputs.
 
-  - Nix building instructions are called “derivations” and are written in the
-    Nix programming language. Derivations can be written for packages or even
-    entire systems. After that, they can then be deterministically “realised”
-    (built) via Nix, the package manager. Derivations can only depend on a
-    pre-defined set of inputs, so they are somewhat reproducible. -- Practical Nix Flakes
+Most things in NixOS are built around derivations. Your NixOS system is
+described by such a single system derivation. When you want to apply a new
+configuration, `nixos-rebuild` handles the process:
 
-  - Most things in NixOS are build around derivations:
+It first builds this derivation:
 
-    - Programs/Applications: Are derivations
+```bash
+nix-build '<nixpkgs/nixos>' -A system
+```
 
-    - Config Files: Are a derivation that takes the nix configuration and produces
-      an appropriate config file for the application.
+Then, once the build is complete, it switches to that new system:
 
-    - The system configuration (i.e. `/run/current-system`) is a derivation
+```bash
+result/bin/switch-to-configuration
+```
+
+After the build, `nixos-rebuild` updates a crucial symbolic link: `/run/current-system`
+This symlink always points to the active, running version of your system in the
+Nix store. In essence, the `/run/current-system` path is the currently active
+system derivation. This design choice gives NixOS its powerful atomic upgrade
+and rollback capabilities: changing your system involves building a new system
+derivation and updating this symlink to point to the latest version.
 
 > ```nix
 >  ls -lsah /run/current-system
->  0 lrwxrwxrwx 1 root root 85 May 23 12:11 /run/current-system -> /nix/store/cy2c0kxpjrl7ajlg9v3zh898mhj4dyjv-nixos-system-magic-25.11.20250520.2795c50
+>  0 lrwxrwxrwx 1 root root 85 May 23 12:11 /run/current-system -> /nix/store/
+>  cy2c0kxpjrl7ajlg9v3zh898mhj4dyjv-nixos-system-magic-25.11.20250520.2795c50
 > ```
 
 - The `->` indicates a symlink and it's pointing to a **store path** which is
@@ -51,7 +47,9 @@
 - For beginners, the analogy of a cooking recipe is helpful:
 
   - **Ingredients (Dependencies):** What other software or libraries are needed.
+
   - **Steps (Build Instructions):** The commands to compile, configure, and install.
+
   - **Final Dish (Output):** The resulting package or resource.
 
 - A Nix derivation encapsulates all this information, telling Nix what inputs
@@ -79,42 +77,193 @@
 
   1.  **name:** A human-readable identifier for the derivation
       (e.g., "foo", "hello.txt"). This helps you and Nix refer to the package.
+
   2.  **system:** Specifies the target architecture for the build
       (e.g., `builtins.currentSystem` for your current machine).
+
   3.  **builder:** Defines the program that will execute the build instructions
       (e.g., `bash`).
 
-> Our First fake derivation
->
-> ```nix
-> nix-repl> :l <nixpkgs> # Makes Nixpkgs available for ${pkgs.bash}
-> nix-repl> d = derivation { name = "myname"; builder = "${pkgs.bash}/bin/bash"; system = "mysystem"; }
-> nix-repl> :b d
-> [...]
-> these derivations will be built:
-> error: a 'mysystem' with features {} is required to build '/nix/store/fq6843vfzzbhy3s6iwcd0hm10l578883-myname.drv',
-> but I am a 'x86_64-linux' with features {benchmark, big-parallel, kvm, nixos-test}
-> ```
->
-> - The build failure is expected here due to the inaccurate attributes
-> - The `:b` is a `nix repl` specific command to build a derivation.
-> - To realise this outside of the `nix repl` you can use `nix-store -r`:
->
-> ```nix
->  $ nix-store -r /nix/store/z3hhlxbckx4g3n9sw91nnvlkjvyw754p-myname.drv
-> ```
->
-> - `nix derivation show`: Pretty print the contents of a store derivation:
->
-> ```nix
->  $ nix derivation show /nix/store/z3hhlxbckx4g3n9sw91nnvlkjvyw754p-myname.drv
-> ```
->
-> -- [Nix Pills](https://nixos.org/guides/nix-pills/06-our-first-derivation.html)
+## The Hello World Derivation
+
+For this example, first create a `hello` directory and add the [Hello tarball](https://ftp.gnu.org/gnu/hello/hello-2.12.1.tar.gz)
+to said directory.
+
+Now lets create the classic Hello derivation:
+
+```nix
+# hello.nix
+let
+  pkgs = import <nixpkgs> { };
+in
+derivation {
+  name = "hello";
+  builder = "${pkgs.bash}/bin/bash";
+  args = [ ./hello_builder.sh ];
+  inherit (pkgs)
+    gnutar
+    gzip
+    gnumake
+    gcc
+    coreutils
+    gawk
+    gnused
+    gnugrep
+    ;
+  bintools = pkgs.binutils.bintools;
+  src = ./hello-2.12.1.tar.gz;
+  system = builtins.currentSystem;
+}
+```
+
+- As you can see, this isn't the only required file but is a recipe outlining
+  how to build the `hello` package. The `tar.gz` package can be found [here](https://ftp.gnu.org/gnu/hello/hello-2.12.1.tar.gz)
+  You would just place the tarball in the same directory as the derivation along
+  with the following `hello_builder.sh`:
+
+```bash
+# hello_builder.sh
+export PATH="$gnutar/bin:$gcc/bin:$gnumake/bin:$coreutils/bin:$gawk/bin:$gzip/bin:$gnugrep/bin:$gnused/bin:$bintools/bin"
+tar -xzf $src
+cd hello-2.12.1
+./configure --prefix=$out
+make
+make install
+```
+
+And build it with:
+
+```bash
+nix-build hello.nix
+```
+
+Finally execute it with:
+
+```bash
+./result/bin/hello
+Hello, world!
+```
+
+## Simple Rust Derivation
+
+Create a `simple.rs` with the following contents:
+
+```rust
+fn main() {
+  println!("Simple Rust!")
+}
+```
+
+And a `rust_builder.sh` like this (this is our builder script):
+
+```bash
+# rust_builder.sh
+# Set up the PATH to include rustc coreutils and gcc
+export PATH="$rustc/bin:$coreutils/bin:$gcc/bin"
+
+# IMPORTANT: Create the $out directory BEFORE rustc tries to write to it
+mkdir -p "$out"
+
+# Compile the Rust source code and place the executable inside $out
+rustc -o "$out/simple_rust" "$src"
+```
+
+Now we'll enter the `nix repl` and build it:
+
+```bash
+❯ nix repl
+Nix 2.28.3
+Type :? for help.
+
+nix-repl> :l <nixpkgs>
+added 3950 variables.
+
+# Define the variables for rustc, coreutils, bash, AND gcc from the loaded nixpkgs
+nix-repl> rustc = pkgs.rustc
+
+nix-repl> coreutils = pkgs.coreutils
+
+nix-repl> bash = pkgs.bash
+
+nix-repl> gcc = pkgs.gcc
+
+# Now define the derivation
+nix-repl> simple_rust_program = derivation {
+            name = "simple-rust-program";
+            builder = "${bash}/bin/bash";
+            args = [ ./rust_builder.sh ];
+            rustc = rustc;
+            coreutils = coreutils;
+            gcc = gcc;
+            src = ./simple.rs;
+            system = builtins.currentSystem;
+          }
+
+nix-repl> :b simple_rust_program
+This derivation produced the following outputs:
+out -> /nix/store/fmyqr2d3ph0lpnxd0xppwvwyhv3iyb7y-simple-rust-program
+```
+
+```bash
+nix-store -r /nix/store/fmyqr2d3ph0lpnxd0xppwvwyhv3iyb7y-simple-rust-program
+
+warning: you did not specify '--add-root'; the result might be removed by the garbage collector
+/nix/store/fmyqr2d3ph0lpnxd0xppwvwyhv3iyb7y-simple-rust-program
+```
+
+This simple Rust example, built with a direct derivation call, illustrates:
+
+- How Nix explicitly manages every single tool in your build environment (`bash`,
+  `rustc`, `gcc`, `coreutils`).
+
+- The strict isolation of Nix builds, where nothing is implicitly available.
+
+- The deterministic mapping of inputs to unique output paths in the Nix store.
 
 - The above example shows the fundamental structure of a Nix derivation, how it's
-  defined within the `nix-repl`, and the importance of correctly specifying attributes
-  like `system`.
+  defined within the `nix-repl`.
+
+- `.drv` files are intermediate files that describe how to build a derivation;
+  it's the bare minimum information.
+
+## When Derivations are Built
+
+Nix doesn't build derivations during the evaluation of your Nix expressions.
+Instead, it processes your code in two main phases (and why you need to use
+`:b simple_rust_program` or `nix-store -r` to actually build or realize it):
+
+1.  Evaluation/Instantiate Phase: This is when Nix parses and interprets your
+    .nix expression. The result is a precise derivation description (often
+    represented as a .drv file on disk), and the unique "out paths" where the
+    final built products will go are calculated. No actual code is compiled or
+    executed yet. Achieved with `nix-instantiate`
+
+2.  Realize/Build Phase: Only after a derivation has been fully described does
+    Nix actually execute its build instructions. It first ensures all the
+    derivation's inputs (dependencies) are built, then runs the builder script
+    in an isolated environment, and places the resulting products into their
+    designated "out paths" in the Nix store. Achieved with `nix-store -r`
+
+## Referring to other derivations
+
+The way that we can refer to other packages/derivations is to use the `outPath`.
+
+The `outPath` describes the location of the files of that derivation. Nix can
+then convert the derivation set into a string:
+
+```bash
+nix repl
+nix-repl> :l <nixpkgs>
+nix-repl> fzf
+«derivation /nix/store/vw1zag9q4xvf10z24j1qybji7wfsz78v-fzf-0.62.0.drv»
+nix-repl> fzf.outPath
+"/nix/store/z3ayhjslz72ldiwrv3mn5n7rs96p2g8a-fzf-0.62.0"
+nix-repl> builtins.toString fzf
+"/nix/store/z3ayhjslz72ldiwrv3mn5n7rs96p2g8a-fzf-0.62.0"
+```
+
+- As long as there is an `outPath` attribute, Nix will do the "set to string
+  conversion".
 
 ## Produce a development shell from a derivation
 
@@ -181,9 +330,14 @@ This Nix expression defines a temporary development shell. Let's break it down:
   `nixpkgs` collection.
 
 - `stdenv.mkDerivation { ... };`: This is the core function for creating
-  packages. `stdenv` provides a set of common build tools and conventions.
-  `mkDerivation` takes an attribute set (a collection of key-value pairs) as its argument.
+  packages.
+
+  - `stdenv` provides a set of common build tools and conventions.
+
+- `mkDerivation` takes an attribute set (a collection of key-value pairs) as its argument.
+
 - `name = "my-environment";`: This gives your derivation a human-readable name.
+
 - `buildInputs = [ pkgs.cowsay ];`: This is a list of dependencies that will
   be available in the build environment of this derivation (or in the `PATH` if
   you enter the shell created by this derivation). `pkgs.cowsay` refers to the
@@ -236,13 +390,54 @@ derivation's definition.
 - **Stateless Systems (Nix):** Nix takes a different approach. When installing
   a package, it creates a unique, immutable directory in the Nix store. This
   means:
+
   - **No Conflicts:** Different versions of the same package can coexist
     without interfering with each other.
+
   - **Reliable Rollback:** You can easily switch back to previous versions
     without affecting system-wide files.
+
   - **Reproducibility:** Builds are more likely to produce the same result
     across different machines if they are "pure" (don't rely on external
     system state).
+
+### The Isolated Nix Build Environment: A Quick Overview
+
+When Nix executes a builder script, it sets up a highly controlled and pristine
+environment to ensure **reproducibility** and **isolation**. Here's what
+happens:
+
+1.  **Fresh Start:** Nix creates a temporary, empty directory for the build and
+    makes it the current working directory.
+
+2.  **Clean Environment:** It completely clears the environment variables from
+    your shell.
+
+3.  **Controlled Inputs:** Nix then populates the environment with _only_ the
+    variables essential for the build, such as:
+
+    - `$NIX_BUILD_TOP`: The path to the temporary build directory.
+
+    - `$PATH`: Carefully set to include only the explicit `buildInputs` you've
+      specified, preventing reliance on arbitrary system tools.
+
+    - `$HOME`: Set to `/homeless-shelter` to prevent programs from reading
+      user-specific configuration files.
+
+    - Variables for each declared output (`$out`, etc.), indicating where the
+      final results should be placed in the Nix store.
+
+4.  **Execution & Logging:** The builder script is run with its specified
+    arguments. All its output (stdout/stderr) is captured in a log.
+
+5.  **Clean Up & Registration:** If successful, the temporary directory is
+    removed. Nix then scans the build outputs for references to other store
+    paths, ensuring all dependencies are correctly tracked for future use and
+    garbage collection. Finally, it normalizes file permissions and timestamps
+    in the output for consistent hashing.
+
+This meticulous setup ensures that your builds are independent of the machine
+they run on and always produce the same result, given the same inputs.
 
 ## Our builder Script
 
@@ -460,7 +655,7 @@ pkgs.stdenv.mkDerivation {
 > }
 > ```
 
-## Conclusion
+### Conclusion
 
 In this chapter, we've laid the groundwork for understanding Nix derivations,
 the fundamental recipes that define how software and other artifacts are built
@@ -489,7 +684,7 @@ projects.
 
 As you can see below, there is a ton of information on derivations freely available.
 
-## Links To Articles about Derivations
+#### Links To Articles about Derivations
 
 <details>
 <summary> Click To Expand Resources </summary>

@@ -1,24 +1,16 @@
 # Chapter 5
 
-<!--toc:start-->
-
-- [Understanding Top-Level Attributes in NixOS Modules](#understanding-top-level-attributes-in-nixos-modules)
-- [The Core of a NixOS System: `system.build.toplevel`](#the-core-of-a-nixos-system-systembuildtoplevel)
-- [How Options Relate: A Chain of Influence](#how-options-relate-a-chain-of-influence)
-- [The NixOS Module System: Evaluating Options](#the-nixos-module-system-evaluating-options)
-- [How the Module System Works: A Simplified Overview](#how-the-module-system-works-a-simplified-overview)
-- [Conclusion](#conclusion)
-<!--toc:end-->
-
-## Understanding Top-Level Attributes in NixOS Modules
+<!-- toc -->
 
 <img src="images/gruv9.png" width="800" height="600">
+
+## Understanding Top-Level Attributes in NixOS Modules
 
 This explanation is based on insights from Infinisil, a prominent figure in the
 Nix community, to help clarify the concept of top-level attributes within
 NixOS modules.
 
-## The Core of a NixOS System: `system.build.toplevel`
+### The Core of a NixOS System: `system.build.toplevel`
 
 <details>
 <summary> ✔️ `system.build.toplevel` Explained (Click to Expand) </summary>
@@ -40,7 +32,7 @@ intermediate steps.
 
 </details>
 
-## How Options Relate: A Chain of Influence
+### How Options Relate: A Chain of Influence
 
 Options in NixOS are not isolated; they often build upon each other.
 
@@ -64,7 +56,7 @@ configuration:
 **Key Takeaway:** Higher-level, user-friendly options are translated into
 lower-level system configurations that are part of the final system build.
 
-## The NixOS Module System: Evaluating Options
+### The NixOS Module System: Evaluating Options
 
 So, how do these options get processed and turned into the final system
 configuration? That's the job of the **NixOS module system**, located in the
@@ -111,7 +103,7 @@ nix-instantiate --eval file.nix -A config.toplevel
 **Key Takeaway**: The NixOS module system is responsible for evaluating and
 merging option configurations from different modules.
 
-## How the Module System Works: A Simplified Overview
+### How the Module System Works: A Simplified Overview
 
 The module system processes a set of "modules" through these general steps:
 
@@ -265,7 +257,7 @@ in this case) is defined elsewhere (e.g., in an imported module).
 **Key Takeaway**: The `config` section defines values for options, regardless
 of whether those options are declared in the same module.
 
-## Conclusion
+#### Conclusion
 
 Understanding the nuances of top-level attributes within NixOS modules, particularly
 `imports`, `options`, and `config`, is fundamental to structuring and managing
