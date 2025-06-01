@@ -2,6 +2,8 @@
   - [Nix Language](nix/nix_language.md)
   - [Nix Package Manager](nix/nix_package_manager.md)
 - [Understanding Nix Functions](./Understanding_Nix_Functions_2.md)
+  - [Practical Nix Functions](functions/practical_functions_2.1.md)
+  - [Functions and NixOS Modules](functions/functions_and_modules_2.2.md)
 - [NixOS Modules Explained](./NixOS_Modules_Explained_3.md)
 - [Nix Flakes Explained](./Nix_Flakes_Explained_4.md)
   - [Nix Flake Inputs](flakes/flake_inputs_4.1.md)

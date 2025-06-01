@@ -41,6 +41,49 @@ The Nix expression evaluator has a bunch of functions and constants built in:
 
 </details>
 
+## Lamdas
+
+Nix functions are anonymous (lambdas) (e.g., `x: x + 2`), and technically take a
+single parameter. However, that single parameter is very often an attribute set,
+allowing you to effectively pass multiple named inputs by destructuring (e.g.,
+`{ arg1, arg2 }: arg1 + arg2`).
+
+Type the parameter name, followed by a colon, and finally the body of the function.
+
+```nix
+nix-repl> param: param * 2
+<<lambda @ <<string>>:1:1>>
+
+nix-repl> (param: param * 2) 2
+4
+```
+
+The above example shows that everything in Nix returns a value. When you call a
+function directly (without first assigning the function itself to a variable),
+the result of that call is immediately evaluated and displayed/used.
+
+In order to make our function reusable and be able to pass different values at
+different times we have to assign our function to a variable:
+
+```nix
+nix-repl> twoTimes = param: param * 2
+```
+
+Now, we can reference our function by it's name and pass our required parameter:
+
+```nix
+nix-repl> twoTimes
+«lambda @ «string»:1:2»
+nix-repl> twoTimes 2
+4
+nix-repl> twoTimes 4
+8
+```
+
+We defined a function `param: param * 2` takes one parameter `param`, and returns
+`param * 2`. We then assigned this function to the variable `twoTimes`. Lastly,
+we called the function with a few different arguments showing it's reusability.
+
 ## Understanding Function Structure: The Role of the Colon
 
 The colon (`:`) acts as a clear separator within a function definition:
@@ -110,14 +153,29 @@ To create functions that appear to take multiple arguments, Nix uses currying.
 This involves nesting single-argument functions, where each function takes one
 argument and returns another function that takes the next argument, and so on.
 
-- Click to see Output:
+```nix
+nix-repl> multiply = x: (y: x*y)
+nix-repl> multiply
+«lambda»
+nix-repl> multiply 4
+«lambda»
+nix-repl> (mul 4) 5
+20
+```
+
+We defined a function that takes the parameter `x`, the body returns another
+function. This other function takes a parameter `y` and returns `x*y`. Therefore,
+calling `multiply 4` returns a function like: `x: 4*y`. In turn, we call the
+returned function with `5`, and get the expected result.
+
+#### Currying example 2
 
 ```nix
 # concat is equivalent to:
 # concat = x: (y: x + y);
 concat = x: y: x + y;
 concat 6 6    # Evaluates to 12
-~ 12
+12
 ```
 
 Here, `concat` is actually **two nested functions**
@@ -451,7 +509,7 @@ mkDerivation = import ./autotools.nix pkgs;
   to a function that expects one argument named `pkgs`.
 
 - `... pkgs`: We are immediately calling that function (the one returned by
-  `inport ./autotools.nix`) and passing it our `pkgs` variable (which is the result
+  `import ./autotools.nix`) and passing it our `pkgs` variable (which is the result
   of `import <nixpkgs> {}`).
 
 **This illustrates the concept of Currying in Nix**:
@@ -462,7 +520,7 @@ another function (which then expects `attrs`).
 
 The result of import `./autotools.nix pkgs` is that second, inner function:
 `attrs: derivation (defaultAttrs // attrs)`. This inner function is then bound
-to your `mkDerivation` variable, making it ready to be called with just the
+to the `mkDerivation` variable, making it ready to be called with just the
 specific attributes for your package (like `name` and `src`).
 
 **Understanding the `attrs` Argument**
@@ -511,7 +569,7 @@ in
 ```
 
 - The attribute set `{ name = "hello"; src = ./hello-2.12.1.tar.gz; }` is
-  precisely what gets passed as the `attrs` argument to the `mkDerivation`
+  what gets passed as the `attrs` argument to the `mkDerivation`
   function (which, remember, is the inner function returned by `autotools.nix`).
 
 - When derivation `(defaultAttrs // attrs)` is evaluated for "hello", the `name`

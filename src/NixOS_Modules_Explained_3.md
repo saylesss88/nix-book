@@ -12,12 +12,12 @@ flexibility that modules give us. We will touch on options and break down the
 `vim` module from the Nixpkgs collection. Finally we will display how to test
 modules with the repl.
 
-- Your `configuration.nix` is a module. For the Nixpkgs collection most modules
-  are in `nixos/modules`.
+Your `configuration.nix` is a module. For the Nixpkgs collection most modules
+are in `nixos/modules`.
 
-- The suggested way of using `home-manager` according to their manual is as a
-  [NixOS module](https://nix-community.github.io/home-manager/index.xhtml#sec-install-nixos-module).
-  Both home-manager and NixOS use the same module system.
+The suggested way of using `home-manager` according to their manual is as a
+[NixOS module](https://nix-community.github.io/home-manager/index.xhtml#sec-install-nixos-module).
+Both home-manager and NixOS use the same module system.
 
 ## Module Structure
 
@@ -44,28 +44,28 @@ modules with the repl.
 }
 ```
 
-- `imports`, `options`, and `config` are the top-level attributes of a Nix module.
-  They are the primary, reserved keys that the Nix module system recognizes and
-  processes to combine different configurations into a single, cohesive system
-  or user environment. `config` is the same `config` you receive as a
-  module argument (e.g. `{ pkgs, config, ... }:` at the top of your module
-  function)
+`imports`, `options`, and `config` are the top-level attributes of a Nix module.
+They are the primary, reserved keys that the Nix module system recognizes and
+processes to combine different configurations into a single, cohesive system
+or user environment. `config` is the same `config` you receive as a
+module argument (e.g. `{ pkgs, config, ... }:` at the top of your module
+function)
 
-- Understanding `config`:
+Understanding `config`:
 
-  - `config` is the big constantly updated blueprint of your entire system.
+`config` is the big constantly updated blueprint of your entire system.
 
-  - Every time you bring in a new module, it adds its own settings and options
-    to this blueprint. So, when a module receives the `config` argument, it's
-    getting the complete picture of everything you've asked NixOS to set up so far.
+Every time you bring in a new module, it adds its own settings and options
+to this blueprint. So, when a module receives the `config` argument, it's
+getting the complete picture of everything you've asked NixOS to set up so far.
 
-  - This allows the module to:
+This allows the module to:
 
-    - See what other parts of your system are doing.
+- See what other parts of your system are doing.
 
-    - Make smare decisions based on those settings.
+- Make smart decisions based on those settings.
 
-    - Add its own pieces to the overall plan, building on what's already there.
+- Add its own pieces to the overall plan, building on what's already there.
 
 - Most modules are functions that take an attribute set and return an attribute
   set.
@@ -154,14 +154,14 @@ on...
 
 **Crucial Distinction: `imports` vs. `import`**:
 
-- Beginners often confuse the modules attribute `imports = [./module.nix]` here
-  with the Nix builtins function `import module.nix`. The first expects a path to
-  a file containing a NixOS module (having the same specific structure we're
-  describing here), while the second loads whatever Nix expression is in that
-  file (no expected structure). --NixOS Wiki.
+Beginners often confuse the modules attribute `imports = [./module.nix]` here
+with the Nix builtins function `import module.nix`. The first expects a path to
+a file containing a NixOS module (having the same specific structure we're
+describing here), while the second loads whatever Nix expression is in that
+file (no expected structure). --NixOS Wiki.
 
-- Considering `configuration.nix` is a module, it can be imported like any other
-  module and this is exactly what you do when getting started with flakes.
+Considering `configuration.nix` is a module, it can be imported like any other
+module and this is exactly what you do when getting started with flakes.
 
 ```nix
 # flake.nix
@@ -196,16 +196,16 @@ on...
 }
 ```
 
-- `modules = [...]` in `flake.nix`: This is effectively the initial `imports` list for
-  your entire NixOS system or Home Manager user configuration. It tells the Nix
-  module system: "Start by collecting and merging the configurations defined in
-  these specific modules."
+`modules = [...]` in `flake.nix`: This is effectively the initial `imports` list for
+your entire NixOS system or Home Manager user configuration. It tells the Nix
+module system: "Start by collecting and merging the configurations defined in
+these specific modules."
 
 The above example is what you get from running:
 `nix flake new /etc/nixos -t github:nix-community/home-manager#nixos`
 
-- If you notice the `home-manager.nixosModules.home-manager`, that is what
-  imports home-manager as a module.
+If you notice the `home-manager.nixosModules.home-manager`, that is what
+imports home-manager as a module.
 
 You could also make the actual home-manager module and import it like this:
 
@@ -227,25 +227,25 @@ You could also make the actual home-manager module and import it like this:
 }
 ```
 
-- This "module" isn't much different from the one included in the `flake.nix`
-  above, it is just shown here to show the flexibility of modules. They can be
-  as big and complex or as small and simple as you want. You can break up every
-  single program or component of your configuration into individual modules or
-  have modules that bundle similar programs the choice is yours.
+This "module" isn't much different from the one included in the `flake.nix`
+above, it is just shown here to show the flexibility of modules. They can be
+as big and complex or as small and simple as you want. You can break up every
+single program or component of your configuration into individual modules or
+have modules that bundle similar programs the choice is yours.
 
-- Then in your `configuration.nix` or equivalent you would add `home-manager.nix`
-  to your imports list and you would have home-manager as a NixOS module.
+Then in your `configuration.nix` or equivalent you would add `home-manager.nix`
+to your imports list and you would have home-manager as a NixOS module.
 
 <details>
 <summary>
 ✔️ Refresher (Click to Expand):
 </summary>
 
-- An **attribute set** is a collection of name-value pairs called _attributes_:
+An **attribute set** is a collection of name-value pairs called _attributes_:
 
-- Attribute sets are written enclosed in curly braces `{}`. Attribute names and
-  attribute values are separated by an equal sign `=`. Each value can be an
-  arbitrary expression, terminated by a semicolon `;`.
+Attribute sets are written enclosed in curly braces `{}`. Attribute names and
+attribute values are separated by an equal sign `=`. Each value can be an
+arbitrary expression, terminated by a semicolon `;`.
 
 > **Example**:[nix.dev reference](https://nix.dev/manual/nix/2.24/language/syntax#attrs-literal)
 > This defines an attribute set with attributes named:
@@ -268,20 +268,20 @@ You could also make the actual home-manager module and import it like this:
 > ~ "Foo"
 > ```
 
-- Attributes can appear in any order. An attribute name may only occur once in
-  each attribute set.
+Attributes can appear in any order. An attribute name may only occur once in
+each attribute set.
 
 > ❗ Remember `{}` is a valid attribute set in Nix.
 
-- The following is a **function** with an attribute set argument, remember that
-  anytime you see a `:` in Nix code it means this is a function. To the left is
-  the **function arguments** and to the right is the **function body**:
+The following is a **function** with an attribute set argument, remember that
+anytime you see a `:` in Nix code it means this is a function. To the left is
+the **function arguments** and to the right is the **function body**:
 
 ```nix
 { a, b }: a + b
 ```
 
-- The simplest possible **NixOS Module**:
+The simplest possible **NixOS Module**:
 
 ```nix
 { ... }:
@@ -295,25 +295,79 @@ NixOS produces a full system configuration by combining smaller, more isolated
 and reusable components: **Modules**. If you want to understand Nix and NixOS
 make sure you grasp modules!
 
-- A NixOS module defines configuration options and behaviors for system
-  components, allowing users to extend, customize, and compose configurations
-  declaratively.
+A NixOS module defines configuration options and behaviors for system
+components, allowing users to extend, customize, and compose configurations
+declaratively.
 
-- A **module** is a file containing a Nix expression with a specific structure.
-  It _declares_ options for other modules to define (give a value). Modules were
-  introduced to allow extending NixOS without modifying its source code.
+A **module** is a file containing a Nix expression with a specific structure.
+It _declares_ options for other modules to define (give a value). Modules were
+introduced to allow extending NixOS without modifying its source code.
 
-- To define any values, the module system first has to know which ones are
-  allowed. This is done by declaring options that specify which attributes can
-  be set and used elsewhere.
+To define any values, the module system first has to know which ones are
+allowed. This is done by declaring options that specify which attributes can
+be set and used elsewhere.
 
-- If you want to write your own modules, I recommend setting up
-  [nixd](https://github.com/nix-community/nixd?tab=readme-ov-file)
-  or [nil](https://github.com/oxalica/nil) with your editor of choice.
-  This will allow your editor to warn you about missing arguments and
-  dependencies as well as syntax errors.
+If you want to write your own modules, I recommend setting up
+[nixd](https://github.com/nix-community/nixd?tab=readme-ov-file)
+or [nil](https://github.com/oxalica/nil) with your editor of choice.
+This will allow your editor to warn you about missing arguments and
+dependencies as well as syntax errors.
 
-## Declaring Options
+### Declaring Options
+
+Options are declared under the top-level `options` attribute with `lib.mkOption`.
+
+[mkOption](https://nixos.org/manual/nixpkgs/stable/#function-library-lib.options.mkOption)
+Creates an Option attribute set. It accepts an attribute set with certain keys
+such as, `default`, `package`, and `example`.
+
+```nix
+# options.nix
+{ lib, ... }:
+{
+  options = {
+    name = lib.mkOption { type = lib.types.str; };
+  };
+}
+```
+
+> `lib` provides helper functions from `nixpkgs.lib` and the ellipsis (`...`) is
+> for arbitrary arguments which means that this function is prepared to accept
+> **any additional arguments** that the caller might provide, even if those
+> arguments are not explicitly named or used within the module's body. They
+> make the modules more flexible, without the `...` each module would have to
+> explicitly list every possible argument it might receive, which would be
+> cumbersome and error-prone. So `{lib, ... }:` means that "I need the `lib`
+> argument" **and** I acknowledge that the module system might pass other
+> arguments automatically (like `config`, `pkgs`, etc.) and I'm fine with them
+> being there, even if I don't use them directly in this specific module file.
+
+### Defining Values
+
+Options are **set** or **defined** under the top-level `config` attribute:
+
+```nix
+# config.nix
+{ ... }:
+{
+  config = {
+    name = "Slick Jones";
+  };
+}
+```
+
+In this **option declaration**, we created an option `name` of type _string_ and
+set that same option to a string.
+
+**Option Definitions** can be in a separate file than **Option Declarations**
+
+### Evaluating Modules
+
+Modules are **evaluated** with [lib.evalModules](https://nixos.org/manual/nixpkgs/stable/#module-system-lib-evalModules)
+`lib.evalModules` evaluates a set of modules, typically once per application
+(e.g. once for NixOS and once for Home-Manager).
+
+## Checking out the Vim module provided by Nixpkgs
 
 The following is `nixpkgs/nixos/modules/programs/vim.nix`, a module that is
 included in the Nixpkgs collection:
@@ -353,49 +407,8 @@ in
 }
 ```
 
-- It provides options to enable Vim, set it as the default editor, and specify
-  the Vim package to use.
-
-- Nixpkgs collection is a good place to see best practices and community norms.
-  As you can see the above module avoids using a top-level `with lib;` that is
-  suggested in the NixOS wiki. Modules, package definitions etc. often contain
-  fairly detailed comments throughout the code explaining why they did certain
-  things.
-
-NixOS Wiki example click the eye to see full example:
-
-```nix
-{ lib, pkgs, config, ... }:
-with lib;
-let
-  # Shorter name to access final settings a
-  # user of hello.nix module HAS ACTUALLY SET.
-  # cfg is a typical convention.
-  cfg = config.services.hello;
-in {
-~   # Declare what settings a user of this "hello.nix" module CAN SET.
-~   options.services.hello = {
-~     enable = mkEnableOption "hello service";
-~     greeter = mkOption {
-~       type = types.str;
-~       default = "world";
-~     };
-~   };
-~
-~   # Define what other settings, services and resources should be active IF
-~   # a user of this "hello.nix" module ENABLED this module
-~   # by setting "services.hello.enable = true;".
-~   config = mkIf cfg.enable {
-~     systemd.services.hello = {
-~       wantedBy = [ "multi-user.target" ];
-~       serviceConfig.ExecStart = "${pkgs.hello}/bin/hello -g'Hello, ${escapeShellArg cfg.greeter}!'";
-~     };
-~   };
-~ }
-```
-
-- I showed you this example to let you know that Nixpkgs is a good resource for
-  up to date best practices and community norms.
+It provides options to enable Vim, set it as the default editor, and specify
+the Vim package to use.
 
 <details>
 <summary> ✔️ Breakdown of the vim module.(Click to Expand)</summary>
@@ -410,19 +423,19 @@ in {
 }
 ```
 
-- Inputs: The module takes the above inputs and `...` (catch-all for other args)
+**Inputs**: The module takes the above inputs and `...` (catch-all for other args)
 
-  - `config`: Allows the module to read option values (e.g.
-    `config.programs.vim.enable`). It provides access to the evaluated
-    configuration.
+- `config`: Allows the module to read option values (e.g.
+  `config.programs.vim.enable`). It provides access to the evaluated
+  configuration.
 
-  - `lib`: The Nixpkgs library, giving us helper functions like `mkEnableOption`
-    , `mkIf`, and `mkOverride`.
+- `lib`: The Nixpkgs library, giving us helper functions like `mkEnableOption`
+  , `mkIf`, and `mkOverride`.
 
-  - `pkgs`: The Nixpkgs package set, used to access packages like `pkgs.vim`
+- `pkgs`: The Nixpkgs package set, used to access packages like `pkgs.vim`
 
-  - `...`: Allows the module to accept additional arguments, making it flexible
-    for extension in the future.
+- `...`: Allows the module to accept additional arguments, making it flexible
+  for extension in the future.
 
 > Key Takeaways: A NixOS module is typically a function that can include
 > `config`, `lib`, and `pkgs`, but it doesn’t require them. The `...`
@@ -440,8 +453,8 @@ let
 in
 ```
 
-- This is a local alias. Instead of typing `config.programs.vim` over and over,
-  the module uses `cfg`.
+This is a local alias. Instead of typing `config.programs.vim` over and over,
+the module uses `cfg`.
 
 3. Option Declaration
 
@@ -486,8 +499,8 @@ warnings = lib.mkIf (cfg.defaultEditor && !cfg.enable) [
 ];
 ```
 
-- Gives you a soft warning if you try to set `defaultEditor = true` without
-  also enabling Vim.
+Gives you a soft warning if you try to set `defaultEditor = true` without
+also enabling Vim.
 
 6. Actual System Config Changes
 
@@ -499,8 +512,9 @@ environment = {
 };
 ```
 
-- It adds Vim to your `systemPackages`, sets `$EDITOR` if `defaultEditor` is
+It adds Vim to your `systemPackages`, sets `$EDITOR` if `defaultEditor` is
 true, and makes `/share/vim-plugins` available in the environment.
+
 </details>
 
 The following is a bat home-manager module that I wrote:
@@ -555,31 +569,31 @@ custom = {
 }
 ```
 
-- If I set this option to true the bat configuration is dropped in place. If
-  it's not set to true, it won't put the bat configuration in the system. Same
-  as with options defined in modules within the Nixpkgs repository.
+If I set this option to true the bat configuration is dropped in place. If
+it's not set to true, it won't put the bat configuration in the system. Same
+as with options defined in modules within the Nixpkgs repository.
 
-- If I had set the default to `true`, it would automatically enable the module
-  without requiring an explicit `custom.batModule.enable = true;` call in my
-  `home.nix`.
+If I had set the default to `true`, it would automatically enable the module
+without requiring an explicit `custom.batModule.enable = true;` call in my
+`home.nix`.
 
 ### Module Composition
 
-- NixOS achieves its full system configuration by combining the configurations
-  defined in various modules. This composition is primarily handled through the
-  `imports` mechanism.
+NixOS achieves its full system configuration by combining the configurations
+defined in various modules. This composition is primarily handled through the
+`imports` mechanism.
 
-- `imports`: This is a standard option within a NixOS or Home Manager
-  configuration (often found in your configuration.nix or home.nix). It takes
-  a list of paths to other Nix modules. When you include a module in the imports
-  list, the options and configurations defined in that module become part of
-  your overall system configuration.
+`imports`: This is a standard option within a NixOS or Home Manager
+configuration (often found in your configuration.nix or home.nix). It takes
+a list of paths to other Nix modules. When you include a module in the imports
+list, the options and configurations defined in that module become part of
+your overall system configuration.
 
-- You declaratively state the desired state of your system by setting options
-  across various modules. The NixOS build system then evaluates and merges these
-  option settings. The culmination of this process, which includes building the
-  entire system closure, is represented by the derivation built by
-  `config.system.build.toplevel`.
+You declaratively state the desired state of your system by setting options
+across various modules. The NixOS build system then evaluates and merges these
+option settings. The culmination of this process, which includes building the
+entire system closure, is represented by the derivation built by
+`config.system.build.toplevel`.
 
 ### NixOS Modules and Dependency Locking with npins
 
@@ -702,10 +716,10 @@ You can test that this works by running:
 nix-instantiate -A nixosSystem.system
 ```
 
-- `nix-instantiate` performs only the evaluation phase of Nix expressions.
-  During this phase, Nix interprets the Nix code, resolves all dependencies, and
-  constructs derivations but does not execute any build actions. Useful for
-  testing.
+`nix-instantiate` performs only the evaluation phase of Nix expressions.
+During this phase, Nix interprets the Nix code, resolves all dependencies, and
+constructs derivations but does not execute any build actions. Useful for
+testing.
 
 To check if this worked and `git` is installed in systemPackages you can
 load it into `nix repl` but first you'll want `lib` to be available so uncomment
@@ -761,12 +775,12 @@ evaluate the files to see which names are in scope:
 }
 ```
 
-- Another reason the above expression is considered an "anti-pattern" is when more
-  then one `with` is used, it's no longer clear where the names are coming from.
+Another reason the above expression is considered an "anti-pattern" is when more
+then one `with` is used, it's no longer clear where the names are coming from.
 
-- Scoping rules for `with` are not intuitive, see [issue](https://github.com/NixOS/nix/issues/490) --nix.dev
-  This can make debugging harder, as searching for variable origins becomes ambiguous
-  (i.e. open to more than one interpretation).
+Scoping rules for `with` are not intuitive, see [issue](https://github.com/NixOS/nix/issues/490) --nix.dev
+This can make debugging harder, as searching for variable origins becomes ambiguous
+(i.e. open to more than one interpretation).
 
 The following follows best practices:
 
@@ -808,13 +822,13 @@ Applying `builtins.attrValues` produces:
 [ pkgs.evcxr pkgs.nix-prefetch-git pkgs.rustup ]
 ```
 
-- As you can see only the values are included in the list, not the keys. This
-  is more explicit and declarative but can be more complicated, especially for
-  a beginner.
+As you can see only the values are included in the list, not the keys. This
+is more explicit and declarative but can be more complicated, especially for
+a beginner.
 
-- `builtins.attrValues` returns the values of all attributes in the given set,
-  sorted by attribute name. The above expression turns into something like the
-  following avoiding bringing every attribute name from `nixpkgs` into scope.
+`builtins.attrValues` returns the values of all attributes in the given set,
+sorted by attribute name. The above expression turns into something like the
+following avoiding bringing every attribute name from `nixpkgs` into scope.
 
 A more straightforward example:
 
@@ -825,7 +839,7 @@ attrValues {c = 3; a = 1; b = 2;}
 
 </details>
 
-- This approach avoids unintended name clashes or confusion when debugging.
+This approach avoids unintended name clashes or confusion when debugging.
 
 Upon looking into this a bit further, most people use the following format to
 avoid the "anti-pattern" from using `with pkgs;`:
@@ -841,15 +855,15 @@ avoid the "anti-pattern" from using `with pkgs;`:
 }
 ```
 
-- While the performance differences might be negligible on modern computers,
-  adopting this best practice from the start is highly recommended. The above
-  approach is more explicit, it's clear exactly where each package is coming
-  from.
+While the performance differences might be negligible on modern computers,
+adopting this best practice from the start is highly recommended. The above
+approach is more explicit, it's clear exactly where each package is coming
+from.
 
-- If maintaining strict scope control matters, use `builtins.attrValues`.
+If maintaining strict scope control matters, use `builtins.attrValues`.
 
-- If readability and simplicity are more your priority, explicitly referencing
-  `pkgs.<packageName>` might be better. Now you can choose for yourself.
+If readability and simplicity are more your priority, explicitly referencing
+`pkgs.<packageName>` might be better. Now you can choose for yourself.
 
 #### Conclusion
 

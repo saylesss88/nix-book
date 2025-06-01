@@ -52,37 +52,105 @@ derivation and updating this symlink to point to the latest version.
 
   - **Final Dish (Output):** The resulting package or resource.
 
-- A Nix derivation encapsulates all this information, telling Nix what inputs
-  to use, how to build it, and what the final output should be.
+A Nix derivation encapsulates all this information, telling Nix what inputs
+to use, how to build it, and what the final output should be.
 
-- Nix derivations run in **pure**, **isolated environments**, meaning they
-  **cannot** access the internet during the build phase. This ensures that
-  builds are reproducible -- they don't depend on external sources that might
-  change over time.
+Nix derivations run in **pure**, **isolated environments**, meaning they
+**cannot** access the internet during the build phase. This ensures that
+builds are reproducible -- they don't depend on external sources that might
+change over time.
 
-  - There are `Fixed-output-derivations` that allow fetching resources during
-    the build process by explicitly specifying the expected hash upfront. Just
-    keep this in mind that normal derivations don't have network access.
+There are `Fixed-output-derivations` that allow fetching resources during
+the build process by explicitly specifying the expected hash upfront. Just
+keep this in mind that normal derivations don't have network access.
 
 ## Creating Derivations in Nix
 
-- The primary way to define packages in Nix is through the `mkDerivation` function,
-  which is part of the standard environment (`stdenv`). While a
-  lower-level `derivation` function exists for advanced use cases,
-  `mkDerivation` simplifies the process by automatically managing dependencies
-  and the build environment.
+The primary way to define packages in Nix is through the `mkDerivation` function,
+which is part of the standard environment (`stdenv`). While a
+lower-level `derivation` function exists for advanced use cases,
+`mkDerivation` simplifies the process by automatically managing dependencies
+and the build environment.
 
-- `mkDerivation` (and `derivation`) takes a set of attributes as its argument.
-  At a minimum, you'll often encounter these essential attributes:
+`mkDerivation` (and `derivation`) takes a set of attributes as its argument.
+At a minimum, you'll often encounter these essential attributes:
 
-  1.  **name:** A human-readable identifier for the derivation
-      (e.g., "foo", "hello.txt"). This helps you and Nix refer to the package.
+1.  **name:** A human-readable identifier for the derivation
+    (e.g., "foo", "hello.txt"). This helps you and Nix refer to the package.
 
-  2.  **system:** Specifies the target architecture for the build
-      (e.g., `builtins.currentSystem` for your current machine).
+2.  **system:** Specifies the target architecture for the build
+    (e.g., `builtins.currentSystem` for your current machine).
 
-  3.  **builder:** Defines the program that will execute the build instructions
-      (e.g., `bash`).
+3.  **builder:** Defines the program that will execute the build instructions
+    (e.g., `bash`).
+
+**How do we pass these required attributes to the `derivation` function?**
+
+Functions in Nix often take a single argument which is an attribute set. For
+`derivation` and `mkDerivation`, this takes the form
+`functionName { attribute1 = value1; attribute2 = value2; ... }`, where the `{}`
+encloses the set of attributes being passed as the function's argument.
+
+Remember that `derivation` and `mkDerivation` take a set (i.e. `{}`) of attributes
+as its first argument. So, in order to pass the required attributes you would
+do something like this:
+
+```nix
+nix-repl> pkgs = import <nixpkgs> {}
+
+nix-repl> d = derivation {
+            name = "mydrv";
+            builder = "${pkgs.bash}/bin/bash";
+            args = [
+              "-c" # Tells bash to execute the following string as a command
+              ''
+                # Explicitly set PATH to include coreutils bin directory
+                export PATH="${pkgs.coreutils}/bin:$PATH"
+                mkdir $out
+              ''
+            ];
+            system = builtins.currentSystem;
+          }
+
+nix-repl> :b d
+```
+
+- When I was starting out, seeing the above written in the following format made
+  it clearer in my mental map that we were passing these attributes as arguments
+  but both accomplish the same thing.
+
+```nix
+d = derivation { name = "myname"; builder = "${coreutils}/bin/true"; system = builtins.currentSystem; }
+```
+
+- When you write `pkgs = import <nixpkgs> {};`, you are importing the Nixpkgs
+  `default.nix` file, which resolves to a function. Calling that function by
+  passing it an empty attribute set `{}` as its argument. The function then
+  evaluates and returns the entire `pkgs` attribute set. To specify a different
+  system for example, you could do something like:
+
+```nix
+pkgsForAarch64 = import <nixpkgs> { system = "aarch64-linux"; };
+```
+
+So when you see:
+
+```nix
+import <nixpkgs> { overlays = []; config = {}; }
+```
+
+- Instead, these empty sets explicitly override any global or implicit
+  overlays/configurations that Nix might otherwise pick up from environment
+  variables (like `NIXPKGS_CONFIG`), default locations (like `~/.config/nixpkgs/config.nix`
+  or `~/.config/nixpkgs/overlays`), or other mechanisms.
+
+- This is to prevent accidental partial application from other parts of your
+  configuration and is saying "Do not pass any custom configuration options for
+  this particular import"
+
+- `derivation` is a pre-made, built-in function in the Nix language. Here, we are
+  passing it an attribute set as argument with the three required attributes.
+  (`name`, `builder`, `system`, and we added an extra argument `args`.)
 
 ## The Hello World Derivation
 
