@@ -1,6 +1,11 @@
 # Chapter 8
 
+<details>
+<summary> ✔️ Click to Expand Table of Contents</summary>
+
 <!-- toc -->
+
+</details>
 
 ![nixWinter](images/nixWinter.png)
 

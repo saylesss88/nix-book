@@ -1,6 +1,11 @@
 # Nix Package Manager
 
+<details>
+<summary> Click to Expand Table of Contents</summary>
+
 <!-- toc -->
+
+</details>
 
 ![nix99](../images/nix99.png)
 

@@ -1,6 +1,8 @@
 - [Getting Started with the Nix Ecosystem](./Getting_Started_with_Nix_1.md)
   - [Nix Language](nix/nix_language.md)
   - [Nix Package Manager](nix/nix_package_manager.md)
+  - [Minimal Btrfs-Subvol Install with Disko and Flakes](nix/minimal_install.md)
+  - [Btrfs Impermanence](nix/impermanence.md)
 - [Understanding Nix Functions](./Understanding_Nix_Functions_2.md)
   - [Practical Nix Functions](functions/practical_functions_2.1.md)
   - [Functions and NixOS Modules](functions/functions_and_modules_2.2.md)

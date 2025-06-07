@@ -1,5 +1,12 @@
 # Nix Flake Inputs
 
+<details>
+<summary> ✔️ Click to Expand Table of Contents</summary>
+
+<!-- toc -->
+
+</details>
+
 The attribute `inputs` specifies the dependencies of a flake, as an attrset
 mapping input names to flake references.
 

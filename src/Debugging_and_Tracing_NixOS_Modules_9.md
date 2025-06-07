@@ -1,6 +1,11 @@
 # Chapter 9
 
+<details>
+<summary> ✔️ Click to Expand Table of Contents</summary>
+
 <!-- toc -->
+
+</details>
 
 ## Debugging and Tracing NixOS Modules
 

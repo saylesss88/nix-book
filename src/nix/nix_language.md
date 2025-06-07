@@ -1,6 +1,11 @@
 # Nix Language
 
+<details>
+<summary> ✔️ Click to Expand Table of Contents</summary>
+
 <!-- toc -->
+
+</details>
 
 ![lambda1](../images/lambda1.png)
 

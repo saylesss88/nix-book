@@ -1,6 +1,11 @@
 # Chapter 10
 
+<details>
+<summary> ✔️ Click to Expand Table of Contents</summary>
+
 <!-- toc -->
+
+</details>
 
 ![gruv18](images/gruv18.png)
 

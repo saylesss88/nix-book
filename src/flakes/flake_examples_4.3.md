@@ -1,5 +1,12 @@
 # Nix Flake Examples
 
+<details>
+<summary> ✔️ Click to Expand Table of Contents</summary>
+
+<!-- toc -->
+
+</details>
+
 This chapter provides practical examples to illustrate the concepts discussed in
 "Nix Flakes Explained."
 

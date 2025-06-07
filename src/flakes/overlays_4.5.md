@@ -1,6 +1,11 @@
 # Extending Flakes with Custom Packages using Overlays
 
+<details>
+<summary> ✔️ Click to Expand Table of Contents</summary>
+
 <!-- toc -->
+
+</details>
 
 ![Pokego Logo](../images/pokego.png)
 

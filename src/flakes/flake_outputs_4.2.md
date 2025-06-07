@@ -1,5 +1,12 @@
 # Nix Flake Outputs
 
+<details>
+<summary> ✔️ Click to Expand Table of Contents</summary>
+
+<!-- toc -->
+
+</details>
+
 Flake outputs are what the flake produces when built. Flakes can have multiple
 outputs simultaneously such as:
 

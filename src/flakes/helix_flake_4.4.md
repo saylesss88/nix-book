@@ -1,6 +1,11 @@
 # Chapter 4.4
 
+<details>
+<summary> ✔️ Click to Expand Table of Contents</summary>
+
 <!-- toc -->
+
+</details>
 
 ![Helix Logo](../images/helix.png)
 

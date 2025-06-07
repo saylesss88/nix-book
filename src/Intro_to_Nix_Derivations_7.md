@@ -1,6 +1,11 @@
 # Chapter 7
 
+<details>
+<summary> ✔️ Click to Expand Table of Contents</summary>
+
 <!-- toc -->
+
+</details>
 
 ## Introduction to Nix Derivations
 

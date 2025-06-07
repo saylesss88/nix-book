@@ -1,6 +1,11 @@
 # Chapter 3
 
+<details>
+<summary> ✔️ Click to Expand Table of Contents</summary>
+
 <!-- toc -->
+
+</details>
 
 ## Nix Module System Explained
 

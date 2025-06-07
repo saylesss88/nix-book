@@ -1,6 +1,11 @@
 # Chapter 5
 
+<details>
+<summary> ✔️ Click to Expand Table of Contents</summary>
+
 <!-- toc -->
+
+</details>
 
 <img src="images/gruv9.png" width="800" height="600">
 
