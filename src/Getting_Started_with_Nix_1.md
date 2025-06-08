@@ -51,13 +51,11 @@ The main reason to learn Nix is that it allows you to write declarative scripts
 for reproducible software builds. Rather than mutate the global state and install
 packages to a global location such as `/usr/bin` Nix stores packages in the Nix
 store, usually the directory `/nix/store`, where each package has its own unique
-subdirectory. This paradigm gives you some power features,
-such as:
+subdirectory. This paradigm gives you some powerful features, such as:
 
 - Allowing multiple versions or variants of the same package at the same time.
   This prevents "DLL hell" from different applications having dependencies on
-  different versions of the same package. The Nix store is immutable, preventing
-  package management operations from overwriting other packages.
+  different versions of the same package.
 
 - Atomic upgrades: Upgrading or uninstalling an application cannot break other
   applications and either succeed completely or fail completely preventing
@@ -104,9 +102,6 @@ only part of the ecosystem. These expressions become powerful when used within
 the Nix Package Manager, which evaluates and realizes them into tangible
 software builds and system configurations. This is where Nixpkgs and NixOS
 come into play.
-
-Nix expressions are fundamental, but their true power emerges when paired with
-package management and system-wide configuration.
 
 ### The Nix Package Manager, Nixpkgs, and NixOS
 
@@ -294,7 +289,7 @@ A single derivation can produce multiple outputs. The executable is typically
 part of the `out` output, specifically in its `bin` directory.
 
 Here is a small snippet of what a `.drv` file could look like, I got this from
-building the hello derivation and running on the store path:
+building the hello derivation and running the following on the store path:
 
 ```bash
 nix show-derivation /nix/store/9na8mwp5zaprikqaqw78v6cdn1rxac7i-hello-2.12.1

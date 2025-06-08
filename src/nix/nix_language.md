@@ -144,8 +144,6 @@ nix-repl> let a = builtins.div 4 0; b = 6; in b
 ```
 
 - Since `a` isn't used in the final result, there's no division by zero error.
-  Values are only evaluated as needed by nix allowing us to bring all of the
-  attributes within `nixpkgs` into scope without performance loss.
 
 ### Strings and String Interpolation
 
@@ -163,11 +161,10 @@ nix-repl> ''
 "This is a\nmulti-line\nstring.\n"
 ```
 
-Is a language feature where a string, path, or attribute name can contain
-expressions enclosed in `${ }`. This construct is called _interpolated string_,
-and the expression inside is an _interpolated expression_.
-
 [string interpolation](https://nix.dev/manual/nix/2.24/language/string-interpolation).
+is a language feature where a string, path, or attribute name can contain an
+expressions enclosed in `${ }`. This construct is called an _interpolated string_,
+and the expression inside is an _interpolated expression_.
 
 Rather than writing:
 
@@ -176,7 +173,7 @@ let path = "/usr/local"; in "--prefix=${path}"
 ```
 
 This evaluates to `"--prefix=/usr/local"`. Interpolated expressions must
-evaluate to a string, path, or an attribute set with an outPath or
+evaluate to a string, path, or an attribute set with an `outPath` or
 `__toString` attribute.
 
 ### Attribute Sets
@@ -191,9 +188,9 @@ are name-value pairs wrapped in curly braces, where the names must be unique:
 }
 ```
 
-- Attribute names usually don't need quotes.
+Attribute names usually don't need quotes.
 
-You can access attributes using dot notation:
+You can access attributes using _dot notation_:
 
 ```nix
 let person = { name = "Alice"; age = 30; }; in person.name
@@ -250,7 +247,7 @@ rec {
 }.x
 ```
 
-- Will crash with an `infinite recursion encountered` error message.
+Will crash with an `infinite recursion encountered` error message.
 
 The [attribute set update operator](https://nix.dev/manual/nix/2.24/language/operators.html#update)
 merges two attribute sets.
@@ -267,7 +264,7 @@ merges two attribute sets.
 { a = 1; b = 3; c = 4; }
 ```
 
-- However, names on the right take precedence, and updates are shallow.
+However, names on the right take precedence, and updates are shallow.
 
 **Example**:
 
@@ -281,8 +278,8 @@ merges two attribute sets.
 { a = { c = 3; }; }
 ```
 
-- Above, key `b` was completely removed, because the whole `a` value was
-  replaced.
+Above, key `b` was completely removed, because the whole `a` value was
+replaced.
 
 **Inheriting Attributes**
 
@@ -341,8 +338,8 @@ The following is a function that expects an integer and returns it increased by
 x: x + 1   # lambda function, not bound to a variable
 ```
 
-- The pattern tells us what the argument of the function has to look like, and
-  binds variables in the body to (parts of) the argument.
+The pattern tells us what the argument of the function has to look like, and
+binds variables in the body to (parts of) the argument.
 
 ```nix
 (x: x + 5) 200
@@ -372,12 +369,12 @@ my_value
 5
 ```
 
-- The body of the function automatically returns the result of the function.
-  Functions are called by spaces between it and its parameters. No commas are
-  needed to separate parameters.
+The body of the function automatically returns the result of the function.
+Functions are called by spaces between it and its parameters. No commas are
+needed to separate parameters.
 
 The following is a function that expects an attribute set with required
-attributes `a` and `b` and concatenates (adds) them:
+attributes `a` and `b` and concatenates them:
 
 ```nix
 { a, b }: a + b
@@ -434,9 +431,9 @@ nix-repl> if a > b then "yes" else "no"
 "no"
 ```
 
-- Here, `"no"` is the result because `a`(6) is not greater than `b`(10). Notice
-  that there's no separate conditional statement -- the entire construct evaluates
-  to a value.
+Here, `"no"` is the result because `a`(6) is not greater than `b`(10). Notice
+that there's no separate conditional statement -- the entire construct evaluates
+to a value.
 
 Another example, integrating built-in functions:
 
@@ -446,8 +443,8 @@ Another example, integrating built-in functions:
 }
 ```
 
-- If `./path` exists it will evaluate to the value `"YES"` or else it will
-  evaluate to `"NO!"`.
+If `./path` exists it will evaluate to the value `"YES"` or else it will
+evaluate to `"NO!"`.
 
 Thus, the final result of the expression would be:
 
@@ -457,8 +454,8 @@ Thus, the final result of the expression would be:
 { key = "NO!"; }
 ```
 
-Since Nix does not have statements, `if` statements **must always return a value**,
-making them behave more like [ternary operators](https://en.wikipedia.org/wiki/Ternary_conditional_operator)
+Since Nix does not have statements, Nix's `if` statements behave more like
+[ternary operators](https://en.wikipedia.org/wiki/Ternary_conditional_operator)
 (`condition ? value_if_true : value_if_false`) in other languages.
 
 **Let expressions**:
@@ -478,14 +475,14 @@ in a + b
 "foofighter"
 ```
 
-- Here, `a` and `b` are defined inside the `let` block, and their values are
-  used in the `in` expression. Since everything in Nix is an expression, `a + b`
-  evaluates to `"foofighter"`
+Here, `a` and `b` are defined inside the `let` block, and their values are
+used in the `in` expression. Since everything in Nix is an expression, `a + b`
+evaluates to `"foofighter"`
 
 **Using Let Expressions Inside Attribute Sets**
 
 Let expressions are commonly used when defining attribute sets
-(key-value mappings) (Click for output):
+(Click for output):
 
 ```nix
 let
@@ -501,8 +498,8 @@ in {
 ~}
 ```
 
-- This allows you to reuse values within an attribute set, making the code more
-  modular and preventing duplication.
+This allows you to reuse values within an attribute set, making the code more
+modular and preventing duplication.
 
 **Let Expressions in Function Arguments**
 
@@ -529,8 +526,8 @@ Result:
 }
 ```
 
-- Here, inherit brings pkgs and lib into the resulting attribute set, alongside
-  the locally defined variables someVar and otherVar.
+Here, `inherit` brings `pkgs` and `lib` into the resulting attribute set, alongside
+the locally defined variables `someVar` and `otherVar`.
 
 **Key Takeaways**:
 
@@ -543,7 +540,7 @@ Result:
 
 **With expressions**:
 
-A with expression in Nix is primarily used to simplify access to attributes
+A `with` expression in Nix is primarily used to simplify access to attributes
 within an attribute set. Instead of repeatedly referring to a long attribute
 path, with temporarily brings the attributes into scope, allowing direct
 access without prefixing them.
@@ -558,21 +555,21 @@ nix-repl> longName.a + longName.b
 7
 ```
 
-- Here, we must explicitly reference `longName.a` and `longName.b`. Using a
-  `with` expression simplifies this:
+Here, we must explicitly reference `longName.a` and `longName.b`. Using a
+`with` expression simplifies this:
 
 ```nix
 nix-repl> with longName; a + b
 7
 ```
 
-- Now, within the scope of the with expression, a and b are accessible without
-  prefixing them with `longName`.
+Now, within the scope of the with expression, `a` and `b` are accessible without
+prefixing them with `longName`.
 
 **Practical Use Case: Working with `pkgs`**
 
 One of the most common uses of `with` that you'll see is when dealing with
-packages from `nixpkgs`:
+packages from `nixpkgs` is writing the following:
 
 ```nix
 { pkgs }:
@@ -581,7 +578,7 @@ with pkgs; {
 }
 ```
 
-Instead of writing:
+Instead of writing this:
 
 ```nix
 { pkgs }:
@@ -610,18 +607,18 @@ nix-repl> with pkgs; let x = 4; in x
 4
 ```
 
-- This shows us that the `let` binding overrides the `with` binding.
+This shows us that the `let` binding overrides the `with` binding.
 
 ```nix
 let x = 4; in with pkgs; x
 4
 ```
 
-- Still returns `4`, but the reasoning is different. The `with` expression doesn't
-  define new bindings; it simply makes attributes from `pkgs` available as
-  unqualified names. However, because `let x = 4` is **outside** the `with`, it
-  already extablished `x = 4`, so when `with pkgs; x` is evaluated inside, `x`
-  still refers to the **outer** `let` binding, not the one from `pkgs`.
+Still returns `4`, but the reasoning is different. The `with` expression doesn't
+define new bindings; it simply makes attributes from `pkgs` available as
+unqualified names. However, because `let x = 4` is **outside** the `with`, it
+already extablished `x = 4`, so when `with pkgs; x` is evaluated inside, `x`
+still refers to the **outer** `let` binding, not the one from `pkgs`.
 
 2. Default values aren't bound in `@-patterns`
 
@@ -649,10 +646,10 @@ nix-repl> f { }
 6
 ```
 
-- The function `f` takes an attribute set with default values (`x = 2`, `y = 4`)
+The function `f` takes an attribute set with default values (`x = 2`, `y = 4`)
 
-- When called with `{}` (an empty set), it falls back to the default values
-  (`2 + 4` -> `6`)
+When called with `{}` (an empty set), it falls back to the default values
+(`2 + 4` -> `6`)
 
 Using `@args` to capture the entire input set:
 
@@ -666,14 +663,14 @@ nix-repl> f { z = 3; }
 6
 ```
 
-- The `{ x ? 1, y ? 2, ... }` syntax means `x` and `y` have defaults, while `...`
-  allows additional attributes.
+The `{ x ? 1, y ? 2, ... }` syntax means `x` and `y` have defaults, while `...`
+allows additional attributes.
 
-- `@args` binds the entire attribute set (`args`) so that we can access `z`,
-  which wouldn't be destructured by default.
+`@args` binds the entire attribute set (`args`) so that we can access `z`,
+which wouldn't be destructured by default.
 
-- When calling `f { z = 3; }`, we pass an extra attribute (`z = 3`), making
-  `x + y + z` → `1 + 2 + 3 = 6`.
+When calling `f { z = 3; }`, we pass an extra attribute (`z = 3`), making
+`x + y + z` → `1 + 2 + 3 = 6`.
 
 4. Imports and namespaces
 
@@ -687,11 +684,11 @@ in
   pkgs.runCommand (lib.strings.removePrefix "....
 ```
 
-- consider using `import` here as using `qualified import ...` in Haskell or
-  `import ...` in Python.
+consider using `import` here as using `qualified import ...` in Haskell or
+`import ...` in Python.
 
-- Another way of importing is with `import ...;`, which corresponds to Python
-  `from ... import *`.
+Another way of importing is with `import ...;`, which corresponds to Python
+`from ... import *`.
 
 But because of not very great IDE support in Nix, `with import ...;` is
 discouraged. Rather use inherit, especially if you are targeting source code

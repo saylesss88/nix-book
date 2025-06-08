@@ -23,8 +23,8 @@ where each package has its own unique subdirectory such as:
 /nix/store/y53c0lamag5wpx7vsiv7wmnjdgq97yd6-yazi-25.5.14pre20250526_74a8ea9
 ```
 
-You can use the Nix on most Linux distributions and Mac OS has good support
-for Nix as well. It should work on most platforms that support POSIX threads
+You can use the Nix on most Linux distributions and Mac OS also has good support
+for Nix. It should work on most platforms that support POSIX threads
 and have a C++11 compiler.
 
 When I install Nix on a distro like Arch Linux I usually use the Zero to Nix
@@ -44,7 +44,7 @@ chmod +x nix-installer.sh
 ./nix-installer.sh install
 ```
 
-- I got the above commands from [zero-to-nix](https://zero-to-nix.com/start/install/)
+I got the above commands from [zero-to-nix](https://zero-to-nix.com/start/install/)
 
 The main difference between using the nix package manager on another distribution
 and NixOS is that NixOS uses Nix not just for package management but also to
@@ -70,7 +70,7 @@ to point to that new commit.
 
 While channels provide a convenient way to get the latest stable or unstable
 packages, they introduce a challenge for strict reproducibility. Because a
-channel like nixos-unstable is constantly updated, fetching packages from it
+channel like `nixos-unstable` is constantly updated, fetching packages from it
 today might give you a different set of package versions than fetching from it
 tomorrow, even if your configuration remains unchanged. This "rolling release"
 nature at a global level can make it harder to share and reproduce exact
@@ -129,57 +129,57 @@ channels and flakes, directly impacting reproducibility and control.
 With channels, updates are a global operation that pulls the latest state of a
 specific branch.
 
-- **How it works**: You typically use `nix-channel --update` to fetch the latest
-  commit from the channels you've subscribed to. For instance,
-  `sudo nix-channel --update nixos` (for NixOS) or `nix-channel --update nixpkgs`
-  (for `nix-env` on other Linux distributions).
+**How it works**: You typically use `nix-channel --update` to fetch the latest
+commit from the channels you've subscribed to. For instance,
+`sudo nix-channel --update nixos` (for NixOS) or `nix-channel --update nixpkgs`
+(for `nix-env` on other Linux distributions).
 
-- **Implication**: This command updates your local system's understanding of
-  what "nixos" or "nixpkgs-unstable" means. From that point on, any `nixos-rebuild switch`,
-  `nix-env -iA`, or `nix-build` commands that implicitly or explicitly refer to
-  `nixpkgs` will use this newly updated version.
+**Implication**: This command updates your local system's understanding of
+what "nixos" or "nixpkgs-unstable" means. From that point on, any `nixos-rebuild switch`,
+`nix-env -iA`, or `nix-build` commands that implicitly or explicitly refer to
+`nixpkgs` will use this newly updated version.
 
-- **Reproducibility Challenge**: The update itself is not recorded in your
-  configuration files. If you share your `configuration.nix` with someone, they
-  might run `nix-channel --update` on a different day and get a different set of
-  package versions because the channel has moved. This makes it challenging to
-  guarantee that two users building the "same" configuration will get identical
-  results. You're effectively relying on the implicit, globally managed state of
-  your channels.
+**Reproducibility Challenge**: The update itself is not recorded in your
+configuration files. If you share your `configuration.nix` with someone, they
+might run `nix-channel --update` on a different day and get a different set of
+package versions because the channel has moved. This makes it challenging to
+guarantee that two users building the "same" configuration will get identical
+results. You're effectively relying on the implicit, globally managed state of
+your channels.
 
 #### Updating with Flakes (Modern Approach)
 
 **Flakes**, by contrast, use a more explicit and localized update mechanism tied
 to your `flake.lock` file.
 
-- **How it works**: When you define a `flake.nix`, you specify the exact URL
-  (e.g., a Git repository with a specific branch or tag) for each input. When
-  you first use a flake, Nix resolves these URLs to a precise Git commit hash
-  and records this hash, along with a content hash, in a `flake.lock` file.
+**How it works**: When you define a `flake.nix`, you specify the exact URL
+(e.g., a Git repository with a specific branch or tag) for each input. When
+you first use a flake, Nix resolves these URLs to a precise Git commit hash
+and records this hash, along with a content hash, in a `flake.lock` file.
 
-  - To update your flake inputs, you run `nix flake update`.
+To update your flake inputs, you run `nix flake update`.
 
-- **Implication**: This command goes to each input's specified URL (e.g.,
-  `github:NixOS/nixpkgs/nixos-unstable`) and fetches the latest commit for that
-  input. It then updates your `flake.lock` file with the new, precise Git commit
-  hash and content hash for that input. Your `flake.nix` itself doesn't change,
-  but the `flake.lock` file now points to newer versions of your dependencies.
+**Implication**: This command goes to each input's specified URL (e.g.,
+`github:NixOS/nixpkgs/nixos-unstable`) and fetches the latest commit for that
+input. It then updates your `flake.lock` file with the new, precise Git commit
+hash and content hash for that input. Your `flake.nix` itself doesn't change,
+but the `flake.lock` file now points to newer versions of your dependencies.
 
-- **Reproducibility Advantage**: The `flake.lock` file acts as a manifest of your
-  exact dependency versions.
+**Reproducibility Advantage**: The `flake.lock` file acts as a manifest of your
+exact dependency versions.
 
-- **Sharing**: When you share your flake (the `flake.nix` and `flake.lock` files),
-  anyone using it will fetch precisely the same Git commit hashes recorded in the
-  `flake.lock`, guaranteeing identical inputs and thus, identical builds (assuming
-  the same system architecture).
+**Sharing**: When you share your flake (the `flake.nix` and `flake.lock` files),
+anyone using it will fetch precisely the same Git commit hashes recorded in the
+`flake.lock`, guaranteeing identical inputs and thus, identical builds (assuming
+the same system architecture).
 
-- **Updating Selectively**: You can update individual inputs within your flake
-  by specifying them: `nix flake update nixpkgs`. This provides fine-grained
-  control over which parts of your dependency graph you want to advance.
+**Updating Selectively**: You can update individual inputs within your flake
+by specifying them: `nix flake update nixpkgs`. This provides fine-grained
+control over which parts of your dependency graph you want to advance.
 
-- **Rolling Back**: Because the `flake.lock` explicitly records the versions,
-  you can easily revert to a previous state by checking out an older `flake.lock`
-  from your version control system.
+**Rolling Back**: Because the `flake.lock` explicitly records the versions,
+you can easily revert to a previous state by checking out an older `flake.lock`
+from your version control system.
 
 **In essence**: Channels involve a global "pull" of the latest branch state,
 making reproducibility harder to guarantee across time and machines. Flakes,

@@ -1,4 +1,8 @@
-# Chapter 2
+╭───┬────────────╮
+│ 0 │ x1b[?1049h │
+│ 1 │ >          │
+│ 2 │ /dev/tty   │
+╰───┴────────────╯# Chapter 2
 
 <details>
 <summary> Click to Expand Table of Contents</summary>

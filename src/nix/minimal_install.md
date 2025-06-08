@@ -1,13 +1,34 @@
-# Minimal Btrfs-Subvol Install with Disko and Flakes
+# Minimal BTRFS-Subvol Install with Disko and Flakes
 
-Disko allows you to declaratively partition and format your disks, and then mount
-them to your system. I recommend checking out the [README](https://github.com/nix-community/disko/tree/master?tab=readme-ov-file)
-as it is a disk destroyer if used incorrectly.
+Figure 1: **BTRFS Logo**: Image of the BTRFS logo. Sourced from the [BTRFS repo](https://github.com/btrfs)
+![BTRFS logo](../images/btrfs1.png)
 
-We will mainly be following the [disko quickstart guide](https://github.com/nix-community/disko/blob/master/docs/quickstart.md)
+## Why I Chose BTRFS
+
+I chose BTRFS because I was already familiar with it from using it with Arch
+Linux and I found it to be very easy to use. From what I've read, there are
+licensing issues between the Linux Kernel and ZFS which means that ZFS is not
+part of the Linux Kernel; it's maintained by the OpenZFS project and available
+as a separate kernel module. This can cause issues and make you think more
+about your filesystem than I personally want to at this point.
+
+While ZFS is a solid choice and offers some benefits over BTRFS, I recommend looking into
+it before making your own decision.
 
 If you have a ton of RAM you could most likely skip the minimal install and just
 set your system up as needed or just use [tmpfs as root](https://elis.nu/blog/2020/05/nixos-tmpfs-as-root/)
+
+## Getting Started with Disko
+
+Disko allows you to declaratively partition and format your disks, and then mount
+them to your system. I recommend checking out the [README](https://github.com/nix-community/disko/tree/master?tab=readme-ov-file)
+as it is a **disk destroyer** if used incorrectly.
+
+We will mainly be following the [disko quickstart guide](https://github.com/nix-community/disko/blob/master/docs/quickstart.md)
+
+Figure 2: **Disko Logo**: Image of the logo for Disko, the NixOS declarative
+disk partitioning tool. Sourced from the [Disko project](https://github.com/nix-community/disko)
+![disko logo](../images/disko1.png)
 
 1. Get the [Nixos Minimal ISO](https://channels.nixos.org/nixos-25.05/latest-nixos-minimal-x86_64-linux.iso)
    Get it on a usb stick, I use Ventoy with Ventoy2Disk.sh. The following is the
@@ -168,7 +189,7 @@ fileSystems."/persist/swap".neededForBoot = true;
 ```
 
 6. Run disko to partition, format and mount your disks. **Warning** this will
-   wipe EVERYTHING on your disk. Disko doesn't work with dual boot.
+   wipe **EVERYTHING** on your disk. Disko doesn't work with dual boot.
 
 ```bash
 sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko/latest -- --mode destroy,format,mount /tmp/disk-config.nix
@@ -183,8 +204,14 @@ mount | grep /mnt
 The output for an `nvme0n1` disk would be similar to the following:
 
 ```bash
-/dev/nvme0n1p1 on /mnt type ext4 (rw,relatime,stripe=2)
-/dev/nvme0n1p2 on /mnt/boot type vfat (rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=iso8859-1,shortname=mixed,errors=remount-ro)
+#... snip ...
+/dev/nvme0n1p2 on /mnt type btrfs (rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=285,subvol=/root)
+/dev/nvme0n1p2 on /mnt/persist type btrfs (rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=261,subvol=/persist)
+/dev/nvme0n1p2 on /mnt/etc type btrfs (rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=261,subvol=/persist)
+/dev/nvme0n1p2 on /mnt/nix type btrfs (rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=260,subvol=/nix)
+/dev/nvme0n1p2 on /mnt/var/lib type btrfs (rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=258,subvol=/lib)
+/dev/nvme0n1p2 on /mnt/var/log type btrfs (rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=259,subvol=/log)
+/dev/nvme0n1p2 on /mnt/nix/store type btrfs (ro,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=260,subvol=/nix)
 # ... snip ...
 ```
 
@@ -199,6 +226,8 @@ nixos-generate-config --no-filesystems --root /mnt
 sudo mv /tmp/disk-config.nix /mnt/etc/nixos
 ```
 
+### Setting a Flake for your minimal Install
+
 8. Create the flake in your home directory, then move it to `/mnt/etc/nixos`
 
 ```bash
@@ -209,6 +238,11 @@ export EDITOR='hx'
 hx flake.nix
 ```
 
+> You'll change `hostname = nixpkgs.lib.nixosSystem` to your chosen hostname,
+> (e.g. `magic = nixpkgs.lib.nixosSystem`). This will be the same as your
+> `networking.hostName = "magic";` in your `configuration.nix` that we will
+> set up shortly.
+
 ```nix
 # flake.nix
 {
@@ -216,8 +250,8 @@ hx flake.nix
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    inputs.disko.url = "github:nix-community/disko/latest";
-    inputs.disko.inputs.nixpkgs.follows = "nixpkgs";
+    disko.url = "github:nix-community/disko/latest";
+    disko.inputs.nixpkgs.follows = "nixpkgs";
     # impermanence.url = "github:nix-community/impermanence";
   };
 
@@ -249,7 +283,8 @@ sudo mv disk-config.nix hardware-configuration.nix configuration.nix ~/flake
 
 - Bootloader
 
-- User
+- User, the example uses `username` change this to your chosen username. If you
+  don't set your hostname it will be `nixos`.
 
 - Networking
 
@@ -281,7 +316,7 @@ copy the hashed password and use it for the value of your `initialHashedPassword
     ./disk-config.nix
   ];
 
-  networking.hostName = "magic"; # Define your hostname.
+  networking.hostName = "magic"; # This will match the `hostname` of your flake
 
   networking.networkmanager.enable = true;
 
@@ -299,7 +334,7 @@ copy the hashed password and use it for the value of your `initialHashedPassword
   users.users.nixos = {
     isNormalUser = true;
     extraGroups = [ "wheel" "networkmanager" ]; # Add "wheel" for sudo access
-     initialHashedPassword = "COPY_YOUR_MKPASSWD_OUTPUT_HERE"; # <-- This is where it goes!
+    initialHashedPassword = "COPY_YOUR_MKPASSWD_OUTPUT_HERE"; # <-- This is where it goes!
     # home = "/home/nixos"; # Optional: Disko typically handles home subvolumes
   };
 
@@ -307,7 +342,7 @@ copy the hashed password and use it for the value of your `initialHashedPassword
 
   nixpkgs.config.allowUnfree = true;
 
-  system.stateVersion = "25.05"; # Did you read the comment?
+  system.stateVersion = "25.05";
 }
 ```
 
@@ -321,11 +356,11 @@ sudo nixos-install --flake /mnt/etc/nixos/flake .#hostname
 - You will be prompted to enter a new password if everything succeeds.
 
 - If everything checks out, reboot the system and you should be prompted to enter
-  your user and password to login to a shell to get started.
+  your `user` and `password` to login to a shell to get started.
 
 - The flake will be placed at `/etc/nixos/flake`, I choose to move it to my
   home directory. Since the file was first in `/etc` you'll need to adjust the
-  permissions with something like `sudo chmod username:users ~/flake` and then
-  you can work on it without privilege esculation.
+  permissions with something like `sudo chown username:users ~/flake`(`username` will
+  be your username) and then you can work on it without privilege escalation.
 
-- To continue following allong and set up impermanence [Click Here](https://saylesss88.github.io/nix/impermanence.html)
+- To continue following along and set up impermanence [Click Here](https://saylesss88.github.io/nix/impermanence.html)
