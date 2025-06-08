@@ -1,0 +1,870 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Nix Flakes Explained - nix-book</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <a href="#" class="top-link" id="back-to-top">↑</a>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">nix-book</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="chapter-4"><a class="header" href="#chapter-4">Chapter 4</a></h1>
+<details>
+<summary> ✔️ Click to Expand Table of Contents</summary>
+<!-- toc -->
+</details>
+<img src="images/gruv15.png" width="800" height="600">
+<h2 id="nix-flakes-explained"><a class="header" href="#nix-flakes-explained">Nix Flakes Explained</a></h2>
+<p>If you're completely new, take a look at
+<a href="https://nixos.wiki/wiki/flakes#Installing_flakes">this</a> to get flakes on your
+system.</p>
+<p>Flakes replace stateful channels (which cause much confusion among novices) and
+introduce a more intuitive and consistent CLI, making them a perfect opportunity
+to start using Nix. -- Alexander Bantyev
+<a href="https://serokell.io/blog/practical-nix-flakes">Practical Nix Flakes</a></p>
+<p>The "state" being remembered and updated by channels is the specific revision
+of the Nixpkgs repository that your local Nix installation considers "current"
+for a given channel. When this state changes on your machine, your builds
+diverge from others whose machines have a different, independently updated
+channel state.</p>
+<p>Channels are also constantly updated on the remote servers. So,
+"nixos-unstable" today refers to a different set of packages and versions
+than "nixos-unstable" did yesterday or will tomorrow.</p>
+<p>Flakes solve this by making the exact revision of <code>nixpkgs</code> (and other
+dependencies) an explicit input within your <code>flake.nix</code> file, pinned in the
+<code>flake.lock</code>. This means the state is explicitly defined in the configuration
+itself, not implicitly managed by a global system setting.</p>
+<p>Evaluation time is notoriously slow on NixOS, the problem was that in the
+past Nix evaluation wasn't hermetic preventing effective evaluation caching.
+A <code>.nix</code> file can import other Nix files or by looking them up in the Nix
+search path (<code>$NIX_PATH</code>). This causes a cached result to be inconsistent
+unless every file is perfectly kept track of. Flakes solve this problem by
+ensuring fully hermetic evaluation.</p>
+<p>"Hermetic" means that the output of an evaluation (the derivation itself)
+depends <em>only</em> on the explicit inputs provided, not on anything external like
+environment variables or pulling in files only on your system. This is the
+problem that Nix solves and the problem that flakes are built around.</p>
+<h2 id="what-is-a-nix-flake"><a class="header" href="#what-is-a-nix-flake">What is a Nix Flake?</a></h2>
+<p><strong>Nix flakes</strong> are independent components in the Nix ecosystem. They define
+their own <strong>dependencies</strong> (inputs) and what they produce (outputs), which can
+include <strong>packages</strong>, <strong>deployment configurations</strong>, or <strong>Nix functions</strong> for
+other flakes to use.</p>
+<p>Flakes provide a standardized framework for building and managing software,
+making all project inputs explicit for greater reproducibility and
+self-containment.</p>
+<p>At its core, a flake is a source tree (like a Git repository) that contains a
+<code>flake.nix</code> file in its root directory. This file provides a standardized way
+to access Nix artifacts such as packages and modules.</p>
+<p>Flakes provide a standard way to write Nix expressions (and therefore
+packages) whose dependencies are version-pinned in a lock file, improving
+reproducibility of Nix installations. -- NixOS Wiki</p>
+<p>Think of <code>flake.nix</code> as the central entry point of a flake. It not only
+defines what the flake produces but also declares its dependencies.</p>
+<h3 id="key-concepts"><a class="header" href="#key-concepts">Key Concepts</a></h3>
+<p><code>flake.nix</code>: <strong>The Heart of a Flake</strong></p>
+<p>The <code>flake.nix</code> file is mandatory for any flake. It must contain an attribute
+set with at least one required attribute: <code>outputs</code>. It can also optionally
+include <code>description</code> and <code>inputs</code>.</p>
+<p><strong>Basic Structure:</strong></p>
+<pre><code class="language-nix">{
+  description = "Package description";
+  inputs = { /* Dependencies go here */ };
+  outputs = { /* What the flake produces */ };
+  nixConfig = { /* Advanced configuration options */ };
+}
+</code></pre>
+<p>I typically see <code>nixConfig</code> used for extra-substituters for cachix. This is
+a general-purpose way to define Nix configuration oprions that apply when
+this flake is evaluated or built. It ties into your <code>/etc/nix/nix.conf</code> or
+<code>~/.config/nix/nix.conf</code>.</p>
+<p>For example, create a directory and add a <code>flake.nix</code> with the following
+contents, yes this is a complete <code>flake.nix</code> demonstrating <em>outputs</em> being the
+only required attribute:</p>
+<pre><code class="language-nix"># flake.nix
+{
+  outputs = _: { multiply = 2 * 2; };
+}
+</code></pre>
+<p>Now evaluate it with:</p>
+<pre><code class="language-bash">nix eval .#multiply
+4
+</code></pre>
+<p>In the <code>outputs = _: { ... };</code> line, the <code>_</code> (underscore) is a placeholder
+argument. It represents the inputs that the outputs function could receive
+(like <code>inputs</code>, <code>self</code>, <code>pkgs</code>, etc.), but in this specific case, we're not
+using any of them to define the multiply attribute. It's a common convention
+in Nix to use <code>_</code> when an argument is required by a function but intentionally
+ignored.</p>
+<p>In the command <code>nix eval .#multiply</code>:</p>
+<ul>
+<li>
+<p>the <code>.</code> signifies the current directory,
+indicating that Nix should look for a <code>flake.nix</code> file in the directory where
+you're running the command.</p>
+</li>
+<li>
+<p>The <code>#</code> is used to select a specific attribute from the <code>outputs</code> of the
+flake. In this case, it's telling Nix to evaluate the <code>multiply</code> attribute.</p>
+</li>
+</ul>
+<p>In the next example we will create a <code>devShells</code> output as well as a <code>packages</code>
+output.</p>
+<p><strong><code>flake.lock</code> auto-generated lock file</strong></p>
+<p>All flake inputs are pinned to specific revisions in a lockfile called <code>flake.lock</code>
+This file stores the revision info as JSON.</p>
+<p>The <code>flake.lock</code> file ensures that Nix flakes have purely deterministic outputs.
+A <code>flake.nix</code> file without an accompanying <code>flake.lock</code> should be considered
+incomplete and a kind of proto-flake. Any Nix CLI command that is run against
+the flake—like <code>nix build</code>, <code>nix develop</code>, or even <code>nix flake show</code>—generates a
+<code>flake.lock</code> for you.</p>
+<p>Here’s an example section of a <code>flake.lock</code> file that pins Nixpkgs to a specific
+revision:</p>
+<pre><code class="language-bash">$ cat flake.lock
+{
+  "nodes": {
+    "nixpkgs": {
+      "info": {
+        "lastModified": 1587398327,
+        "narHash": "sha256-mEKkeLgUrzAsdEaJ/1wdvYn0YZBAKEG3AN21koD2AgU="
+      },
+      "locked": {
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "5272327b81ed355bbed5659b8d303cf2979b6953",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-20.03",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "nixpkgs": "nixpkgs"
+      }
+    }
+  },
+  "root": "root",
+  "version": 5
+}
+</code></pre>
+<p>Any future build of this flake will use the version of <code>nixpkgs</code> recorded in
+the lock file. If you add new inputs, they will be automatically added when
+you run a nix flake command like <code>nix flake show</code>. But it won't replace
+existing locks.</p>
+<p>If you need to update a locked input to the latest version:</p>
+<pre><code class="language-bash">nix flake lock --update-input nixpkgs
+nix build
+</code></pre>
+<h3 id="helper-functions-that-are-good-to-know-for-working-with-flakes"><a class="header" href="#helper-functions-that-are-good-to-know-for-working-with-flakes">Helper functions that are good to know for working with Flakes</a></h3>
+<p><code>lib.genAttrs</code>: A function, given the name of the attribute, returns the
+attribute's value</p>
+<p>Example:</p>
+<pre><code class="language-nix">nix repl
+nix-repl&gt; :l &lt;nixpgs&gt;
+nix-repl&gt; lib.genAttrs [ "boom" "bash" ] (name: "sonic" + namd)
+</code></pre>
+<p><strong>Output</strong>:</p>
+<pre><code class="language-nix">{
+  bash = "sonicbash";
+  boom = "sonicboom";
+}
+</code></pre>
+<p>You will often see the following:</p>
+<p>A common use for this with flakes is to have a list of different systems:</p>
+<pre><code class="language-nix">     systems = [
+       "x86_64-linux"
+       "aarch64-linux"
+       "x86_64-darwin"
+       "aarch64-darwin"
+     ];
+</code></pre>
+<p>And use it to generate an attribute set for each listed system:</p>
+<pre><code class="language-nix">eachSystem = lib.genAttrs systems;
+</code></pre>
+<p>The above command creates an attribute set by mapping over a list of system
+strings. If you notice, you provide it a list (i.e. [ 1 2 3 ]) and the
+function returns a set (i.e. <code>{ ... }</code>)</p>
+<p>Why <code>genAttrs</code> is useful:</p>
+<ul>
+<li>
+<p>It lets you define attributes (like <code>packages</code>, <code>checks</code>, <code>devShells</code>) per
+supported system in a DRY(don't repeat yourself), structured way.</p>
+</li>
+<li>
+<p><code>lib.mapAttrs</code>: A function, given an attribute's name and value, returns a new
+<code>nameValuePair</code>.</p>
+</li>
+</ul>
+<p>Example:</p>
+<pre><code class="language-nix">nix-repl&gt; builtins.mapAttrs (name: value: name + "-" + value) { x = "foo"; y = "bar"; }
+</code></pre>
+<p><strong>Output</strong>:</p>
+<pre><code class="language-nix">{
+  x = "x-foo";
+  y = "y-bar";
+}
+</code></pre>
+<p><code>pkgs.mkShell</code>: is a specialized <code>stdenv.mkDerivation</code> that removes some
+repetition when using it with <code>nix-shell</code> (or <code>nix develop</code>)</p>
+<p>Example:</p>
+<pre><code class="language-nix">{ pkgs ? import &lt;nixpkgs&gt; {} }:
+pkgs.mkShell {
+  packages = [ pkgs.gnumake ];
+
+  inputsFrom = [ pkgs.hello pkgs.gnutar ];
+
+  shellHook = ''
+    export DEBUG=1
+  '';
+}
+</code></pre>
+<h4 id="a-simple-flake-that-outputs-a-devshell-and-a-package"><a class="header" href="#a-simple-flake-that-outputs-a-devshell-and-a-package">A Simple flake that outputs a devshell and a package</a></h4>
+<p>In a new directory create a <code>flake.nix</code></p>
+<pre><code class="language-nix"># flake.nix
+{
+  outputs = {
+    self,
+    nixpkgs,
+  }: let
+    pkgs = nixpkgs.legacyPackages.x86_64-linux;
+  in {
+
+    packages.x86_64-linux.default = pkgs.kakoune; # You could define a meta-package here
+
+    devShells.x86_64-linux.default = pkgs.mkShell {
+      packages = [
+        pkgs.kakoune
+        pkgs.git
+        pkgs.ripgrep
+        pkgs.fzf
+      ];
+    };
+  };
+}
+</code></pre>
+<p><code>mkShell</code> is a wrapper around <code>mkDerivation</code></p>
+<p>This flake offers two main outputs for <code>x86_64-linux</code> systems:</p>
+<ol>
+<li>
+<p>A <strong>standard package</strong> (<code>packages.x86_64-linux.default</code>): This simple example
+just re-exports <code>kakoune</code> from <code>nixpkgs</code>. You could build your own apps here.</p>
+</li>
+<li>
+<p>A <strong>development shell</strong> (<code>devShells.x86_64-linux.default</code>): This provides a
+convenient environment where you have specific tools available without
+installing them globally on your system.</p>
+</li>
+</ol>
+<p>To use this flake you have a few options:</p>
+<ul>
+<li>
+<p><code>nix run</code> will launch kakoune</p>
+</li>
+<li>
+<p><code>nix develop</code> will activate the development environment providing all of the
+pkgs listed under <code>mkShell</code>.</p>
+</li>
+<li>
+<p>Or more explicitly <code>nix develop .#devShells.x86_64-linux.default</code>, does the same
+thing as the command above.</p>
+</li>
+</ul>
+<h4 id="flake-references"><a class="header" href="#flake-references">Flake References</a></h4>
+<details>
+<summary> ✔️ Flake References (Click to Expand) </summary>
+<p><strong>Flake references</strong> (flakerefs) are a way to specify the location of a flake.
+They have two different formats:</p>
+<blockquote>
+<p><strong>Attribute set representation</strong>:</p>
+<pre><code class="language-nix">{
+  type = "github";
+  owner = "NixOS";
+  repo = "nixpkgs";
+}
+</code></pre>
+<p>or <strong>URL-like syntax</strong>:</p>
+<pre><code class="language-nix">github:NixOS/nixpkgs
+</code></pre>
+<p>These are used on the command line as a more convenient alternative to the
+attribute set representation. For instance, in the command</p>
+<pre><code class="language-nix">nix build github:NixOS/nixpkgs#hello
+</code></pre>
+<p><code>github:NixOS/nixpkgs</code> is a flake reference (while <code>hello</code> is an output
+attribute). They are also allowed in the <code>inputs</code> attribute of a flake, e.g.</p>
+<pre><code class="language-nix">inputs.nixpkgs.url = "github:NixOS/nixpkgs";
+</code></pre>
+<p>is equivalent to</p>
+<pre><code class="language-nix">inputs.nixpkgs = {
+  type = "github";
+  owner = "NixOS";
+  repo = "nixpkgs";
+};
+</code></pre>
+<p>--
+<a href="https://nix.dev/manual/nix/2.24/command-ref/new-cli/nix3-flake#flake-references">nix.dev flake-references</a></p>
+</blockquote>
+</details>
+<h4 id="nix-flake-commands"><a class="header" href="#nix-flake-commands">Nix Flake Commands</a></h4>
+<details>
+<summary> ✔️ Flake Commands (Click to Expand) </summary>
+<blockquote>
+<p><code>nix flake</code> provides subcommands for creating, modifying and querying <em>Nix
+Flakes</em>. Flakes are the unit for packaging Nix code in a reproducible and
+discoverable way. They can have dependencies on other flakes, making it
+possible to have multi-repository Nix projects.</p>
+</blockquote>
+<p>— From
+<a href="https://nix.dev/manual/nix/2.28/command-ref/new-cli/nix3-flake">nix.dev Reference Manual</a></p>
+<ul>
+<li>
+<p>The main thing to note here is that <code>nix flake</code> is used to manage Nix flakes
+and that Flake commands are whitespace separated rather than hyphen <code>-</code>
+separated.</p>
+</li>
+<li>
+<p>Flakes do provide some advantages when it comes to discoverability of outputs.</p>
+</li>
+<li>
+<p>For Example, two helpful commands to inspect a flake are:</p>
+<ul>
+<li>
+<p><a href="https://nix.dev/manual/nix/2.28/command-ref/new-cli/nix3-flake-show">nix flake show</a>
+command: Show the outputs provided by a flake.</p>
+</li>
+<li>
+<p><a href="https://nix.dev/manual/nix/2.28/command-ref/new-cli/nix3-flake-check">nix flake check</a>
+command: check whether the flake evaluates and run its tests.</p>
+</li>
+<li>
+<p>Any Nix CLI command that is run against a flake -- like <code>nix build</code>,
+<code>nix develop</code>, <code>nix flake show</code> -- generate a <code>flake.lock</code> file for you.</p>
+<ul>
+<li>The <code>flake.lock</code> file ensures that all flake inputs are pinned to specific
+revisions and that Flakes have purely deterministic outputs.</li>
+</ul>
+</li>
+</ul>
+<p>Example:</p>
+</li>
+</ul>
+<pre><code class="language-bash">nix shell nixpkgs#ponysay --command ponysay "Flakes Rock!"
+</code></pre>
+<p>This works because of the [flake registry] that maps symbolic identifiers like
+<code>nixpkgs</code> to actual locations such as <code>https://github.com/NixOS/nixpkgs</code>. So
+the following are equivalent:</p>
+<pre><code class="language-bash">nix shell nixpkgs#ponysay --command ponysay Flakes Rock!
+nix shell github:NixOS/nixpkgs#ponysay --command ponysay Flakes Rock!
+</code></pre>
+<p>To override the <code>nixpkgs</code> registry with your own local copy you could:</p>
+<pre><code class="language-bash">nix registry add nixpkgs ~/src/local-nixpkgs
+</code></pre>
+</details>
+<h3 id="attribute-sets-the-building-blocks"><a class="header" href="#attribute-sets-the-building-blocks">Attribute Sets: The Building Blocks</a></h3>
+<details>
+<summary> ✔️ Attribute set Refresher (Click to Expand) </summary>
+<p><strong>Attribute sets</strong> are fundamental in Nix. They are simply collections of
+name-value pairs wrapped in curly braces <code>{}</code>.</p>
+<ul>
+<li>Example, (click to see Output):</li>
+</ul>
+<pre><code class="language-nix">let
+  my_attrset = { foo = "bar"; };
+in
+my_attrset.foo
+<span class="boring"> "bar"
+</span></code></pre>
+<p><strong>Top-Level Attributes of a Flake</strong>:</p>
+<p>Flakes have specific <strong>top-level attributes</strong> that can be accessed directly
+(without dot notation). The most common ones are <code>inputs</code>, <code>outputs</code>, and
+<code>nixConfig</code>.</p>
+  </details>
+<h3 id="deeper-dive-into-the-structure-of-flakenix"><a class="header" href="#deeper-dive-into-the-structure-of-flakenix">Deeper Dive into the Structure of <code>flake.nix</code></a></h3>
+<p><img src="images/Flakes.png" alt="Flakes" /></p>
+<p><code>inputs</code>: <strong>Declaring Dependencies</strong></p>
+<p>The <code>inputs</code> attribute set specifies the other flakes that your current flake
+depends on.</p>
+<p>Each key in the <code>inputs</code> set is a name you choose for the dependency, and the
+value is a reference to that flake (usually a URL or a Git Repo).</p>
+<p>To access something from a dependency, you generally go through the <code>inputs</code>
+attribute (e.g., <code>inputs.helix.packages</code>).</p>
+<p>See <a href="https://saylesss88.github.io/flakes/flake_inputs_4.1.html">Nix Flake inputs</a>
+for a flake inputs deep dive.</p>
+<p><strong>Example:</strong> This declares dependencies on the <code>nixpkgs</code> and <code>import-cargo</code>
+flakes:</p>
+<pre><code class="language-nix">inputs = {
+  import-cargo.url = "github:edolstra/import-cargo";
+  nixpkgs.url = "nixpkgs";
+};
+</code></pre>
+<p>When Nix evaluates your flake, it fetches and evaluates each input. These
+evaluated inputs are then passed as an attribute set to the outputs
+function, with the keys matching the names you gave them in the inputs set.</p>
+<p>The special input <code>self</code> is a reference to the <code>outputs</code> and the source tree
+of the current flake itself.</p>
+<p><strong><code>outputs</code>: Defining What Your Flake Provides</strong></p>
+<p>The <strong><code>outputs</code></strong> attribute defines what your flake makes available. This can
+include packages, NixOS modules, development environments (<code>devShells</code>) and
+other Nix derivations.</p>
+<p>Flakes can output arbitrary Nix values. However, certain outputs have specific
+meanings for Nix commands and must adhere to particular types (often
+derivations, as described in the
+<a href="https://nixos.wiki/wiki/Flakes">output schema</a>).</p>
+<p>You can inspect the outputs of a flake using the command:</p>
+<pre><code class="language-nix">nix flake show
+</code></pre>
+<blockquote>
+<p>This command takes a flake URI and displays its outputs in a tree structure,
+showing the attribute paths and their corresponding types.</p>
+</blockquote>
+<p><strong>Understanding the <code>outputs</code> Function</strong></p>
+<p>Beginners often mistakenly think that self and nixpkgs within
+<code>outputs = { self, nixpkgs, ... }: { ... }</code> are the outputs themselves.
+Instead, they are the <em>input arguments</em> (often called <em>output arguments</em>) to
+the outputs function.</p>
+<p>The outputs function in <code>flake.nix</code> always takes a single argument, which is
+an attribute set. The syntax <code>{ self, nixpkgs, ... }</code> is Nix's way of
+destructuring this single input attribute set to extract the values associated
+with the keys self and nixpkgs.</p>
+<p>Flakes output your whole system configuration, packages, and also Nix
+functions for use elsewhere.</p>
+<ul>
+<li>
+<p>For example, the <code>nixpkgs</code> repository has its own <code>flake.nix</code> file that
+outputs many helper functions via the <code>lib</code> attribute.</p>
+</li>
+<li>
+<p>For a deep dive into flake outputs, see <a href="https://saylesss88.github.io/flakes/flake_outputs_4.2.html">Nix Flake Outputs</a></p>
+</li>
+</ul>
+<blockquote>
+<p>The <code>lib</code> convention The convention of using <code>lib</code> to output functions is
+observed not just by Nixpkgs but by many other Nix projects. You’re free,
+however, to output functions via whichever attribute you prefer. --
+<a href="https://zero-to-nix.com/concepts/flakes/#inputs">Zero to Nix Flakes</a></p>
+</blockquote>
+<p>Some flake outputs are required to be system specific (i.e. "x86_64-linux" for
+(64-bit AMD/Intel Linux) including packages, development environments, and
+NixOS configurations)</p>
+<p><strong>Variadic Attributes (...) and @-patterns</strong></p>
+<p>The <code>...</code> syntax in the input arguments of the outputs function indicates
+variadic attributes, meaning the input attribute set can contain more
+attributes than just those explicitly listed (like <code>lib</code> and <code>nixpkgs</code>).</p>
+<p><strong>Example:</strong></p>
+<pre><code class="language-nix">mul = { a, b, ... }: a * b;
+mul { a = 3; b = 4; c = 2; } # 'c' is an extra attribute
+</code></pre>
+<p>However, you cannot directly access these extra attributes within the function
+body unless you use the @-pattern:</p>
+<ul>
+<li>(Click for Output)</li>
+</ul>
+<pre><code class="language-nix">mul = s@{ a, b, ... }: a  b  s.c; # 's' now refers to the entire input set
+mul { a = 3; b = 4; c = 2; } # Output: 24
+<span class="boring"> 24
+</span></code></pre>
+<p>When used in the outputs function argument list (e.g.,
+<code>outputs = { pkgs, ... } @ inputs)</code>, the @-pattern binds the entire input
+attribute set to a name (in this case, <code>inputs</code>) while also allowing you to
+destructure specific attributes like pkgs.</p>
+<p><strong>What <code>outputs = { pkgs, ... } @ inputs: { ... };</code> does:</strong></p>
+<ol>
+<li>
+<p><strong>Destructuring:</strong> It tries to extract the value associated with the key
+<code>pkgs</code> from the input attribute set and binds it to the variable <code>pkgs</code>. The
+<code>...</code> allows for other keys in the input attribute set to be ignored during
+this direct destructuring.</p>
+</li>
+<li>
+<p><strong>Binding the Entire Set:</strong> It binds the entire input attribute set to the
+variable inputs.</p>
+<ul>
+<li>Example <code>flake.nix</code>:</li>
+</ul>
+</li>
+</ol>
+<pre><code class="language-nix">{
+inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+inputs.home-manager.url = "github:nix-community/home-manager";
+
+outputs = { self, nixpkgs, ... } @ attrs: { # A `packages` output for the x86_64-linux platform
+packages.x86_64-linux.hello = nixpkgs.legacyPackages.x86_64-linux.hello;
+
+    # A `nixosConfigurations` output (for a NixOS system named "fnord")
+    nixosConfigurations.fnord = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      specialArgs = attrs;
+      modules = [ ./configuration.nix ];
+    };
+
+};
+}
+</code></pre>
+<p><strong>Platform Specificity in Outputs</strong></p>
+<p>Flakes ensure that their outputs are consistent across different evaluation
+environments. Therefore, any package-related output must explicitly specify
+the target platform (a combination of architecture and OS, <code>x86_64-linux</code>).</p>
+<p><strong>legacyPackages Explained</strong></p>
+<p><code>legacyPackages</code> is a way for flakes to interact with the traditional, less
+structured package organization of nixpkgs. Instead of packages being directly
+at the top level (e.g., <code>pkgs.hello</code>), <code>legacyPackages</code> provides a
+platform-aware way to access them within the flake's structured output format
+(e.g., <code>nixpkgs.legacyPackages.x86_64-linux.hello</code>). It acts as a bridge
+between the flake's expected output structure and nixpkgs's historical
+organization.</p>
+<p><strong>The Sole Argument of outputs</strong></p>
+<p>It's crucial to remember that the outputs function accepts only one argument,
+which is an attribute set. The <code>{ self, nixpkgs, ... }</code> syntax is simply
+destructuring that single input attribute set.</p>
+<p><strong>Outputs of the Flake (Return Value)</strong></p>
+<p>The outputs of the flake refer to the attribute set that is returned by the
+<code>outputs</code> function. This attribute set can contain various named outputs like
+<code>packages</code>, <code>nixosConfigurations</code>, <code>devShells</code>, etc.</p>
+<p><strong>Imports: Including Other Nix Expressions</strong></p>
+<p>The <code>import</code> function in Nix is used to evaluate the Nix expression found at a
+specified path (usually a file or directory) and return its value.</p>
+<p>Basic Usage: import <code>./path/to/file.nix</code></p>
+<p><strong>Passing Arguments During Import</strong></p>
+<p><code>import &lt;nixpkgs&gt; {}</code> is calling two functions, not one.</p>
+<ol>
+<li><code>import &lt;nixpkgs&gt;</code>: The first function call</li>
+</ol>
+<ul>
+<li>
+<p><code>import</code> is a built-in Nix function. Its job is to load and evaluate a Nix
+expression from a specified path.</p>
+</li>
+<li>
+<p><code>&lt;nixpkgs&gt;</code> is a flake reference. When you use <code>import &lt;nixpkgs&gt;</code>, Nix
+evaluates the <code>default.nix</code> file (or sometimes <code>lib/default.nix</code>) found
+at that location.</p>
+</li>
+<li>
+<p>The <code>default.nix</code> in <code>nixpkgs</code> evaluates to a function. This function is
+designed to be configurable, allowing you to pass arguments like <code>system</code>,
+<code>config</code>, etc. to customize how <code>nixpkgs</code> behaves and what packages it provides.</p>
+</li>
+<li>
+<p>So, <code>import &lt;nixpkgs&gt;</code> doesn't give you the <code>nixpkgs</code> package set directly;
+it gives you the function that generates the <code>nixpkgs</code> package set derivation.</p>
+</li>
+</ul>
+<ol start="2">
+<li><code>{}</code>: The second function call (and its argument)</li>
+</ol>
+<ul>
+<li>
+<p><code>{}</code> denotes an empty attribute set</p>
+</li>
+<li>
+<p>When an attribute set immediately follows a function, it means you are calling
+that function and passing the attribute set as its single argument.</p>
+</li>
+</ul>
+<p>So, the <code>{}</code> after <code>import &lt;nixpkgs&gt;</code> is not part of the <code>import</code> function iteself.
+It's the argument being passed to the function that <code>import &lt;nixpkgs&gt;</code> just
+returned.</p>
+<p>You can also pass an attribute set as an argument to the Nix expression being
+imported:</p>
+<pre><code class="language-nix">let
+myHelpers = import ./lib/my-helpers.nix { pkgs = nixpkgs; };
+in
+# ... use myHelpers
+</code></pre>
+<p>In this case, the Nix expression in <code>./lib/my-helpers.nix</code> is likely a
+function that expects an argument (often named <code>pkgs</code> by convention):</p>
+<pre><code class="language-nix"># ./lib/my-helpers.nix
+
+{ pkgs }:
+let
+myPackage = pkgs.stdenv.mkDerivation {
+name = "my-package"; # ...
+};
+in
+myPackage
+</code></pre>
+<p>By passing <code>{ pkgs = nixpkgs; }</code> during the import, you are providing the
+nixpkgs value from your current <code>flake.nix</code> scope to the pkgs parameter
+expected by the code in <code>./lib/my-helpers.nix</code>.</p>
+<p><strong>Importing Directories (<code>default.nix</code>)</strong></p>
+<p>When you use import with a path that points to a directory, Nix automatically
+looks for a file named <code>default.nix</code> within that directory. If found, Nix
+evaluates the expressions within <code>default.nix</code> as if you had specified its
+path directly in the import statement.</p>
+<ul>
+<li>For more advanced examples see <a href="https://saylesss88.github.io/flakes/flake_examples_4.3.html">Nix Flake Examples</a></li>
+</ul>
+<h5 id="conclusion-unifying-your-nix-experience-with-flakes"><a class="header" href="#conclusion-unifying-your-nix-experience-with-flakes">Conclusion: Unifying Your Nix Experience with Flakes</a></h5>
+<p>For some examples of more advanced outputs like <code>devShells</code> and <code>checks</code>, check
+out this blog post that I wrote:
+<a href="https://tsawyer87.github.io/posts/nix_flakes_tips/">Nix Flakes Tips and Tricks</a></p>
+<p>In this chapter, we've explored Nix Flakes as a powerful and modern approach to
+managing Nix projects, from development environments to entire system
+configurations. We've seen how they provide structure, dependency management,
+and reproducibility through well-defined inputs and outputs. Flakes offer a
+cohesive way to organize your Nix code and share it with others.</p>
+<p>As we've worked with the flake.nix file, you've likely noticed its structure – a
+top-level attribute set defining various outputs like devShells, packages,
+nixosConfigurations, and more. These top-level attributes are not arbitrary;
+they follow certain conventions and play specific roles within the Flake
+ecosystem.</p>
+<p>In the next chapter,
+<a href="https://saylesss88.github.io/Understanding_Top-Level_Attributes_5.html">Understanding Top-Level Attributes</a>
+we will delve deeper into the meaning and purpose of these common top-level
+attributes. We'll explore how they are structured, what kind of expressions they
+typically contain, and how they contribute to the overall functionality and
+organization of your Nix Flakes. Understanding these attributes is key to
+effectively leveraging the full potential of Nix Flakes.</p>
+<h5 id="further-resources"><a class="header" href="#further-resources">Further Resources</a></h5>
+<details>
+<summary> ✔️ Resources (Click to Expand)</summary>
+<ul>
+<li>
+<p><a href="https://serokell.io/blog/practical-nix-flakes">practical-nix-flakes</a></p>
+</li>
+<li>
+<p><a href="https://xeiaso.net/blog/nix-flakes-1-2022-02-21/">Nix Flakes an Introduction</a></p>
+</li>
+<li>
+<p><a href="https://www.tweag.io/blog/2020-07-31-nixos-flakes/">tweag nix-flakes</a></p>
+</li>
+<li>
+<p><a href="https://nixos.wiki/wiki/Flakes">NixOS-wiki Flakes</a></p>
+</li>
+<li>
+<p><a href="https://nix.dev/concepts/flakes.html">nix.dev flakes</a></p>
+</li>
+<li>
+<p><a href="https://vtimofeenko.com/posts/practical-nix-flake-anatomy-a-guided-tour-of-flake.nix/">anatomy-of-a-flake</a></p>
+</li>
+<li>
+<p><a href="https://jade.fyi/blog/flakes-arent-real/">flakes-arent-real</a></p>
+</li>
+<li>
+<p><a href="https://mhwombat.codeberg.page/nix-book/#_attribute_set_operations">wombats-book-of-nix</a></p>
+</li>
+<li>
+<p><a href="https://zero-to-nix.com/concepts/flakes/">zero-to-nix flakes</a></p>
+</li>
+<li>
+<p><a href="https://nixos-and-flakes.thiscute.world/">nixos-and-flakes-book</a></p>
+</li>
+<li>
+<p><a href="https://flakehub.com/">FlakeHub</a></p>
+</li>
+</ul>
+<p><img src="images/nixosnix.png" alt="FlakeHub" /></p>
+</details>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="NixOS_Modules_Explained_3.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="flakes/flake_inputs_4.1.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="NixOS_Modules_Explained_3.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="flakes/flake_inputs_4.1.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

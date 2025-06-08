@@ -1,0 +1,967 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Hack the Helix Flake - nix-book</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <a href="#" class="top-link" id="back-to-top">↑</a>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">nix-book</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="chapter-44"><a class="header" href="#chapter-44">Chapter 4.4</a></h1>
+<details>
+<summary> ✔️ Click to Expand Table of Contents</summary>
+<!-- toc -->
+</details>
+<p><img src="../images/helix.png" alt="Helix Logo" /></p>
+<h1 id="understanding-the-helix-flake-and-modifying-its-behavior"><a class="header" href="#understanding-the-helix-flake-and-modifying-its-behavior">Understanding the Helix Flake and Modifying its Behavior</a></h1>
+<p>As we've seen from previous examples, the helix editor repository includes a few
+<code>.nix</code> files including a <code>flake.nix</code>. Their flake uses a lot of idiomatic Nix
+code and advanced features. First I will break down their <code>flake.nix</code> and
+<code>default.nix</code> to understand why they do certain things. And finally, we will
+change the build to "debug" mode demonstrating how easily you can modify the
+behavior of a package defined within a Nix flake without changing the original
+source code or the upstream flake directly.</p>
+<ol>
+<li>Let's clone the Helix repository:</li>
+</ol>
+<pre><code class="language-bash">git clone https://github.com/helix-editor/helix.git
+cd helix
+</code></pre>
+<ol start="2">
+<li>Enter the Development Shell:</li>
+</ol>
+<p>The Helix project's <code>flake.nix</code> includes a <code>devShells.default</code> output, specifically
+designed for development.</p>
+<pre><code class="language-bash">nix develop
+</code></pre>
+<ol start="3">
+<li>You're now in a fully configured development environment:</li>
+</ol>
+<ul>
+<li>When you run <code>nix develop</code>, Nix builds and drops you into a shell environment
+with all the dependencies specified in <code>devShells.default</code>. This means you
+don’t have to manually install or manage tools like Rust, Cargo, or Clang—it’s
+all handled declaratively through Nix.</li>
+</ul>
+<p>You can now build and run the project using its standard tooling:</p>
+<pre><code class="language-bash">cargo build
+cargo run
+</code></pre>
+<ol start="4">
+<li>Making Changes and Testing Them</li>
+</ol>
+<p>Since you're in a reproducible environment, you can confidently hack on the
+project without worrying about your system setup. Try modifying some code in
+<code>helix</code> and rebuilding with Cargo. The Nix shell ensures consistency for every
+contributor or device you work on.</p>
+<ol start="5">
+<li>Run Just the Binary</li>
+</ol>
+<p>If you only want to run the compiled program without entering the shell, use
+the nix run command:</p>
+<pre><code class="language-bash">nix run
+</code></pre>
+<p>This builds and runs the default package defined by the flake. In the case of
+Helix, this launches the <code>hx</code> editor directly.</p>
+<ol start="6">
+<li>Build Without Running</li>
+</ol>
+<p>To just build the project and get the path to the output binary:</p>
+<pre><code class="language-bash">nix build
+</code></pre>
+<p>You’ll find the compiled binary under <code>./result/bin</code>.</p>
+<ol start="7">
+<li>Pinning and Reproducing</li>
+</ol>
+<p>Because the project uses a flake, you can ensure full reproducibility by
+pinning the inputs. For example, you can clone with --recurse-submodules
+and copy the flake.lock to ensure you're using the same dependency versions
+as upstream. This is great for debugging or sharing exact builds.</p>
+<p>✅ Recap:</p>
+<p>With flakes, projects like Helix provide everything you need for development
+and running in a single flake.nix. You can nix develop to get started hacking,
+nix run to quickly try it out, and nix build to produce binaries—all without
+installing or polluting your system.</p>
+<h2 id="understanding-the-helix-flakenix"><a class="header" href="#understanding-the-helix-flakenix">Understanding the Helix flake.nix</a></h2>
+<p>The helix flake is full of idiomatic Nix code and displays some of the more
+advanced things a flake can provide:</p>
+<pre><code class="language-nix">{
+  description = "A post-modern text editor.";
+
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
+
+  outputs = {
+    self,
+    nixpkgs,
+    rust-overlay,
+    ...
+  }: let
+    inherit (nixpkgs) lib;
+    systems = [
+      "x86_64-linux"
+      "aarch64-linux"
+      "x86_64-darwin"
+      "aarch64-darwin"
+    ];
+    eachSystem = lib.genAttrs systems;
+    pkgsFor = eachSystem (system:
+      import nixpkgs {
+        localSystem.system = system;
+        overlays = [(import rust-overlay) self.overlays.helix];
+      });
+    gitRev = self.rev or self.dirtyRev or null;
+  in {
+    packages = eachSystem (system: {
+      inherit (pkgsFor.${system}) helix;
+      /*
+      The default Helix build. Uses the latest stable Rust toolchain, and unstable
+      nixpkgs.
+
+      The build inputs can be overridden with the following:
+
+      packages.${system}.default.override { rustPlatform = newPlatform; };
+
+      Overriding a derivation attribute can be done as well:
+
+      packages.${system}.default.overrideAttrs { buildType = "debug"; };
+      */
+      default = self.packages.${system}.helix;
+    });
+    checks =
+      lib.mapAttrs (system: pkgs: let
+        # Get Helix's MSRV toolchain to build with by default.
+        msrvToolchain = pkgs.pkgsBuildHost.rust-bin.fromRustupToolchainFile ./rust-toolchain.toml;
+        msrvPlatform = pkgs.makeRustPlatform {
+          cargo = msrvToolchain;
+          rustc = msrvToolchain;
+        };
+      in {
+        helix = self.packages.${system}.helix.override {
+          rustPlatform = msrvPlatform;
+        };
+      })
+      pkgsFor;
+
+    # Devshell behavior is preserved.
+    devShells =
+      lib.mapAttrs (system: pkgs: {
+        default = let
+          commonRustFlagsEnv = "-C link-arg=-fuse-ld=lld -C target-cpu=native --cfg tokio_unstable";
+          platformRustFlagsEnv = lib.optionalString pkgs.stdenv.isLinux "-Clink-arg=-Wl,--no-rosegment";
+        in
+          pkgs.mkShell {
+            inputsFrom = [self.checks.${system}.helix];
+            nativeBuildInputs = with pkgs;
+              [
+                lld
+                cargo-flamegraph
+                rust-bin.nightly.latest.rust-analyzer
+              ]
+              ++ (lib.optional (stdenv.isx86_64 &amp;&amp; stdenv.isLinux) cargo-tarpaulin)
+              ++ (lib.optional stdenv.isLinux lldb)
+              ++ (lib.optional stdenv.isDarwin darwin.apple_sdk.frameworks.CoreFoundation);
+            shellHook = ''
+              export RUST_BACKTRACE="1"
+              export RUSTFLAGS="''${RUSTFLAGS:-""} ${commonRustFlagsEnv} ${platformRustFlagsEnv}"
+            '';
+          };
+      })
+      pkgsFor;
+
+    overlays = {
+      helix = final: prev: {
+        helix = final.callPackage ./default.nix {inherit gitRev;};
+      };
+
+      default = self.overlays.helix;
+    };
+  };
+  nixConfig = {
+    extra-substituters = ["https://helix.cachix.org"];
+    extra-trusted-public-keys = ["helix.cachix.org-1:ejp9KQpR1FBI2onstMQ34yogDm4OgU2ru6lIwPvuCVs="];
+  };
+}
+</code></pre>
+<h2 id="top-level-metadata"><a class="header" href="#top-level-metadata">Top-Level Metadata</a></h2>
+<pre><code class="language-nix">{
+  description = "A post-modern text editor.";
+}
+</code></pre>
+<ul>
+<li>This sets a human-readable description for the flake.</li>
+</ul>
+<h2 id="inputs"><a class="header" href="#inputs">Inputs</a></h2>
+<pre><code class="language-nix">inputs = {
+  nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+  rust-overlay = {
+    url = "github:oxalica/rust-overlay";
+    inputs.nixpkgs.follows = "nixpkgs";
+  };
+};
+</code></pre>
+<ul>
+<li>
+<p><code>nixpkgs</code>: Uses the <code>nixos-unstable</code> branch of the Nixpkgs repository.</p>
+</li>
+<li>
+<p><code>rust-overlay</code>: follows the same <code>nixpkgs</code>, ensuring compatibility between
+inputs.</p>
+</li>
+</ul>
+<h2 id="outputs-function"><a class="header" href="#outputs-function">Outputs Function</a></h2>
+<pre><code class="language-nix">outputs = { self, nixpkgs, rust-overlay, ... }:
+</code></pre>
+<ul>
+<li>This defines what this flake exports, including <code>packages</code>, <code>devShells</code>, etc.</li>
+</ul>
+<h2 id="common-setup"><a class="header" href="#common-setup">Common Setup</a></h2>
+<pre><code class="language-nix">let
+  inherit (nixpkgs) lib;
+  systems = [ ... ];
+  eachSystem = lib.genAttrs systems;
+</code></pre>
+<ul>
+<li>
+<p><code>systems</code>: A list of the supported systems</p>
+</li>
+<li>
+<p><code>eachSystem</code>: A Helper to map over all platforms.</p>
+</li>
+</ul>
+<pre><code class="language-nix">  pkgsFor = eachSystem (system:
+    import nixpkgs {
+      localSystem.system = system;
+      overlays = [(import rust-overlay) self.overlays.helix];
+    });
+</code></pre>
+<ul>
+<li>This imports <code>nixpkgs</code> for each system and applies overlays</li>
+</ul>
+<p>📦 <code>packages</code></p>
+<pre><code class="language-nix">packages = eachSystem (system: {
+  inherit (pkgsFor.${system}) helix;
+  default = self.packages.${system}.helix;
+});
+</code></pre>
+<ul>
+<li>
+<p>For each platform:</p>
+<ul>
+<li>
+<p>Includes a <code>helix</code> package (defined in <code>./default.nix</code>)</p>
+</li>
+<li>
+<p>Sets <code>default</code> to <code>helix</code> (used by <code>nix build</code>, <code>nix run</code>)</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>Let's look at the helix <code>default.nix</code>:</p>
+<pre><code class="language-nix">{
+  lib,
+  rustPlatform,
+  callPackage,
+  runCommand,
+  installShellFiles,
+  git,
+  gitRev ? null,
+  grammarOverlays ? [],
+  includeGrammarIf ? _: true,
+}: let
+  fs = lib.fileset;
+
+  src = fs.difference (fs.gitTracked ./.) (fs.unions [
+    ./.envrc
+    ./rustfmt.toml
+    ./screenshot.png
+    ./book
+    ./docs
+    ./runtime
+    ./flake.lock
+    (fs.fileFilter (file: lib.strings.hasInfix ".git" file.name) ./.)
+    (fs.fileFilter (file: file.hasExt "svg") ./.)
+    (fs.fileFilter (file: file.hasExt "md") ./.)
+    (fs.fileFilter (file: file.hasExt "nix") ./.)
+  ]);
+
+  # Next we actually need to build the grammars and the runtime directory
+  # that they reside in. It is built by calling the derivation in the
+  # grammars.nix file, then taking the runtime directory in the git repo
+  # and hooking symlinks up to it.
+  grammars = callPackage ./grammars.nix {inherit grammarOverlays includeGrammarIf;};
+  runtimeDir = runCommand "helix-runtime" {} ''
+    mkdir -p $out
+    ln -s ${./runtime}/* $out
+    rm -r $out/grammars
+    ln -s ${grammars} $out/grammars
+  '';
+in
+  rustPlatform.buildRustPackage (self: {
+    cargoLock = {
+      lockFile = ./Cargo.lock;
+      # This is not allowed in nixpkgs but is very convenient here: it allows us to
+      # avoid specifying `outputHashes` here for any git dependencies we might take
+      # on temporarily.
+      allowBuiltinFetchGit = true;
+    };
+
+    nativeBuildInputs = [
+      installShellFiles
+      git
+    ];
+
+    buildType = "release";
+
+    name = with builtins; (fromTOML (readFile ./helix-term/Cargo.toml)).package.name;
+    src = fs.toSource {
+      root = ./.;
+      fileset = src;
+    };
+
+    # Helix attempts to reach out to the network and get the grammars. Nix doesn't allow this.
+    HELIX_DISABLE_AUTO_GRAMMAR_BUILD = "1";
+
+    # So Helix knows what rev it is.
+    HELIX_NIX_BUILD_REV = gitRev;
+
+    doCheck = false;
+    strictDeps = true;
+
+    # Sets the Helix runtime dir to the grammars
+    env.HELIX_DEFAULT_RUNTIME = "${runtimeDir}";
+
+    # Get all the application stuff in the output directory.
+    postInstall = ''
+      mkdir -p $out/lib
+      installShellCompletion ${./contrib/completion}/hx.{bash,fish,zsh}
+      mkdir -p $out/share/{applications,icons/hicolor/{256x256,scalable}/apps}
+      cp ${./contrib/Helix.desktop} $out/share/applications/Helix.desktop
+      cp ${./logo.svg} $out/share/icons/hicolor/scalable/apps/helix.svg
+      cp ${./contrib/helix.png} $out/share/icons/hicolor/256x256/apps/helix.png
+    '';
+
+    meta.mainProgram = "hx";
+  })
+</code></pre>
+<h3 id="breaking-down-helixdefaultnix"><a class="header" href="#breaking-down-helixdefaultnix">Breaking Down <code>helix/default.nix</code></a></h3>
+<p>This <code>default.nix</code> file is a Nix derivation that defines how to build the Helix
+editor itself. It's designed to be called by the main <code>flake.nix</code> as part of its
+<code>packages</code> output.</p>
+<p>Here's a breakdown of its components:</p>
+<ol>
+<li><strong>Function Arguments</strong>:</li>
+</ol>
+<pre><code class="language-nix">{
+  lib,
+  rustPlatform,
+  callPackage,
+  runCommand,
+  installShellFiles,
+  git,
+  gitRev ? null,
+  grammarOverlays ? [],
+  includeGrammarIf ? _: true,
+}:
+</code></pre>
+<p><code>lib</code>: The Nixpkgs <code>lib</code> (library) functions, essential for common operations
+like <code>fileset</code> and <code>strings</code>.</p>
+<p><code>rustPlatform</code>: A helper function from Nixpkgs specifically for building Rust
+projects. It provides a <code>buildRustPackage</code> function, which simplifies the
+process significantly.</p>
+<p><code>callPackage</code>: A Nixpkgs function used to instantiate a Nix expression (like
+<code>grammars.nix</code>) with its dependencies automatically supplied from the current
+Nix environment.</p>
+<p><code>runCommand</code>: A Nixpkgs primitive that creates a derivation by running a shell
+command. It's used here to construct the <code>runtimeDir</code>.</p>
+<p><code>installShellFiles</code>: A utility from Nixpkgs for installing shell completion
+files.</p>
+<p><code>git</code>: The Git package, needed for determining the <code>gitRev</code>.</p>
+<p><code>gitRev ? null</code>: The Git revision of the Helix repository. It's an optional
+argument, defaulting to null. This is passed in from the main <code>flake.nix</code>.</p>
+<p><code>grammarOverlays ? []</code>: An optional list of overlays for grammars, allowing
+customization.</p>
+<p><code>includeGrammarIf ? _: true</code>: An optional function to control which grammars
+are included.</p>
+<ol start="2">
+<li><strong>Local Variables</strong> (<code>let ... in</code>)</li>
+</ol>
+<pre><code class="language-nix">let
+  fs = lib.fileset;
+
+  src = fs.difference (fs.gitTracked ./.) (fs.unions [
+    ./.envrc
+    ./rustfmt.toml
+    ./screenshot.png
+    ./book
+    ./docs
+    ./runtime
+    ./flake.lock
+    (fs.fileFilter (file: lib.strings.hasInfix ".git" file.name) ./.)
+    (fs.fileFilter (file: file.hasExt "svg") ./.)
+    (fs.fileFilter (file: file.hasExt "md") ./.)
+    (fs.fileFilter (file: file.hasExt "nix") ./.)
+  ]);
+
+  grammars = callPackage ./grammars.nix { inherit grammarOverlays includeGrammarIf; };
+  runtimeDir = runCommand "helix-runtime" {} ''
+    mkdir -p $out
+    ln -s ${./runtime}/* $out
+    rm -r $out/grammars
+    ln -s ${grammars} $out/grammars
+  '';
+in
+</code></pre>
+<p><code>fs = lib.fileset;</code>: Aliases <code>lib.fileset</code> for convenient file set operations.</p>
+<p><code>src</code>: This is a crucial part. It defines the source files that will be used to
+build Helix by:</p>
+<ul>
+<li>
+<p>Taking all Git-tracked files in the current directory (<code>fs.gitTracked ./.</code>).</p>
+</li>
+<li>
+<p>Excluding configuration files (e.g., .envrc, flake.lock), documentation (.md), images (.svg), and Nix files (.nix) using fs.difference and fs.unions. This ensures a clean build input, reducing Nix store size and avoiding unnecessary rebuilds.</p>
+</li>
+<li>
+<p><code>grammars</code>: Builds syntax grammars by calling <code>grammars.nix</code>, passing <code>grammarOverlays</code>
+(for customizing grammar builds) and <code>includeGrammarIf</code> (a filter for selecting grammars).</p>
+</li>
+<li>
+<p><code>runtimeDir</code>: Creates a runtime directory for Helix by:</p>
+<ul>
+<li>
+<p>Symlinking the <code>runtime</code> directory from the source.</p>
+</li>
+<li>
+<p>Replacing the <code>grammars</code> subdirectory with a symlink to the <code>grammars</code>
+derivation, ensuring Helix uses Nix-managed grammars.</p>
+</li>
+</ul>
+</li>
+</ul>
+<ol start="3">
+<li><strong>The Build Derivation</strong> (<code>rustPlatform.buildRustPackage</code>)</li>
+</ol>
+<p>The core of this <code>default.nix</code> is the <code>rustPlatform.buildRustPackage</code> call, which
+is a specialized builder for Rust projects:</p>
+<pre><code class="language-nix">in
+  rustPlatform.buildRustPackage (self: {
+    cargoLock = {
+      lockFile = ./Cargo.lock;
+      # ... comments ...
+      allowBuiltinFetchGit = true;
+    };
+</code></pre>
+<p><code>cargoLock</code>: Specifies how Cargo dependencies are handled.</p>
+<p><code>lockFile = ./Cargo.lock;</code> Points to the <code>Cargo.lock</code> file for reproducible builds.</p>
+<p><code>allowBuiltinFetchGit = true</code>: Allows Cargo to fetch Git dependencies directly
+from repositories specified in <code>Cargo.lock</code>. This is discouraged in Nixpkgs
+because it can break build reproducibility, but it’s used here for convenience
+during development, eliminating the need to manually specify <code>outputHashes</code> for
+Git dependencies.</p>
+<pre><code class="language-nix">nativeBuildInputs = [
+      installShellFiles
+      git
+    ];
+</code></pre>
+<p><code>nativeBuildInputs</code>: Are tools needed during the build process but not necessarily
+at runtime.</p>
+<pre><code class="language-nix">buildType = "release";
+</code></pre>
+<p><code>buildType</code>: Specifies that Helix should be built in "release" mode (optimized).</p>
+<pre><code class="language-nix">name = with builtins; (fromTOML (readFile ./helix-term/Cargo.toml)).package.name;
+    src = fs.toSource {
+      root = ./.;
+      fileset = src;
+    };
+</code></pre>
+<p><code>name</code>: Dynamically sets the package name by reading it from the <code>Cargo.toml</code> file.</p>
+<p><code>src</code>: Uses the <code>src</code> file set defined earlier as the source for the build.</p>
+<pre><code class="language-nix"># Helix attempts to reach out to the network and get the grammars. Nix doesn't allow this.
+    HELIX_DISABLE_AUTO_GRAMMAR_BUILD = "1";
+
+    # So Helix knows what rev it is.
+    HELIX_NIX_BUILD_REV = gitRev;
+</code></pre>
+<p><strong>Environment Variables</strong>: Sets environment variables that Helix uses.</p>
+<p><code>HELIX_DISABLE_AUTO_GRAMMAR_BUILD = "1"</code>: Prevents Helix from downloading
+grammars during the build, as Nix’s sandboxed environment disallows network
+access. Instead, grammars are provided via the <code>runtimeDir</code> derivation.</p>
+<p><code>HELIX_NIX_BUILD_REV = gitRev</code>: Embeds the specified Git revision (or <code>null</code> if
+unspecified) into the Helix binary, allowing Helix to display its version or
+commit hash.</p>
+<pre><code class="language-nix"> doCheck = false;
+    strictDeps = true;
+</code></pre>
+<p><code>doCheck = false;</code>: Skips running tests during the build. This is common for
+faster builds, especially in CI/CD, but tests are often run in a separate
+<code>checks</code> output (as seen in the <code>flake.nix</code>).</p>
+<p><code>strictDeps = true;</code>: Ensures that all dependencies are explicitly declared.</p>
+<pre><code class="language-nix">    # Sets the Helix runtime dir to the grammars
+    env.HELIX_DEFAULT_RUNTIME = "${runtimeDir}";
+</code></pre>
+<pre><code class="language-nix">    # Sets the Helix runtime dir to the grammars
+    env.HELIX_DEFAULT_RUNTIME = "${runtimeDir}";
+</code></pre>
+<p><code>env.HELIX_DEFAULT_RUNTIME</code>: Tells Helix where to find its runtime files
+(including the Nix-managed grammars).</p>
+<pre><code class="language-nix">
+    # Get all the application stuff in the output directory.
+    postInstall = ''
+      mkdir -p $out/lib
+      installShellCompletion ${./contrib/completion}/hx.{bash,fish,zsh}
+      mkdir -p $out/share/{applications,icons/hicolor/{256x256,scalable}/apps}
+      cp ${./contrib/Helix.desktop} $out/share/applications/Helix.desktop
+      cp ${./logo.svg} $out/share/icons/hicolor/scalable/apps/helix.svg
+      cp ${./contrib/helix.png} $out/share/icons/hicolor/256x256/apps/helix.png
+    '';
+</code></pre>
+<p><code>postInstall</code>: A shell script that runs after the main build is complete. This
+is used for installing additional files that are part of the Helix distribution
+but not directly built by Cargo.</p>
+<p>Installs shell completion files (<code>hx.bash</code>, <code>hx.fish</code>, <code>hx.zsh</code>). This enables
+tab completion.</p>
+<p>Installs desktop entry files (<code>Helix.desktop</code>) and icons (<code>logo.svg</code>, <code>helix.png</code>)
+for desktop integration for GUI environments.</p>
+<pre><code class="language-nix">
+    meta.mainProgram = "hx";
+
+})
+</code></pre>
+<p><code>meta.mainProgram</code>: Specifies the primary executable provided by this package,
+allowing <code>nix run</code> to automatically execute <code>hx</code>.</p>
+<p>A lot going on in this derivation!</p>
+<h3 id="making-actual-changes"><a class="header" href="#making-actual-changes">Making Actual Changes</a></h3>
+<ol>
+<li>Locate the <code>packages</code> output section. It looks like this:</li>
+</ol>
+<pre><code class="language-nix">packages = eachSystem (system: {
+      inherit (pkgsFor.${system}) helix;
+      /*
+      The default Helix build. Uses the latest stable Rust toolchain, and unstable
+      nixpkgs.
+
+      The build inputs can be overridden with the following:
+
+      packages.${system}.default.override { rustPlatform = newPlatform; };
+
+      Overriding a derivation attribute can be done as well:
+
+      packages.${system}.default.overrideAttrs { buildType = "debug"; };
+      */
+      default = self.packages.${system}.helix;
+    });
+</code></pre>
+<ol start="2">
+<li>Modify the <code>default</code> package. The comments actually tell us exactly how to
+do this. We want to use <code>overrideAttrs</code> to change the <code>buildType</code></li>
+</ol>
+<p>Change this line:</p>
+<pre><code class="language-nix">default = self.packages.${system}.helix;
+</code></pre>
+<p>To this:</p>
+<pre><code class="language-nix">default = self.packages.${system}.helix.overrideAttrs { buildType = "debug"; };
+</code></pre>
+<ul>
+<li>This tells Nix to take the standard Helix package definition and override one
+of its internal attributes (<code>buildType</code>) to "debug" instead of "release".</li>
+</ul>
+<ol start="3">
+<li>Build the "Hacked" Helix:</li>
+</ol>
+<pre><code class="language-bash">nix build
+</code></pre>
+<ul>
+<li>Nix will now rebuild Helix, but this time, it will compile it in debug mode.
+You'll likely notice the build takes a bit longer, and the resulting binary
+will be larger due to the included debugging symbols.</li>
+</ul>
+<ol start="4">
+<li>Run the Debug Binary:</li>
+</ol>
+<pre><code class="language-bash">./result/bin/hx
+</code></pre>
+<ul>
+<li>You're now running your custom-built debug version of Helix! This is useful
+if you were, for example, attatching a debugger.</li>
+</ul>
+<p>This is a simple yet powerful "hack" that demonstrates how easily you can modify
+the behavior of a package defined within a Nix flake without changing the
+original source code or the upstream flake directly. You're simply telling Nix
+how you'd like your version of the package to be built.</p>
+<h3 id="another-way-to-modify-behavior"><a class="header" href="#another-way-to-modify-behavior">Another way to Modify Behavior</a></h3>
+<p>Since we are already familiar with the structure and behavior of Helix’s
+<code>flake.nix</code>, we can leverage that understanding to create our own Nix flake.
+By analyzing how Helix organizes its <code>inputs</code>, <code>outputs</code>, and package definitions,
+we gain the confidence to modify and extend a flake’s functionality to suit our
+specific needs—whether that’s customizing builds, adding overlays, or
+integrating with home-manager.</p>
+<ol>
+<li>Create a <code>flake.nix</code> in your own directory (outside the helix repo):</li>
+</ol>
+<pre><code class="language-nix">{
+  description = "Customized Helix build with debug features";
+
+  inputs = {
+    helix.url = "github:helix-editor/helix";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
+  outputs = {
+    self,
+    helix,
+    nixpkgs,
+    rust-overlay,
+  }: let
+    system = "x86_64-linux";
+    pkgs = import nixpkgs {
+      system = system;
+      overlays = [rust-overlay.overlay.overlays.default];
+    };
+  in {
+    packages.${system}.default = helix.packages.${system}.helix.overrideAttrs (old: {
+      buildType = "debug";
+
+      # Add additional cargo features
+      cargoBuildFlags =
+        (old.cargoBuildFlags or [])
+        ++ [
+          "--features"
+          "tokio-console"
+        ];
+
+      # Inject custom RUSTFLAGS
+      RUSTFLAGS = (old.RUSTFLAGS or "") + " -C debuginfo=2 -C opt-level=1";
+    });
+  };
+}
+</code></pre>
+<p>Check it:</p>
+<pre><code class="language-bash">nix flake check
+warning: creating lock file '"/home/jr/world/flake.lock"':
+• Added input 'helix':
+    'github:helix-editor/helix/8961ae1dc66633ea6c9f761896cb0d885ae078ed?narHash=sha256-f14perPUk%2BH15GyGRbg0Akqhn3rxFnc6Ez5onqpzu6A%3D' (2025-05-29)
+• Added input 'helix/nixpkgs':
+    'github:nixos/nixpkgs/5135c59491985879812717f4c9fea69604e7f26f?narHash=sha256-Vr3Qi346M%2B8CjedtbyUevIGDZW8LcA1fTG0ugPY/Hic%3D' (2025-02-26)
+• Added input 'helix/rust-overlay':
+    'github:oxalica/rust-overlay/d342e8b5fd88421ff982f383c853f0fc78a847ab?narHash=sha256-3SdPQrZoa4odlScFDUHd4CUPQ/R1gtH4Mq9u8CBiK8M%3D' (2025-02-27)
+• Added input 'helix/rust-overlay/nixpkgs':
+    follows 'helix/nixpkgs'
+• Added input 'nixpkgs':
+    'github:nixos/nixpkgs/96ec055edbe5ee227f28cdbc3f1ddf1df5965102?narHash=sha256-7doLyJBzCllvqX4gszYtmZUToxKvMUrg45EUWaUYmBg%3D' (2025-05-28)
+• Added input 'rust-overlay':
+    'github:oxalica/rust-overlay/405ef13a5b80a0a4d4fc87c83554423d80e5f929?narHash=sha256-k0nhPtkVDQkVJckRw6fGIeeDBktJf1BH0i8T48o7zkk%3D' (2025-05-30)
+• Added input 'rust-overlay/nixpkgs':
+    follows 'nixpkgs'
+</code></pre>
+<ul>
+<li>The <code>nix flake check</code> command will generate a <code>flake.lock</code> file if one doesn't
+exist, and the warnings you see indicate that new inputs are being added and
+locked to specific versions for reproducibility. This is expected behavior for
+a new or modified flake.</li>
+</ul>
+<p>Inspect the outputs:</p>
+<pre><code class="language-bash">nix flake show
+path:/home/jr/world?lastModified=1748612128&amp;narHash=sha256-WEYtptarRrrm0Jb/0PJ/b5VPqLkCk5iEenjbKYU4Xm8%3D
+└───packages
+    └───x86_64-linux
+        └───default: package 'helix-term'
+</code></pre>
+<ul>
+<li>
+<p>The <code>└───packages</code> line indicates that our flake exposes a top-level <code>packages</code>
+attribute.</p>
+</li>
+<li>
+<p><code>└───x86_64-linux</code>: System architecture specificity</p>
+</li>
+<li>
+<p><code>└───default: package 'helix-term'</code> Signifies that within the <code>x86_64-linux</code>
+packages, there's a package named <code>default</code>. This is a special name that allows
+you to omit the package name when using commands like <code>nix build</code>.</p>
+</li>
+<li>
+<p><code>package 'helix-term'</code> This is the most direct confirmation of our "hack". It
+tells us that our <code>default</code> package is <code>helix-term</code>. This confirms that our
+<code>overrideAttrs</code> in the <code>packages.${system}.default</code> section successfully
+targeted and modified the Helix editor package, which is internally named
+<code>helix-term</code> by the Helix flake.</p>
+</li>
+</ul>
+<p><strong>What This Does</strong>:</p>
+<ul>
+<li>
+<p><code>overrideAttrs</code> lets you change <em>only</em> parts of the derivation without
+rewriting everything.</p>
+</li>
+<li>
+<p><code>buildType = "debug"</code> enables debug builds.</p>
+</li>
+<li>
+<p><code>cargoBuildFlags</code> adds extra features passed to Cargo, e.g., <code>--features tokio-console</code></p>
+</li>
+<li>
+<p><code>RUSTFLAGS</code> gives you even more control over compiler behavior, optimization
+levels, etc.</p>
+</li>
+</ul>
+<p><strong>Run It</strong>:</p>
+<pre><code class="language-bash">nix run
+</code></pre>
+<p>Or drop into the dev shell:</p>
+<pre><code class="language-bash">nix develop
+</code></pre>
+<ul>
+<li>(assuming you also wire in a <code>devShells</code> output)</li>
+</ul>
+<p><strong>Adding the <code>devShells</code> output</strong>:</p>
+<p>Since we already have the helix flake as an input to our own <code>flake.nix</code> we can
+now forward or extend Helix's <code>devShells</code> like this:</p>
+<pre><code class="language-nix">  outputs = { self, nixpkgs, helix, rust-overlay, ... }: {
+    devShells = helix.devShells;
+  };
+</code></pre>
+<p>Or if you want to pick a specific system:</p>
+<pre><code class="language-nix">  outputs = { self, nixpkgs, helix, rust-overlay ... }:
+    let
+      system = "x86_64-linux";
+    in {
+      devShells.${system} = helix.devShells.${system};
+    };
+</code></pre>
+<p><strong>Optional: Combine with your own</strong> <code>devShell</code></p>
+<p>You can also extend or merge it with your own shell like so:</p>
+<pre><code class="language-nix">  outputs = { self, nixpkgs, helix, rust-overlay, ... }:
+    let
+      system = "x86_64-linux";
+      pkgs = import nixpkgs { inherit system; };
+    in {
+      devShells.${system} = {
+        default = pkgs.mkShell {
+          name = "my-shell";
+          inputsFrom = [ helix.devShells.${system}.default ];
+          buildInputs = [ pkgs.git ];
+        };
+      };
+    };
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../flakes/flake_examples_4.3.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../flakes/overlays_4.5.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../flakes/flake_examples_4.3.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../flakes/overlays_4.5.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

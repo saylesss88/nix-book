@@ -1,0 +1,824 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Nix Language - nix-book</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <a href="#" class="top-link" id="back-to-top">↑</a>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">nix-book</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="nix-language"><a class="header" href="#nix-language">Nix Language</a></h1>
+<details>
+<summary> ✔️ Click to Expand Table of Contents</summary>
+<!-- toc -->
+</details>
+<p><img src="../images/lambda1.png" alt="lambda1" /></p>
+<h2 id="nix-expression-language-syntax-overview"><a class="header" href="#nix-expression-language-syntax-overview">Nix Expression Language Syntax Overview</a></h2>
+<p>The Nix language is designed for conveniently creating and composing <em>derivations</em>
+precise descriptions of how contents of files are used to derive new files. --<a href="https://nix.dev/manual/nix/2.28/language/">Nix Reference Manual</a></p>
+<p>Nix is often described as “JSON with functions.” It’s a declarative language
+where you define outcomes, not step-by-step instructions. Instead of writing
+sequential code, you create expressions that describe data structures,
+functions, and dependencies. These expressions are evaluated lazily, meaning Nix
+computes values only when needed, making it efficient for managing large
+systems.</p>
+<p>You can plug most of the following into the <code>nix repl</code> I'm showing it in a single
+code block here for brevity:</p>
+<pre><code class="language-nix"># Comments Look Like This!
+
+# Strings
+"This is a string"          # String literal
+
+''
+one
+two                        # multi-line String
+three
+''
+
+("foo" + "bar")           # =&gt; "foobar"
+
+"foo" != "bar"   # Inequality test  # =&gt; true
+
+!false      # =&gt; true
+
+("Home dir is ${builtins.getEnv "HOME"}")  # String Interpolation
+# =&gt; "Home dir is /home/jr"
+
+"3 6 ${builtins.toString 9}"
+# =&gt; "3 6 9"
+
+"goodbye ${ { d = "world";}.d}"
+# =&gt; "goodbye world"
+
+# Booleans
+
+(false &amp;&amp; true)    # AND         # =&gt; false
+
+(true || false)    # OR         # =&gt; true
+
+(if 6 &lt; 9 then "yay" else "nay")  # =&gt; "yay"
+
+null      # Null Value
+
+679       # Integer
+
+(6 + 7 + 9) # =&gt; 22   # Addition
+
+(9 - 3  - 2) # =&gt; 4   # Subtraction
+
+(6 / 3)  # =&gt; 2       # Division
+6.79      # Floating Point
+
+/etc/nixos      # Absolute Path
+
+../modules/nixos/boot.nix    # relative
+
+# Let expressions
+
+(let a = "2"; in                   # Let expressions are a way to create variables
+a + a + builtins.toString "4")
+# =&gt; "224"
+
+(let first = "firstname"; in
+"lastname " first)
+# =&gt; "lastname firstname"
+
+# Lists
+
+[ 1 2 "three" "bar" "baz" ]   # lists are whitespace separated
+
+builtins.elemAt [ 1 2 3 4 5 ] 3
+# =&gt; 4
+
+builtins.length [ 1 2 3 4 ]
+# =&gt; 4
+
+# Attrsets
+
+{ first = "Jim"; last = "Bo"; }.last # Attribute selection
+# =&gt; "Bo"
+
+{ a = 1; b = 3; } // { c = 4; b = 2; }   # Attribute Set merging
+# =&gt; { a = 1; b = 2; c = 4; }               # Right Side takes precedence
+
+builtins.listToAttrs [ { name = "Jr"; value = "Jr Juniorville"; } {name = "$"; value = "JR"; } { name = "jr"; value = "jr
+ville"; }]
+# =&gt; { "$" = "JR"; Jr = "Jr Juniorville"; jr = "jrville"; }
+
+# Control Flow
+
+if 2 * 2 == 4
+then "yes!"
+else "no!"
+# =&gt; "yes!"
+
+assert 2 * 2
+== 4; "yes!"
+# =&gt; "yes!"
+
+with builtins;
+head [ 5 6 7 ]
+# =&gt; 5
+
+# or
+
+builtins.head[ 5 6 7 ]
+
+inherit pkgs     # pkgs = pkgs;
+src;             # src = src;
+</code></pre>
+<h3 id="understanding-laziness"><a class="header" href="#understanding-laziness">Understanding Laziness</a></h3>
+<p>Nix expressions are evaluated lazily, meaning Nix computes values only when
+needed. This is a powerful feature that makes Nix efficient for managing large
+systems, as it avoids unnecessary computations.</p>
+<p>For example, observe how <code>a</code> is never evaluated in the following <code>nix-repl</code>
+session:</p>
+<pre><code class="language-nix">nix-repl&gt; let a = builtins.div 4 0; b = 6; in b
+6
+</code></pre>
+<ul>
+<li>Since <code>a</code> isn't used in the final result, there's no division by zero error.</li>
+</ul>
+<h3 id="strings-and-string-interpolation"><a class="header" href="#strings-and-string-interpolation">Strings and String Interpolation</a></h3>
+<p><strong>Strings</strong>: Strings are enclosed in double quotes (<code>"</code>) or two single quotes
+(<code>''</code>).</p>
+<pre><code class="language-nix">nix-repl&gt; "stringDaddy"
+"stringDaddy"
+nix-repl&gt; ''
+  This is a
+  multi-line
+  string
+''
+"This is a\nmulti-line\nstring.\n"
+</code></pre>
+<p><a href="https://nix.dev/manual/nix/2.24/language/string-interpolation">string interpolation</a>.
+is a language feature where a string, path, or attribute name can contain an
+expressions enclosed in <code>${ }</code>. This construct is called an <em>interpolated string</em>,
+and the expression inside is an <em>interpolated expression</em>.</p>
+<p>Rather than writing:</p>
+<pre><code class="language-nix">let path = "/usr/local"; in "--prefix=${path}"
+</code></pre>
+<p>This evaluates to <code>"--prefix=/usr/local"</code>. Interpolated expressions must
+evaluate to a string, path, or an attribute set with an <code>outPath</code> or
+<code>__toString</code> attribute.</p>
+<h3 id="attribute-sets"><a class="header" href="#attribute-sets">Attribute Sets</a></h3>
+<p><strong>Attribute sets</strong> are all over Nix code and deserve their own section, they
+are name-value pairs wrapped in curly braces, where the names must be unique:</p>
+<pre><code class="language-nix">{
+  string = "hello";
+  int = 8;
+}
+</code></pre>
+<p>Attribute names usually don't need quotes.</p>
+<p>You can access attributes using <em>dot notation</em>:</p>
+<pre><code class="language-nix">let person = { name = "Alice"; age = 30; }; in person.name
+"Alice"
+</code></pre>
+<p>You will sometimes see attribute sets with <code>rec</code> prepended. This allows access
+to attributes within the set:</p>
+<pre><code class="language-nix">rec {
+  x = y;
+  y = 123;
+}.x
+</code></pre>
+<p><strong>Output</strong>: <code>123</code></p>
+<p>or</p>
+<pre><code class="language-nix">rec {
+  one = 1;
+  two = one + 1;
+  three = two + 1;
+}
+</code></pre>
+<p><strong>Output</strong>:</p>
+<pre><code class="language-nix"> {
+  one = 1;
+  three = 3;
+  two = 2;
+ }
+</code></pre>
+<pre><code class="language-nix"># This would fail:
+{
+  one = 1;
+  two = one + 1;  # Error: undefined variable 'one'
+  three = two + 1;
+}
+</code></pre>
+<p>Recursive sets introduce the danger of <em>infinite recursion</em> For example:</p>
+<pre><code class="language-nix">rec {
+  x = y;
+  y = x;
+}.x
+</code></pre>
+<p>Will crash with an <code>infinite recursion encountered</code> error message.</p>
+<p>The <a href="https://nix.dev/manual/nix/2.24/language/operators.html#update">attribute set update operator</a>
+merges two attribute sets.</p>
+<p><strong>Example</strong>:</p>
+<pre><code class="language-nix">{ a = 1; b = 2; } // { b = 3; c = 4; }
+</code></pre>
+<p><strong>Output</strong>:</p>
+<pre><code class="language-nix">{ a = 1; b = 3; c = 4; }
+</code></pre>
+<p>However, names on the right take precedence, and updates are shallow.</p>
+<p><strong>Example</strong>:</p>
+<pre><code class="language-nix">{ a = { b = 1; }; } // { a = { c = 3; }; }
+</code></pre>
+<p><strong>Output</strong>:</p>
+<pre><code class="language-nix">{ a = { c = 3; }; }
+</code></pre>
+<p>Above, key <code>b</code> was completely removed, because the whole <code>a</code> value was
+replaced.</p>
+<p><strong>Inheriting Attributes</strong></p>
+<ul>
+<li>Click to see Output:</li>
+</ul>
+<pre><code class="language-nix">let x = 123; in
+{
+  inherit x;
+  y = 456;
+}
+</code></pre>
+<p>is equivalent to</p>
+<pre><code class="language-nix">let x = 123; in
+{
+  x = x;
+  y = 456;
+}
+</code></pre>
+<p>which are both equivalent to</p>
+<pre><code class="language-nix">{
+  x = 123;
+  y = 456;
+}
+</code></pre>
+<blockquote>
+<p>❗: This works because <code>x</code> is added to the lexical scope by the <code>let</code>
+construct.</p>
+</blockquote>
+<p>Now that we understand attribute sets lets move on to functions, a powerful
+feature of the Nix language that gives you the ability to reuse and share
+logical pieces of code.</p>
+<h3 id="functionslambdas"><a class="header" href="#functionslambdas">Functions(lambdas):</a></h3>
+<p>Functions in Nix help you build reusable components and are the the building
+blocks of Nix. In the next chapter we'll go even further into Nix functions
+and how to use them but I will touch on them here.</p>
+<p>Nix functions have this form:</p>
+<pre><code class="language-nix">pattern: body
+</code></pre>
+<p>The following is a function that expects an integer and returns it increased by
+1:</p>
+<pre><code class="language-nix">x: x + 1   # lambda function, not bound to a variable
+</code></pre>
+<p>The pattern tells us what the argument of the function has to look like, and
+binds variables in the body to (parts of) the argument.</p>
+<pre><code class="language-nix">(x: x + 5) 200
+205
+</code></pre>
+<p>They are all lambdas (i.e. anonymous functions without names) until we assign
+them to a variable like the following example.</p>
+<p>Functions are defined using this syntax, where <code>x</code> and <code>y</code> are attributes passed
+into the function:</p>
+<pre><code class="language-nix">{
+  my_function = x: y: x + y;
+}
+</code></pre>
+<p>The code below calls a function called <code>my_function</code> with the parameters <code>2</code> and
+<code>3</code>, and assigns its output to the <code>my_value</code> field:</p>
+<pre><code class="language-nix">{
+  my_value = my_function 2 3;
+}
+my_value
+5
+</code></pre>
+<p>The body of the function automatically returns the result of the function.
+Functions are called by spaces between it and its parameters. No commas are
+needed to separate parameters.</p>
+<p>The following is a function that expects an attribute set with required
+attributes <code>a</code> and <code>b</code> and concatenates them:</p>
+<pre><code class="language-nix">{ a, b }: a + b
+</code></pre>
+<p><strong>Default Values in Functions</strong>:</p>
+<p>Functions in Nix can define <strong>default values</strong> for their arguments. This allows
+for more flexible function calls where some arguments are optional.</p>
+<pre><code class="language-nix">{ x, y ? "foo", z ? "bar" }: z + y + x
+</code></pre>
+<ul>
+<li>Specifies a function that only requires an attribute named <code>x</code>, but optionally
+accepts <code>y</code> and <code>z</code>.</li>
+</ul>
+<p><strong>@-patterns in functions</strong>:</p>
+<p>An <code>@-pattern</code> provides a means of referring to the whole value being matched
+by the function's argument pattern, in addition to destructuring it. This is
+especially useful when you want to access attributes that are not explicitly
+destructured in the pattern:</p>
+<pre><code class="language-nix">args@{ x, y, z, ... }: z + y + x + args.a
+# or
+{ x, y, z, ... } @ args: z + y + x + args.a
+</code></pre>
+<ul>
+<li>
+<p>Here, <code>args</code> is bound to the argument as <em>passed</em>, which is further matched
+against the pattern <code>{ x, y, z, ... }</code>. The <code>@-pattern</code> makes mainly sense
+with an ellipsis(<code>...</code>) as you can access attribute names as <code>a</code>, using
+<code>args.a</code>, which was given as an additional attribute to the function.</p>
+</li>
+<li>
+<p>We will expand on Functions in <a href="https://saylesss88.github.io/Understanding_Nix_Functions_2.html">This Chapter</a></p>
+</li>
+</ul>
+<h3 id="if-let-and-with-expressions"><a class="header" href="#if-let-and-with-expressions">If, Let, and With Expressions</a></h3>
+<p>Nix is a pure expression language, meaning every construct evaluates to a
+value — there are no statements. Because of this, <strong>if expressions</strong> in Nix work
+differently than in imperative languages, where conditional logic often relies
+on statements (<code>if</code>, <code>elsif</code>, etc.).</p>
+<p><strong>If expressions in Nix</strong>:</p>
+<p>Since everything in Nix is an expression, an <code>if</code> expression must always
+produce a value:</p>
+<pre><code class="language-nix">nix-repl&gt; a = 6
+nix-repl&gt; b = 10
+nix-repl&gt; if a &gt; b then "yes" else "no"
+"no"
+</code></pre>
+<p>Here, <code>"no"</code> is the result because <code>a</code>(6) is not greater than <code>b</code>(10). Notice
+that there's no separate conditional statement -- the entire construct evaluates
+to a value.</p>
+<p>Another example, integrating built-in functions:</p>
+<pre><code class="language-nix">{
+  key = if builtins.pathExists ./path then "YES" else "NO!";
+}
+</code></pre>
+<p>If <code>./path</code> exists it will evaluate to the value <code>"YES"</code> or else it will
+evaluate to <code>"NO!"</code>.</p>
+<p>Thus, the final result of the expression would be:</p>
+<pre><code class="language-nix">{ key = "YES"; }
+# or
+{ key = "NO!"; }
+</code></pre>
+<p>Since Nix does not have statements, Nix's <code>if</code> statements behave more like
+<a href="https://en.wikipedia.org/wiki/Ternary_conditional_operator">ternary operators</a>
+(<code>condition ? value_if_true : value_if_false</code>) in other languages.</p>
+<p><strong>Let expressions</strong>:</p>
+<p>Let expressions in Nix is primarily a mechanism for local variable binding
+and scoping. It allows you to define named values that are only accessible
+within the <code>in</code> block of the <code>let</code> expression. This is useful for keeping
+code clean and avoiding repitition.</p>
+<p>For example:</p>
+<pre><code class="language-nix">let
+  a = "foo";
+  b = "fighter";
+in a + b
+"foofighter"
+</code></pre>
+<p>Here, <code>a</code> and <code>b</code> are defined inside the <code>let</code> block, and their values are
+used in the <code>in</code> expression. Since everything in Nix is an expression, <code>a + b</code>
+evaluates to <code>"foofighter"</code></p>
+<p><strong>Using Let Expressions Inside Attribute Sets</strong></p>
+<p>Let expressions are commonly used when defining attribute sets
+(Click for output):</p>
+<pre><code class="language-nix">let
+  appName = "nix-app";
+  version = "1.0";
+in {
+  name = appName;
+  fullName = appName + "-" + version;
+}
+<span class="boring">{
+</span><span class="boring">  name = "nix-app";
+</span><span class="boring">  fullName = "nix-app-1.0";
+</span><span class="boring">}
+</span></code></pre>
+<p>This allows you to reuse values within an attribute set, making the code more
+modular and preventing duplication.</p>
+<p><strong>Let Expressions in Function Arguments</strong></p>
+<p>You can also use let expressions within function arguments to define
+intermediate values before returning an output:</p>
+<pre><code class="language-nix">{ pkgs, lib }:
+let
+  someVar = "hello";
+  otherVar = "world";
+in
+{ inherit pkgs lib someVar otherVar; }
+</code></pre>
+<p>Result:</p>
+<pre><code class="language-nix">{
+  pkgs = &lt;value&gt;;
+  lib = &lt;value&gt;;
+  someVar = "hello";
+  otherVar = "world";
+}
+</code></pre>
+<p>Here, <code>inherit</code> brings <code>pkgs</code> and <code>lib</code> into the resulting attribute set, alongside
+the locally defined variables <code>someVar</code> and <code>otherVar</code>.</p>
+<p><strong>Key Takeaways</strong>:</p>
+<ul>
+<li>
+<p>Let expressions allow local variable bindings that are only visible inside the
+in block. They also help avoid repitition and improve readability.</p>
+</li>
+<li>
+<p>Commonly used inside attribute sets or function arguments.</p>
+</li>
+<li>
+<p>Their scope is limited to the expression in which they are declared.</p>
+</li>
+</ul>
+<p><strong>With expressions</strong>:</p>
+<p>A <code>with</code> expression in Nix is primarily used to simplify access to attributes
+within an attribute set. Instead of repeatedly referring to a long attribute
+path, with temporarily brings the attributes into scope, allowing direct
+access without prefixing them.</p>
+<p><strong>Basic Example: Reducing Attribute Path Usage</strong></p>
+<p>Consider the following expressions:</p>
+<pre><code class="language-nix">nix-repl&gt; longName = { a = 3; b = 4; }
+nix-repl&gt; longName.a + longName.b
+7
+</code></pre>
+<p>Here, we must explicitly reference <code>longName.a</code> and <code>longName.b</code>. Using a
+<code>with</code> expression simplifies this:</p>
+<pre><code class="language-nix">nix-repl&gt; with longName; a + b
+7
+</code></pre>
+<p>Now, within the scope of the with expression, <code>a</code> and <code>b</code> are accessible without
+prefixing them with <code>longName</code>.</p>
+<p><strong>Practical Use Case: Working with <code>pkgs</code></strong></p>
+<p>One of the most common uses of <code>with</code> that you'll see is when dealing with
+packages from <code>nixpkgs</code> is writing the following:</p>
+<pre><code class="language-nix">{ pkgs }:
+with pkgs; {
+  myPackages = [ vim git neofetch ];
+}
+</code></pre>
+<p>Instead of writing this:</p>
+<pre><code class="language-nix">{ pkgs }:
+{
+  myPackages = [ pkgs.vim pkgs.git pkgs.neofetch ];
+}
+</code></pre>
+<blockquote>
+<p>Tip: Overusing <code>with lib;</code> or <code>with pkgs;</code> can reduce clarity, it may be
+fine for smaller modules where the scope is limited. For larger configurations,
+explicit references (<code>pkgs.something</code>) often make dependencies clearer and prevent
+ambiguity.</p>
+</blockquote>
+<h3 id="nix-language-quirks"><a class="header" href="#nix-language-quirks">Nix Language Quirks</a></h3>
+<ol>
+<li><code>with</code> gets less priority than <code>let</code>. This can be confusing, especially if you
+like to write <code>with pkgs;</code>:</li>
+</ol>
+<pre><code class="language-nix">nix-repl&gt; pkgs = { x = 2; }
+
+nix-repl&gt; with pkgs; x
+2
+
+nix-repl&gt; with pkgs; let x = 4; in x
+4
+</code></pre>
+<p>This shows us that the <code>let</code> binding overrides the <code>with</code> binding.</p>
+<pre><code class="language-nix">let x = 4; in with pkgs; x
+4
+</code></pre>
+<p>Still returns <code>4</code>, but the reasoning is different. The <code>with</code> expression doesn't
+define new bindings; it simply makes attributes from <code>pkgs</code> available as
+unqualified names. However, because <code>let x = 4</code> is <strong>outside</strong> the <code>with</code>, it
+already extablished <code>x = 4</code>, so when <code>with pkgs; x</code> is evaluated inside, <code>x</code>
+still refers to the <strong>outer</strong> <code>let</code> binding, not the one from <code>pkgs</code>.</p>
+<ol start="2">
+<li>Default values aren't bound in <code>@-patterns</code></li>
+</ol>
+<p>In the following example, calling a function that binds a default value <code>"baz"</code>
+to the argument's attribute <code>b</code> with an empty attribute set as argument
+will produce an empty attribute set <code>inputs</code> rather than the desired
+<code>{ b = "baz"; }</code>:</p>
+<pre><code class="language-nix">(inputs@(b ? "baz"): inputs) {}
+</code></pre>
+<p>Output:</p>
+<pre><code class="language-nix">{}
+</code></pre>
+<ol start="3">
+<li>Destructuring function arguments:</li>
+</ol>
+<pre><code class="language-nix">nix-repl&gt; f = { x ? 2, y ? 4 }: x + y
+
+nix-repl&gt; f { }
+6
+</code></pre>
+<p>The function <code>f</code> takes an attribute set with default values (<code>x = 2</code>, <code>y = 4</code>)</p>
+<p>When called with <code>{}</code> (an empty set), it falls back to the default values
+(<code>2 + 4</code> -&gt; <code>6</code>)</p>
+<p>Using <code>@args</code> to capture the entire input set:</p>
+<p>The <code>@args</code> syntax allows us to retain access to the full attribute set, even
+after destructuring:</p>
+<pre><code class="language-nix">nix-repl&gt; f = { x ? 1, y ? 2, ... }@args: with args; x + y + z
+
+nix-repl&gt; f { z = 3; }
+6
+</code></pre>
+<p>The <code>{ x ? 1, y ? 2, ... }</code> syntax means <code>x</code> and <code>y</code> have defaults, while <code>...</code>
+allows additional attributes.</p>
+<p><code>@args</code> binds the entire attribute set (<code>args</code>) so that we can access <code>z</code>,
+which wouldn't be destructured by default.</p>
+<p>When calling <code>f { z = 3; }</code>, we pass an extra attribute (<code>z = 3</code>), making
+<code>x + y + z</code> → <code>1 + 2 + 3 = 6</code>.</p>
+<ol start="4">
+<li>Imports and namespaces</li>
+</ol>
+<p>There is a keyword import, but it's equivalent in other languages is eval. It can be used for namespacing too:</p>
+<pre><code class="language-nix">let
+  pkgs = import &lt;nixpkgs&gt; {};
+  lib = import &lt;nixpkgs/lib&gt;;
+in
+  pkgs.runCommand (lib.strings.removePrefix "....
+</code></pre>
+<p>consider using <code>import</code> here as using <code>qualified import ...</code> in Haskell or
+<code>import ...</code> in Python.</p>
+<p>Another way of importing is with <code>import ...;</code>, which corresponds to Python
+<code>from ... import *</code>.</p>
+<p>But because of not very great IDE support in Nix, <code>with import ...;</code> is
+discouraged. Rather use inherit, especially if you are targeting source code
+for Nix newcomers:</p>
+<pre><code class="language-nix">let
+  lib = import &lt;nixpkgs/lib&gt;;
+  inherit (lib.strings)
+    removePrefix removeSuffix
+  ;
+  inherit (lib.lists)
+    isList init drop
+  ;
+in
+  removePrefix ...
+</code></pre>
+<p><code>inherit</code> has higher priority than <code>with</code>, and conflicts with <code>let</code></p>
+<pre><code class="language-nix">nix-repl&gt; let pkgs = { x = 1; }; x = 2; x = 3; inherit (pkgs) x; in x
+error: attribute ‘x’ at (string):1:31 already defined at (string):1:24
+</code></pre>
+<p>This makes it a sane citizen of Nix lanugage... except it has a twin, called
+<code>{ inherit ...; }</code>. They DON'T do the same - <code>let inherit ...</code> adds let-bindings,
+and <code>{ inherit ...; }</code> adds attributes to a record.
+--<a href="https://nixos.wiki/wiki/Nix_Language_Quirks">https://nixos.wiki/wiki/Nix_Language_Quirks</a></p>
+<ol start="5">
+<li>Only attribute names can be interpolated, not Nix code:</li>
+</ol>
+<pre><code class="language-nix">nix-repl&gt; let ${"y"} = 4; in y
+4
+
+nix-repl&gt; with { ${"y"} = 4; }; y
+4
+
+let y = 1; x = ${y}; in x
+error: syntax error, unexpected DOLLAR_CURLY
+</code></pre>
+<p><strong>Conclusion</strong></p>
+<ul>
+<li>
+<p><code>let</code> bindings introduce new local values and override anything from <code>with</code>.</p>
+</li>
+<li>
+<p><code>with</code> doesn't create bindings - it only makes attributes available within
+its scope.</p>
+</li>
+<li>
+<p>The order matters: If <code>let x = 4</code> is outside <code>with</code>, then <code>x = 4</code> already
+exists before <code>with</code> runs, so <code>with pkgs; x</code> resolves to <code>4</code>, not the value
+from <code>pkgs</code>.</p>
+</li>
+</ul>
+<h4 id="resources"><a class="header" href="#resources">Resources</a></h4>
+<details>
+<summary> ✔️ Resources (Click to Expand) </summary>
+<p>A few resources to help get you started with the Nix Language, I have actually
+grown to love the language. I find it fairly simple but powerful!</p>
+<ul>
+<li>
+<p><a href="https://nix.dev/tutorials/nix-language.html">nix.dev nixlang-basics</a></p>
+</li>
+<li>
+<p><a href="https://nix.dev/manual/nix/2.24/language/">Nix Language Overview</a></p>
+</li>
+<li>
+<p><a href="https://learnxinyminutes.com/nix/">learn nix in y minutes</a></p>
+</li>
+<li>
+<p><a href="https://github.com/tazjin/nix-1p">nix onepager</a></p>
+</li>
+<li>
+<p><a href="https://zero-to-nix.com/concepts/nix-language/">zero-to-nix nix lang</a></p>
+</li>
+<li>
+<p><a href="https://nixos.org/guides/nix-pills/04-basics-of-language.html">nix-pills basics of nixlang</a></p>
+</li>
+<li>
+<p><a href="https://nixos.org/guides/nix-pills/04-basics-of-language">Basics of the Language Pill</a></p>
+</li>
+</ul>
+</details>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../Getting_Started_with_Nix_1.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../nix/nix_package_manager.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../Getting_Started_with_Nix_1.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../nix/nix_package_manager.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

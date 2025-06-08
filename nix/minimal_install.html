@@ -1,0 +1,559 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Minimal Btrfs-Subvol Install with Disko and Flakes - nix-book</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <a href="#" class="top-link" id="back-to-top">↑</a>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">nix-book</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="minimal-btrfs-subvol-install-with-disko-and-flakes"><a class="header" href="#minimal-btrfs-subvol-install-with-disko-and-flakes">Minimal BTRFS-Subvol Install with Disko and Flakes</a></h1>
+<p>Figure 1: <strong>BTRFS Logo</strong>: Image of the BTRFS logo. Sourced from the <a href="https://github.com/btrfs">BTRFS repo</a>
+<img src="../images/btrfs1.png" alt="BTRFS logo" /></p>
+<h2 id="why-i-chose-btrfs"><a class="header" href="#why-i-chose-btrfs">Why I Chose BTRFS</a></h2>
+<p>I chose BTRFS because I was already familiar with it from using it with Arch
+Linux and I found it to be very easy to use. From what I've read, there are
+licensing issues between the Linux Kernel and ZFS which means that ZFS is not
+part of the Linux Kernel; it's maintained by the OpenZFS project and available
+as a separate kernel module. This can cause issues and make you think more
+about your filesystem than I personally want to at this point.</p>
+<p>While ZFS is a solid choice and offers some benefits over BTRFS, I recommend looking into
+it before making your own decision.</p>
+<p>If you have a ton of RAM you could most likely skip the minimal install and just
+set your system up as needed or just use <a href="https://elis.nu/blog/2020/05/nixos-tmpfs-as-root/">tmpfs as root</a></p>
+<h2 id="getting-started-with-disko"><a class="header" href="#getting-started-with-disko">Getting Started with Disko</a></h2>
+<p>Disko allows you to declaratively partition and format your disks, and then mount
+them to your system. I recommend checking out the <a href="https://github.com/nix-community/disko/tree/master?tab=readme-ov-file">README</a>
+as it is a <strong>disk destroyer</strong> if used incorrectly.</p>
+<p>We will mainly be following the <a href="https://github.com/nix-community/disko/blob/master/docs/quickstart.md">disko quickstart guide</a></p>
+<p>Figure 2: <strong>Disko Logo</strong>: Image of the logo for Disko, the NixOS declarative
+disk partitioning tool. Sourced from the <a href="https://github.com/nix-community/disko">Disko project</a>
+<img src="../images/disko1.png" alt="disko logo" /></p>
+<ol>
+<li>
+<p>Get the <a href="https://channels.nixos.org/nixos-25.05/latest-nixos-minimal-x86_64-linux.iso">Nixos Minimal ISO</a>
+Get it on a usb stick, I use Ventoy with Ventoy2Disk.sh. The following is the
+link to the <a href="https://sourceforge.net/projects/ventoy/files/v1.1.05/ventoy-1.1.05-linux.tar.gz/download">Ventoy TarBall</a>
+download, untar it with <code>tar -xzf ventoy-1.1.05-linux.tar.gz</code>, and make it
+executable with <code>chmod +x Ventoy2Disk.sh</code>, and finally execute it with <code>sudo bash Ventoy2Disk.sh</code>
+Follow the prompts to finish the install.</p>
+</li>
+<li>
+<p>The minimal installer uses <code>wpa_supplicant</code> instead of NetworkManager, to enable
+networking run the following:</p>
+</li>
+</ol>
+<pre><code class="language-bash">sudo systemctl start wpa_supplicant
+wpa_cli
+</code></pre>
+<pre><code class="language-bash">&gt; add_network
+0
+
+&gt; set_network 0 ssid "myhomenetwork"
+OK
+
+&gt; set_network 0 psk "mypassword"
+OK
+
+&gt; enable_network 0
+OK
+</code></pre>
+<p>To exit type <code>quit</code>, then check your connection with <code>ping google.com</code>.</p>
+<p>Another option is to do the following, so either the above method or the below
+method after starting <code>wpa_supplicant</code>:</p>
+<pre><code class="language-bash"># Alternative for quick setup (less interactive, but often faster)
+sudo wpa_passphrase "myhomenetwork" "mypassword" &gt;&gt; /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
+sudo systemctl restart wpa_supplicant@wlan0.service
+</code></pre>
+<ol start="3">
+<li>Get your Disk Name with <code>lsblk</code></li>
+</ol>
+<p>The output should be something like:</p>
+<pre><code class="language-bash">NAME        MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
+nvme0n1     259:0    0   1,8T  0 disk
+</code></pre>
+<ol start="4">
+<li>Copy the disk configuration to your machine. You can choose one from the
+<a href="https://github.com/nix-community/disko/tree/master/example">examples directory</a>.
+I chose the btrfs-subvolumes layout so I ran the following:</li>
+</ol>
+<pre><code class="language-bash">cd /tmp
+curl https://raw.githubusercontent.com/nix-community/disko/refs/heads/master/example/btrfs-subvolumes.nix -o /tmp/disk-config.nix
+</code></pre>
+<ol start="5">
+<li>Make Necessary changes, I set mine up for impermanence with the following:</li>
+</ol>
+<pre><code class="language-bash">nano /tmp/disk-config.nix
+</code></pre>
+<pre><code class="language-nix">{
+  disko.devices = {
+    disk = {
+      main = {
+        type = "disk";
+        device = "/dev/nvme0n1";
+        content = {
+          type = "gpt";
+          partitions = {
+            ESP = {
+              priority = 1;
+              name = "ESP";
+              start = "1M";
+              end = "512M";
+              type = "EF00";
+              content = {
+                type = "filesystem";
+                format = "vfat";
+                mountpoint = "/boot";
+                mountOptions = ["umask=0077"];
+              };
+            };
+            root = {
+              size = "100%";
+              content = {
+                type = "btrfs";
+                extraArgs = ["-f"]; # Override existing partition
+                # Subvolumes must set a mountpoint in order to be mounted,
+                # unless their parent is mounted
+                subvolumes = {
+                  # Subvolume name is different from mountpoint
+                  "/root" = {
+                    mountpoint = "/";
+                    mountOptions = ["subvol=root" "compress=zstd" "noatime"];
+                  };
+                  # Subvolume name is the same as the mountpoint
+                  "/home" = {
+                    mountOptions = ["subvol=home" "compress=zstd" "noatime"];
+                    mountpoint = "/home";
+                  };
+                  # Sub(sub)volume doesn't need a mountpoint as its parent is mounted
+                  "/home/user" = {};
+                  # Parent is not mounted so the mountpoint must be set
+                  "/nix" = {
+                    mountOptions = [
+                      "subvol=nix"
+                      "compress=zstd"
+                      "noatime"
+                    ];
+                    mountpoint = "/nix";
+                  };
+                  "/persist" = {
+                    mountpoint = "/persist";
+                    mountOptions = ["subvol=nix" "compress=zstd" "noatime"];
+                  };
+                  "/log" = {
+                    mountpoint = "/var/log";
+                    mountOptions = ["subvol=log" "compress=zstd" "noatime"];
+                  };
+                  "/lib" = {
+                    mountpoint = "/var/lib";
+                    mountOptions = ["subvol=lib" "compress=zstd" "noatime"];
+                  };
+                  # This subvolume will be created but not mounted
+                  "/test" = {};
+                };
+
+              };
+            };
+          };
+        };
+      };
+    };
+  };
+  fileSystems."/persist".neededForBoot = true;
+  fileSystems."/var/log".neededForBoot = true;
+  fileSystems."/var/lib".neededForBoot = true;
+}
+</code></pre>
+<ul>
+<li>You may choose to add a swapfile to the above <code>disk-config.nix</code>, I haven't
+included it here because I manage it with the impermanence module. If you were
+to add it here you could just add under say the <code>"/lib"</code> section add:</li>
+</ul>
+<pre><code class="language-nix"># Persistent subvolume for swapfile
+"/persist/swap" = {
+  mountpoint = "/persist/swap";
+  mountOptions = ["subvol=persist/swap" "noatime"]; # No compression for swap
+};
+fileSystems."/persist/swap".neededForBoot = true;
+</code></pre>
+<ol start="6">
+<li>Run disko to partition, format and mount your disks. <strong>Warning</strong> this will
+wipe <strong>EVERYTHING</strong> on your disk. Disko doesn't work with dual boot.</li>
+</ol>
+<pre><code class="language-bash">sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko/latest -- --mode destroy,format,mount /tmp/disk-config.nix
+</code></pre>
+<p>Check it with the following:</p>
+<pre><code class="language-bash">mount | grep /mnt
+</code></pre>
+<p>The output for an <code>nvme0n1</code> disk would be similar to the following:</p>
+<pre><code class="language-bash">#... snip ...
+/dev/nvme0n1p2 on /mnt type btrfs (rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=285,subvol=/root)
+/dev/nvme0n1p2 on /mnt/persist type btrfs (rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=261,subvol=/persist)
+/dev/nvme0n1p2 on /mnt/etc type btrfs (rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=261,subvol=/persist)
+/dev/nvme0n1p2 on /mnt/nix type btrfs (rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=260,subvol=/nix)
+/dev/nvme0n1p2 on /mnt/var/lib type btrfs (rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=258,subvol=/lib)
+/dev/nvme0n1p2 on /mnt/var/log type btrfs (rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=259,subvol=/log)
+/dev/nvme0n1p2 on /mnt/nix/store type btrfs (ro,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=260,subvol=/nix)
+# ... snip ...
+</code></pre>
+<ol start="7">
+<li>Generate necessary files, here we use <code>--no-filesystems</code> because disko handles the
+<code>fileSystems</code> attribute for us.</li>
+</ol>
+<pre><code class="language-bash">nixos-generate-config --no-filesystems --root /mnt
+</code></pre>
+<pre><code class="language-bash">sudo mv /tmp/disk-config.nix /mnt/etc/nixos
+</code></pre>
+<h3 id="setting-a-flake-for-your-minimal-install"><a class="header" href="#setting-a-flake-for-your-minimal-install">Setting a Flake for your minimal Install</a></h3>
+<ol start="8">
+<li>Create the flake in your home directory, then move it to <code>/mnt/etc/nixos</code></li>
+</ol>
+<pre><code class="language-bash">mkdir flake &amp;&amp; cd flake
+nix-shell -p git yazi helix
+export NIX_CONFIG='experimental-features = nix-command flakes'
+export EDITOR='hx'
+hx flake.nix
+</code></pre>
+<blockquote>
+<p>You'll change <code>hostname = nixpkgs.lib.nixosSystem</code> to your chosen hostname,
+(e.g. <code>magic = nixpkgs.lib.nixosSystem</code>). This will be the same as your
+<code>networking.hostName = "magic";</code> in your <code>configuration.nix</code> that we will
+set up shortly.</p>
+</blockquote>
+<pre><code class="language-nix"># flake.nix
+{
+  description = "NixOS configuration";
+
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    disko.url = "github:nix-community/disko/latest";
+    disko.inputs.nixpkgs.follows = "nixpkgs";
+    # impermanence.url = "github:nix-community/impermanence";
+  };
+
+  outputs = inputs@{ nixpkgs, ... }: {
+    nixosConfigurations = {
+      hostname = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          ./configuration.nix
+          inputs.disko.nixosModules.disko
+          # inputs.impermanence.nixosModules.impermanence
+        ];
+      };
+    };
+  };
+}
+</code></pre>
+<p>Move all the files into your flake:</p>
+<pre><code class="language-bash">cd /mnt/etc/nixos/
+sudo mv disk-config.nix hardware-configuration.nix configuration.nix ~/flake
+</code></pre>
+<ol start="9">
+<li>Edit <code>configuration.nix</code> with what is required, the following is required, I
+clone my original flake repo and move the pieces into place but it's fairly
+easy to just type it all out:</li>
+</ol>
+<ul>
+<li>
+<p>Bootloader</p>
+</li>
+<li>
+<p>User, the example uses <code>username</code> change this to your chosen username. If you
+don't set your hostname it will be <code>nixos</code>.</p>
+</li>
+<li>
+<p>Networking</p>
+</li>
+<li>
+<p><code>hardware-configuration.nix</code> &amp; <code>disk-config.nix</code> for this setup</p>
+</li>
+<li>
+<p><code>initialHashedPassword</code>: Run <code>mkpasswd -m SHA-512 -s</code>, then enter your desired
+password. Example output,</p>
+</li>
+</ul>
+<pre><code class="language-bash">Password: your_secret_password
+Retype password: your_secret_password
+$6$random_salt$your_hashed_password_string_here_this_is_very_long_and_complex
+</code></pre>
+<p>copy the hashed password and use it for the value of your <code>initialHashedPassword</code></p>
+<pre><code class="language-nix"># configuration.nix
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
+}: {
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+    ./disk-config.nix
+  ];
+
+  networking.hostName = "magic"; # This will match the `hostname` of your flake
+
+  networking.networkmanager.enable = true;
+
+  boot.loader.systemd-boot.enable = true; # (for UEFI systems only)
+  # List packages installed in system profile.
+  # You can use https://search.nixos.org/ to find more packages (and options).
+  environment.systemPackages = with pkgs; [
+    vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
+    #   wget
+    git
+  ];
+
+  time.timeZone = "America/New_York";
+
+  users.users.nixos = {
+    isNormalUser = true;
+    extraGroups = [ "wheel" "networkmanager" ]; # Add "wheel" for sudo access
+    initialHashedPassword = "COPY_YOUR_MKPASSWD_OUTPUT_HERE"; # &lt;-- This is where it goes!
+    # home = "/home/nixos"; # Optional: Disko typically handles home subvolumes
+  };
+
+  console.keyMap = "us";
+
+  nixpkgs.config.allowUnfree = true;
+
+  system.stateVersion = "25.05";
+}
+</code></pre>
+<ol start="10">
+<li>Move the flake to <code>/mnt/etc/nixos</code> and run <code>nixos-install</code>:</li>
+</ol>
+<pre><code class="language-bash">sudo mv ~/flake /mnt/etc/nixos/
+sudo nixos-install --flake /mnt/etc/nixos/flake .#hostname
+</code></pre>
+<ul>
+<li>
+<p>You will be prompted to enter a new password if everything succeeds.</p>
+</li>
+<li>
+<p>If everything checks out, reboot the system and you should be prompted to enter
+your <code>user</code> and <code>password</code> to login to a shell to get started.</p>
+</li>
+<li>
+<p>The flake will be placed at <code>/etc/nixos/flake</code>, I choose to move it to my
+home directory. Since the file was first in <code>/etc</code> you'll need to adjust the
+permissions with something like <code>sudo chown username:users ~/flake</code>(<code>username</code> will
+be your username) and then you can work on it without privilege escalation.</p>
+</li>
+<li>
+<p>To continue following along and set up impermanence <a href="https://saylesss88.github.io/nix/impermanence.html">Click Here</a></p>
+</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../nix/nix_package_manager.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../nix/impermanence.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../nix/nix_package_manager.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../nix/impermanence.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>
