@@ -8,8 +8,10 @@
 </details>
 
 Figure 1: **Impermanence Logo**: Image of the Impermanence logo. Sourced from the
+
 [Impermanence repo](https://github.com/nix-community/impermanence)
-![Impermanence logo](../images/Impermanence.png)
+
+<img src="../images/Impermanence.png" alt="Impermanence logo" style="width: 500px; height: auto;">
 
 This guide is for an unencrypted setup, there are a few links at the end for
 encrypted setups. This guide follows the previous [minimal install guide](https://saylesss88.github.io/nix/impermanence.html)
