@@ -6,8 +6,7 @@ A friendly, comprehensive guide to mastering Nix and NixOS.
 Welcome to my personal journey and guide through the Nix ecosystem! This "book"
 aims to be a practical and understandable resource for anyone looking to dive
 into Nix, NixOS, and Home Manager. Whether you're just getting started or
-looking to deepen your understanding, I hope you find this resource helpful
-and inspiring.
+looking to deepen your understanding, I hope you find this resource helpful!
 
 ✨ What You'll Find Here
 
@@ -47,21 +46,27 @@ experience smoother and more enjoyable.
 
 📖 How to Read the Book
 
-You can read the book directly here on GitHub by navigating through the folders, or for a more comfortable reading experience, check out the dedicated website (if you've set one up):
+You can read the book directly here on GitHub by navigating through the folders,
+or for a more comfortable reading experience, check out the dedicated website:
 
-    [Link to Chapter 1](https://saylesss88.github.io/)
+- [Link to Chapter 1](https://saylesss88.github.io/)
 
-    Browse the book chapters here on [GitHub](https://github.com/saylesss88/nix-book/tree/main/src).
+- Browse the book chapters here on [GitHub](https://github.com/saylesss88/nix-book/tree/main/src).
 
 🙏 Contributions & Feedback
 
-This book is a living document, and I welcome your input! If you find any errors, have suggestions for improvements, or want to contribute a new section, please feel free to:
+This book is a living document, and I welcome your input! If you find any errors,
+have suggestions for improvements, or want to contribute a new section, please
+feel free to:
 
-    Open an Issue: For bug reports, typos, or content suggestions.
+- Reach out to me on Reddit `u/WasabiOk6163`
 
-    Submit a Pull Request: If you have code changes or want to add content directly.
+- Open an Issue: For bug reports, typos, or content suggestions.
+
+- Submit a Pull Request: If you have code changes or want to add content directly.
 
 Your feedback is invaluable and helps make this resource better for everyone!
+
 ⚖️ License
 
 This "Nix Book" is open-source and licensed under the Apache License 2.0.
