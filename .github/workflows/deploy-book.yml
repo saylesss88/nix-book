@@ -31,6 +31,4 @@ jobs:
         with:
           github_token: ${{ secrets.GH_PAGES_TOKEN }} # Uses your secret PAT for authentication
           publish_dir: ./book # Specifies that the 'book' directory should be published
-          # By default, this action pushes to the 'gh-pages' branch.
-          # For User/Organization Pages, ensure your saylesss88.github.io repo serves from 'main'.
-          # You can specify the branch if needed, e.g., 'publish_branch: main'
+          publish_branch: main # <--- ADD THIS LINE to push to your main branch
