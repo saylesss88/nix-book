@@ -32,6 +32,6 @@ jobs:
           github_token: ${{ secrets.GH_PAGES_TOKEN }} # Uses your secret PAT for authentication
           publish_dir: ./book # Specifies that the 'book' directory should be published
           publish_branch: main # Push to the 'main' branch of the target repo
-          repository_name: saylesss88/saylesss88.github.io # <--- ADD THIS LINE!
+          external_repository: saylesss88/saylesss88.github.io # <--- CHANGE THIS LINE!
           # If you want a custom commit message for the deploy commit in saylesss88.github.io:
           # commit_message: 'Deploy mdBook: ${{ github.event.head_commit.message }}'
