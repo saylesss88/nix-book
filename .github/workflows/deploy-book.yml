@@ -1,0 +1,36 @@
+# .github/workflows/deploy-book.yml
+name: Deploy mdBook to User GitHub Pages
+
+on:
+  push:
+    branches:
+      - main # This workflow runs when you push to the 'main' branch of 'nix-book'
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest # The virtual environment to run the job on
+    permissions:
+      contents: write # Needed for the deploy action to push changes
+
+    steps:
+      - name: Checkout mdBook source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Ensures full history is fetched, sometimes needed for deployment actions
+
+      - name: Setup mdBook
+        uses: peaceiris/actions-mdbook@v1 # Action to install mdBook
+        with:
+          mdbook-version: "latest" # Uses the latest mdBook version
+
+      - name: Build mdBook
+        run: mdbook build # Builds your book, outputting to the 'book' directory
+
+      - name: Deploy to saylesss88.github.io
+        uses: peaceiris/actions-gh-pages@v4 # Action for deploying to GitHub Pages
+        with:
+          github_token: ${{ secrets.GH_PAGES_TOKEN }} # Uses your secret PAT for authentication
+          publish_dir: ./book # Specifies that the 'book' directory should be published
+          # By default, this action pushes to the 'gh-pages' branch.
+          # For User/Organization Pages, ensure your saylesss88.github.io repo serves from 'main'.
+          # You can specify the branch if needed, e.g., 'publish_branch: main'
