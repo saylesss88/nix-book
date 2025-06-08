@@ -1,5 +1,7 @@
 📚 Welcome to nix-book!
 
+[![Deploy mdBook to User GitHub Pages](https://github.com/saylesss88/nix-book/actions/workflows/deploy-book.yml/badge.svg?branch=main)](https://github.com/saylesss88/nix-book/actions/workflows/deploy-book.yml)
+
 A friendly, comprehensive guide to mastering Nix and NixOS.
 👋 Welcome!
 
