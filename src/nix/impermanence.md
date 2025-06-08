@@ -1,4 +1,4 @@
-# Unencrypted Btrfs Impermanence with Flakes
+# Unencrypted BTRFS Impermanence with Flakes
 
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
@@ -17,13 +17,13 @@ This guide is for an unencrypted setup, there are a few links at the end for
 encrypted setups. This guide follows the previous [minimal install guide](https://saylesss88.github.io/nix/impermanence.html)
 but you should be able to adjust it carefully to meet your needs.
 
-This section details how to set up impermanence on your NixOS system using Btrfs
+This section details how to set up impermanence on your NixOS system using BTRFS
 subvolumes. With impermanence, your operating system's root filesystem will
 reset to a pristine state on each reboot, while designated directories and
 files remain persistent. This provides a highly reliable and rollback-friendly
 system.
 
-## Impermanence: The Concept and Its Btrfs Implementation
+## Impermanence: The Concept and Its BTRFS Implementation
 
 In a traditional Linux system, most of this state is stored on the disk and
 persists indefinitely unless manually deleted or modified. However, this can
@@ -40,7 +40,7 @@ temporary files) are discarded upon shutdown or reboot.
 ### What Does Impermanence Do?
 
 Impermanence is a NixOS approach that makes the system stateless (or nearly
-stateless) by wiping the root filesystem (/) on each boot, ensuring a clean,
+stateless) by wiping the root filesystem (`/`) on each boot, ensuring a clean,
 predictable starting point. Only explicitly designated data (persistent state)
 is preserved across reboots, typically stored in specific locations like the
 `/persist` subvolume. This achieves:
@@ -72,7 +72,8 @@ is preserved across reboots, typically stored in specific locations like the
 
 ### Getting Started
 
-1. Add impermanence to your `flake.nix`
+1. Add impermanence to your `flake.nix`. You will change the `hostname` in the
+   flake to match your `networking.hostName`.
 
 ```nix
 # flake.nix
@@ -104,7 +105,7 @@ is preserved across reboots, typically stored in specific locations like the
 2. Discover where your root subvolume is located with `findmnt`:
 
 Before configuring impermanence, it's crucial to know the device path and
-subvolume path of your main Btrfs partition where the root filesystem (`/`) is
+subvolume path of your main BTRFS partition where the root filesystem (`/`) is
 located. This information is needed for the mount command within the
 impermanence script.
 
@@ -125,10 +126,10 @@ scripts.
 
 3. Create an `impermanence.nix`:
 
-Now, create a new file named impermanence.nix in your configuration directory
-(`/mnt/etc/nixos/flake/` if you followed the previous steps). This file will
-contain all the specific settings for your impermanent setup, including Btrfs
-subvolume management and persistent data locations
+Now, create a new file named `impermanence.nix` in your configuration directory
+(i.e. your flake directory). This file will contain all the specific settings
+for your impermanent setup, including BTRFS subvolume management and persistent
+data locations
 
 ```nix
 {lib, ...}: {
@@ -166,7 +167,7 @@ subvolume management and persistent data locations
       "/var/spool" # Mail queues, cron jobs
       "/srv" # Web server data, etc.
       "/root" # Root user's home
-      # "/var/log" # Persist logs for debugging (still commented out, good)
+      # "/var/log" # Persist logs are handled by disko
     ];
     files = [
       "/swapfile" # Persist swapfile (impermanence manages this file)
@@ -212,7 +213,7 @@ system.
 cd /path/to/your/nixos/flake
 ```
 
-2. Rebuild and Switch: Execute the nixos-rebuild switch command. This command will:
+2. Rebuild and Switch: Execute the `nixos-rebuild switch` command. This command will:
 
 - Evaluate your `flake.nix` and the modules it imports (including your new
   `impermanence.nix`).
@@ -229,7 +230,8 @@ sudo nixos-rebuild switch --flake .#hostname # Replace 'hostname' with your actu
 
 - Before you reboot, create a temporary directory and file in a non-persistent
   location. Since you haven't explicitly added `/imperm_test` to your
-  `environment.persistence."/persist"` directories, this file should not survive a reboot.
+  `environment.persistence."/persist"` directories, this file should not survive
+  a reboot.
 
 ```bash
 mkdir /imperm_test
