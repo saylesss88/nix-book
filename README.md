@@ -41,7 +41,7 @@ This book covers a range of topics to help you harness the power of Nix:
 
 - Nix Pull Requests
 
-- Intro to Nushell on NixOS- [Getting Started with the Nix Ecosystem](./Getting_Started_with_Nix_1.md)
+- Intro to Nushell on NixOS
 
 My goal is to share my learnings and provide clear examples to make your Nix
 experience smoother and more enjoyable.
