@@ -29,9 +29,9 @@ jobs:
       - name: Deploy to saylesss88.github.io
         uses: peaceiris/actions-gh-pages@v4 # Action for deploying to GitHub Pages
         with:
-          github_token: ${{ secrets.GH_PAGES_TOKEN }} # Uses your secret PAT for authentication
+          personal_token: ${{ secrets.GH_PAGES_TOKEN }} # <--- CHANGE THIS LINE! Use personal_token
           publish_dir: ./book # Specifies that the 'book' directory should be published
           publish_branch: main # Push to the 'main' branch of the target repo
-          external_repository: saylesss88/saylesss88.github.io # <--- CHANGE THIS LINE!
+          external_repository: saylesss88/saylesss88.github.io # Still needed for external repo
           # If you want a custom commit message for the deploy commit in saylesss88.github.io:
           # commit_message: 'Deploy mdBook: ${{ github.event.head_commit.message }}'
