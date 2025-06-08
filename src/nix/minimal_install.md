@@ -1,5 +1,12 @@
 # Minimal BTRFS-Subvol Install with Disko and Flakes
 
+<details>
+<summary> ✔️ Click to Expand Table of Contents</summary>
+
+<!-- toc -->
+
+</details>
+
 Figure 1: **BTRFS Logo**: Image of the BTRFS logo. Sourced from the [BTRFS repo](https://github.com/btrfs)
 ![BTRFS logo](../images/btrfs1.png)
 
