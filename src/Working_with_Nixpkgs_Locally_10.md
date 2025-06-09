@@ -116,20 +116,42 @@ mkdir src && cd src
 > - CI/CD environments: Where disk space and clone time are critical, and only
 >   the latest commit is needed for automated tests or builds.
 
-- With that said, to avoid downloading the entire history, perform a shallow
-  clone:
+With that said, to avoid downloading the entire history, perform a shallow
+clone:
 
-  ```bash
-  git clone [https://github.com/NixOS/nixpkgs](https://github.com/NixOS/nixpkgs) --depth 1
-  cd nixpkgs
-  ```
+```bash
+git clone [https://github.com/NixOS/nixpkgs](https://github.com/NixOS/nixpkgs) --depth 1
+cd nixpkgs
+```
 
-  - While in the `nixpkgs` directory, you can check the version of a package:
+While in the `nixpkgs` directory, you can check the version of a package:
 
 ```bash
 nix-instantiate --eval -A openssl.version
 "3.4.1"
 ```
+
+Or to directly edit the file you can use `nix edit`:
+
+```bash
+nix edit nixpkgs#openssl
+```
+
+It uses the nix registry and `openssl.meta.position` to locate the file.
+
+```bash
+man nix3 registry
+```
+
+```bash
+nix repl
+nix-repl> :l <nixpkgs>
+nix-repl> openssl
+nix-repl> openssl.meta.position
+nix-repl> builtins.unsafeGetAttrPos "description" openssl.meta
+```
+
+The above command will open the `openssl/default.nix` in your `$EDITOR`.
 
 ## A.1 Full Fork and Clone of Nixpkgs
 

@@ -1,11 +1,6 @@
 # Chapter1
 
-<details>
-<summary> ✔️ Click to Expand Table of Contents</summary>
-
 <!-- toc -->
-
-</details>
 
 ![gruv13](images/gruv13.png)
 
@@ -48,10 +43,11 @@ Example click the eye to see hidden text:
 ### Why Learn Nix?
 
 The main reason to learn Nix is that it allows you to write declarative scripts
-for reproducible software builds. Rather than mutate the global state and install
-packages to a global location such as `/usr/bin` Nix stores packages in the Nix
-store, usually the directory `/nix/store`, where each package has its own unique
-subdirectory. This paradigm gives you some powerful features, such as:
+for reproducible software builds. Rather than mutate the global state and
+install packages to a global location such as `/usr/bin` Nix stores packages in
+the Nix store, usually the directory `/nix/store`, where each package has its
+own unique subdirectory. This paradigm gives you some powerful features, such
+as:
 
 - Allowing multiple versions or variants of the same package at the same time.
   This prevents "DLL hell" from different applications having dependencies on
@@ -100,29 +96,30 @@ Example of a simple nix expression:
 While the Nix language provides the foundation for writing expressions, it is
 only part of the ecosystem. These expressions become powerful when used within
 the Nix Package Manager, which evaluates and realizes them into tangible
-software builds and system configurations. This is where Nixpkgs and NixOS
-come into play.
+software builds and system configurations. This is where Nixpkgs and NixOS come
+into play.
 
 ### The Nix Package Manager, Nixpkgs, and NixOS
 
 At the heart of the Nix ecosystem is **Nix Package Manager**. This powerful
-engine is responsible for orchestrating the entire process: taking
-**Nix expressions** (like _package definitions_ and _configuration modules_),
-evaluating them into precise _derivations_, executing their build steps
-(the _realization phase_), and meticulously managing the immutable Nix store.
+engine is responsible for orchestrating the entire process: taking **Nix
+expressions** (like _package definitions_ and _configuration modules_),
+evaluating them into precise _derivations_, executing their build steps (the
+_realization phase_), and meticulously managing the immutable Nix store.
 
 A cornerstone of the Nix ecosystem is **Nixpkgs**. This vast collection
-comprises tens of thousands of Nix expressions that describe how to build
-a wide array of software packages from source. Nixpkgs is more than just a
-package repository—it also contains **NixOS Modules**, declarative configurations
-that define system behavior, ensuring a structured and reproducible environment.
+comprises tens of thousands of Nix expressions that describe how to build a wide
+array of software packages from source. Nixpkgs is more than just a package
+repository—it also contains **NixOS Modules**, declarative configurations that
+define system behavior, ensuring a structured and reproducible environment.
 These modules enable users to declaratively describe a Linux system, with each
 module contributing to the desired state of the overall system by leveraging
-_package definitions_ and _derivations_. This is how NixOS emerges: it is
-quite simply the natural consequence of applying the Nix philosophy to building
-an entire Linux operating system.
+_package definitions_ and _derivations_. This is how NixOS emerges: it is quite
+simply the natural consequence of applying the Nix philosophy to building an
+entire Linux operating system.
 
-We will further expand our understanding of modules in [Chapter 3](https://saylesss88.github.io/NixOS_Modules_Explained_3.html)
+We will further expand our understanding of modules in
+[Chapter 3](https://saylesss88.github.io/NixOS_Modules_Explained_3.html)
 
 The following is an example of a NixOS module that is part of the `nixpkgs`
 collection:
@@ -159,13 +156,14 @@ in
   installed and its default configuration files are placed in `/etc`, allowing
   ZMap to be managed declaratively as part of the operating system.
 
-  - When `nixpkgs` is imported (e.g., in a NixOS configuration), the configuration
-    options and settings defined by its modules (like `programs.zmap.nix`) become
-    available for use, typically accessed via dot notation (e.g., `config.programs.zmap.enable`).
-    This ability to make such a huge set of modules and packages readily
-    available without a significant performance penalty is due to Nix's **lazy
-    evaluation**; only the expressions required for a particular build or
-    configuration are actually evaluated.
+  - When `nixpkgs` is imported (e.g., in a NixOS configuration), the
+    configuration options and settings defined by its modules (like
+    `programs.zmap.nix`) become available for use, typically accessed via dot
+    notation (e.g., `config.programs.zmap.enable`). This ability to make such a
+    huge set of modules and packages readily available without a significant
+    performance penalty is due to Nix's **lazy evaluation**; only the
+    expressions required for a particular build or configuration are actually
+    evaluated.
 
   - Most of the time you'll simply [search](https://search.nixos.org/packages)
     to see if the package is already included in `nixpkgs` and follow the
@@ -173,15 +171,15 @@ in
     search for the [options](https://search.nixos.org/options?) to see what
     configurable settings are available, and then proceed to search for the
     package itself if you know it exists or if you need its specific package
-    definition. When you look up the options for Zmap, `programs.zmap.enable`
-    is all that is listed in this example.
+    definition. When you look up the options for Zmap, `programs.zmap.enable` is
+    all that is listed in this example.
 
   - Home Manager uses the same underlying Nix module system as NixOS, and when
     you do something like home.packages = with pkgs; you are referring to the
-    same package derivations from nixpkgs as you would with `environment.systemPackages`.
-    However, Home Manager's own configuration modules (e.g., for `programs.zsh` or
-    `git`) are distinct and reside in the Home Manager repository, designed for
-    user-specific configurations.
+    same package derivations from nixpkgs as you would with
+    `environment.systemPackages`. However, Home Manager's own configuration
+    modules (e.g., for `programs.zsh` or `git`) are distinct and reside in the
+    Home Manager repository, designed for user-specific configurations.
 
 One of the main differentiating aspects of Nix, as opposed to traditional
 package managers, is this concept that package builds are treated as pure
@@ -263,8 +261,8 @@ stripping (with command strip and flags -S -p) in  /nix/store/53hqyw72dijq3wb5kc
 ```
 
 - Nix realizes the derivation by actually executing the build steps, fetching
-  sources, compiling (if needed), and producing the final result (typically stored
-  in e.g. `/nix/store/53hqyw72dijq3wb5kc0ln04g681gk6cp-hello-2.12.1`)
+  sources, compiling (if needed), and producing the final result (typically
+  stored in e.g. `/nix/store/53hqyw72dijq3wb5kc0ln04g681gk6cp-hello-2.12.1`)
 
 - `nix-build` also creates a symlink named `result` in your current directory,
   pointing to the final build output in the Nix store.
@@ -280,8 +278,8 @@ Hello, world!
 derivation.The derivation describes how the package is built, but does not
 include the final binaries.
 
-To say that another way, the derivation is not the executable. The executable
-is one of the derivations `outputs`. When Nix "realizes" a derivation, it executes
+To say that another way, the derivation is not the executable. The executable is
+one of the derivations `outputs`. When Nix "realizes" a derivation, it executes
 those build instructions, and the result is the actual built software, which
 gets placed into its own unique path in the Nix store.
 
@@ -351,9 +349,9 @@ We also introduced the vast Nixpkgs collection, which provides tens of thousands
 of package definitions and forms the foundation for NixOS — a fully declarative
 operating system built on these principles—and even user-level configurations
 like those managed by Home Manager. This unique functional approach, with its
-emphasis on immutability and lazy evaluation, is what enables Nix's promises
-of consistency, atomic upgrades, and truly hermetic builds, fundamentally
-changing how we think about software and system management.
+emphasis on immutability and lazy evaluation, is what enables Nix's promises of
+consistency, atomic upgrades, and truly hermetic builds, fundamentally changing
+how we think about software and system management.
 
 ##### Related Sub-Chapters
 
@@ -363,7 +361,8 @@ changing how we think about software and system management.
 
 Now that you have a foundational understanding of the Nix ecosystem and its core
 operational cycle, we are ready to delve deeper into the building blocks of Nix
-expressions. In the next chapter, [Understanding Nix Functions](https://saylesss88.github.io/Understanding_Nix_Functions_2.html),
+expressions. In the next chapter,
+[Understanding Nix Functions](https://saylesss88.github.io/Understanding_Nix_Functions_2.html),
 we will peel back the layers and explore the intricacies of function arguments,
 advanced patterns, scope, and how functions play a crucial role in building more
 sophisticated Nix expressions and derivations.
@@ -396,8 +395,8 @@ Here are some resources that are helpful for getting started:
 
 - [NixOS Wiki](https://wiki.nixos.org/wiki/NixOS_Wiki)
 
-- [nix.dev](https://nix.dev/): Has become the top respected source of information
-  in my opinion. There is a lot of great stuff in here, and they actively update
-  the information.
+- [nix.dev](https://nix.dev/): Has become the top respected source of
+  information in my opinion. There is a lot of great stuff in here, and they
+  actively update the information.
 
 </details>
