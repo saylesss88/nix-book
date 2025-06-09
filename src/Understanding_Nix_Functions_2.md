@@ -1,6 +1,11 @@
 # Chapter 2
 
+<details>
+<summary> ✔️ Click to Expand Table of Contents</summary>
+
 <!-- toc -->
+
+</details>
 
 <img src="images/nixLogo.png" width="400" height="300">
 

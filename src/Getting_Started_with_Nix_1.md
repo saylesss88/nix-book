@@ -1,6 +1,11 @@
 # Chapter1
 
+<details>
+<summary> ✔️ Click to Expand Table of Contents</summary>
+
 <!-- toc -->
+
+</details>
 
 ![gruv13](images/gruv13.png)
 
