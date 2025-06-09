@@ -197,7 +197,7 @@ So, `inherit (pkgsFor.${system}) helix;` is equivalent to:
 helix = pkgsFor.${system}.helix;
 ```
 
-Therefore, because of `inherit (pkgsFor.${system}) helix;``, the helix attribute
+Therefore, because of `inherit (pkgsFor.${system}) helix;`, the helix attribute
 is explicitly defined under `packages.${system}``. This is why you access it
 as `inputs.helix.packages.${pkgs.system}.helix;`.
 

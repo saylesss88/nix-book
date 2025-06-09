@@ -15,32 +15,35 @@ If you're completely new, take a look at
 [this](https://nixos.wiki/wiki/flakes#Installing_flakes) to get flakes on your
 system.
 
+For the Nix Flake man page type `man nix3 flake` and for a specific feature,
+type something like `man nix3 flake-lock`.
+
 Flakes replace stateful channels (which cause much confusion among novices) and
 introduce a more intuitive and consistent CLI, making them a perfect opportunity
 to start using Nix. -- Alexander Bantyev
 [Practical Nix Flakes](https://serokell.io/blog/practical-nix-flakes)
 
-The "state" being remembered and updated by channels is the specific revision
-of the Nixpkgs repository that your local Nix installation considers "current"
-for a given channel. When this state changes on your machine, your builds
-diverge from others whose machines have a different, independently updated
-channel state.
+The "state" being remembered and updated by channels is the specific revision of
+the Nixpkgs repository that your local Nix installation considers "current" for
+a given channel. When this state changes on your machine, your builds diverge
+from others whose machines have a different, independently updated channel
+state.
 
-Channels are also constantly updated on the remote servers. So,
-"nixos-unstable" today refers to a different set of packages and versions
-than "nixos-unstable" did yesterday or will tomorrow.
+Channels are also constantly updated on the remote servers. So, "nixos-unstable"
+today refers to a different set of packages and versions than "nixos-unstable"
+did yesterday or will tomorrow.
 
 Flakes solve this by making the exact revision of `nixpkgs` (and other
 dependencies) an explicit input within your `flake.nix` file, pinned in the
 `flake.lock`. This means the state is explicitly defined in the configuration
 itself, not implicitly managed by a global system setting.
 
-Evaluation time is notoriously slow on NixOS, the problem was that in the
-past Nix evaluation wasn't hermetic preventing effective evaluation caching.
-A `.nix` file can import other Nix files or by looking them up in the Nix
-search path (`$NIX_PATH`). This causes a cached result to be inconsistent
-unless every file is perfectly kept track of. Flakes solve this problem by
-ensuring fully hermetic evaluation.
+Evaluation time is notoriously slow on NixOS, the problem was that in the past
+Nix evaluation wasn't hermetic preventing effective evaluation caching. A `.nix`
+file can import other Nix files or by looking them up in the Nix search path
+(`$NIX_PATH`). This causes a cached result to be inconsistent unless every file
+is perfectly kept track of. Flakes solve this problem by ensuring fully hermetic
+evaluation.
 
 "Hermetic" means that the output of an evaluation (the derivation itself)
 depends _only_ on the explicit inputs provided, not on anything external like
@@ -59,15 +62,15 @@ making all project inputs explicit for greater reproducibility and
 self-containment.
 
 At its core, a flake is a source tree (like a Git repository) that contains a
-`flake.nix` file in its root directory. This file provides a standardized way
-to access Nix artifacts such as packages and modules.
+`flake.nix` file in its root directory. This file provides a standardized way to
+access Nix artifacts such as packages and modules.
 
-Flakes provide a standard way to write Nix expressions (and therefore
-packages) whose dependencies are version-pinned in a lock file, improving
-reproducibility of Nix installations. -- NixOS Wiki
+Flakes provide a standard way to write Nix expressions (and therefore packages)
+whose dependencies are version-pinned in a lock file, improving reproducibility
+of Nix installations. -- NixOS Wiki
 
-Think of `flake.nix` as the central entry point of a flake. It not only
-defines what the flake produces but also declares its dependencies.
+Think of `flake.nix` as the central entry point of a flake. It not only defines
+what the flake produces but also declares its dependencies.
 
 ### Key Concepts
 
@@ -88,9 +91,9 @@ include `description` and `inputs`.
 }
 ```
 
-I typically see `nixConfig` used for extra-substituters for cachix. This is
-a general-purpose way to define Nix configuration oprions that apply when
-this flake is evaluated or built. It ties into your `/etc/nix/nix.conf` or
+I typically see `nixConfig` used for extra-substituters for cachix. This is a
+general-purpose way to define Nix configuration oprions that apply when this
+flake is evaluated or built. It ties into your `/etc/nix/nix.conf` or
 `~/.config/nix/nix.conf`.
 
 For example, create a directory and add a `flake.nix` with the following
@@ -112,17 +115,15 @@ nix eval .#multiply
 ```
 
 In the `outputs = _: { ... };` line, the `_` (underscore) is a placeholder
-argument. It represents the inputs that the outputs function could receive
-(like `inputs`, `self`, `pkgs`, etc.), but in this specific case, we're not
-using any of them to define the multiply attribute. It's a common convention
-in Nix to use `_` when an argument is required by a function but intentionally
-ignored.
+argument. It represents the inputs that the outputs function could receive (like
+`inputs`, `self`, `pkgs`, etc.), but in this specific case, we're not using any
+of them to define the multiply attribute. It's a common convention in Nix to use
+`_` when an argument is required by a function but intentionally ignored.
 
 In the command `nix eval .#multiply`:
 
-- the `.` signifies the current directory,
-  indicating that Nix should look for a `flake.nix` file in the directory where
-  you're running the command.
+- the `.` signifies the current directory, indicating that Nix should look for a
+  `flake.nix` file in the directory where you're running the command.
 
 - The `#` is used to select a specific attribute from the `outputs` of the
   flake. In this case, it's telling Nix to evaluate the `multiply` attribute.
@@ -132,8 +133,8 @@ output.
 
 **`flake.lock` auto-generated lock file**
 
-All flake inputs are pinned to specific revisions in a lockfile called `flake.lock`
-This file stores the revision info as JSON.
+All flake inputs are pinned to specific revisions in a lockfile called
+`flake.lock` This file stores the revision info as JSON.
 
 The `flake.lock` file ensures that Nix flakes have purely deterministic outputs.
 A `flake.nix` file without an accompanying `flake.lock` should be considered
@@ -177,10 +178,9 @@ $ cat flake.lock
 }
 ```
 
-Any future build of this flake will use the version of `nixpkgs` recorded in
-the lock file. If you add new inputs, they will be automatically added when
-you run a nix flake command like `nix flake show`. But it won't replace
-existing locks.
+Any future build of this flake will use the version of `nixpkgs` recorded in the
+lock file. If you add new inputs, they will be automatically added when you run
+a nix flake command like `nix flake show`. But it won't replace existing locks.
 
 If you need to update a locked input to the latest version:
 
@@ -188,6 +188,9 @@ If you need to update a locked input to the latest version:
 nix flake lock --update-input nixpkgs
 nix build
 ```
+
+The above command allows you to update individual inputs, and `nix flake update`
+will update the whole lock file.
 
 ### Helper functions that are good to know for working with Flakes
 
@@ -231,8 +234,8 @@ eachSystem = lib.genAttrs systems;
 ```
 
 The above command creates an attribute set by mapping over a list of system
-strings. If you notice, you provide it a list (i.e. [ 1 2 3 ]) and the
-function returns a set (i.e. `{ ... }`)
+strings. If you notice, you provide it a list (i.e. [ 1 2 3 ]) and the function
+returns a set (i.e. `{ ... }`)
 
 Why `genAttrs` is useful:
 
@@ -321,8 +324,8 @@ To use this flake you have a few options:
 - `nix develop` will activate the development environment providing all of the
   pkgs listed under `mkShell`.
 
-- Or more explicitly `nix develop .#devShells.x86_64-linux.default`, does the same
-  thing as the command above.
+- Or more explicitly `nix develop .#devShells.x86_64-linux.default`, does the
+  same thing as the command above.
 
 #### Flake References
 
@@ -417,8 +420,8 @@ nix shell nixpkgs#ponysay --command ponysay "Flakes Rock!"
 ```
 
 This works because of the [flake registry] that maps symbolic identifiers like
-`nixpkgs` to actual locations such as `https://github.com/NixOS/nixpkgs`. So
-the following are equivalent:
+`nixpkgs` to actual locations such as `https://github.com/NixOS/nixpkgs`. So the
+following are equivalent:
 
 ```bash
 nix shell nixpkgs#ponysay --command ponysay Flakes Rock!
@@ -474,7 +477,8 @@ value is a reference to that flake (usually a URL or a Git Repo).
 To access something from a dependency, you generally go through the `inputs`
 attribute (e.g., `inputs.helix.packages`).
 
-See [Nix Flake inputs](https://saylesss88.github.io/flakes/flake_inputs_4.1.html)
+See
+[Nix Flake inputs](https://saylesss88.github.io/flakes/flake_inputs_4.1.html)
 for a flake inputs deep dive.
 
 **Example:** This declares dependencies on the `nixpkgs` and `import-cargo`
@@ -488,11 +492,11 @@ inputs = {
 ```
 
 When Nix evaluates your flake, it fetches and evaluates each input. These
-evaluated inputs are then passed as an attribute set to the outputs
-function, with the keys matching the names you gave them in the inputs set.
+evaluated inputs are then passed as an attribute set to the outputs function,
+with the keys matching the names you gave them in the inputs set.
 
-The special input `self` is a reference to the `outputs` and the source tree
-of the current flake itself.
+The special input `self` is a reference to the `outputs` and the source tree of
+the current flake itself.
 
 **`outputs`: Defining What Your Flake Provides**
 
@@ -517,22 +521,23 @@ nix flake show
 **Understanding the `outputs` Function**
 
 Beginners often mistakenly think that self and nixpkgs within
-`outputs = { self, nixpkgs, ... }: { ... }` are the outputs themselves.
-Instead, they are the _input arguments_ (often called _output arguments_) to
-the outputs function.
+`outputs = { self, nixpkgs, ... }: { ... }` are the outputs themselves. Instead,
+they are the _input arguments_ (often called _output arguments_) to the outputs
+function.
 
-The outputs function in `flake.nix` always takes a single argument, which is
-an attribute set. The syntax `{ self, nixpkgs, ... }` is Nix's way of
-destructuring this single input attribute set to extract the values associated
-with the keys self and nixpkgs.
+The outputs function in `flake.nix` always takes a single argument, which is an
+attribute set. The syntax `{ self, nixpkgs, ... }` is Nix's way of destructuring
+this single input attribute set to extract the values associated with the keys
+self and nixpkgs.
 
-Flakes output your whole system configuration, packages, and also Nix
-functions for use elsewhere.
+Flakes output your whole system configuration, packages, and also Nix functions
+for use elsewhere.
 
 - For example, the `nixpkgs` repository has its own `flake.nix` file that
   outputs many helper functions via the `lib` attribute.
 
-- For a deep dive into flake outputs, see [Nix Flake Outputs](https://saylesss88.github.io/flakes/flake_outputs_4.2.html)
+- For a deep dive into flake outputs, see
+  [Nix Flake Outputs](https://saylesss88.github.io/flakes/flake_outputs_4.2.html)
 
 > The `lib` convention The convention of using `lib` to output functions is
 > observed not just by Nixpkgs but by many other Nix projects. You’re free,
@@ -540,14 +545,14 @@ functions for use elsewhere.
 > [Zero to Nix Flakes](https://zero-to-nix.com/concepts/flakes/#inputs)
 
 Some flake outputs are required to be system specific (i.e. "x86_64-linux" for
-(64-bit AMD/Intel Linux) including packages, development environments, and
-NixOS configurations)
+(64-bit AMD/Intel Linux) including packages, development environments, and NixOS
+configurations)
 
 **Variadic Attributes (...) and @-patterns**
 
 The `...` syntax in the input arguments of the outputs function indicates
-variadic attributes, meaning the input attribute set can contain more
-attributes than just those explicitly listed (like `lib` and `nixpkgs`).
+variadic attributes, meaning the input attribute set can contain more attributes
+than just those explicitly listed (like `lib` and `nixpkgs`).
 
 **Example:**
 
@@ -606,8 +611,8 @@ packages.x86_64-linux.hello = nixpkgs.legacyPackages.x86_64-linux.hello;
 **Platform Specificity in Outputs**
 
 Flakes ensure that their outputs are consistent across different evaluation
-environments. Therefore, any package-related output must explicitly specify
-the target platform (a combination of architecture and OS, `x86_64-linux`).
+environments. Therefore, any package-related output must explicitly specify the
+target platform (a combination of architecture and OS, `x86_64-linux`).
 
 **legacyPackages Explained**
 
@@ -615,9 +620,8 @@ the target platform (a combination of architecture and OS, `x86_64-linux`).
 structured package organization of nixpkgs. Instead of packages being directly
 at the top level (e.g., `pkgs.hello`), `legacyPackages` provides a
 platform-aware way to access them within the flake's structured output format
-(e.g., `nixpkgs.legacyPackages.x86_64-linux.hello`). It acts as a bridge
-between the flake's expected output structure and nixpkgs's historical
-organization.
+(e.g., `nixpkgs.legacyPackages.x86_64-linux.hello`). It acts as a bridge between
+the flake's expected output structure and nixpkgs's historical organization.
 
 **The Sole Argument of outputs**
 
@@ -648,15 +652,16 @@ Basic Usage: import `./path/to/file.nix`
   expression from a specified path.
 
 - `<nixpkgs>` is a flake reference. When you use `import <nixpkgs>`, Nix
-  evaluates the `default.nix` file (or sometimes `lib/default.nix`) found
-  at that location.
+  evaluates the `default.nix` file (or sometimes `lib/default.nix`) found at
+  that location.
 
 - The `default.nix` in `nixpkgs` evaluates to a function. This function is
   designed to be configurable, allowing you to pass arguments like `system`,
-  `config`, etc. to customize how `nixpkgs` behaves and what packages it provides.
+  `config`, etc. to customize how `nixpkgs` behaves and what packages it
+  provides.
 
-- So, `import <nixpkgs>` doesn't give you the `nixpkgs` package set directly;
-  it gives you the function that generates the `nixpkgs` package set derivation.
+- So, `import <nixpkgs>` doesn't give you the `nixpkgs` package set directly; it
+  gives you the function that generates the `nixpkgs` package set derivation.
 
 2. `{}`: The second function call (and its argument)
 
@@ -665,9 +670,9 @@ Basic Usage: import `./path/to/file.nix`
 - When an attribute set immediately follows a function, it means you are calling
   that function and passing the attribute set as its single argument.
 
-So, the `{}` after `import <nixpkgs>` is not part of the `import` function iteself.
-It's the argument being passed to the function that `import <nixpkgs>` just
-returned.
+So, the `{}` after `import <nixpkgs>` is not part of the `import` function
+iteself. It's the argument being passed to the function that `import <nixpkgs>`
+just returned.
 
 You can also pass an attribute set as an argument to the Nix expression being
 imported:
@@ -679,8 +684,8 @@ in
 # ... use myHelpers
 ```
 
-In this case, the Nix expression in `./lib/my-helpers.nix` is likely a
-function that expects an argument (often named `pkgs` by convention):
+In this case, the Nix expression in `./lib/my-helpers.nix` is likely a function
+that expects an argument (often named `pkgs` by convention):
 
 ```nix
 # ./lib/my-helpers.nix
@@ -695,17 +700,18 @@ myPackage
 ```
 
 By passing `{ pkgs = nixpkgs; }` during the import, you are providing the
-nixpkgs value from your current `flake.nix` scope to the pkgs parameter
-expected by the code in `./lib/my-helpers.nix`.
+nixpkgs value from your current `flake.nix` scope to the pkgs parameter expected
+by the code in `./lib/my-helpers.nix`.
 
 **Importing Directories (`default.nix`)**
 
 When you use import with a path that points to a directory, Nix automatically
 looks for a file named `default.nix` within that directory. If found, Nix
-evaluates the expressions within `default.nix` as if you had specified its
-path directly in the import statement.
+evaluates the expressions within `default.nix` as if you had specified its path
+directly in the import statement.
 
-- For more advanced examples see [Nix Flake Examples](https://saylesss88.github.io/flakes/flake_examples_4.3.html)
+- For more advanced examples see
+  [Nix Flake Examples](https://saylesss88.github.io/flakes/flake_examples_4.3.html)
 
 ##### Conclusion: Unifying Your Nix Experience with Flakes
 
