@@ -99,7 +99,7 @@
 
 - Cloning Nixpkgs requires careful consideration due to its size.
 
-## A. Initial Clone: Shallow Cloning
+## A.a Initial Clone: Shallow Cloning
 
 It is common to place your local clone in the `/src` directory:
 
@@ -124,6 +124,8 @@ git clone [https://github.com/NixOS/nixpkgs](https://github.com/NixOS/nixpkgs) -
 cd nixpkgs
 ```
 
+## A.b A few Examples exploring Nixpkgs
+
 While in the `nixpkgs` directory, you can check the version of a package:
 
 ```bash
@@ -141,6 +143,20 @@ It uses the nix registry and `openssl.meta.position` to locate the file.
 
 ```bash
 man nix3 registry
+```
+
+```bash
+cd /src
+nix repl
+nix-repl> :lf nixpkgs
+nix-repl> outputs.legacyPackages.x86_64-linux.openssl.meta.position
+"/nix/store/syvnmj3hhckkbncm94kfkbl76qsdqqj3-source/pkgs/development/libraries/openssl/default.nix:303"
+nix-repl> builtins.unsafeGetAttrPos "description" outputs.legacyPackages.x86_64-linux.openssl.meta
+{
+  column = 9;
+  file = "/nix/store/syvnmj3hhckkbncm94kfkbl76qsdqqj3-source/pkgs/development/libraries/openssl/default.nix";
+  line = 303;
+}
 ```
 
 ```bash

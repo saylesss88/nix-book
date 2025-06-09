@@ -2,7 +2,8 @@
 
 When you start exploring NixOS configurations or tools like Home Manager, you'll
 encounter a concept called Nix Modules. Modules are also functions, but they
-behave differently regarding their arguments, which can be a source of confusion.
+behave differently regarding their arguments, which can be a source of
+confusion.
 
 **What are NixOS Modules**?
 
@@ -16,10 +17,10 @@ specific keys like `options`, `config`, and `imports`.
 
 **Automatic Arguments in Modules**
 
-Unlike the functions we've been writing, Nix's module system automatically passes
-a standard set of arguments to every module function it evaluates. You don't
-explicitly pass these arguments when you `import` a module file; the module
-system handles it for you.
+Unlike the functions we've been writing, Nix's module system automatically
+passes a standard set of arguments to every module function it evaluates. You
+don't explicitly pass these arguments when you `import` a module file; the
+module system handles it for you.
 
 The most common automatic arguments you'll see are:
 
@@ -52,13 +53,13 @@ A typical module might start like this:
 ```
 
 In the above module, the only required argument is `pkgs` because we explicitly
-use it in the module (i.e. `pkgs.firefox`). Editors have pretty good support
-for letting you know if you're missing arguments or have unnecessary ones.
-`config` and would be required if we were setting any options in this module.
+use it in the module (i.e. `pkgs.firefox`). Editors have pretty good support for
+letting you know if you're missing arguments or have unnecessary ones. `config`,
+and `lib` and would be required if we were setting any options in this module.
 
 This automatic passing of arguments is a core feature of the module system that
-simplifies writing configurations, as you always have access to `pkgs`, `lib`, and
-the evolving `config` and `options` without boilerplate.
+simplifies writing configurations, as you always have access to `pkgs`, `lib`,
+and the evolving `config` and `options` without boilerplate.
 
 #### `specialArgs`: Passing Custom Arguments to Modules
 
@@ -67,9 +68,9 @@ if you need to pass additional, custom data to your modules that isn't part of
 the standard `config`, `pkgs`, `lib`, or `options`? This is where `specialArgs`
 comes in.
 
-`specialArgs` is an attribute you can pass to the `import` function when you load a
-module (or a set of modules). It's typically used to provide data that your
-modules need but isn't something Nixpkgs would normally manage.
+`specialArgs` is an attribute you can pass to the `import` function when you
+load a module (or a set of modules). It's typically used to provide data that
+your modules need but isn't something Nixpkgs would normally manage.
 
 For example, in a `configuration.nix`:
 
@@ -120,10 +121,10 @@ And then, inside `my-webserver-module.nix`:
 }
 ```
 
-Any argument listed in a module's function signature that is not
-one of the standard `config`, `pkgs`, `lib`, `options` (or `pkgs.callPackage`,
-etc., which are often implicit through `pkgs`) must be provided via `specialArgs`
-at the point where the modules are composed.
+Any argument listed in a module's function signature that is not one of the
+standard `config`, `pkgs`, `lib`, `options` (or `pkgs.callPackage`, etc., which
+are often implicit through `pkgs`) must be provided via `specialArgs` at the
+point where the modules are composed.
 
 Any values listed in a module that aren’t automatically passed via Nixpkgs must
 be explicitly provided through `specialArgs`.
@@ -195,8 +196,8 @@ Now if I want to use any of these arguments in modules I can by any module file
 referenced by my configuration.
 
 For example, the following is a `git.nix` module that uses the variables from
-the flake passed from `extraSpecialArgs` in this case because it's a home-manager
-module:
+the flake passed from `extraSpecialArgs` in this case because it's a
+home-manager module:
 
 ```nix
 # git.nix
