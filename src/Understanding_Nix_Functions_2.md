@@ -1,15 +1,6 @@
-╭───┬────────────╮
-│ 0 │ x1b[?1049h │
-│ 1 │ >          │
-│ 2 │ /dev/tty   │
-╰───┴────────────╯# Chapter 2
-
-<details>
-<summary> Click to Expand Table of Contents</summary>
+# Chapter 2
 
 <!-- toc -->
-
-</details>
 
 <img src="images/nixLogo.png" width="400" height="300">
 
@@ -17,15 +8,15 @@
 
 **Functions** are the building blocks of Nix, appearing everywhere in Nix
 expressions and configurations. Mastering them is essential for writing
-effective Nix code and understanding tools like NixOS and Home Manager.
-This chapter explores how Nix functions work, focusing on their **single-argument
+effective Nix code and understanding tools like NixOS and Home Manager. This
+chapter explores how Nix functions work, focusing on their **single-argument
 nature**, **currying**, **partial application**, and their role in **modules**.
 
 ## What are Nix Functions?
 
 A **Nix Function** is a rule that takes an input (called an **argument**) and
-produces an **output** based on that input. Unlike many programming languages, Nix
-functions are designed to take exactly one argument at a time. This unique
+produces an **output** based on that input. Unlike many programming languages,
+Nix functions are designed to take exactly one argument at a time. This unique
 approach, combined with a technique called currying, allows Nix to simulate
 multi-argument functions in a flexible and reusable way.
 
@@ -57,7 +48,8 @@ single parameter. However, that single parameter is very often an attribute set,
 allowing you to effectively pass multiple named inputs by destructuring (e.g.,
 `{ arg1, arg2 }: arg1 + arg2`).
 
-Type the parameter name, followed by a colon, and finally the body of the function.
+Type the parameter name, followed by a colon, and finally the body of the
+function.
 
 ```nix
 nix-repl> param: param * 2
@@ -89,9 +81,10 @@ nix-repl> twoTimes 4
 8
 ```
 
-We defined a function `param: param * 2` takes one parameter `param`, and returns
-`param * 2`. We then assigned this function to the variable `twoTimes`. Lastly,
-we called the function with a few different arguments showing it's reusability.
+We defined a function `param: param * 2` takes one parameter `param`, and
+returns `param * 2`. We then assigned this function to the variable `twoTimes`.
+Lastly, we called the function with a few different arguments showing it's
+reusability.
 
 ## Understanding Function Structure: The Role of the Colon
 
@@ -115,8 +108,8 @@ greet = personName: "Hello, ${personName}!";
 
 - Here, `personName` is the **argument** (the placeholder).
 
-- `"Hello, ${personName}!"`, is the **function body** (which uses the placeholder
-  to create the greeting).
+- `"Hello, ${personName}!"`, is the **function body** (which uses the
+  placeholder to create the greeting).
 
 When you call the function, (click to see Output):
 
@@ -135,8 +128,8 @@ greet "Anonymous"
 
 The simplest form of a Nix function takes a single argument. In Nix, function
 definitions like `x: x + 1` or `personName: "Hello, ${personName}!";` are
-**anonymous lambda functions**. They exist as values until they are assigned
-to a variable.
+**anonymous lambda functions**. They exist as values until they are assigned to
+a variable.
 
 - Click to see Output:
 
@@ -173,9 +166,9 @@ nix-repl> (mul 4) 5
 ```
 
 We defined a function that takes the parameter `x`, the body returns another
-function. This other function takes a parameter `y` and returns `x*y`. Therefore,
-calling `multiply 4` returns a function like: `x: 4*y`. In turn, we call the
-returned function with `5`, and get the expected result.
+function. This other function takes a parameter `y` and returns `x*y`.
+Therefore, calling `multiply 4` returns a function like: `x: 4*y`. In turn, we
+call the returned function with `5`, and get the expected result.
 
 #### Currying example 2
 
@@ -201,8 +194,8 @@ Here's how it works step by step:
 - When you call `concat 6`, the outer function binds `x` to `6` and returns a
   new function: `y: 6 + y`.
 
-- When you call that function with `6` (i.e., `concat 6 6`), it computes `6 + 6`,
-  resulting in `12`.
+- When you call that function with `6` (i.e., `concat 6 6`), it computes
+  `6 + 6`, resulting in `12`.
 
 This chaining is why Nix functions are so powerful—it allows you to build
 flexible, reusable functions.
@@ -234,21 +227,21 @@ nix-repl> greeting "Hello" "Alice"
 
 This function is a chain of two single-argument functions:
 
-1. The outer function takes `prefix` (e.g. `"Hello"`) and returns a function that
-   expects `name`.
+1. The outer function takes `prefix` (e.g. `"Hello"`) and returns a function
+   that expects `name`.
 
-2. The inner function takes `name` (e.g. `"Alice"`) and combines it with `prefix`
-   to produce the final string.
+2. The inner function takes `name` (e.g. `"Alice"`) and combines it with
+   `prefix` to produce the final string.
 
 Thanks to **lexical scope** (where inner functions can access variables from
 outer functions), the inner function "remembers" the `prefix` value.
 
 #### Partial Application: Using Functions Incrementally
 
-Because of **currying**, you can apply arguments to a Nix function one at a time.
-This is called _partial application_. When you provide only some of the expected
-arguments, you get a new function that "remembers" the provided arguments and
-waits for the rest.
+Because of **currying**, you can apply arguments to a Nix function one at a
+time. This is called _partial application_. When you provide only some of the
+expected arguments, you get a new function that "remembers" the provided
+arguments and waits for the rest.
 
 **Example:**
 
@@ -263,7 +256,8 @@ nix-repl> helloGreeting "Alice"
 ```
 
 - `helloGreeting` is now a new function. It has already received the `prefix`
-  argument (`"Hello"`), when we provide the second argument we get `"Hello, Alice!"`
+  argument (`"Hello"`), when we provide the second argument we get
+  `"Hello, Alice!"`
 
 **Benefits of Partial Application:**
 
@@ -278,15 +272,15 @@ functions like `map` and `filter`.
 In the context of Nix, the phrase "Nix treats functions as first-class citizens"
 means that functions in Nix are treated as values, just like numbers, strings,
 or lists. They can be manipulated, passed around, and used in the same flexible
-ways as other data types. This concept comes from functional programming and
-has specific implications in Nix.
+ways as other data types. This concept comes from functional programming and has
+specific implications in Nix.
 
 **What It Means in Nix**
 
 1. Functions Can Be **Assigned to Variables**:
 
-- You can store a function in a variable, just like you would store a number
-  or string.
+- You can store a function in a variable, just like you would store a number or
+  string.
 
 - Example:
 
@@ -332,7 +326,8 @@ helloGreeting "Alice"  # Output: "Hello, Alice!"
 
 4. Functions **Are Values in Expressions**:
 
-- Functions can be used anywhere a value is expected, such as in attribute sets or lists.
+- Functions can be used anywhere a value is expected, such as in attribute sets
+  or lists.
 
 - Example:
 
@@ -353,16 +348,16 @@ myFuncs.add 3 4  # Output: 7
 
 This functional approach is fundamental to Nix's unique build system. In Nix,
 **package builds (called derivations)** are essentially functions. They take
-specific **inputs** (source code, dependencies, build scripts) and deterministically
-produce **outputs** (a built package).
+specific **inputs** (source code, dependencies, build scripts) and
+deterministically produce **outputs** (a built package).
 
-This design ensures **atomicity**: if a build does not succeed completely
-and perfectly, it produces no output at all. This prevents situations common
-in other package managers where partial updates or corrupted builds can leave
-your system in an inconsistent or broken state.
+This design ensures **atomicity**: if a build does not succeed completely and
+perfectly, it produces no output at all. This prevents situations common in
+other package managers where partial updates or corrupted builds can leave your
+system in an inconsistent or broken state.
 
-Many NixOS and Home Manager modules are functions, and their first-class
-status means they can be combined, reused, or passed to other parts of the
+Many NixOS and Home Manager modules are functions, and their first-class status
+means they can be combined, reused, or passed to other parts of the
 configuration system.
 
 Now that we understand the "first-class" nature of Nix Functions let's see how
@@ -373,8 +368,8 @@ they fit into NixOS and Home Manager modules.
 It's crucial to understand that most NixOS and Home Manager modules are
 fundamentally **functions**.
 
-These module functions typically accept a single argument:
-**an attribute set** (remember this, it's important to understand).
+These module functions typically accept a single argument: **an attribute set**
+(remember this, it's important to understand).
 
 **Example**:
 
@@ -426,16 +421,16 @@ plugins = [
 
   - To be clear either way is fine, especially in such a small self contained
     module. If it were in a single file `configuration.nix` it would be a bit
-    more confusing to trace. Explicitness is your friend with Nix and maintaining
-    reproducability. `with` isn't always bad but should be avoided at the top
-    of a file for example to bring `nixpkgs` into scope, use `let` instead.
+    more confusing to trace. Explicitness is your friend with Nix and
+    maintaining reproducability. `with` isn't always bad but should be avoided
+    at the top of a file for example to bring `nixpkgs` into scope, use `let`
+    instead.
 
-The entire module definition is a function that takes one argument (an
-attribute set):`{ pkgs, ... }`. When this module is included in your
-configuration, the NixOS module system calls this function with a specific
-attribute set. This attribute set contains the available packages (`pkgs`),
-and other relevant information. The module then uses these values to define
-parts of your system.
+The entire module definition is a function that takes one argument (an attribute
+set):`{ pkgs, ... }`. When this module is included in your configuration, the
+NixOS module system calls this function with a specific attribute set. This
+attribute set contains the available packages (`pkgs`), and other relevant
+information. The module then uses these values to define parts of your system.
 
 ### Understanding passing and getting back arguments
 
@@ -479,8 +474,9 @@ in
   }
 ```
 
-- You can get the tarball [here](https://ftp.gnu.org/gnu/hello/hello-2.12.1.tar.gz),
-  place it in the same directory as `autotools.nix`
+- You can get the tarball
+  [here](https://ftp.gnu.org/gnu/hello/hello-2.12.1.tar.gz), place it in the
+  same directory as `autotools.nix`
 
 And finally the `builder.sh` that `autotools.nix` declares for the `args`
 attribute:
@@ -513,13 +509,13 @@ When you write:
 mkDerivation = import ./autotools.nix pkgs;
 ```
 
-- `import ./autotools.nix`: This evaluates the `autotools.nix` file. Because
-  it starts with `pkgs: attrs: ...`, it means that `autotools.nix` evaluates
-  to a function that expects one argument named `pkgs`.
+- `import ./autotools.nix`: This evaluates the `autotools.nix` file. Because it
+  starts with `pkgs: attrs: ...`, it means that `autotools.nix` evaluates to a
+  function that expects one argument named `pkgs`.
 
 - `... pkgs`: We are immediately calling that function (the one returned by
-  `import ./autotools.nix`) and passing it our `pkgs` variable (which is the result
-  of `import <nixpkgs> {}`).
+  `import ./autotools.nix`) and passing it our `pkgs` variable (which is the
+  result of `import <nixpkgs> {}`).
 
 **This illustrates the concept of Currying in Nix**:
 
@@ -548,23 +544,25 @@ in
 1. What `attrs` Represents:
 
 - Once `autotools.nix` has received its `pkgs` argument (and returned the inner
-  function), this inner function is waiting for its final argument, which we call
-  `attrs`.
+  function), this inner function is waiting for its final argument, which we
+  call `attrs`.
 
 - `attrs` is simply an attribute set (a key-value map in Nix). It's designed to
-  receive all the specific properties of the individual package you want to build
-  using this helper.
+  receive all the specific properties of the individual package you want to
+  build using this helper.
 
 2. How `attrs` is Used:
 
-- Look at the final line of `autotools.nix`: `derivation (defaultAttrs // attrs)`.
+- Look at the final line of `autotools.nix`:
+  `derivation (defaultAttrs // attrs)`.
 
 - The `//` operator in Nix performs an attribute set merge. It takes all
-  attributes from `defaultAttrs` and combines them with all attributes from `attrs`.
+  attributes from `defaultAttrs` and combines them with all attributes from
+  `attrs`.
 
-- Crucially, if an attribute exists in both `defaultAttrs` and `attrs`, the value
-  from `attrs` (the second operand) takes precedence and overrides the default
-  value.
+- Crucially, if an attribute exists in both `defaultAttrs` and `attrs`, the
+  value from `attrs` (the second operand) takes precedence and overrides the
+  default value.
 
 3. Applying attrs in the hello Derivation:
 
@@ -577,13 +575,13 @@ in
         }
 ```
 
-- The attribute set `{ name = "hello"; src = ./hello-2.12.1.tar.gz; }` is
-  what gets passed as the `attrs` argument to the `mkDerivation`
-  function (which, remember, is the inner function returned by `autotools.nix`).
+- The attribute set `{ name = "hello"; src = ./hello-2.12.1.tar.gz; }` is what
+  gets passed as the `attrs` argument to the `mkDerivation` function (which,
+  remember, is the inner function returned by `autotools.nix`).
 
 - When derivation `(defaultAttrs // attrs)` is evaluated for "hello", the `name`
-  and `src` provided in the `attrs` set will be merged with all the `defaultAttrs`
-  (like `builder`, `args`, `baseInputs`, etc.).
+  and `src` provided in the `attrs` set will be merged with all the
+  `defaultAttrs` (like `builder`, `args`, `baseInputs`, etc.).
 
 In summary:
 
@@ -591,17 +589,18 @@ In summary:
   the builder.
 
 - The `attrs` argument is where you provide the unique details for each specific
-  package you intend to build using this `autotools.nix` helper. It allows you to
-  specify things like the package's name, source code, version, and any custom
-  build flags, while still benefiting from all the sensible defaults provided by
-  `autotools.nix`. This separation makes `autotools.nix` a reusable and flexible
-  "template" for creating derivations.
+  package you intend to build using this `autotools.nix` helper. It allows you
+  to specify things like the package's name, source code, version, and any
+  custom build flags, while still benefiting from all the sensible defaults
+  provided by `autotools.nix`. This separation makes `autotools.nix` a reusable
+  and flexible "template" for creating derivations.
 
 #### Conclusion
 
-Having explored the fundamental nature of functions in Nix, we can now see
-this concept applies to more complex areas like NixOS configuration and derivations.
-In the next chapter, [NixOS Modules Explained](https://saylesss88.github.io/NixOS_Modules_Explained_3.html).
+Having explored the fundamental nature of functions in Nix, we can now see this
+concept applies to more complex areas like NixOS configuration and derivations.
+In the next chapter,
+[NixOS Modules Explained](https://saylesss88.github.io/NixOS_Modules_Explained_3.html).
 We will learn about NixOS Modules which are themselves functions most of the
 time.
 
