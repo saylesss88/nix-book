@@ -145,28 +145,6 @@ It uses the nix registry and `openssl.meta.position` to locate the file.
 man nix3 registry
 ```
 
-```bash
-cd /src
-nix repl
-nix-repl> :lf nixpkgs
-nix-repl> outputs.legacyPackages.x86_64-linux.openssl.meta.position
-"/nix/store/syvnmj3hhckkbncm94kfkbl76qsdqqj3-source/pkgs/development/libraries/openssl/default.nix:303"
-nix-repl> builtins.unsafeGetAttrPos "description" outputs.legacyPackages.x86_64-linux.openssl.meta
-{
-  column = 9;
-  file = "/nix/store/syvnmj3hhckkbncm94kfkbl76qsdqqj3-source/pkgs/development/libraries/openssl/default.nix";
-  line = 303;
-}
-```
-
-```bash
-nix repl
-nix-repl> :l <nixpkgs>
-nix-repl> openssl
-nix-repl> openssl.meta.position
-nix-repl> builtins.unsafeGetAttrPos "description" openssl.meta
-```
-
 The above command will open the `openssl/default.nix` in your `$EDITOR`.
 
 ## A.1 Full Fork and Clone of Nixpkgs

@@ -1,7 +1,18 @@
-# Build a local package
+# Creating and Building a Local Package within a Nixpkgs Clone
+
+While an actual submission to Nixpkgs involves more steps, this chapter
+demonstrates the fundamental pattern for creating a package. Every package
+recipe is a file that declares a function. This function takes the packages
+dependencies as argument.
 
 In this example we'll make a simple package with `coreutils` and build it.
 Demonstrating the process of building and testing a local package.
+
+## Clone Nixpkgs
+
+First, we'll clone Nixpkgs and try to find a good spot to put our package. We're
+just building a test package so `nixpkgs/pkgs/misc` could be a good place to
+start. We'll call our package `testPackage`.
 
 ```bash
 cd ~
@@ -34,6 +45,11 @@ ls # Try to find a catagory that your pkg fits in
 ╰────┴────────────────┴──────┴─────────┴─────────────╯
 ```
 
+Ad-hoc semi-regular structure, if you need to make a new package we first make a
+directory with the name of the package and a `default.nix` in said directory:
+
+## Create your Package directory and a `default.nix`
+
 ```bash
 cd misc
 mkdir testPackage && cd testPackage
@@ -55,6 +71,8 @@ runCommand "testPackage" {
   echo 'This is a Test' > $out
 ''
 ```
+
+## Tie it in with Nixpkgs top-level package bundle
 
 Now we need to add our `testPackage` to `all-packages.nix`
 
@@ -82,7 +100,22 @@ tfk8s = callPackage ../applications/misc/tfk8s { };
 # snip ...
 ```
 
-Move to the root directory of Nixpkgs
+> `callPackage` is a core utility in Nixpkgs. It takes a Nix expression (like
+> our `default.nix` file, which defines a function) and automatically provides
+> the function with any arguments it declares, by looking them up within the
+> `pkgs` set (or the scope where `callPackage` is invoked). This means you only
+> need to list the dependencies your package needs in its `default.nix` function
+> signature, and `callPackage` will "inject" the correct versions of those
+> packages. This is what the `callPackage` Nix Pill demonstrates at a lower
+> level.
+
+## Try Building the Package
+
+Move to the root directory of Nixpkgs:
+
+```bash
+cd ~/src/nixpkgs
+```
 
 Try building it:
 
@@ -112,6 +145,47 @@ cat ~/src/nixpkgs/result
 nix-instantiate --eval -A testPackage.meta.position
 "/home/jr/src/nixpkgs/pkgs/misc/testPackage/default.nix:6"
 ```
+
+Tools like `nix search` and the Nixpkgs website use the `meta` information for
+documentation and discoverability. It can also be useful for debugging and helps
+to provide better error messages. The above command shows that the
+`meta.position` attribute points to the file and line where the package
+definition begins, which is very useful for debugging.
+
+Typically a file will have a `meta` attribute that looks similar to the
+following:
+
+```nix
+meta = with lib; {
+    homepage = "https://www.openssl.org/";
+    description = "A cryptographic library that implements the SSL and TLS protocols";
+    license = licenses.openssl;
+    platforms = platforms.all;
+} // extraMeta;
+```
+
+For example, the following shows how Nix is able to discover different parts of
+your configuration:
+
+Launch the `nix repl` and load your local flake:
+
+```bash
+cd /src
+nix repl
+nix-repl> :lf nixpkgs
+nix-repl> outputs.legacyPackages.x86_64-linux.openssl.meta.position
+"/nix/store/syvnmj3hhckkbncm94kfkbl76qsdqqj3-source/pkgs/development/libraries/openssl/default.nix:303"
+nix-repl> builtins.unsafeGetAttrPos "description" outputs.legacyPackages.x86_64-linux.openssl.meta
+{
+  column = 9;
+  file = "/nix/store/syvnmj3hhckkbncm94kfkbl76qsdqqj3-source/pkgs/development/libraries/openssl/default.nix";
+  line = 303;
+}
+```
+
+Lets create just the `meta.description` for demonstration purposes.
+
+## Adding the meta attribute
 
 Since we don't have a `meta` attribute this points to a default value that's
 incorrect.
@@ -143,13 +217,13 @@ nix-instantiate --eval -A testPackage.meta.position
 "/home/jr/src/nixpkgs/pkgs/misc/testPackage/default.nix:11"
 ```
 
-Now it points us to the 11'th line, right where our meta description is.
+Now it points us to the 11'th line, right where our `meta.description` is.
 
 Let's stage our package so nix recognises it:
 
 ```bash
 cd ~/nixpkgs
-git add .
+git add pkgs/misc/testPackage/
 nix edit .#testPackage
 ```
 
