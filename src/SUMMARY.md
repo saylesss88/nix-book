@@ -22,5 +22,6 @@
 - [Debugging and Tracing NixOS Modules](./Debugging_and_Tracing_NixOS_Modules_9.md)
 - [Working with Nixpkgs Locally](./Working_with_Nixpkgs_Locally_10.md)
   - [Build a local package within a Nixpkgs Clone](nixpkgs/local_package.md)
+  - [Nixpkgs Overlays](nixpkgs/overlay.md)
 - [Nix Pull Requests](./Nix_Pull_Requests_11.md)
 - [Intro to Nushell on NixOS](./intro_to_nushell_on_NixOS.md)

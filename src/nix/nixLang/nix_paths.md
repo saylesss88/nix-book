@@ -384,4 +384,73 @@ nix-repl> builtins.getContext (builtins.storePath "/nix/store/29mhfr5g4dsv07d80b
 {
   "/nix/store/29mhfr5g4dsv07d80b7n4bgs45syk3wl-hello-2.12.2" = { ... };
 }
+nix-repl> :p builtins.getContext (builtins.storePath "/nix/store/29mhfr5g4dsv07d80b7n4bgs45syk3wl-hello-2.12.2")
+{
+  "/nix/store/29mhfr5g4dsv07d80b7n4bgs45syk3wl-hello-2.12.2" = { path = true; };
+}
 ```
+
+```bash
+nix-repl> :l .
+warning: Nix search path entry '/nix/var/nix/profiles/per-user/root/channels' does not exist, ignoring
+Added 24878 variables.
+
+nix-repl> hello.outPath
+# this is the output path of the hello derivation
+"/nix/store/29mhfr5g4dsv07d80b7n4bgs45syk3wl-hello-2.12.2"
+nix-repl> :p builtins.getContext hello.outPath
+# we see that this is a `.drv`, this is because derivations can have multiple outputs
+{
+  "/nix/store/ljxsxdy1syy03b9kfnnh8x7zsk21fdcq-hello-2.12.2.drv" = {
+    outputs = [ "out" ];
+  };
+}
+# for example
+nix-repl> openssl.outputs
+[
+  "bin"
+  "dev"
+  "out"
+  "man"
+  "doc"
+  "debug"
+]
+nix-repl> openssl.all
+# a list of all the derivations
+[
+  «derivation /nix/store/rw3y8k94ib37dc86n0wivr551wyzxgsk-openssl-3.4.1.drv»
+  «derivation /nix/store/rw3y8k94ib37dc86n0wivr551wyzxgsk-openssl-3.4.1.drv»
+  «derivation /nix/store/rw3y8k94ib37dc86n0wivr551wyzxgsk-openssl-3.4.1.drv»
+  «derivation /nix/store/rw3y8k94ib37dc86n0wivr551wyzxgsk-openssl-3.4.1.drv»
+  «derivation /nix/store/rw3y8k94ib37dc86n0wivr551wyzxgsk-openssl-3.4.1.drv»
+  «derivation /nix/store/rw3y8k94ib37dc86n0wivr551wyzxgsk-openssl-3.4.1.drv»
+]
+nix-repl> lib.concatStringsSep " " openssl.all
+"/nix/store/rjzx8v679rwd6dsb6s08iy3j2rrax72s-openssl-3.4.1-bin /nix/store/kcgqglb4iax0zh5jlrxmjdik93wlgsrq-openssl-3.4.1-dev /nix/store/8pviily4fgsl02ijm65binz236717wfs-openssl-3.4.1 /nix/store/1l5b31cnswnbcdcac9rzs9xixnc2n9r5-openssl-3.4.1-man /nix/store/9fz5qmj0z70cbzy7mapml0sbi8z6ap0a-openssl-3.4.1-doc /nix/store/yk2g2gfcj2fy1ffyi1g91q7jmp4h8pxa-openssl-3.4.1-debug"
+nix-repl> :p builtins.getContext (builtins.unsafeDiscardOutputDependency (lib.concatStringsSep " " openssl.all))
+{
+  "/nix/store/rw3y8k94ib37dc86n0wivr551wyzxgsk-openssl-3.4.1.drv" = {
+    outputs = [
+      "bin"
+      "debug"
+      "dev"
+      "doc"
+      "man"
+      "out"
+    ];
+  };
+}
+nix-repl> :p builtins.getContext openssl.drvPath
+{
+  "/nix/store/rw3y8k94ib37dc86n0wivr551wyzxgsk-openssl-3.4.1.drv" = { allOutputs = true; };
+}
+# useful if you need to create a derivation that copies this derivation to another machine
+# remote builders usually take care of this but you may need it occasionally
+nix-repl> :p builtins.getContext (builtins.unsafeDiscardOutputDependency openssl.drvPath)
+{
+  "/nix/store/rw3y8k94ib37dc86n0wivr551wyzxgsk-openssl-3.4.1.drv" = { path = true; };
+}
+```
+
+Relying on paths outside of the nix store is generally not recommended because
+of garbage collection and it's considered unsafe.
