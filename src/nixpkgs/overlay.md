@@ -12,11 +12,11 @@ fd 'btrfs-progs' .
 ./pkgs/by-name/bt/btrfs-progs/
 ```
 
-Now navigate to where they have `src =` defined and copy that code block, in
-this case it is the following:
+Open the `package.nix` in the above directory and copy the `src` block within
+the `stdenv.mkDerivation` block like so:
 
 ```nix
-  pname = "btrfs-progs";
+# package.nix
   version = "6.14";
 
   src = fetchurl {
@@ -26,11 +26,9 @@ this case it is the following:
 ```
 
 When we use the above `src` block in our overlay we'll need to add
-`src = self.fetchurl` for our overlay to have access to it.
+`src = self.fetchurl` for our overlay to have access to `fetchurl`.
 
-I yanked the above block because we can use the `pname` and `version` in our
-overlay. Now we'll create our overlay and paste the above section below the
-overlay like so:
+We will replace the version with our desired version number.
 
 ```bash
 cd ~/src/nixpkgs
@@ -45,7 +43,6 @@ would cause a refetch. We will use an empty string to follow convention:
 # overlay.nix
 self: super: {
   btrfs-progs = super.btrfs-progs.overrideAttrs (old: rec {
-      pname = "btrfs-progs";
       version = "6.13";
 
       # Notice the `self` added here

@@ -346,7 +346,7 @@ nix derivation show /nix/store/58zcp9xwgf1sirmzf9sh61j8gz9lkw34-test.drv | jq
 ```
 
 You see the `"inputDrvs"`, they are the derivations that we depend on and it
-doesnt know about the hello.drv. In Nix for the builder sandbox it creates a
+doesn't know about the `hello.drv`. In Nix for the builder sandbox it creates a
 sandbox that only contains the derivations that you depend on which ensures that
 you can't depend on any derivation that you haven't explicitly decalred.
 
