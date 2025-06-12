@@ -60,7 +60,8 @@ self: super: {
 ```
 
 To build this with the file right from the root of the local Nixpkgs (i.e.
-`~/src/nixpkgs`) you could run the following:
+`~/src/nixpkgs`) you could run the following. Running the command this way
+avoids the impurity of looking it up in the `~/.config` directory:
 
 ```bash
 nix-build -A btrfs-progs --arg overlays '[ (import ./overlay.nix) ]'
@@ -101,8 +102,41 @@ stripping (with command strip and flags -S -p) in  /nix/store/szd6lizahidjniz85a
 /nix/store/szd6lizahidjniz85a0g1wsrfknirhwb-btrfs-progs-6.13
 ```
 
-We can see that we were successful by the `6.13` in the store path. Now, we can
-move and rename the file so `nixpkgs` automatically picks it up:
+We can inspect it with the repl:
+
+```bash
+cd ~/src/nixpkgs
+nix repl
+nix-repl> :a import ./. { overlays = [ (import ./overlay.nix) ]; }
+nix-repl> btrfs-progs
+«derivation /nix/store/6yxhj84cwcsnrd87rcxbd6w08l9ikc6p-btrfs-progs-6.13.drv»
+nix-repl> btrfs-progs.drvAttrs.buildInputs
+[
+  «derivation /nix/store/yg4llzkcla5rppv8r1iikyamfxg3g4sg-acl-2.3.2.drv»
+  «derivation /nix/store/vqczbcwjnid6bs4cv3skl7kyd6kkzcfx-attr-2.5.2.drv»
+  «derivation /nix/store/xrvx0azszpdh2x0lnldakqx25vfxab19-e2fsprogs-1.47.2.drv»
+  «derivation /nix/store/iil4b8adk615zhp6wmzjx16z1v2f8f4j-util-linux-minimal-2.41.drv»
+  «derivation /nix/store/wwld8wp91m26wz69gp8vzh090sh5ygxd-lzo-2.10.drv»
+  «derivation /nix/store/w4ncw24gdfkbx9779xpgjli5sagi506m-systemd-minimal-libs-257.5.drv»
+  «derivation /nix/store/dmh4lvmq6n8hy56q93kplvnfnlwqzzv5-zlib-1.3.1.drv»
+  «derivation /nix/store/h8iwhnr636dwb72qqcyzp111ajjxgzr2-zstd-1.5.7.drv»
+]
+nix-repl> btrfs-progs.drvAttrs.version
+"6.13"
+nix-repl> btrfs-progs.drvAttrs.src
+«derivation /nix/store/y5nkz1xczxha4xl93qq3adndyc46dcvf-btrfs-progs-v6.13.tar.xz.drv»
+```
+
+Using `:a` adds the attributes from the resulting set into scope and avoids
+bringing the entire `nixpkgs` set into scope.
+
+To see whats available, you can for example type `btrfs-progs.drvAttrs.` then
+hit `TAB`.
+
+Another way to do this is to move our overlay to the
+`~/.config/nixpkgs/overlays` directory and rename the file like the following,
+agian this adds an impurity because it relies on your `~/.config` directory
+which is different from user to user:
 
 ```bash
 mv overlay.nix ~/.config/nixpkgs/overlays/btrfs-progs.nix
