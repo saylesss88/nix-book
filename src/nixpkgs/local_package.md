@@ -17,7 +17,7 @@ start. We'll call our package `testPackage`.
 ```bash
 cd ~
 mkdir src && cd src
-git clone git@github.com:NixOS/nixpkgs.git
+git clone https://github.com/NixOS/nixpkgs.git
 cd nixpkgs/pkgs
 ls # Try to find a catagory that your pkg fits in
 ╭────┬────────────────┬──────┬─────────┬─────────────╮
@@ -48,6 +48,9 @@ ls # Try to find a catagory that your pkg fits in
 Ad-hoc semi-regular structure, if you need to make a new package we first make a
 directory with the name of the package and a `default.nix` in said directory:
 
+> ❗ NOTE: In this example we will use the `misc` directory, it is now
+> recommended to use the `by-name` directory. Explained further down.
+
 ## Create your Package directory and a `default.nix`
 
 ```bash
@@ -71,8 +74,6 @@ runCommand "testPackage" {
   echo 'This is a Test' > $out
 ''
 ```
-
-## Tie it in with Nixpkgs top-level package bundle
 
 Now we need to add our `testPackage` to `all-packages.nix`
 
@@ -108,6 +109,49 @@ tfk8s = callPackage ../applications/misc/tfk8s { };
 > signature, and `callPackage` will "inject" the correct versions of those
 > packages. This is what the `callPackage` Nix Pill demonstrates at a lower
 > level.
+
+## Understanding `pkgs/by-name/` and other locations
+
+Nixpkgs uses different conventions for package placement:
+
+- **Older categories (e.g., `pkgs/misc/`, `pkgs/applications/`):** Packages
+  within these directories typically use `default.nix` as their definition file
+  (e.g., `pkgs/misc/testPackage/default.nix`). **These packages are NOT
+  automatically included** in the top-level `pkgs` set; they _must_ be
+  explicitly added via a `callPackage` entry in
+  `pkgs/top-level/all-packages.nix`. This is the method demonstrated in this
+  chapter for our `testPackage`.
+
+- **The new `pkgs/by-name/` convention:** This is the _preferred location for
+  new packages_.
+
+  - Packages here are placed in a directory structure like
+    `pkgs/by-name/<first-two-letters>/<package-name>/`.
+
+  - Crucially, their main definition file is named `package.nix` (e.g.,
+    `pkgs/by-name/te/testPackage/package.nix`).
+
+  - **Packages placed within `pkgs/by-name/` are automatically discovered and
+    exposed** by Nixpkgs' top-level `pkgs` set. They **do not** require a manual
+    `callPackage` entry in `all-packages.nix`. This results in a more modular
+    and scalable approach, reducing manual maintenance.
+
+> ❗ : While this example uses `pkgs/misc/` to demonstrate explicit
+> `callPackage` usage, when contributing a _new_ package to Nixpkgs, you should
+> nearly always place it within `pkgs/by-name/` and name its definition file
+> `package.nix`.
+
+- [pkgs/by-name/README](https://github.com/NixOS/nixpkgs/blob/master/pkgs/by-name/README.md)
+
+- There are some
+  [Limitations](https://github.com/NixOS/nixpkgs/blob/master/pkgs/by-name/README.md#limitations)
+  to this approach.
+
+- [nixpkgs-vet](https://github.com/NixOS/nixpkgs-vet)
+
+Previously, packages were manually added to `all-packages.nix`. While this is no
+longer needed in most cases, understanding the old method provides useful
+context for troubleshooting legacy configurations or custom integrations.
 
 ## Try Building the Package
 
