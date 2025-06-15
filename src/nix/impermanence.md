@@ -7,21 +7,22 @@
 
 </details>
 
-Figure 1: **Impermanence Logo**: Image of the Impermanence logo. Sourced from the
+Figure 1: **Impermanence Logo**: Image of the Impermanence logo. Sourced from
+the
 
 [Impermanence repo](https://github.com/nix-community/impermanence)
 
 ![Impermanence Logo](../images/Impermanence.png)
 
 This guide is for an unencrypted setup, there are a few links at the end for
-encrypted setups. This guide follows the previous [minimal install guide](https://saylesss88.github.io/nix/impermanence.html)
-but you should be able to adjust it carefully to meet your needs.
+encrypted setups. This guide follows the previous
+[minimal install guide](https://saylesss88.github.io/nix/impermanence.html) but
+you should be able to adjust it carefully to meet your needs.
 
 This section details how to set up impermanence on your NixOS system using BTRFS
 subvolumes. With impermanence, your operating system's root filesystem will
-reset to a pristine state on each reboot, while designated directories and
-files remain persistent. This provides a highly reliable and rollback-friendly
-system.
+reset to a pristine state on each reboot, while designated directories and files
+remain persistent. This provides a highly reliable and rollback-friendly system.
 
 ## Impermanence: The Concept and Its BTRFS Implementation
 
@@ -59,16 +60,16 @@ is preserved across reboots, typically stored in specific locations like the
   designated persistent subvolumes (e.g., `/persist`, `/var/log`, `/var/lib`) or
   files.
 
-- You control exactly what state persists by configuring `environment.persistence."/persist"`
-  or other mechanisms.
+- You control exactly what state persists by configuring
+  `environment.persistence."/persist"` or other mechanisms.
 
 3. Reproducibility and Security:
 
 - By wiping transient state, impermanence prevents unintended changes from
   accumulating, making the system more reproducible.
 
-- It enhances security by ensuring sensitive temporary data (e.g., `/tmp`, runtime
-  credentials) is erased on reboot.
+- It enhances security by ensuring sensitive temporary data (e.g., `/tmp`,
+  runtime credentials) is erased on reboot.
 
 ### Getting Started
 
@@ -170,7 +171,7 @@ data locations
       # "/var/log" # Persist logs are handled by disko
     ];
     files = [
-      "/swapfile" # Persist swapfile (impermanence manages this file)
+      #"/swapfile" # Persist swapfile (impermanence manages this file)
     ];
   };
 
@@ -202,9 +203,9 @@ data locations
 
 ### Applying Your Impermanence Configuration
 
-Once you have completed all the steps and created or modified the necessary files
-(`flake.nix`, `impermanence.nix`), you need to apply these changes to your NixOS
-system.
+Once you have completed all the steps and created or modified the necessary
+files (`flake.nix`, `impermanence.nix`), you need to apply these changes to your
+NixOS system.
 
 1. Navigate to your NixOS configuration directory (where your `flake.nix` is
    located).
@@ -213,7 +214,8 @@ system.
 cd /path/to/your/nixos/flake
 ```
 
-2. Rebuild and Switch: Execute the `nixos-rebuild switch` command. This command will:
+2. Rebuild and Switch: Execute the `nixos-rebuild switch` command. This command
+   will:
 
 - Evaluate your `flake.nix` and the modules it imports (including your new
   `impermanence.nix`).
@@ -241,7 +243,8 @@ cat /imperm_test/testfile # Verify content
 ```
 
 4. Reboot Your System: For the impermanence setup to take full effect and for
-   your root filesystem to be reset for the first time, you must reboot your machine.
+   your root filesystem to be reset for the first time, you must reboot your
+   machine.
 
 ```bash
 sudo reboot
@@ -249,7 +252,8 @@ sudo reboot
 
 5. Verify Impermanence (After Reboot):
 
-- After the system has rebooted, check if the test directory and file still exist:
+- After the system has rebooted, check if the test directory and file still
+  exist:
 
 ```bash
 ls -l /imperm_test/testfile
