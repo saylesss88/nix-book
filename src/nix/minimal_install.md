@@ -7,8 +7,8 @@
 
 </details>
 
-Figure 1: **BTRFS Logo**: Image of the BTRFS logo. Sourced from the [BTRFS repo](https://github.com/btrfs)
-![BTRFS logo](../images/btrfs1.png)
+Figure 1: **BTRFS Logo**: Image of the BTRFS logo. Sourced from the
+[BTRFS repo](https://github.com/btrfs) ![BTRFS logo](../images/btrfs1.png)
 
 ## Why I Chose BTRFS
 
@@ -16,36 +16,42 @@ I chose BTRFS because I was already familiar with it from using it with Arch
 Linux and I found it to be very easy to use. From what I've read, there are
 licensing issues between the Linux Kernel and ZFS which means that ZFS is not
 part of the Linux Kernel; it's maintained by the OpenZFS project and available
-as a separate kernel module. This can cause issues and make you think more
-about your filesystem than I personally want to at this point.
+as a separate kernel module. This can cause issues and make you think more about
+your filesystem than I personally want to at this point.
 
-While ZFS is a solid choice and offers some benefits over BTRFS, I recommend looking into
-it before making your own decision.
+While ZFS is a solid choice and offers some benefits over BTRFS, I recommend
+looking into it before making your own decision.
 
 If you have a ton of RAM you could most likely skip the minimal install and just
-set your system up as needed or just use [tmpfs as root](https://elis.nu/blog/2020/05/nixos-tmpfs-as-root/)
+set your system up as needed or just use
+[tmpfs as root](https://elis.nu/blog/2020/05/nixos-tmpfs-as-root/)
 
 ## Getting Started with Disko
 
-Disko allows you to declaratively partition and format your disks, and then mount
-them to your system. I recommend checking out the [README](https://github.com/nix-community/disko/tree/master?tab=readme-ov-file)
+Disko allows you to declaratively partition and format your disks, and then
+mount them to your system. I recommend checking out the
+[README](https://github.com/nix-community/disko/tree/master?tab=readme-ov-file)
 as it is a **disk destroyer** if used incorrectly.
 
-We will mainly be following the [disko quickstart guide](https://github.com/nix-community/disko/blob/master/docs/quickstart.md)
+We will mainly be following the
+[disko quickstart guide](https://github.com/nix-community/disko/blob/master/docs/quickstart.md)
 
 Figure 2: **Disko Logo**: Image of the logo for Disko, the NixOS declarative
-disk partitioning tool. Sourced from the [Disko project](https://github.com/nix-community/disko)
+disk partitioning tool. Sourced from the
+[Disko project](https://github.com/nix-community/disko)
 ![disko logo](../images/disko1.png)
 
-1. Get the [Nixos Minimal ISO](https://channels.nixos.org/nixos-25.05/latest-nixos-minimal-x86_64-linux.iso)
+1. Get the
+   [Nixos Minimal ISO](https://channels.nixos.org/nixos-25.05/latest-nixos-minimal-x86_64-linux.iso)
    Get it on a usb stick, I use Ventoy with Ventoy2Disk.sh. The following is the
-   link to the [Ventoy TarBall](https://sourceforge.net/projects/ventoy/files/v1.1.05/ventoy-1.1.05-linux.tar.gz/download)
+   link to the
+   [Ventoy TarBall](https://sourceforge.net/projects/ventoy/files/v1.1.05/ventoy-1.1.05-linux.tar.gz/download)
    download, untar it with `tar -xzf ventoy-1.1.05-linux.tar.gz`, and make it
-   executable with `chmod +x Ventoy2Disk.sh`, and finally execute it with `sudo bash Ventoy2Disk.sh`
-   Follow the prompts to finish the install.
+   executable with `chmod +x Ventoy2Disk.sh`, and finally execute it with
+   `sudo bash Ventoy2Disk.sh` Follow the prompts to finish the install.
 
-2. The minimal installer uses `wpa_supplicant` instead of NetworkManager, to enable
-   networking run the following:
+2. The minimal installer uses `wpa_supplicant` instead of NetworkManager, to
+   enable networking run the following:
 
 ```bash
 sudo systemctl start wpa_supplicant
@@ -182,9 +188,16 @@ nano /tmp/disk-config.nix
 }
 ```
 
-- You may choose to add a swapfile to the above `disk-config.nix`, I haven't
-  included it here because I manage it with the impermanence module. If you were
-  to add it here you could just add under say the `"/lib"` section add:
+> ❗ NOTE: While `"/persist"` is perfectly functional and valid,
+> `"/nix/persist"` (or often `/var/lib/impermanence` with tools like
+> `impermanence`) has emerged as a very common and somewhat "standard" location
+> in the NixOS community for the persistent data. If you choose to go for
+> `"/nix/persist"` here, make sure to match
+> `  environment.persistence."/nix/persist" = {` in your `impermanence.nix`
+
+- You may also choose to add a swapfile to the above `disk-config.nix`, I
+  haven't included it here because I manage it with the impermanence module. If
+  you were to add it here you could just add under say the `"/lib"` section add:
 
 ```nix
 # Persistent subvolume for swapfile
@@ -222,8 +235,8 @@ The output for an `nvme0n1` disk would be similar to the following:
 # ... snip ...
 ```
 
-7. Generate necessary files, here we use `--no-filesystems` because disko handles the
-   `fileSystems` attribute for us.
+7. Generate necessary files, here we use `--no-filesystems` because disko
+   handles the `fileSystems` attribute for us.
 
 ```bash
 nixos-generate-config --no-filesystems --root /mnt
@@ -247,8 +260,8 @@ hx flake.nix
 
 > You'll change `hostname = nixpkgs.lib.nixosSystem` to your chosen hostname,
 > (e.g. `magic = nixpkgs.lib.nixosSystem`). This will be the same as your
-> `networking.hostName = "magic";` in your `configuration.nix` that we will
-> set up shortly.
+> `networking.hostName = "magic";` in your `configuration.nix` that we will set
+> up shortly.
 
 ```nix
 # flake.nix
@@ -306,7 +319,8 @@ Retype password: your_secret_password
 $6$random_salt$your_hashed_password_string_here_this_is_very_long_and_complex
 ```
 
-copy the hashed password and use it for the value of your `initialHashedPassword`
+copy the hashed password and use it for the value of your
+`initialHashedPassword`
 
 ```nix
 # configuration.nix
@@ -362,12 +376,14 @@ sudo nixos-install --flake /mnt/etc/nixos/flake .#hostname
 
 - You will be prompted to enter a new password if everything succeeds.
 
-- If everything checks out, reboot the system and you should be prompted to enter
-  your `user` and `password` to login to a shell to get started.
+- If everything checks out, reboot the system and you should be prompted to
+  enter your `user` and `password` to login to a shell to get started.
 
-- The flake will be placed at `/etc/nixos/flake`, I choose to move it to my
-  home directory. Since the file was first in `/etc` you'll need to adjust the
-  permissions with something like `sudo chown username:users ~/flake`(`username` will
-  be your username) and then you can work on it without privilege escalation.
+- The flake will be placed at `/etc/nixos/flake`, I choose to move it to my home
+  directory. Since the file was first in `/etc` you'll need to adjust the
+  permissions with something like `sudo chown username:users ~/flake`(`username`
+  will be your username) and then you can work on it without privilege
+  escalation.
 
-- To continue following along and set up impermanence [Click Here](https://saylesss88.github.io/nix/impermanence.html)
+- To continue following along and set up impermanence
+  [Click Here](https://saylesss88.github.io/nix/impermanence.html)

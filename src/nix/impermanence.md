@@ -201,6 +201,13 @@ data locations
 }
 ```
 
+> ❗ NOTE: While `"/persist"` is perfectly functional and valid,
+> `"/nix/persist"` (or often `/var/lib/impermanence` with tools like
+> `impermanence`) has emerged as a very common and somewhat "standard" location
+> in the NixOS community for the persistent data. If you choose to go for
+> `"/nix/persist"` here, make sure to match
+> `  environment.persistence."/nix/persist" = {` in your `impermanence.nix`
+
 ### Applying Your Impermanence Configuration
 
 Once you have completed all the steps and created or modified the necessary
