@@ -155,7 +155,7 @@ nano /tmp/disk-config.nix
                   };
                   "/persist" = {
                     mountpoint = "/persist";
-                    mountOptions = ["subvol=nix" "compress=zstd" "noatime"];
+                    mountOptions = ["subvol=persist" "compress=zstd" "noatime"];
                   };
                   "/log" = {
                     mountpoint = "/var/log";
