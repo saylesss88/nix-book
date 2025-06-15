@@ -171,7 +171,7 @@ data locations
       # "/var/log" # Persist logs are handled by disko
     ];
     files = [
-      #"/swapfile" # Persist swapfile (impermanence manages this file)
+      #"/persist/swapfile" # Persist swapfile (impermanence manages this file)
     ];
   };
 
@@ -211,7 +211,7 @@ NixOS system.
    located).
 
 ```bash
-cd /path/to/your/nixos/flake
+cd /path/to/your/flake
 ```
 
 2. Rebuild and Switch: Execute the `nixos-rebuild switch` command. This command
