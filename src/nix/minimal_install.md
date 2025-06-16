@@ -248,9 +248,12 @@ sudo mv /tmp/disk-config.nix /mnt/etc/nixos
 
 ### Setting a Flake for your minimal Install
 
-8. Create the flake in your home directory, then move it to `/mnt/etc/nixos`
+8. Create the flake in your home directory, then move it to `/mnt/etc/nixos`.
+   This avoids needing to use `sudo` for every command while in the
+   `/mnt/etc/nixos` directory.
 
 ```bash
+cd ~
 mkdir flake && cd flake
 nix-shell -p git yazi helix
 export NIX_CONFIG='experimental-features = nix-command flakes'
@@ -301,12 +304,12 @@ sudo mv disk-config.nix hardware-configuration.nix configuration.nix ~/flake
    clone my original flake repo and move the pieces into place but it's fairly
    easy to just type it all out:
 
-- Bootloader
+- Bootloader, (e.g., `boot.loader.systemd-boot.enable = true;`)
 
 - User, the example uses `username` change this to your chosen username. If you
   don't set your hostname it will be `nixos`.
 
-- Networking
+- Networking, `networking.networkmanager.enable = true;`
 
 - `hardware-configuration.nix` & `disk-config.nix` for this setup
 

@@ -69,7 +69,11 @@ is preserved across reboots, typically stored in specific locations like the
   accumulating, making the system more reproducible.
 
 - It enhances security by ensuring sensitive temporary data (e.g., `/tmp`,
-  runtime credentials) is erased on reboot.
+╭───┬────────────╮
+│ 0 │ x1b[?1049h │
+│ 1 │ >          │
+│ 2 │ /dev/tty   │
+╰───┴────────────╯  runtime credentials) is erased on reboot.
 
 ### Getting Started
 
