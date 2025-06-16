@@ -94,17 +94,27 @@ nvme0n1     259:0    0   1,8T  0 disk
 
 4. Copy the disk configuration to your machine. You can choose one from the
    [examples directory](https://github.com/nix-community/disko/tree/master/example).
-   I chose the btrfs-subvolumes layout so I ran the following:
 
-- I also created a starter repo containing much of what's needed, you should
-  still follow the step to generate your own hardware-configuration.nix but most
-  everything else should work after you change a few things labeled
-  `# Change me!`. If you clone the repo you can skip the next curl command.
+-
+- **Option A**: (Simpler for new users) I also created a starter repo containing
+  much of what's needed, you should still follow the step to generate your own
+  `hardware-configuration.nix` but most everything else should work after you
+  change a few things labeled `# Change me!`. If you clone the repo you can skip
+  the next curl command.
 
 ```bash
 cd ~
 git clone https://github.com/saylesss88/my-flake.git
 ```
+
+After cloning the repo, follow step 7 to generate your configuration and replace
+the repos `hardware-configuration.nix` with your newly generated one. I
+recommend making all the necessary changes (changing the `#Change me!`
+locations) while in your home directory, then moving the flake to
+`/mnt/etc/nixos/` and installing from there.
+
+- **Option B**: (More flexible, more manual steps) Skip cloning the repo above
+  and for the btrfs-subvolume default layout, run the following:
 
 ```bash
 cd /tmp
