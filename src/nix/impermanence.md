@@ -24,6 +24,11 @@ subvolumes. With impermanence, your operating system's root filesystem will
 reset to a pristine state on each reboot, while designated directories and files
 remain persistent. This provides a highly reliable and rollback-friendly system.
 
+In NixOS, "state" is any data or condition of the system that isn't defined in
+your declarative configuration. The impermanence approach aims to make this
+state temporary (ephemeral) or easily resettable, so your system always matches
+your configuration and can recover from unwanted changes or corruption.
+
 ## Impermanence: The Concept and Its BTRFS Implementation
 
 In a traditional Linux system, most of this state is stored on the disk and
@@ -44,7 +49,8 @@ Impermanence is a NixOS approach that makes the system stateless (or nearly
 stateless) by wiping the root filesystem (`/`) on each boot, ensuring a clean,
 predictable starting point. Only explicitly designated data (persistent state)
 is preserved across reboots, typically stored in specific locations like the
-`/persist` subvolume. This achieves:
+`/nix/persist` subvolume. This is possible because NixOS can boot with only the
+`/boot`, and `/nix` directories. This achieves:
 
 1. Clean Root Filesystem:
 
@@ -57,11 +63,11 @@ is preserved across reboots, typically stored in specific locations like the
 2. Selective Persistence:
 
 - Critical state (e.g., user files, logs, system configuration) is preserved in
-  designated persistent subvolumes (e.g., `/persist`, `/var/log`, `/var/lib`) or
-  files.
+  designated persistent subvolumes (e.g., `/nix/persist`, `/var/log`,
+  `/var/lib`) or files.
 
 - You control exactly what state persists by configuring
-  `environment.persistence."/persist"` or other mechanisms.
+  `environment.persistence."/nix/persist"` or other mechanisms.
 
 3. Reproducibility and Security:
 
@@ -209,8 +215,8 @@ sudo nixos-rebuild switch --flake .#hostname # Replace 'hostname' with your actu
 
 - Before you reboot, create a temporary directory and file in a non-persistent
   location. Since you haven't explicitly added `/imperm_test` to your
-  `environment.persistence."/persist"` directories, this file should not survive
-  a reboot.
+  `environment.persistence."/nix/persist"` directories, this file should not
+  survive a reboot.
 
 ```bash
 mkdir /imperm_test
@@ -242,7 +248,7 @@ contents were indeed ephemeral and were removed during the reboot process,
 indicating your impermanence setup is working correctly!
 
 Your system should now come up with a fresh root filesystem, and only the data
-specified in your `environment.persistence."/persist"` configuration will be
+specified in your `environment.persistence."/nix/persist"` configuration will be
 persistent.
 
 #### Related Material
