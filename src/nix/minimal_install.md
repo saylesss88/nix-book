@@ -159,8 +159,8 @@ nano /tmp/disk-config.nix
                     ];
                     mountpoint = "/nix";
                   };
-                  "/persist" = {
-                    mountpoint = "/persist";
+                  "/nix/persist" = {
+                    mountpoint = "/nix/persist";
                     mountOptions = ["subvol=persist" "compress=zstd" "noatime"];
                   };
                   "/log" = {
@@ -173,8 +173,15 @@ nano /tmp/disk-config.nix
                   };
                   # This subvolume will be created but not mounted
                   "/test" = {};
+                  # Subvolume for the swapfile
+                  "/nix/persist/swap" = {
+                    mountpoint = "/nix/persist/swap";
+                    mountOptions = ["subvol=swap" "noatime" "nodatacow"];
+                    swap = {
+                      swapfile.size = "8G";
+                    };
+                  };
                 };
-
               };
             };
           };
@@ -182,34 +189,50 @@ nano /tmp/disk-config.nix
       };
     };
   };
-  fileSystems."/persist".neededForBoot = true;
+  fileSystems."/nix/persist".neededForBoot = true;
   fileSystems."/var/log".neededForBoot = true;
   fileSystems."/var/lib".neededForBoot = true;
 }
 ```
 
-> ❗ NOTE: While `"/persist"` is perfectly functional and valid,
-> `"/nix/persist"` (or often `/var/lib/impermanence` with tools like
-> `impermanence`) has emerged as a very common and somewhat "standard" location
-> in the NixOS community for the persistent data. If you choose to go for
-> `"/nix/persist"` here, make sure to match
-> `  environment.persistence."/nix/persist" = {` in your `impermanence.nix`
+> ❗ NOTE: It may be unnecessary and even redundant having disko manage your
+> swap. Especially if you use `zram` as it will take priority over the swap:
 
-- You may also choose to add a swapfile to the above `disk-config.nix`, I
-  haven't included it here because I manage it with the impermanence module. If
-  you were to add it here you could just add under say the `"/lib"` section add:
+> ```nix
+> {
+>   lib,
+>   config,
+>   ...
+> }: let
+>   cfg = config.custom.zram;
+> in {
+>   options.custom.zram = {
+>     enable = lib.mkEnableOption "Enable utils module";
+>   };
+>
+>   config = lib.mkIf cfg.enable {
+>     zramSwap = {
+>       enable = true;
+>       # one of "lzo", "lz4", "zstd"
+>       algorithm = "zstd";
+> >       priority = 5;
+> >       memoryPercent = 50;
+>     };
+>   };
+> }
+> ```
+>
+> And in your `configuration.nix` you would add:
+>
+> ```nix
+> # configuration.nix
+> custom = {
+>     zram.enable = true;
+> };
+> ```
 
-```nix
-# Persistent subvolume for swapfile
-"/persist/swap" = {
-  mountpoint = "/persist/swap";
-  mountOptions = ["subvol=persist/swap" "noatime"]; # No compression for swap
-};
-fileSystems."/persist/swap".neededForBoot = true;
-```
-
-6. Run disko to partition, format and mount your disks. **Warning** this will
-   wipe **EVERYTHING** on your disk. Disko doesn't work with dual boot.
+6.  Run disko to partition, format and mount your disks. **Warning** this will
+    wipe **EVERYTHING** on your disk. Disko doesn't work with dual boot.
 
 ```bash
 sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko/latest -- --mode destroy,format,mount /tmp/disk-config.nix
@@ -241,6 +264,11 @@ The output for an `nvme0n1` disk would be similar to the following:
 ```bash
 nixos-generate-config --no-filesystems --root /mnt
 ```
+
+It may be helpful to add a couple things to your `configuration.nix` now,
+rebuild and then move on. Such as, your hostname, git, an editor of your choice.
+After your additions run `sudo nixos-rebuild switch` to apply the changes. If
+you do this, you can skip the `nix-shell -p` command coming up.
 
 ```bash
 sudo mv /tmp/disk-config.nix /mnt/etc/nixos
@@ -375,6 +403,8 @@ copy the hashed password and use it for the value of your
 ```bash
 sudo mv ~/flake /mnt/etc/nixos/
 sudo nixos-install --flake /mnt/etc/nixos/flake .#hostname
+# if the above command doesn't work try this:
+sudo nixos-install --flake /mnt/etc/nixos/flake#hostname
 ```
 
 - You will be prompted to enter a new password if everything succeeds.
