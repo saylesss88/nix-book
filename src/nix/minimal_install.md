@@ -95,7 +95,6 @@ nvme0n1     259:0    0   1,8T  0 disk
 4. Copy the disk configuration to your machine. You can choose one from the
    [examples directory](https://github.com/nix-community/disko/tree/master/example).
 
--
 - **Option A**: (Simpler for new users) I also created a starter repo containing
   much of what's needed, you should still follow the step to generate your own
   `hardware-configuration.nix` but most everything else should work after you
@@ -106,6 +105,9 @@ nvme0n1     259:0    0   1,8T  0 disk
 cd ~
 git clone https://github.com/saylesss88/my-flake.git
 ```
+
+> Make sure to change line 7 in `disk-config.nix` to what you got from step 3
+> `device = "/dev/nvme0n1";`
 
 After cloning the repo, follow step 7 to generate your configuration and replace
 the repos `hardware-configuration.nix` with your newly generated one. I
