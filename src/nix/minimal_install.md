@@ -96,6 +96,16 @@ nvme0n1     259:0    0   1,8T  0 disk
    [examples directory](https://github.com/nix-community/disko/tree/master/example).
    I chose the btrfs-subvolumes layout so I ran the following:
 
+- I also created a starter repo containing much of what's needed, you should
+  still follow the step to generate your own hardware-configuration.nix but most
+  everything else should work after you change a few things labeled
+  `# Change me!`. If you clone the repo you can skip the next curl command.
+
+```bash
+cd ~
+git clone https://github.com/saylesss88/my-flake.git
+```
+
 ```bash
 cd /tmp
 curl https://raw.githubusercontent.com/nix-community/disko/refs/heads/master/example/btrfs-subvolumes.nix -o /tmp/disk-config.nix
