@@ -101,7 +101,7 @@ github_deploy_key_ed25519: |
   ...
   -----END OPENSSH PRIVATE KEY-----
 
-github_deploy_key_ed25519: |
+github_deploy_key_ed25519_nix-book: |
   -----BEGIN OPENSSH PRIVATE KEY-----
   ...
   -----END OPENSSH PRIVATE KEY-----
