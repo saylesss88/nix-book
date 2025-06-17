@@ -115,6 +115,17 @@ sops -d secrets/github-deploy-key.yaml
 
 The `-----BEGIN` and the rest of the private key **must** be indented 2 spaces
 
+> ❗ WARNING: Only ever enter your private keys through the `sops` command. If
+> you forget and paste them in without the `sops` command then run `git add` at
+> any point, your git history will have contained an unencrypted secret which is
+> a nono. Always use the `sops` command when dealing with files in the `secrets`
+> directory, save the file and inspect that it is encrypted on save. If not
+> something went wrong with the `sops` process, **do not add it to Git**. If you
+> do, you will be required to rewrite your entire history which can be bad if
+> you're collaborating with others. `git-filter-repo` is one such solution that
+> rewrites your history. Just keep this in mind. This happens because Git has a
+> protection that stops you from doing stupid things.
+
 Generate a hashedPassword:
 
 ```bash
@@ -179,6 +190,7 @@ And finally use the password-hash for your `hashedPasswordFile` for your user,
 my user is `jr` so I added this:
 
 ```nix
+# ... snip ...
     users.users = {
       # ${username} = {
       jr = {
@@ -186,7 +198,7 @@ my user is `jr` so I added this:
         isNormalUser = true;
         # description = userVars.gitUsername;
         hashedPasswordFile = config.sops.secrets.password_hash.path;
-
+  # ...snip...
 ```
 
 7. Rebuild your configuration and you should see something like this:
