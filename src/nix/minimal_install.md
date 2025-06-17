@@ -96,10 +96,8 @@ nvme0n1     259:0    0   1,8T  0 disk
    [examples directory](https://github.com/nix-community/disko/tree/master/example).
 
 - **Option A**: (Simpler for new users) I also created a starter repo containing
-  much of what's needed, you should still follow the step to generate your own
-  `hardware-configuration.nix` but most everything else should work after you
-  change a few things labeled `# Change me!`. If you clone the repo you can skip
-  the next curl command.
+  much of what's needed. If you choose this option follow the `README.md`
+  included with the repo.
 
 ```bash
 cd ~
@@ -108,12 +106,6 @@ git clone https://github.com/saylesss88/my-flake.git
 
 > Make sure to change line 7 in `disk-config.nix` to what you got from step 3
 > `device = "/dev/nvme0n1";`
-
-After cloning the repo, follow step 7 to generate your configuration and replace
-the repos `hardware-configuration.nix` with your newly generated one. I
-recommend making all the necessary changes (changing the `#Change me!`
-locations) while in your home directory, then moving the flake to
-`/mnt/etc/nixos/` and installing from there.
 
 - **Option B**: (More flexible, more manual steps) Skip cloning the repo above
   and for the btrfs-subvolume default layout, run the following:
@@ -195,14 +187,6 @@ nano /tmp/disk-config.nix
                   };
                   # This subvolume will be created but not mounted
                   "/test" = {};
-                  # Subvolume for the swapfile
-                  "/nix/persist/swap" = {
-                    mountpoint = "/nix/persist/swap";
-                    mountOptions = ["subvol=swap" "noatime" "nodatacow"];
-                    swap = {
-                      swapfile.size = "8G";
-                    };
-                  };
                 };
               };
             };
@@ -217,8 +201,9 @@ nano /tmp/disk-config.nix
 }
 ```
 
-> ❗ NOTE: It may be unnecessary and even redundant having disko manage your
-> swap. Especially if you use `zram` as it will take priority over the swap:
+- For `/tmp` on RAM use something like the following. I've found that having
+  disko manage swaps causes unnecessary issues. Using zram follows the ephemeral
+  route:
 
 > ```nix
 > {
@@ -252,6 +237,14 @@ nano /tmp/disk-config.nix
 >     zram.enable = true;
 > };
 > ```
+
+After adding the above module, you can see it with:
+
+```bash
+swapon --show
+NAME       TYPE      SIZE USED PRIO
+/dev/zram0 partition 7.5G   0B    5
+```
 
 6.  Run disko to partition, format and mount your disks. **Warning** this will
     wipe **EVERYTHING** on your disk. Disko doesn't work with dual boot.
