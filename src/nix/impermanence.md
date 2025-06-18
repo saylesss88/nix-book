@@ -209,6 +209,31 @@ cd /path/to/your/flake
 
 - Activate the new system configuration, making it the current running system.
 
+> ❗ **NOTE:** On the first rebuild after setting up impermanence, you may find
+> that you're not in the password database or cannot log in/sudo. This occurs
+> because the initial state of your new ephemeral root filesystem, including
+> `/etc` (where user passwords are stored), is fresh. It has to do with the
+> timing of when `environment.persistence` takes effect during the first boot.
+>
+> To avoid this password issue, **before** your first `nixos-rebuild switch` for
+> impermanence, run:
+>
+> ```bash
+> sudo mkdir -p /nix/persist/etc # Ensure the target directory exists
+> sudo cp -a /etc/* /nix/persist/etc
+> ```
+>
+> - This copies your _current_ `/etc` directory contents (including existing
+>   user passwords) into your persistent storage.
+> - **Crucially:** You must also ensure that `/etc` is explicitly included in
+>   your `environment.persistence."/nix/persist".directories` list in your
+>   `impermanence.nix` like we did above, (or main configuration). This
+>   configures NixOS to persistently bind-mount `/nix/persist/etc` over `/etc`
+>   on every subsequent boot.
+>
+> Once these steps are done and you reboot, your user passwords should function
+> correctly, and future rebuilds will not present this problem.
+
 ```bash
 sudo nixos-rebuild switch --flake .#hostname # Replace 'hostname' with your actual system hostname
 ```
