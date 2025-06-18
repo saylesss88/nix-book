@@ -69,6 +69,11 @@ is preserved across reboots, typically stored in specific locations like the
 - You control exactly what state persists by configuring
   `environment.persistence."/nix/persist"` or other mechanisms.
 
+> ⚠️ CRITICAL WARNING: DO NOT PERSIST `/var/lib/nixos` ⚠️. A common pitfall, and
+> one you may encounter warnings for in other guides, is mistakenly attempting
+> to make `/var/lib/nixos` persistant via `environment.persistence`. This is
+> critically important: **DO NOT do this it will break your system!**.
+
 3. Reproducibility and Security:
 
 - By wiping transient state, impermanence prevents unintended changes from
