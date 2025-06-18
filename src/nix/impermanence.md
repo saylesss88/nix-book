@@ -137,8 +137,8 @@ Now, create a new file named `impermanence.nix` in your configuration directory
 (i.e. your flake directory). This file will contain all the specific settings
 for your impermanent setup, including BTRFS subvolume management and persistent
 data locations. Since this file is right next to your `configuration.nix`,
-you'll just add an `imports = [ ./impermanence.nix ]` to apply it to your
-configuration.
+you'll just add an `imports = [ ./impermanence.nix ]` to your
+`configuration.nix` apply it to your configuration.
 
 ```nix
 {lib, ...}: {
