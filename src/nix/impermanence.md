@@ -72,7 +72,9 @@ is preserved across reboots, typically stored in specific locations like the
 > ⚠️ CRITICAL WARNING: DO NOT PERSIST `/var/lib/nixos` ⚠️. A common pitfall, and
 > one you may encounter warnings for in other guides, is mistakenly attempting
 > to make `/var/lib/nixos` persistant via `environment.persistence`. This is
-> critically important: **DO NOT do this it will break your system!**.
+> critically important: **DO NOT do this it will break your system!**. Actually,
+> don't persist random things if you don't know what they do. Do your research
+> first to see if persisting said directory or file will break your system.
 
 3. Reproducibility and Security:
 

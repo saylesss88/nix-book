@@ -19,8 +19,56 @@ part of the Linux Kernel; it's maintained by the OpenZFS project and available
 as a separate kernel module. This can cause issues and make you think more about
 your filesystem than I personally want to at this point.
 
-While ZFS is a solid choice and offers some benefits over BTRFS, I recommend
-looking into it before making your own decision.
+<details>
+<summary> ✔️ Click for BTRFS Subvolume Overview </summary>
+
+A **Btrfs subvolume** is essentially a distinct section within a Btrfs
+filesystem that maintains its own set of files and directories, along with a
+separate inode numbering system. Unlike block-level partitions (such as LVM
+logical volumes), Btrfs subvolumes operate at the file level and are based on
+file extents.
+
+**Extents** in Btrfs are contiguous blocks of data on disk that store the actual
+contents of files. When files are created or modified, Btrfs manages these
+extents efficiently, allowing features like deduplication and snapshots.
+Multiple subvolumes can reference the same extents, meaning that identical data
+is not duplicated on disk, which saves space and improves performance.
+
+A **snapshot** in Btrfs is a special kind of subvolume that starts with the same
+content as another subvolume at the time the snapshot is taken. Snapshots are
+typically writable by default, so you can make changes in the snapshot without
+affecting the original subvolume. This is possible because Btrfs tracks changes
+at the extent level, only creating new extents when files are modified (a
+technique called copy-on-write).
+
+Subvolumes in Btrfs behave much like regular directories from a user’s
+perspective, but they support additional operations such as renaming, moving,
+and nesting (placing subvolumes within other subvolumes). There are no
+restrictions on nesting, though it can affect how snapshots are created and
+managed. Each subvolume is assigned a unique and unchangeable numeric ID
+(subvolid or rootid).
+
+You can access a Btrfs subvolume in two main ways:
+
+- As a normal directory within the filesystem.
+
+- By mounting it directly as if it were a separate filesystem, using the subvol
+  or subvolid mount options. When mounted this way, you only see the contents of
+  that subvolume, similar to how a bind mount works.
+
+When a new Btrfs filesystem is created, it starts with a "top-level" subvolume
+(with an internal ID of 5). This subvolume is always present and cannot be
+deleted or replaced, and it is the default mount point unless changed with btrfs
+subvolume set-default.
+
+Subvolumes can also have storage quotas set using Btrfs’s quota groups
+(qgroups), but otherwise, they all draw from the same underlying storage pool.
+Thanks to features like deduplication and snapshots, subvolumes can share data
+efficiently at the extent level.While ZFS is a solid choice and offers some
+benefits over BTRFS, I recommend looking into it before making your own
+decision.
+
+</details>
 
 If you have a ton of RAM you could most likely skip the minimal install and just
 set your system up as needed or just use
@@ -433,5 +481,130 @@ sudo nixos-install --flake /mnt/etc/nixos/flake#hostname
   will be your username) and then you can work on it without privilege
   escalation.
 
+- You can check the layout of your btrfs system with:
+
+```bash
+sudo btrfs subvolume list /
+```
+
+- You may notice some `old_roots` in the output, which are snapshots, which are
+  likely created before system upgrades or reboots for rollback purposes. They
+  can be deleted or rolled back as needed.
+
+- [BTRFS Subvolumes](https://btrfs.readthedocs.io/en/latest/Subvolumes.html)
+
 - To continue following along and set up impermanence
   [Click Here](https://saylesss88.github.io/nix/impermanence.html)
+
+## Recovery with `nixos-enter` and chroot
+
+🛠️ Recovery: Chroot into Your NixOS Btrfs+Impermanence System
+
+If you need to repair your system (e.g., forgot root password, fix a broken
+config, etc.), follow these steps to chroot into your NixOS install:
+
+1. Boot a Live ISO
+
+   Boot from a NixOS (or any recent Linux) live USB.
+
+   Open a terminal and become root:
+
+```bash
+sudo -i
+```
+
+2. Identify Your Devices
+
+Your main disk is /dev/nvme0n1
+
+- EFI partition: /dev/nvme0n1p1 (mounted at /boot)
+
+- Root partition: /dev/nvme0n1p2 (Btrfs, with subvolumes)
+
+3. Mount the Btrfs Root Subvolume
+
+First, mount the Btrfs partition somewhere temporary (not as / yet):
+
+```bash
+mount -o subvol=root,compress=zstd,noatime /dev/nvme0n1p2 /mnt
+```
+
+4. Mount Other Subvolumes
+
+Now mount your other subvolumes as defined in your disko.nix:
+
+```bash
+# Home
+
+mkdir -p /mnt/home mount -o subvol=home,compress=zstd,noatime /dev/nvme0n1p2
+/mnt/home
+
+# User home (optional, usually not needed unless you want to access it directly)
+
+mkdir -p /mnt/home/user mount -o subvol=home/user,compress=zstd,noatime
+/dev/nvme0n1p2 /mnt/home/user
+
+# Nix store
+
+mkdir -p /mnt/nix mount -o subvol=nix,compress=zstd,noatime /dev/nvme0n1p2
+/mnt/nix
+
+# Nix persist
+
+mkdir -p /mnt/nix/persist mount -o subvol=persist,compress=zstd,noatime
+/dev/nvme0n1p2 /mnt/nix/persist
+
+# /var/log
+
+mkdir -p /mnt/var/log mount -o subvol=log,compress=zstd,noatime /dev/nvme0n1p2
+/mnt/var/log
+
+# /var/lib
+
+mkdir -p /mnt/var/lib mount -o subvol=lib,compress=zstd,noatime /dev/nvme0n1p2
+/mnt/var/lib
+```
+
+Note: If you get "subvolume not found," check the subvolume names with btrfs
+subvol list /mnt.
+
+5. Mount the EFI Partition
+
+```bash
+mkdir -p /mnt/boot mount /dev/nvme0n1p1 /mnt/boot
+```
+
+6. (Optional) Mount Virtual Filesystems
+
+```bash
+mount --bind /dev /mnt/dev mount --bind /proc /mnt/proc mount --bind /sys
+/mnt/sys mount --bind /run /mnt/run
+```
+
+7. Chroot
+
+```bash
+chroot /mnt /run/current-system/sw/bin/bash
+```
+
+or, if using a non-NixOS live system:
+
+```bash
+nixos-enter
+```
+
+(You may need to install nixos-enter with nix-shell -p nixos-enter.) 8. You’re
+In!
+
+You can now run `nixos-rebuild`, reset passwords, or fix configs as needed. 🔎
+
+📓 Notes
+
+- Adjust compress=zstd,noatime if your config uses different mount options.
+
+- For impermanence, make sure to mount all persistent subvolumes you need.
+
+- If you use swap, you may want to enable it too (e.g., swapon /dev/zram0 if
+  relevant).
+
+You can now recover, repair, or maintain your NixOS system as needed!
