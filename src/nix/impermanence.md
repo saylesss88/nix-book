@@ -290,6 +290,16 @@ persistent.
 This is if you followed the minimal_install guide, it will need to be changed
 for a different disk layout.
 
+[Chroot](https://en.wikipedia.org/wiki/Chroot) is an operation that changes the
+apparent root directory for the current running process and their children. A
+program that is run in such a modified environment cannot access files and
+commands outside that environmental directory tree. This modified environment is
+called a chroot jail. --NixOS wiki
+
+`nixos-enter` allows you to access a NixOS installation from a NixOS rescue
+system. To use, setup `/mnt` as described in the
+[installation manual](https://nixos.org/manual/nixos/stable/#sec-installation)
+
 🛠️ Recovery: Chroot into Your NixOS Btrfs+Impermanence System
 
 Take note of your layout from commands like:
@@ -299,6 +309,9 @@ sudo fdisk -l
 lsblk
 sudo btrfs subvol list /
 ```
+
+Also inspect your `disk-config.nix` to ensure you refer to the correct `subvol=`
+names.
 
 If you need to repair your system (e.g., forgot root password, fix a broken
 config, etc.), follow these steps to chroot into your NixOS install:
@@ -334,35 +347,33 @@ mount -o subvol=root,compress=zstd,noatime /dev/nvme0n1p2 /mnt
 Now mount your other subvolumes as defined in your `disko.nix`:
 
 ```bash
+# Mount Other Subvolumes
+# (Ensure /mnt directories are created for each *mountpoint*)
+
 # Home
+mkdir -p /mnt/home
+mount -o subvol=home,compress=zstd,noatime /dev/nvme0n1p2 /mnt/home
 
-mkdir -p /mnt/home mount -o subvol=home,compress=zstd,noatime /dev/nvme0n1p2
-/mnt/home
-
-# User home (optional, usually not needed unless you want to access it directly)
-
-mkdir -p /mnt/home/user mount -o subvol=home/user,compress=zstd,noatime
-/dev/nvme0n1p2 /mnt/home/user
+# IMPORTANT: No separate mount for /mnt/home/user, as it's a nested subvolume
+# and handled by the /home mount.
 
 # Nix store
-
-mkdir -p /mnt/nix mount -o subvol=nix,compress=zstd,noatime /dev/nvme0n1p2
-/mnt/nix
+mkdir -p /mnt/nix
+mount -o subvol=nix,compress=zstd,noatime /dev/nvme0n1p2 /mnt/nix
 
 # Nix persist
-
-mkdir -p /mnt/nix/persist mount -o subvol=persist,compress=zstd,noatime
-/dev/nvme0n1p2 /mnt/nix/persist
+mkdir -p /mnt/nix/persist
+# CRITICAL: Based our disko.nix, the subvolume name is 'persist', not 'nix/persist'
+mount -o subvol=persist,compress=zstd,noatime /dev/nvme0n1p2 /mnt/nix/persist
 
 # /var/log
-
-mkdir -p /mnt/var/log mount -o subvol=log,compress=zstd,noatime /dev/nvme0n1p2
-/mnt/var/log
+mkdir -p /mnt/var/log
+mount -o subvol=log,compress=zstd,noatime /dev/nvme0n1p2 /mnt/var/log
 
 # /var/lib
-
-mkdir -p /mnt/var/lib mount -o subvol=lib,compress=zstd,noatime /dev/nvme0n1p2
-/mnt/var/lib
+mkdir -p /mnt/var/lib
+# Confirmed: The subvolume named 'lib' is mounted to /var/lib
+mount -o subvol=lib,compress=zstd,noatime /dev/nvme0n1p2 /mnt/var/lib
 ```
 
 Note: If you get "subvolume not found," check the subvolume names with
@@ -400,16 +411,20 @@ You can now run `nixos-rebuild`, reset passwords, or fix configs as needed. 🔎
 
 📓 Notes
 
-- Adjust compress=zstd,noatime if your config uses different mount options.
+- Adjust `compress=zstd,noatime` if your config uses different mount options.
 
 - For impermanence, make sure to mount all persistent subvolumes you need.
 
-- If you use swap, you may want to enable it too (e.g., swapon /dev/zram0 if
+- If you use swap, you may want to enable it too (e.g., `swapon /dev/zram0` if
   relevant).
 
 You can now recover, repair, or maintain your NixOS system as needed!
 
 #### Related Material
+
+- [Change root (chroot)](https://wiki.nixos.org/wiki/Change_root)
+
+- [nixos-enter](https://www.mankier.com/8/nixos-enter)
 
 - [erase your darlings](https://grahamc.com/blog/erase-your-darlings/)
 
