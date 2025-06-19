@@ -11,7 +11,8 @@ recovery keys and confirm that they are correct. Refer to this
 
 > ❗ NOTE: There are some serious limitations to this setup, I'd say it could
 > stop the average person. But an experienced hacker could easily bypass this
-> without encryption.
+> without encryption if they had access to your computer. For more protection
+> look into TPM2 Hardware Requirements and full disk encryption.
 
 ## Requirements
 
