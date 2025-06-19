@@ -167,6 +167,7 @@ directory is located at `~/flake/secrets` so the path from `sops.nix` to
         owner = "root";
         group = "root";
         mode = "0400";
+        neededForUsers = true;
       };
       "github_deploy_key_ed25519_nix-book" = {
         sopsFile = ../../secrets/github-deploy-key.yaml;
