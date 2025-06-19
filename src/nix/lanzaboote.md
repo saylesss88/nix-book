@@ -292,3 +292,61 @@ System:
 ```
 
 We can see the `Secure Boot: enabled (user)`
+
+## What Lanzaboote (Secure Boot) Actually Secures on NixOS and Limitations
+
+As mentioned earlier, this provides some basic protection that may be good
+enough for your desktop in your bedroom but there are some serious limitations.
+I want to be clear that this may stop an average person but an advanced threat
+actor with resources could still fairly easily get in.
+
+Secure Boot (with Lanzaboote or any other tool) on NixOS primarily protects the
+boot chain—the bootloader, kernel, and initrd—by ensuring only signed, trusted
+binaries are executed at boot. This is a real and valuable security improvement,
+especially for defending against “evil maid” attacks (where someone with
+physical access tampers with your bootloader or kernel) and for preventing many
+forms of persistent malware.
+
+Here are some of the caveats:
+
+1. Userspace Remains Unverified
+
+   Once the kernel and initrd have booted, NixOS (by default) does not
+   cryptographically verify the integrity of the rest of userspace (the programs
+   and libraries in the Nix store, your configs, etc.).
+
+   This means an attacker who can modify userspace (e.g., by gaining root
+   access) can potentially install persistent malware, even if your boot chain
+   is protected
+
+   .
+
+2. Kernel Lockdown Is Not Enabled
+
+   The Linux kernel’s [lockdown mode]
+
+   is designed to prevent even root from tampering with the kernel at runtime
+   (e.g., by loading unsigned modules, using kexec, or accessing /dev/mem).
+
+   NixOS does not enable kernel lockdown by default, and enabling it is
+   non-trivial, especially given how the Nix store works (modules and kernels
+   are built dynamically and not always signed at install time).
+
+   Without lockdown, a root user (or malware with root) can still compromise the
+   kernel after boot.
+
+3. Stage 2 Verification Is Lacking
+
+   Some distributions (like Fedora Silverblue or systems using dm-verity)
+   cryptographically verify the entire userspace at boot, making it immutable
+   and much harder to tamper with. This is not the default on NixOS, though
+   there are experimental or appliance-focused solutions
+
+   .
+
+4. Disk Encryption Complements Secure Boot
+
+   Full disk encryption (e.g., LUKS) is strongly recommended alongside Secure
+   Boot. Encryption protects your data at rest and ensures that even if someone
+   bypasses Secure Boot, they cannot read or modify your files without your
+   passphrase
