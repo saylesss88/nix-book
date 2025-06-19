@@ -5,7 +5,7 @@
 - Click Fork, then Create a new Fork.
 
 - Uncheck the box "Only fork the `master` branch", for development we will need
-  more branches for development.
+  more branches.
 
   - If you only fork master, you won't have the `nixos-XX.YY` release branches
     available on your fork when you later try to create a PR against them, or
