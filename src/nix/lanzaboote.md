@@ -9,6 +9,10 @@ For Windows dual-booters and BitLocker users, you should export your BitLocker
 recovery keys and confirm that they are correct. Refer to this
 [Microsoft support article](https://support.microsoft.com/en-us/windows/find-your-bitlocker-recovery-key-6b71ad27-0b89-ea08-f143-056f5ab347d6)
 
+> ❗ NOTE: There are some serious limitations to this setup, I'd say it could
+> stop the average person. But an experienced hacker could easily bypass this
+> without encryption.
+
 ## Requirements
 
 To be able to setup Secure Boot on your device, NixOS needs to be installed in
@@ -207,7 +211,6 @@ different conventions.
 You can see your BIOS from the output of `bootctl status`:
 
 ```bash
-sudo bootctl status
 sudo bootctl status
 doas (jr@magic) password:
 System:
