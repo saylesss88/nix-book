@@ -285,6 +285,130 @@ Your system should now come up with a fresh root filesystem, and only the data
 specified in your `environment.persistence."/nix/persist"` configuration will be
 persistent.
 
+## Recovery with `nixos-enter` and chroot
+
+This is if you followed the minimal_install guide, it will need to be changed
+for a different disk layout.
+
+🛠️ Recovery: Chroot into Your NixOS Btrfs+Impermanence System
+
+Take note of your layout from commands like:
+
+```bash
+sudo fdisk -l
+lsblk
+sudo btrfs subvol list /
+```
+
+If you need to repair your system (e.g., forgot root password, fix a broken
+config, etc.), follow these steps to chroot into your NixOS install:
+
+1. Boot a Live ISO
+
+   Boot from a NixOS (or any recent Linux) live USB.
+
+   Open a terminal and become root:
+
+```bash
+sudo -i
+```
+
+2. Identify Your Devices
+
+Your main disk is `/dev/nvme0n1`
+
+- EFI partition: `/dev/nvme0n1p1` (mounted at /boot)
+
+- Root partition: `/dev/nvme0n1p2` (Btrfs, with subvolumes)
+
+3. Mount the Btrfs Root Subvolume
+
+First, mount the Btrfs partition somewhere temporary (not as / yet):
+
+```bash
+mount -o subvol=root,compress=zstd,noatime /dev/nvme0n1p2 /mnt
+```
+
+4. Mount Other Subvolumes
+
+Now mount your other subvolumes as defined in your `disko.nix`:
+
+```bash
+# Home
+
+mkdir -p /mnt/home mount -o subvol=home,compress=zstd,noatime /dev/nvme0n1p2
+/mnt/home
+
+# User home (optional, usually not needed unless you want to access it directly)
+
+mkdir -p /mnt/home/user mount -o subvol=home/user,compress=zstd,noatime
+/dev/nvme0n1p2 /mnt/home/user
+
+# Nix store
+
+mkdir -p /mnt/nix mount -o subvol=nix,compress=zstd,noatime /dev/nvme0n1p2
+/mnt/nix
+
+# Nix persist
+
+mkdir -p /mnt/nix/persist mount -o subvol=persist,compress=zstd,noatime
+/dev/nvme0n1p2 /mnt/nix/persist
+
+# /var/log
+
+mkdir -p /mnt/var/log mount -o subvol=log,compress=zstd,noatime /dev/nvme0n1p2
+/mnt/var/log
+
+# /var/lib
+
+mkdir -p /mnt/var/lib mount -o subvol=lib,compress=zstd,noatime /dev/nvme0n1p2
+/mnt/var/lib
+```
+
+Note: If you get "subvolume not found," check the subvolume names with
+`btrfs subvol list /mnt`.
+
+5. Mount the EFI Partition
+
+```bash
+mkdir -p /mnt/boot mount /dev/nvme0n1p1 /mnt/boot
+```
+
+6. (Optional) Mount Virtual Filesystems
+
+```bash
+mount --bind /dev /mnt/dev mount --bind /proc /mnt/proc mount --bind /sys
+/mnt/sys mount --bind /run /mnt/run
+```
+
+7. Chroot
+
+```bash
+chroot /mnt /run/current-system/sw/bin/bash
+```
+
+or, if using a non-NixOS live system:
+
+```bash
+nixos-enter
+```
+
+(You may need to install nixos-enter with nix-shell -p nixos-enter.) 8. You’re
+In!
+
+You can now run `nixos-rebuild`, reset passwords, or fix configs as needed. 🔎
+
+📓 Notes
+
+- Adjust compress=zstd,noatime if your config uses different mount options.
+
+- For impermanence, make sure to mount all persistent subvolumes you need.
+
+- If you use swap, you may want to enable it too (e.g., swapon /dev/zram0 if
+  relevant).
+
+You can now recover, repair, or maintain your NixOS system as needed!
+
 #### Related Material
 
 - [erase your darlings](https://grahamc.com/blog/erase-your-darlings/)
