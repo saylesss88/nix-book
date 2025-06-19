@@ -220,7 +220,7 @@ repeatedly hit delete until it brings up the BIOS settings.
 
 The lanzaboote guide shows a few systems and how to enter setup mode for them.
 
-For a thinkpad the steps are:
+For a ThinkPad the steps are:
 
 1. Select the "Security" tab.
 
@@ -233,11 +233,14 @@ For a thinkpad the steps are:
 ---
 
 For my system, it would allow me to do the above steps but when I saved and
-exited I got the red screen then blue screen and it said No Valid Keys or
+exited I got a red screen then blue screen and it said No Valid Keys or
 something like that and eventually brought me to the MOK Manager where you can
-manually regester keys, this is NOT what you want to do.
+manually register keys, this is NOT what you want to do.
 
-After some tinkering, I found that I was able to enter custom mode without
+Even after this mistake I was able to re-enable secure boot and get back into
+the system.
+
+After some tinkering, I found that I was able to enter "custom mode" without
 enabling secure boot, which in turn allowed me to select the "Reset to Setup
 Mode"
 
@@ -247,7 +250,8 @@ save our changes so hit "No" do not exit without saving.
 
 After this you should see all No Keys entries.
 
-Finally, Hit the setting to save and exit.
+Finally, Hit the setting to save and exit, some BIOS list an F4 or F9 keybind
+that saves and exits.
 
 > ❗: For my system, choosing "save and reboot" would not work for some reason,
 > I had to choose "save and exit".
@@ -271,10 +275,13 @@ Enrolled keys to the EFI variables!
 > Boot bypasses, see for example:
 > <https://uefi.org/sites/default/files/resources/dbx_release_info.pdf>
 
-I then Rebooted and enabled secure boot and can see from being able to log in
-with secure boot works and the output of `sbctl status` shows:
+I then Rebooted into BIOS and enabled secure boot, saved and exited. This loads
+NixOS as if you just rebooted.
+
+And finally check the output of `sbctl status`:
 
 ```bash
+sudo sbctl status
 System:
       Firmware: UEFI 2.70 (American Megatrends 5.19)
  Firmware Arch: x64
