@@ -188,6 +188,16 @@ directory is located at `~/flake/secrets` so the path from `sops.nix` to
 }
 ```
 
+> ❗ NOTE: You may see in the sops quickstart guide that if you're using
+> impermanence, the key used for secret decryption (`sops.age.keyFile` or
+> `age.sshKeyPaths`, you can't use both) must be in a persistent directory,
+> loaded early enough during the boot process. If you are using the btrfs
+> subvolume layout you don't need to worry about this because your home will be
+> on its own partition when only the root partition is wiped on reboot. Adding
+> `neededForUsers = true;` tells sops-nix to decrypt and make that secret
+> available earlier in the boot process--specifically, before user and group
+> accounts are created.
+
 And finally use the password-hash for your `hashedPasswordFile` for your user,
 my user is `jr` so I added this:
 
