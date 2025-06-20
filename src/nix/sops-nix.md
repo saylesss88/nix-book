@@ -1,5 +1,25 @@
 # Sops-Nix encrypted secrets
 
+Managing secrets—like API keys, SSH deploy keys, and password hashes is a
+critical part of system configuration, but it’s also one of the trickiest to do
+securely and reproducibly. Traditionally, secrets might be stored in ad hoc
+locations, referenced by absolute paths, or managed manually outside of version
+control. This approach makes it hard to share, rebuild, or audit your
+configuration, and increases the risk of accidental leaks or inconsistencies
+between systems.
+
+`sops-nix` solves these problems by integrating Mozilla SOPS directly into your
+NixOS configuration. Instead of relying on hardcoded file paths or copying
+secrets around, you declare your secrets in your Nix code, encrypt them with
+strong keys, and let `sops-nix` handle decryption and placement at activation
+time.
+
+Encryption with strong keys, as used by sops-nix, makes brute force attacks
+computationally unfeasible with current technology—the time and resources
+required to try every possible key would be astronomically high. However, this
+protection relies on using strong, secret keys and good security practices;
+advances in technology or poor key management can weaken this defense.
+
 1. Add sops to your `flake.nix`:
 
 ```nix
@@ -30,6 +50,19 @@ environment.systemPackages = [
 ];
 ```
 
+Also add the following to your `.gitignores` in your git config:
+
+```nix
+programs.git = {
+    enabled = true;
+    ignores = [
+        "secrets/"
+        ".key"
+        ".pem"
+    ];
+}
+```
+
 3. Generate a key (This is your **private key** and **MUST NEVER BE COMMITTED TO
    GIT OR SHARED**):
 
@@ -38,12 +71,14 @@ mkdir -p ~/.config/sops/age
 age-keygen -o ~/.config/sops/age/keys.txt
 ```
 
-Copy the Public Keys Value, it will look something like this:
+To get the Public Keys Value, run the following command:
 
 ```bash
 age-keygen -y ~/.config/sops/age/keys.txt
 age12zlz6lvcdk6eqaewfylg35w0syh58sm7gh53q5vvn7hd7c6nngyseftjxl
 ```
+
+Copy the `age` value it gives you back.
 
 4. Create a `.sops.yaml` in the same directory as your `flake.nix`:
 
@@ -71,7 +106,7 @@ creation_rules:
         # This part ensures your *personal* key can decrypt it.
 ```
 
-Save it and move on.
+Save it and move on, this file and `sops.nix` are safe to version control.
 
 5. sops-nix's automatic decryption feature using system SSH host keys only works
    with ed25519 host keys for deriving Age decryption keys. Therefore, for
@@ -83,7 +118,7 @@ ssh-keygen -t ed25519 -C "your_email@example.com"
 ssh-keygen -t ed25519 -f ~/nix-book-deploy-key -C "deploy-key-nix-book-repo"
 ```
 
-5. Copy the **PRIVATE** key for each and add them to your secrets directory:
+6. Copy the **PRIVATE** key for each and add them to your secrets directory:
 
 While in your flake directory:
 
@@ -145,7 +180,7 @@ password_hash: PasteGeneratedPasswordHere
 sops -d secrets/password-hash.yaml
 ```
 
-6. Create a `sops.nix` and import it or add this directly to your
+7. Create a `sops.nix` and import it or add this directly to your
    `configuration.nix`:
 
 My `sops.nix` is located at `~/flake/hosts/hostname/sops.nix` and the secrets
@@ -188,15 +223,24 @@ directory is located at `~/flake/secrets` so the path from `sops.nix` to
 }
 ```
 
+Import `sops.nix` into your `configuration.nix` or equivalent:
+
+```nix
+# configuration.nix
+imports = [
+  ./sops.nix # Assuming sops.nix is in the same directory as configuration.nix, adjust path as needed
+  # ... other imports
+];
+```
+
 > ❗ NOTE: You may see in the sops quickstart guide that if you're using
-> impermanence, the key used for secret decryption (`sops.age.keyFile` or
-> `age.sshKeyPaths`, you can't use both) must be in a persistent directory,
-> loaded early enough during the boot process. If you are using the btrfs
-> subvolume layout you don't need to worry about this because your home will be
-> on its own partition when only the root partition is wiped on reboot. Adding
-> `neededForUsers = true;` tells sops-nix to decrypt and make that secret
-> available earlier in the boot process--specifically, before user and group
-> accounts are created.
+> impermanence, the key used for secret decryption (`sops.age.keyFile`) must be
+> in a persistent directory, loaded early enough during the boot process. If you
+> are using the btrfs subvolume layout you don't need to worry about this
+> because your home will be on its own partition when only the root partition is
+> wiped on reboot. Adding `neededForUsers = true;` tells `sops-nix` to decrypt
+> and make that secret available earlier in the boot process--specifically,
+> before user and group accounts are created.
 
 And finally use the password-hash for your `hashedPasswordFile` for your user,
 my user is `jr` so I added this:
@@ -213,7 +257,7 @@ my user is `jr` so I added this:
   # ...snip...
 ```
 
-7. Rebuild your configuration and you should see something like this:
+8. Rebuild your configuration and you should see something like this:
 
 ```bash
 sops-install-secrets: Imported /etc/ssh/ssh_host_ed25519_key as age key with fingerprint age1smamkzrwpdxw63hrxxcq8kmejsm4olknsrg72vd0qtfpmlzlvnf8uws38mzuj
