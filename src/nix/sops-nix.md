@@ -58,19 +58,6 @@ environment.systemPackages = [
 ];
 ```
 
-Also add the following to your `.gitignores` in your git config:
-
-```nix
-programs.git = {
-    enabled = true;
-    ignores = [
-        "secrets/"
-        ".key"
-        ".pem"
-    ];
-}
-```
-
 3. Generate a key (This is your **private key** and **MUST NEVER BE COMMITTED TO
    GIT OR SHARED**):
 
