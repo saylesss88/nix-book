@@ -1,5 +1,10 @@
 # Sops-Nix encrypted secrets
 
+[SOPS](https://github.com/getsops/sops?ref=blog.gitguardian.com), short for
+**S**ecrets**OP**eration**S**, is an editor of encrypted files that supports
+quite a few BINARY formats and encrypts with AWS KMS, GCP KMS, Azure Key Vault,
+age, and PGP.
+
 Managing secrets—like API keys, SSH deploy keys, and password hashes is a
 critical part of system configuration, but it’s also one of the trickiest to do
 securely and reproducibly. Traditionally, secrets might be stored in ad hoc
@@ -25,8 +30,7 @@ advances in technology or poor key management can weaken this defense.
 > **diligent security practices**. If your PGP passphrase is weak, your Age
 > private key is easily guessable, or the cleartext secret itself is very short
 > and has low entropy (e.g., "12345", "true", "admin"), an attacker might be
-> able to compromise your secrets regardless of the encryption. Advances in
-> technology or poor key management can significantly weaken this defense.
+> able to compromise your secrets regardless of the encryption.
 
 1. Add sops to your `flake.nix`:
 
@@ -122,6 +126,12 @@ mkdir secrets
 sops secrets/github-deploy-key.yaml  # For your github ssh key
 ```
 
+When you call a `sops` command, it will handle the encryption/decryption
+transparently and open the cleartext file in an editor.
+
+Editing will happen in the editor that `$SOPS_EDITOR` or `$EDITOR` is set to,
+sops will wait for the editor to exit, and then try to reencrypt the file.
+
 The above command will open a default sops `github-deploy-key.yaml` in your
 `$EDITOR`:
 
@@ -137,13 +147,13 @@ github_deploy_key_ed25519_nix-book: |
   -----END OPENSSH PRIVATE KEY-----
 ```
 
+The `-----BEGIN` and the rest of the private key **must** be indented 2 spaces
+
 Ensure sops can decrypt it:
 
 ```bash
 sops -d secrets/github-deploy-key.yaml
 ```
-
-The `-----BEGIN` and the rest of the private key **must** be indented 2 spaces
 
 > ❗ WARNING: Only ever enter your private keys through the `sops` command. If
 > you forget and paste them in without the `sops` command then run `git add` at
@@ -156,20 +166,26 @@ The `-----BEGIN` and the rest of the private key **must** be indented 2 spaces
 > rewrites your history. Just keep this in mind. This happens because Git has a
 > protection that stops you from doing stupid things.
 
-Generate a hashedPassword:
+Generate an encrypted password hash with:
 
 ```bash
 mkpasswd -m SHA-512 -s
-# Enter your chosen password and copy it
+# Enter your chosen password and copy the encrypted hash it gives you back
 ```
 
 ```bash
 sops secrets/password-hash.yaml      # For your `hashedPasswordFile`
 ```
 
+The above command will open your `$EDITOR` with the file `password-hash.yaml`,
+add the following content to it. Replace `PasteEncryptedHashHere` with the
+output of the `mkpasswd` command above:
+
 ```yaml
-password_hash: PasteGeneratedPasswordHere
+password_hash: PasteEncryptedHashHere
 ```
+
+Ensure sops can decrypt it:
 
 ```bash
 sops -d secrets/password-hash.yaml
@@ -237,6 +253,19 @@ imports = [
 > and make that secret available earlier in the boot process--specifically,
 > before user and group accounts are created.
 
+You typically use `age.sshKeyPaths` for **system-level secrets** with a
+persistent SSH host key
+
+For **user-level secrets**, use `age.keyFile` pointing to your Age private key,
+stored in a safe persistent location.
+
+For reproducibility, keep your key files in a persistent, predictable path and
+document which keys are used for which secrets in your `.sops.yaml`.
+
+If you don't need both `age.keyFile` and `age.sshKeyPaths` it can reduce
+complexity to use one or the other. Although most people may choose one, it's
+not bad to use both it just adds complexity.
+
 And finally use the password-hash for your `hashedPasswordFile` for your user,
 my user is `jr` so I added this:
 
@@ -255,8 +284,11 @@ my user is `jr` so I added this:
 8. Rebuild your configuration and you should see something like this:
 
 ```bash
-sops-install-secrets: Imported /etc/ssh/ssh_host_ed25519_key as age key with fingerprint age1smamkzrwpdxw63hrxxcq8kmejsm4olknsrg72vd0qtfpmlzlvnf8uws38mzuj
+sops-install-secrets: Imported /etc/ssh/ssh_host_ed25519_key as age key with fingerprint age1smamdkzrwpdxw63hrxxcq8kmejsm4olknsrg72vd0qtfpmlzlvnf8uws38mzuj
 ```
 
-If all goes well you should now have a more reproducible setup that doesn't rely
-on file paths for your secrets.
+By integrating SOPS with NixOS through `sops-nix`, you gain a modern, secure,
+and reproducible way to manage sensitive secrets. Unlike traditional
+approaches—where secrets are often scattered in ad hoc locations, referenced by
+absolute paths, or managed outside version control—sops-nix keeps your secrets
+encrypted, declarative, and version-control friendly.
