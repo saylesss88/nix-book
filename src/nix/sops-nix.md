@@ -20,6 +20,14 @@ required to try every possible key would be astronomically high. However, this
 protection relies on using strong, secret keys and good security practices;
 advances in technology or poor key management can weaken this defense.
 
+> ❗ **CRITICAL SECURITY NOTE:** While the encryption itself is robust, this
+> protection fundamentally relies on using **strong, secret keys** and
+> **diligent security practices**. If your PGP passphrase is weak, your Age
+> private key is easily guessable, or the cleartext secret itself is very short
+> and has low entropy (e.g., "12345", "true", "admin"), an attacker might be
+> able to compromise your secrets regardless of the encryption. Advances in
+> technology or poor key management can significantly weaken this defense.
+
 1. Add sops to your `flake.nix`:
 
 ```nix
