@@ -24,7 +24,7 @@ jobs:
           mdbook-version: "latest" # Uses the latest mdBook version
 
       - name: Install mdbook-toc preprocessor
-        run: cargo install mdbook-toc --version 0.14.1
+        run: cargo install mdbook-toc --version 0.14.0
 
       - name: Build mdBook
         run: mdbook build # Builds your book, outputting to the 'book' directory
