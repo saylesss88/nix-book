@@ -201,7 +201,7 @@ Example:
 
 ```nix
 nix repl
-nix-repl> :l <nixpgs>
+nix-repl> :l <nixpkgs>
 nix-repl> lib.genAttrs [ "boom" "bash" ] (name: "sonic" + namd)
 ```
 
