@@ -1,6 +1,5 @@
 # .github/workflows/deploy-book.yml
 name: Deploy mdBook to User GitHub Pages
-
 on:
   push:
     branches:
@@ -18,33 +17,13 @@ jobs:
         with:
           fetch-depth: 0 # Ensures full history is fetched, sometimes needed for deployment actions
 
-      # --- ADD THIS STEP FOR RUST TOOLCHAIN SETUP ---
-      - name: Setup Rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          # Try 'stable' first. If issues persist, try a specific older stable version like '1.75.0'
-          toolchain: stable
-          profile: minimal
-          override: true
-
       - name: Setup mdBook
         uses: peaceiris/actions-mdbook@v1 # Action to install mdBook
         with:
           mdbook-version: "latest" # Uses the latest mdBook version
 
-      # --- MODIFY THIS STEP FOR INSTALLING mdbook-toc ---
       - name: Install mdbook-toc preprocessor
-        run: |
-          # --- OPTIONAL: Add a clean-up step for debugging persistent issues ---
-          # This helps ensure you're starting with a fresh dependency resolution
-          # If the problem is intermittent or related to caching, this can fix it.
-          # rm -rf ~/.cargo/registry ~/.cargo/git ~/.cargo/bin/mdbook-toc
-          # --- End optional clean-up ---
-
-          # Install the latest mdbook-toc. Since you're already on 0.14.2,
-          # and it's failing, simply running `cargo install` is correct here.
-          # The problem likely isn't a *wrong* version, but an underlying dependency conflict.
-          cargo install mdbook-toc
+        run: cargo install mdbook-toc
 
       - name: Build mdBook
         run: mdbook build # Builds your book, outputting to the 'book' directory
