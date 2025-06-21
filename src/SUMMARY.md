@@ -1,5 +1,7 @@
 - [Getting Started with the Nix Ecosystem](./Getting_Started_with_Nix_1.md)
   - [Nix Language](nix/nix_language.md)
+  - [Version Control with Git](vcs/git.md)
+  - [Version Control with JJ](vcs/jujutsu.md)
     - [Nix Paths](nix/nixLang/nix_paths.md)
   - [Nix Package Manager](nix/nix_package_manager.md)
   - [Minimal Btrfs-Subvol Install with Disko and Flakes](nix/minimal_install.md)
