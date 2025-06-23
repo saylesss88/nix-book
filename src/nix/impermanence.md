@@ -69,12 +69,10 @@ is preserved across reboots, typically stored in specific locations like the
 - You control exactly what state persists by configuring
   `environment.persistence."/nix/persist"` or other mechanisms.
 
-> ⚠️ CRITICAL WARNING: DO NOT PERSIST `/var/lib/nixos` ⚠️. A common pitfall, and
-> one you may encounter warnings for in other guides, is mistakenly attempting
-> to make `/var/lib/nixos` persistant via `environment.persistence`. This is
-> critically important: **DO NOT do this it will break your system!**. Actually,
-> don't persist random things if you don't know what they do. Do your research
-> first to see if persisting said directory or file will break your system.
+- ❗ The understanding around persisting `/var/lib/nixos` seems to be evolving.
+  [The importance of persisting `/var/lib/nixos`](https://github.com/nix-community/impermanence/issues/178)
+  See also
+  [necessary system state](https://github.com/NixOS/nixpkgs/pull/273384)
 
 3. Reproducibility and Security:
 
