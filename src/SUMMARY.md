@@ -5,6 +5,7 @@
     - [Nix Paths](nix/nixLang/nix_paths.md)
   - [Nix Package Manager](nix/nix_package_manager.md)
   - [Minimal Btrfs-Subvol Install with Disko and Flakes](nix/minimal_install.md)
+  - [Minimal LUKS Encrypted Install with Btrfs-Subvols](nix/luks_install.md)
   - [Btrfs Impermanence](nix/impermanence.md)
   - [Sops-Nix encrypted secrets](nix/sops-nix.md)
   - [Secure Boot with Lanzaboote](nix/lanzaboote.md)
