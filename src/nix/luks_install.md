@@ -50,6 +50,7 @@ nix-shell -p git helix yazi age sops mkpasswd
 export EDITOR='hx'
 git config --global user.name "YourUsername"
 git config --global user.email "YourGitEmail"
+```
 
 4. Clone the Configuration Repository
 
