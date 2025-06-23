@@ -70,7 +70,7 @@ is preserved across reboots, typically stored in specific locations like the
   `environment.persistence."/nix/persist"` or other mechanisms.
 
 - ❗ The understanding around persisting `/var/lib/nixos` seems to be evolving.
-  [The importance of persisting `/var/lib/nixos`](https://github.com/nix-community/impermanence/issues/178)
+  See,[The importance of persisting `/var/lib/nixos`](https://github.com/nix-community/impermanence/issues/178)
   See also
   [necessary system state](https://github.com/NixOS/nixpkgs/pull/273384)
 
