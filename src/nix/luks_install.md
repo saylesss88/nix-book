@@ -234,3 +234,10 @@ sudo nixos-install --flake /mnt/etc/nixos/my-flake#hostname
 sudo mv /etc/nixos/my-flake ~
 sudo chown -R $USER:users ~/my-flake
 ```
+
+- It is possible to use sops to auto decrypt your luks partition but it negates
+  many of the benefits in my opinion. It's something you could look into if you
+  wanted, as it still does provide some benefits.
+
+- I'm working on the impermanence guide for this setup, had quite a few
+  headaches so far. I'm open to suggestions.
