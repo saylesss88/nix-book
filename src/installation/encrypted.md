@@ -296,6 +296,20 @@ age.keyFile = "/root/.config/sops/age/keys.txt"; # Crucial: This path is now on 
 - Update `configuration.nix`: Review and update your `configuration.nix` with
   your hostname, desired packages, services, etc.
 
+Adding the following to your `configuration.nix` is a more robust way of
+defining your LUKS device and is recommended:
+
+```nix
+# configuration.nix
+  boot.initrd.luks.devices = {
+    cryptroot = {
+      device = "/dev/disk/by-partlabel/luks";
+      allowDiscards = true;
+      preLVM = true;
+    };
+  };
+```
+
 Final rebuild to apply all changes:
 
 ```bash
