@@ -43,6 +43,15 @@ git config --global user.name "YourUsername"
 git config --global user.email "YourGitEmail"
 ```
 
+- You may be put off by the `nix-env` commands, the live installer runs from RAM
+  and a read-only filesystem. Any packages you install with `nix-env` are only
+  available while you're in the live environment. When you reboot, the system is
+  discarded, and everything reverts to the original state.
+
+- The only persistent changes are those you deliberately make to the mounted
+  filesystem (e.g., `/mnt` during installation), which is the target for your
+  new NixOS installation.
+
 # Clone the Starter Repo
 
 ```bash
@@ -78,7 +87,7 @@ sudo mv /mnt/etc/nixos/hardware-configuration.nix ~/my-flake/hardware-configurat
 ```
 
 Run Disko to wipe, partition, and format your disk (WARNING: This destroys ALL
-data on the target disk!) Bash
+data on the target disk, disko doesn't work with dual boot!)
 
 ```bash
 sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko/latest -- --mode destroy,format,mount ~/my-flake/disk-config2.nix
@@ -93,6 +102,22 @@ Verify your partitions are mounted to `/mnt`:
 ```bash
 mount | grep /mnt
 ```
+
+`/mnt` is a temporary mount point used during installation to access and
+configure the target filesystem. Disko uses `/mnt` to mount the filesystems it
+creates, but these mounts are only for the installation process. After
+installation and reboot, `/mnt` is no longer used unless you manually mount
+something there.
+
+After installation and reboot:
+
+- All files and directories under `/mnt` (for example, `/mnt/etc/nixos/`) are
+  now accessible at their normal system locations.
+
+- So, `/mnt/etc/nixos/` becomes `/etc/nixos/` on your new NixOS system.
+
+- `/mnt` itself is no longer used as a mount point unless you manually mount
+  something there again.
 
 6. Install SOPS-Related Tools & Generate Secrets (Post-Disko)
 
