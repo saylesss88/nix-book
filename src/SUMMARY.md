@@ -7,6 +7,7 @@
 - [Installation](installation/README.md)
   - [Unencrypted Setups](installation/unencrypted.md)
   - [Encrypted Setups](installation/encrypted.md)
+  - [Encrypted Manual Setup](installation/encrypted_manual.md)
 - [Btrfs Impermanence](nix/impermanence.md)
   - [Sops-Nix encrypted secrets](nix/sops-nix.md)
   - [Secure Boot with Lanzaboote](nix/lanzaboote.md)
