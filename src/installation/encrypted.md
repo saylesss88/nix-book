@@ -1,5 +1,12 @@
 # Encrypted Setups
 
+<details>
+<summary> ✔️ Click to Expand Table of Contents</summary>
+
+<!-- toc -->
+
+</details>
+
 # Minimal LUKS Encrypted Install with Btrfs Subvolumes
 
 Follow this guide to set up a minimal NixOS install with LUKS, Btrfs, and

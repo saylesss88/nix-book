@@ -1,5 +1,12 @@
 # Secure Boot with Lanzaboote
 
+<details>
+<summary> Click to Expand Table of Contents</summary>
+
+<!-- toc -->
+
+</details>
+
 ⚠️ **Warning: This can easily brick your system** ⚠️
 
 We will mainly follow the lanzaboote

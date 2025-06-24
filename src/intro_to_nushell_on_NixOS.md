@@ -6,8 +6,8 @@
 
 ## Intro to Nushell on NixOS
 
-- **TL;DR**:I recently switched default shells from zsh to nushell, this post
-  is about some of the challenges and advantages of using nushell with NixOS.
+- **TL;DR**:I recently switched default shells from zsh to nushell, this post is
+  about some of the challenges and advantages of using nushell with NixOS.
 
 - While the average user might not immediately see significant advantages, those
   who frequently work with structured data formats like JSON, YAML, and CSV –
@@ -35,7 +35,8 @@
 
 - When internal Nushell commands (like `ls`, `open`, `where`, `get`, `sort-by`,
   etc.) produce output, they generally do so in Nushell's structured data format
-  (tables or records). This is the shell's native way of representing information.
+  (tables or records). This is the shell's native way of representing
+  information.
 
 - Beyond these foundational strengths, Nushell offers a range of unique features
   that enhance its functionality and make it particularly well-suited for
@@ -43,13 +44,15 @@
 
 **Some Unique Features**:
 
-- Besides the built-in commands, Nushell has a [standard library](https://www.nushell.sh/book/standard_library.html)
-  Nushell operates on _structured data_. You could call it a "data-first" shell
-  and programming language.
+- Besides the built-in commands, Nushell has a
+  [standard library](https://www.nushell.sh/book/standard_library.html) Nushell
+  operates on _structured data_. You could call it a "data-first" shell and
+  programming language.
 
 - Also included, is a full-featured dataframe processing engine using
   [Polars](https://github.com/pola-rs/polars) if you want to process large data
-  efficiently directly in your shell, check out the [Dataframes-Docs](https://www.nushell.sh/book/dataframes.html)
+  efficiently directly in your shell, check out the
+  [Dataframes-Docs](https://www.nushell.sh/book/dataframes.html)
 
 - **Multi-Line Editing**:
 
@@ -64,12 +67,13 @@ mv ...$in ./backups/
 ```
 
 - This allows you to cycle through the entire multi-line command using the up
-  and down arrow keys and then customize different lines or sections of the command.
+  and down arrow keys and then customize different lines or sections of the
+  command.
 
 - You can manually insert a newline using `Alt+Enter` or `Shift+Enter`.
 
-- The [Reedline-Editor](https://www.nushell.sh/book/line_editor.html) is powerful
-  and provides good `vi-mode` or `emacs` support built in.
+- The [Reedline-Editor](https://www.nushell.sh/book/line_editor.html) is
+  powerful and provides good `vi-mode` or `emacs` support built in.
 
 - It's default `Ctrl+r` history command is nice to work with out of the box.
 
@@ -83,8 +87,9 @@ $nu | explore --peek
 - With the above command you can navigate with vim keybinds or arrow keys.
 
 - These features demonstrate Nushell’s user-friendly interface, but what truly
-  sets it apart is its underlying design as a structured data scripting language.
-  This “language-first” approach powers many of its distinctive capabilities.
+  sets it apart is its underlying design as a structured data scripting
+  language. This “language-first” approach powers many of its distinctive
+  capabilities.
 
 ![explore](images/explore.png)
 
@@ -101,17 +106,17 @@ $nu | explore --peek
     structured data. Each command can understand and manipulate this structured
     data directly.
 
-  - **Consistent syntax**: Its syntax is more consistent and predictable compared
-    to the often quirky syntax of Bash and Zsh, drawing inspiration from
-    other programming languages.
+  - **Consistent syntax**: Its syntax is more consistent and predictable
+    compared to the often quirky syntax of Bash and Zsh, drawing inspiration
+    from other programming languages.
 
   - **Strong typing** Nushell has a type system, which helps catch errors early
     and allows for more robust scripting.
 
   - **First-class data types**: It treats various data formats (like JSON, CSV,
-    TOML) as native data types, making it easier to work with them. Because of this,
-    Nushell aims to replace the need for external tools like `jq`, `awk`, `sed`,
-    `cut`, and even some uses of `grep` and `curl`.
+    TOML) as native data types, making it easier to work with them. Because of
+    this, Nushell aims to replace the need for external tools like `jq`, `awk`,
+    `sed`, `cut`, and even some uses of `grep` and `curl`.
 
 - **Variables are Immutable by Default**: Nushell's commands are based on a
   functional-style of programming which requires immutability, sound familiar?
@@ -166,12 +171,12 @@ mkdir test ; cd test
 ]
 ```
 
-- And create the following `filter.nu` that first converts `users.json` into
-  its own internal structured data format with the `open` command, then to filters
-  out people under `21` with the `where` control flow construct, then selects the
-  `name` and `age` columns, sorts them by age, and finally converts them back to
-  `json` and saves them to a file called `filtered_users.json`. A lot happening
-  in a 6 line script.
+- And create the following `filter.nu` that first converts `users.json` into its
+  own internal structured data format with the `open` command, then to filters
+  out people under `21` with the `where` control flow construct, then selects
+  the `name` and `age` columns, sorts them by age, and finally converts them
+  back to `json` and saves them to a file called `filtered_users.json`. A lot
+  happening in a 6 line script.
 
 ```nu
 open users.json           # Read JSON file into structured data
@@ -198,11 +203,12 @@ open users.json
 ╰───┴─────────┴─────╯
 ```
 
-- The `source` command in Nushell is used to execute the commands within a script
-  file (like `filter.nu`) in the current Nushell environment. It's similar to
-  running the script directly in the shell, but keeps the shell open for further
-  use. In this example, `source filter.nu` runs the commands inside `filter.nu`,
-  processing the `users.json` file and creating the `filtered_users.json` file:
+- The `source` command in Nushell is used to execute the commands within a
+  script file (like `filter.nu`) in the current Nushell environment. It's
+  similar to running the script directly in the shell, but keeps the shell open
+  for further use. In this example, `source filter.nu` runs the commands inside
+  `filter.nu`, processing the `users.json` file and creating the
+  `filtered_users.json` file:
 
 ```nu
 source filter.nu
@@ -224,10 +230,10 @@ bat filtered_users.json
 ```
 
 - As you can see, without needing any external tools, Nushell was able to read,
-  filter, select, sort, and then re-serialize JSON data using a clear and concise
-  pipeline. This demonstrates its power in handling structured data natively,
-  making common data manipulation tasks within the shell significantly more
-  streamlined and readable compared to traditional approaches.
+  filter, select, sort, and then re-serialize JSON data using a clear and
+  concise pipeline. This demonstrates its power in handling structured data
+  natively, making common data manipulation tasks within the shell significantly
+  more streamlined and readable compared to traditional approaches.
 
 **In the filter.nu example:**
 
@@ -251,8 +257,8 @@ open users.json           # Read JSON file into structured data
 3. `| select name age`: Receives the filtered table, selects only the `name` and
    `age` columns, and outputs a table with fewer columns.
 
-4. `| sort-by age`: Receives the table, sorts the rows based on the `age` column,
-   and outputs a sorted table.
+4. `| sort-by age`: Receives the table, sorts the rows based on the `age`
+   column, and outputs a sorted table.
 
 5. `| to json`: Receives the sorted table and converts it back into JSON text.
 
@@ -297,8 +303,8 @@ limitations you might encounter when adopting Nushell as your default shell.
 **Limited Feature Set Compared to Traditional Job Control:**
 
 - **Lack of Full POSIX Job Control**: Nushell's job control doesn't yet fully
-  implement all the features and signals defined by POSIX job control (e.g., more
-  nuanced signal handling, stopped jobs). While it covers the basics, users
+  implement all the features and signals defined by POSIX job control (e.g.,
+  more nuanced signal handling, stopped jobs). While it covers the basics, users
   accustomed to advanced Bash job control might find it lacking.
 
 - **Foregrounding Behavior**: There have been criticisms about how foregrounding
@@ -307,9 +313,9 @@ limitations you might encounter when adopting Nushell as your default shell.
 **Output Handling Challenges**:
 
 - **Interleaved Output**: Managing the output of multiple backgrounded jobs can
-  sometimes be messy, with output from different jobs potentially interleaving in
-  the terminal. While Nushell tries to handle this, it's not always as clean as
-  desired.
+  sometimes be messy, with output from different jobs potentially interleaving
+  in the terminal. While Nushell tries to handle this, it's not always as clean
+  as desired.
 
 - **Redirection Complexity**: Redirecting the input and output of backgrounded
   jobs can be less straightforward than in Bash, sometimes requiring more
@@ -388,7 +394,8 @@ $p * 6    # 42
 
   ![nu4](images/nu4.png)
 
-- `Carapace` [Carapace-Bin Install](https://carapace-sh.github.io/carapace-bin/install.html):
+- `Carapace`
+  [Carapace-Bin Install](https://carapace-sh.github.io/carapace-bin/install.html):
 
   ![nu9](images/nu9.png)
 
@@ -450,8 +457,8 @@ def nix-upgrade [
 ![nu5](images/nu5.png)
 
 - The `ns` command is designed to search for Nix packages using `nix search` and
-  present the results in a cleaner format, specifically removing the architecture
-  and operating system prefix that nix search often includes.
+  present the results in a cleaner format, specifically removing the
+  architecture and operating system prefix that nix search often includes.
 
 <details>
 <summary> ✔️ Click To Expand</summary>
@@ -572,8 +579,8 @@ def nix-list-system []: nothing -> list<string> {
   It's not perfect but works for my use case, take whats useful and leave the
   rest.
 
-- You'll first need to install [just](https://github.com/casey/just)
-  to make use of `justfiles`.
+- You'll first need to install [just](https://github.com/casey/just) to make use
+  of `justfiles`.
 
 ```bash
 # nix shell nixpkgs#just nixpkgs#nushell
@@ -625,20 +632,21 @@ cleanup:
 
 - A lot of the `.nu` files came from this repo by BlindFS:
 
-  - [modern-dot-files](https://github.com/blindFS/modern-dot-files/tree/main)
-    he uses Nix Darwin so there are a few changes for NixOS. I found this
-    through [this_week_in_nu](https://github.com/nushell/this_week_in_nu).
+  - [modern-dot-files](https://github.com/blindFS/modern-dot-files/tree/main) he
+    uses Nix Darwin so there are a few changes for NixOS. I found this through
+    [this_week_in_nu](https://github.com/nushell/this_week_in_nu).
 
   - [my-nu-config](https://github.com/saylesss88/flake/tree/main/home/shells/nushell)
 
-  - The examples use this starship config[Aylur-dotfiles](https://github.com/Aylur/dotfiles/blob/main/home/starship.nix)
+  - The examples use this starship
+    config[Aylur-dotfiles](https://github.com/Aylur/dotfiles/blob/main/home/starship.nix)
     The logic on the bottom enables starship for Nushell, Zsh, and Bash!
 
   - If you wan't to use my config you'll have to enable the experimental-feature
     `pipe-operators` in the same place you enable flakes and nix-command.
 
-- There are still situations where I need to switch to zsh or bash to get something
-  to work i.e. `nix-shell` and a few others.
+- There are still situations where I need to switch to zsh or bash to get
+  something to work i.e. `nix-shell` and a few others.
 
 - From custom commands to `justfile` integrations, Nushell offers a wealth of
   tools to enhance your NixOS experience, even if occasional workarounds are

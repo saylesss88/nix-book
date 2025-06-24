@@ -24,8 +24,8 @@ where each package has its own unique subdirectory such as:
 ```
 
 You can use the Nix on most Linux distributions and Mac OS also has good support
-for Nix. It should work on most platforms that support POSIX threads
-and have a C++11 compiler.
+for Nix. It should work on most platforms that support POSIX threads and have a
+C++11 compiler.
 
 When I install Nix on a distro like Arch Linux I usually use the Zero to Nix
 installer as it automates several steps, such as enabling flakes by default:
@@ -35,7 +35,8 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
 ```
 
 If you have concerns about the "curl to Bash" approach you could examine the
-installation script [here](https://raw.githubusercontent.com/DeterminateSystems/nix-installer/main/nix-installer.sh)
+installation script
+[here](https://raw.githubusercontent.com/DeterminateSystems/nix-installer/main/nix-installer.sh)
 then download and run it:
 
 ```bash
@@ -44,19 +45,21 @@ chmod +x nix-installer.sh
 ./nix-installer.sh install
 ```
 
-I got the above commands from [zero-to-nix](https://zero-to-nix.com/start/install/)
+I got the above commands from
+[zero-to-nix](https://zero-to-nix.com/start/install/)
 
-The main difference between using the nix package manager on another distribution
-and NixOS is that NixOS uses Nix not just for package management but also to
-manage the system configuration (e.g., to build config files in `/etc`).
+The main difference between using the nix package manager on another
+distribution and NixOS is that NixOS uses Nix not just for package management
+but also to manage the system configuration (e.g., to build config files in
+`/etc`).
 
 [Home Manager](https://nix-community.github.io/home-manager/) is a Nix-powered
 tool for reproducible management of the contents of the users' home directories.
-This includes programs, configuration files, environment variables, and arbitrary
-files. Home manager uses the same module system as NixOS.
+This includes programs, configuration files, environment variables, and
+arbitrary files. Home manager uses the same module system as NixOS.
 
-Now that we've discussed some of the basics of the Nix package manager, lets
-see how it is used to build and manage software in NixOS.
+Now that we've discussed some of the basics of the Nix package manager, lets see
+how it is used to build and manage software in NixOS.
 
 ## Channels
 
@@ -74,20 +77,20 @@ channel like `nixos-unstable` is constantly updated, fetching packages from it
 today might give you a different set of package versions than fetching from it
 tomorrow, even if your configuration remains unchanged. This "rolling release"
 nature at a global level can make it harder to share and reproduce exact
-development environments or system configurations across different machines
-or at different points in time.
+development environments or system configurations across different machines or
+at different points in time.
 
 ## Channels vs. Flakes Enhancing Reproducibility
 
-Before the introduction of **Nix Flakes**, channels were the primary mechanism for
-sourcing `Nixpkgs`. While functional, they posed a challenge for exact
+Before the introduction of **Nix Flakes**, channels were the primary mechanism
+for sourcing `Nixpkgs`. While functional, they posed a challenge for exact
 reproducibility because they point to a moving target (the latest commit on a
 branch). This meant that a `nix-build` command run yesterday might produce a
 different result than one run today, simply because the channel updated.
 
-Nix Flakes were introduced to address this. Flakes bring a built-in, standardized
-way to define the exact inputs to a Nix build, including the precise Git
-revision of `Nixpkgs` or any other dependency.
+Nix Flakes were introduced to address this. Flakes bring a built-in,
+standardized way to define the exact inputs to a Nix build, including the
+precise Git revision of `Nixpkgs` or any other dependency.
 
 Here's a quick comparison:
 
@@ -101,23 +104,24 @@ Here's a quick comparison:
 
 The ability of Flakes to "lock" the exact version of all dependencies in a
 `flake.lock` file is a game-changer for collaboration and long-term
-reproducibility, ensuring that your Nix configuration builds the same way,
-every time, everywhere.
+reproducibility, ensuring that your Nix configuration builds the same way, every
+time, everywhere.
 
 ## Nixpkgs
 
 **Nixpkgs** is the largest repository of Nix packages and NixOS modules.
 
-For **NixOS** users, `nixos-unstable` channel branch is the rolling release, where
-the packages are tested and must pass integration tests.
+For **NixOS** users, `nixos-unstable` channel branch is the rolling release,
+where the packages are tested and must pass integration tests.
 
 For **standalone Nix** users, `nixpkgs-unstable` channel branch is the rolling
 release, where packages pass only basic build tests and are upgraded often.
 
-For Flakes, as mentioned above they don't use channels so `nixpkgs` will be listed
-as an `input` to your flake. (e.g., `inputs.nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";`)
-When using flakes you can actually disable channels and actually recommended to
-avoid conflicts between traditional channel-based workflows and the flake system.
+For Flakes, as mentioned above they don't use channels so `nixpkgs` will be
+listed as an `input` to your flake. (e.g.,
+`inputs.nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";`) When using flakes
+you can actually disable channels and actually recommended to avoid conflicts
+between traditional channel-based workflows and the flake system.
 
 ### Updates
 
@@ -134,10 +138,10 @@ commit from the channels you've subscribed to. For instance,
 `sudo nix-channel --update nixos` (for NixOS) or `nix-channel --update nixpkgs`
 (for `nix-env` on other Linux distributions).
 
-**Implication**: This command updates your local system's understanding of
-what "nixos" or "nixpkgs-unstable" means. From that point on, any `nixos-rebuild switch`,
-`nix-env -iA`, or `nix-build` commands that implicitly or explicitly refer to
-`nixpkgs` will use this newly updated version.
+**Implication**: This command updates your local system's understanding of what
+"nixos" or "nixpkgs-unstable" means. From that point on, any
+`nixos-rebuild switch`, `nix-env -iA`, or `nix-build` commands that implicitly
+or explicitly refer to `nixpkgs` will use this newly updated version.
 
 **Reproducibility Challenge**: The update itself is not recorded in your
 configuration files. If you share your `configuration.nix` with someone, they
@@ -153,9 +157,9 @@ your channels.
 to your `flake.lock` file.
 
 **How it works**: When you define a `flake.nix`, you specify the exact URL
-(e.g., a Git repository with a specific branch or tag) for each input. When
-you first use a flake, Nix resolves these URLs to a precise Git commit hash
-and records this hash, along with a content hash, in a `flake.lock` file.
+(e.g., a Git repository with a specific branch or tag) for each input. When you
+first use a flake, Nix resolves these URLs to a precise Git commit hash and
+records this hash, along with a content hash, in a `flake.lock` file.
 
 To update your flake inputs, you run `nix flake update`.
 
@@ -173,13 +177,13 @@ anyone using it will fetch precisely the same Git commit hashes recorded in the
 `flake.lock`, guaranteeing identical inputs and thus, identical builds (assuming
 the same system architecture).
 
-**Updating Selectively**: You can update individual inputs within your flake
-by specifying them: `nix flake update nixpkgs`. This provides fine-grained
-control over which parts of your dependency graph you want to advance.
+**Updating Selectively**: You can update individual inputs within your flake by
+specifying them: `nix flake update nixpkgs`. This provides fine-grained control
+over which parts of your dependency graph you want to advance.
 
-**Rolling Back**: Because the `flake.lock` explicitly records the versions,
-you can easily revert to a previous state by checking out an older `flake.lock`
-from your version control system.
+**Rolling Back**: Because the `flake.lock` explicitly records the versions, you
+can easily revert to a previous state by checking out an older `flake.lock` from
+your version control system.
 
 **In essence**: Channels involve a global "pull" of the latest branch state,
 making reproducibility harder to guarantee across time and machines. Flakes,
@@ -192,15 +196,16 @@ control out of the box.
 **Derivation Overview**
 
 In Nix, the process of managing software starts with **package definitions**.
-These are files written in the Nix language that describe how a particular
-piece of software should be built. These package definitions, when processed
-by Nix, are translated into derivations.
+These are files written in the Nix language that describe how a particular piece
+of software should be built. These package definitions, when processed by Nix,
+are translated into derivations.
 
 At its core, a derivation in Nix is a blueprint or a recipe that describes how
 to build a specific software package or any other kind of file or directory.
 It's a declarative specification of:
 
-- **Inputs**: What existing files or other derivations are needed as dependencies.
+- **Inputs**: What existing files or other derivations are needed as
+  dependencies.
 
 - **Build Steps**: The commands that need to be executed to produce the desired
   output.
@@ -328,5 +333,5 @@ Run the "installed" program:
 ./result/bin/hello
 ```
 
-- This will execute the `hello` file from the Nix store and print `"Hello,
-World!"`.
+- This will execute the `hello` file from the Nix store and print
+  `"Hello, World!"`.

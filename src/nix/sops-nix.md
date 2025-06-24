@@ -1,5 +1,12 @@
 # Sops-Nix encrypted secrets
 
+<details>
+<summary> Click to Expand Table of Contents</summary>
+
+<!-- toc -->
+
+</details>
+
 [SOPS](https://github.com/getsops/sops?ref=blog.gitguardian.com), short for
 **S**ecrets**OP**eration**S**, is an editor of encrypted files that supports
 quite a few BINARY formats and encrypts with AWS KMS, GCP KMS, Azure Key Vault,
