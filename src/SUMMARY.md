@@ -5,7 +5,7 @@
   - [Version Control with Git](vcs/git.md)
   - [Version Control with JJ](vcs/jujutsu.md)
 - [Installation](installation/README.md)
-  - [Unencrypted Setups](installation/encrypted.md)
+  - [Unencrypted Setups](installation/unencrypted.md)
   - [Encrypted Setups](installation/encrypted_manual.md)
 - [Btrfs Impermanence](nix/impermanence.md)
   - [Sops-Nix encrypted secrets](nix/sops-nix.md)
