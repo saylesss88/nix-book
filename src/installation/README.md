@@ -10,7 +10,7 @@ secrets, `lanzaboote` for Secure Boot, or `impermanence` for a stateless system.
 ## 1. Unencrypted Installation
 
 - **Guide:**
-  [Minimal Btrfs-Subvol Install with Disko and Flakes](./unencrypted/minimal_install.md)
+  [Minimal Btrfs-Subvol Install with Disko and Flakes](https://saylesss88.github.io/installation/unencrypted.html)
 - **Best for:**
 
   - Users who want a straightforward and quick setup.
