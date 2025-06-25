@@ -28,17 +28,8 @@ secrets, `lanzaboote` for Secure Boot, or `impermanence` for a stateless system.
 
 ## 2. Encrypted Installation
 
-- I included 2 separate subchapters for encrypted installation.
-
-1. **Starter Repo Guide with Sops:** (Most of the files are in place, they just
-   need to be adjusted).
-   [Minimal LUKS Encrypted Install with Btrfs-Subvols](./encrypted/luks_install.md)
-
-2. **Manual Encrypted Install Guide:** (More flexible, and more manual steps).
-   [Manual Encrypted Install](https://github.com/saylesss88/nix-book/blob/main/src/installation/encrypted_manual.md)
-
-- For the manual encrypted install I didn't include sops before the install and
-  reboot.
+- **Manual Encrypted Install Guide:**
+  [Manual Encrypted Install](https://github.com/saylesss88/nix-book/blob/main/src/installation/encrypted_manual.md)
 
 - **Important Considerations:**
 
