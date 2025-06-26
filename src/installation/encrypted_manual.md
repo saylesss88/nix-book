@@ -145,7 +145,7 @@ hx /tmp/disk-config.nix
                       mountOptions = ["subvol=root" "compress=zstd" "noatime"];
                     };
                     "/root-blank" = {
-                      mountOptions = ["subvol=root-blank" "datanocow" "noatime"];
+                      mountOptions = ["subvol=root-blank" "nodatacow" "noatime"];
                     };
                     "/home" = {
                       mountpoint = "/home";
