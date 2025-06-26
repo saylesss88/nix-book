@@ -295,6 +295,6 @@ nix-build -A icat
   especially for large monorepos like Nixpkgs. While it has a learning curve, it
   can significantly improve parallel work and branch management.
 
-- [Intro-To-Jujutsu](https://tsawyer87.github.io/posts/intro_to_jujutsu/)
+- [Intro-To-Jujutsu](https://saylesss88.github.io/vcs/jujutsu.html)
 
 </details>
