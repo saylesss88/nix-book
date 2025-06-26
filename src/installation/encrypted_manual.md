@@ -75,6 +75,21 @@ nvme0n1     259:0    0   1,8T  0 disk
 4. Copy the disk configuration to your machine. You can choose one from the
    [examples directory](https://github.com/nix-community/disko/tree/master/example).
 
+- There is still a starter repo that can save you some typing, make sure to
+  carefully review if you decide to use it:
+
+```bash
+export NIX_CONFIG='experimental-features = nix-command flakes'
+export EDITOR='hx' # or 'vi'
+nix-shell -p git yazi helix mkpasswd
+git config --global user.name "gitUsername"
+git config --global user.email "gitEmail"
+git clone https://github.com/saylesss88/my-flake.git
+```
+
+- I've moved away from trying to configure sops pre install, it adds unnecessary
+  complexity to a minimal install in my opinion.
+
 - If you click on the layout you want then click the `Raw` button near the top,
   then copy the url and use it in the following command:
 
@@ -129,6 +144,9 @@ hx /tmp/disk-config.nix
                       mountpoint = "/";
                       mountOptions = ["subvol=root" "compress=zstd" "noatime"];
                     };
+                    "/root-blank" = {
+                      mountOptions = ["subvol=root-blank" "datanocow" "noatime"];
+                    };
                     "/home" = {
                       mountpoint = "/home";
                       mountOptions = ["subvol=home" "compress=zstd" "noatime"];
@@ -163,6 +181,46 @@ hx /tmp/disk-config.nix
   fileSystems."/var/log".neededForBoot = true;
   fileSystems."/var/lib".neededForBoot = true;
 }
+```
+
+## Create a Blank Snapshot of /root
+
+This will give us more options when it comes to impermanence. (i.e. being able
+to rollback to a fresh snapshot of root on reboot)
+
+To access all of the subvolumes, we have to mount the Btrfs partitions
+top-level.
+
+1. Unlock the LUKS device:
+
+```bash
+sudo cryptsetup open /dev/disk/by-partlabel/luks cryptroot
+```
+
+2. Mount the Btrfs top-level (subvolid=5):
+
+```bash
+sudo mount -o subvolid=5 /dev/mapper/cryptroot /mnt
+```
+
+3. List the contents:
+
+```bash
+ls /mnt
+# you should see something like
+root   home  nix  persist  log  lib  ...
+```
+
+4. Now we can take a snapshot of the `root` subvolume:
+
+```bash
+sudo btrfs subvolume snapshot -r /mnt/root /mnt/root-blank
+```
+
+5. Make sure to unmount:
+
+```bash
+sudo umount /mnt
 ```
 
 - For `/tmp` on RAM use something like the following. I've found that having
@@ -264,9 +322,6 @@ sudo mv /tmp/disk-config.nix /mnt/etc/nixos
 ```bash
 cd ~
 mkdir flake && cd flake
-nix-shell -p git yazi helix
-export NIX_CONFIG='experimental-features = nix-command flakes'
-export EDITOR='hx'
 hx flake.nix
 ```
 
@@ -325,23 +380,18 @@ sudo mv disk-config.nix hardware-configuration.nix configuration.nix ~/flake
 - `initialHashedPassword`: Run `mkpasswd -m SHA-512 -s`, then enter your desired
   password. Example output,
 
-```bash
-Password: your_secret_password
-Retype password: your_secret_password
-$6$random_salt$your_hashed_password_string_here_this_is_very_long_and_complex
-```
-
 - If you type this out by hand and mess up a single character, you will have to
   start over completely. A fairly safe way to do this is with `vim` or `hx` and
   redirect the hashed pass to a `/tmp/hash`, you can then read it into your
   `users.nix`:
 
 ```bash
-mkpasswd -m SHA-512 -s > /tmp/hash
+mkpasswd -m SHA-512 -s > /tmp/pass.txt
+# Enter your chosen password
 ```
 
-And then when inside `users.nix` you type `:r /tmp/hash` to read the hash into
-your current file.
+And then when inside `users.nix`, move to the line where you want the hashed
+password and type `:r /tmp/pass.txt` to read the hash into your current file.
 
 ```nix
 # configuration.nix
