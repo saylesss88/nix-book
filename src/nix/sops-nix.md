@@ -142,6 +142,10 @@ sops will wait for the editor to exit, and then try to reencrypt the file.
 The above command will open a default sops `github-deploy-key.yaml` in your
 `$EDITOR`:
 
+Erase the default `sops` filler and type `github_deploy_key_ed25519: |`, move
+your cursor 1 line down and type `:r ~/.ssh/id_ed25519` to read the private key
+into the file and repeat as needed.
+
 ```yaml
 github_deploy_key_ed25519: |
   -----BEGIN OPENSSH PRIVATE KEY-----
@@ -176,7 +180,7 @@ sops -d secrets/github-deploy-key.yaml
 Generate an encrypted password hash with:
 
 ```bash
-mkpasswd -m SHA-512 -s
+mkpasswd -m SHA-512 -s > /tmp/password-hash.txt
 # Enter your chosen password and copy the encrypted hash it gives you back
 ```
 
@@ -187,6 +191,9 @@ sops secrets/password-hash.yaml      # For your `hashedPasswordFile`
 The above command will open your `$EDITOR` with the file `password-hash.yaml`,
 add the following content to it. Replace `PasteEncryptedHashHere` with the
 output of the `mkpasswd` command above:
+
+Delete the default `sops` filler, type `password_hash:` and leave your cursor
+after the `:` and type `:r /tmp/password-hash.txt`
 
 ```yaml
 password_hash: PasteEncryptedHashHere
@@ -204,6 +211,17 @@ sops -d secrets/password-hash.yaml
 My `sops.nix` is located at `~/flake/hosts/hostname/sops.nix` and the secrets
 directory is located at `~/flake/secrets` so the path from `sops.nix` to
 `secrets/pasword-hash.yaml` would be `../../secrets/password-hash.yaml`
+
+Another step you can take is to copy your key to a persistent location,
+preparing for impermanence:
+
+```bash
+sudo mkdir /persist/sops/age
+sudo cp ~/.config/sops/age/keys.txt /persist/sops/age/keys.txt
+```
+
+Then you would change the `age.keyFile = "/persist/sops/age/keys.txt"` to match
+this location below.
 
 ```nix
 # ~/flake/hosts/magic/sops.nix  # magic is my hostname
