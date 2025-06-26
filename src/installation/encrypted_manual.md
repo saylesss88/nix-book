@@ -105,12 +105,6 @@ curl https://raw.githubusercontent.com/nix-community/disko/refs/heads/master/exa
 
 5. Make Necessary changes, I prepared mine for impermanence with the following:
 
-> ❗ Be careful if you do implement impermanence, it has caused nothing but
-> issues thusfar for me. I have only been able to get it to work in the TTY or
-> by using `sudo nixos-rebuild boot`, I believe because there are less running
-> processes to interfere with each other in a TTY. I mention this here because I
-> haven't found the solution yet.
-
 ```bash
 hx /tmp/disk-config.nix
 ```
@@ -230,6 +224,21 @@ sudo btrfs subvolume snapshot -r /mnt/root /mnt/root-blank
 
 ```bash
 sudo umount /mnt
+```
+
+## Lets copy all of our files to a persistent location
+
+```bash
+sudo mkdir -p /persist/etc
+sudo mkdir -p /persist/var/lib
+sudo mkdir -p /persist/var/log
+sudo mkdir -p /persist/home
+sudo mkdir -p /persist/root
+sudo cp -a /etc/. /persist/etc/
+sudo cp -a /var/lib/. /persist/var/lib
+sudo cp -a /var/log/. /persist/var/log
+sudo cp -a /home/. /persist/home/
+sudo cp -a /root/. /persist/root/
 ```
 
 ## /tmp on RAM with zram
@@ -477,3 +486,5 @@ sudo btrfs subvolume list /
 ```
 
 - [BTRFS Subvolumes](https://btrfs.readthedocs.io/en/latest/Subvolumes.html)
+
+- [Encrypted Impermanence]
