@@ -87,8 +87,11 @@ git config --global user.email "gitEmail"
 git clone https://github.com/saylesss88/my-flake.git
 ```
 
-- I've moved away from trying to configure sops pre install, it adds unnecessary
-  complexity to a minimal install in my opinion.
+- I prefer `helix` here as it's defaults are great. (i.e., auto closing brackets
+  and much more)
+
+- I've moved away from trying to configure `sops` pre install, it adds
+  unnecessary complexity to a minimal install in my opinion.
 
 - If you click on the layout you want then click the `Raw` button near the top,
   then copy the url and use it in the following command:
@@ -100,7 +103,13 @@ curl https://raw.githubusercontent.com/nix-community/disko/refs/heads/master/exa
 
 - The above curl command is to the `luks-btrfs-subvolumes.nix` layout.
 
-5. Make Necessary changes, I set mine up for impermanence with the following:
+5. Make Necessary changes, I prepared mine for impermanence with the following:
+
+> ❗ Be careful if you do implement impermanence, it has caused nothing but
+> issues thusfar for me. I have only been able to get it to work in the TTY or
+> by using `sudo nixos-rebuild boot`, I believe because there are less running
+> processes to interfere with each other in a TTY. I mention this here because I
+> haven't found the solution yet.
 
 ```bash
 hx /tmp/disk-config.nix
@@ -223,6 +232,8 @@ sudo btrfs subvolume snapshot -r /mnt/root /mnt/root-blank
 sudo umount /mnt
 ```
 
+## /tmp on RAM with zram
+
 - For `/tmp` on RAM use something like the following. I've found that having
   disko manage swaps causes unnecessary issues. Also, with btrfs it's easy to
   create a swap after the fact if you choose to.
@@ -262,7 +273,7 @@ Using zram follows the ephemeral route:
 > };
 > ```
 
-After adding the above module, you can see it with:
+After adding the above module and rebuilding, you can see it with:
 
 ```bash
 swapon --show
@@ -304,28 +315,32 @@ The output for an `nvme0n1` disk would be similar to the following:
 nixos-generate-config --no-filesystems --root /mnt
 ```
 
-It may be helpful to add a couple things to your `configuration.nix` now,
-rebuild and then move on. Such as, your hostname, git, an editor of your choice.
-After your additions run `sudo nixos-rebuild switch` to apply the changes. If
-you do this, you can skip the `nix-shell -p` command coming up.
+- The above command will place a `configuration.nix` and
+  `hardware-configuration.nix` in `/mnt/etc/nixos/`
 
-```bash
-sudo mv /tmp/disk-config.nix /mnt/etc/nixos
-```
+It may be helpful to add a couple things to your `configuration.nix` now, while
+it's in it's default location. You can just add what you want and rebuild once
+with `sudo nixos-rebuild switch` and move on. (i.e. `git`, an editor, etc.).
 
 ### Setting a Flake for your minimal Install
 
-8. Create the flake in your home directory, then move it to `/mnt/etc/nixos`.
-   This avoids needing to use `sudo` for every command while in the
-   `/mnt/etc/nixos` directory.
+8. Create the flake in your home directory to avoid needing to use sudo for
+   every command:
 
 ```bash
-cd ~
-mkdir flake && cd flake
+cd   # Move to home directory
+mkdir flake
+cd /mnt/etc/nixos/
+sudo mv hardware-configuration.nix configuration.nix ~/flake/
+sudo mv /tmp/disk-config.nix ~/flake/
+```
+
+```bash
+cd flake
 hx flake.nix
 ```
 
-> You'll change `hostname = nixpkgs.lib.nixosSystem` to your chosen hostname,
+> You'll change `hostName = nixpkgs.lib.nixosSystem` to your chosen hostname,
 > (e.g. `magic = nixpkgs.lib.nixosSystem`). This will be the same as your
 > `networking.hostName = "magic";` in your `configuration.nix` that we will set
 > up shortly.
@@ -344,7 +359,7 @@ hx flake.nix
 
   outputs = inputs@{ nixpkgs, ... }: {
     nixosConfigurations = {
-      hostname = nixpkgs.lib.nixosSystem {
+      hostName = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
           ./configuration.nix
@@ -357,14 +372,7 @@ hx flake.nix
 }
 ```
 
-Move all the files into your flake:
-
-```bash
-cd /mnt/etc/nixos/
-sudo mv disk-config.nix hardware-configuration.nix configuration.nix ~/flake
-```
-
-9. Edit `configuration.nix` with what is required, the following is required, I
+9. Edit `configuration.nix` with what is required, the following are required, I
    clone my original flake repo and move the pieces into place but it's fairly
    easy to just type it all out:
 
@@ -377,12 +385,9 @@ sudo mv disk-config.nix hardware-configuration.nix configuration.nix ~/flake
 
 - `hardware-configuration.nix` & `disk-config.nix` for this setup
 
-- `initialHashedPassword`: Run `mkpasswd -m SHA-512 -s`, then enter your desired
-  password. Example output,
-
 - If you type this out by hand and mess up a single character, you will have to
   start over completely. A fairly safe way to do this is with `vim` or `hx` and
-  redirect the hashed pass to a `/tmp/hash`, you can then read it into your
+  redirect the hashed pass to a `/tmp/pass.txt`, you can then read it into your
   `users.nix`:
 
 ```bash
@@ -390,8 +395,9 @@ mkpasswd -m SHA-512 -s > /tmp/pass.txt
 # Enter your chosen password
 ```
 
-And then when inside `users.nix`, move to the line where you want the hashed
-password and type `:r /tmp/pass.txt` to read the hash into your current file.
+And then when inside `configuration.nix`, move to the line where you want the
+hashed password and type `:r /tmp/pass.txt` to read the hash into your current
+file.
 
 ```nix
 # configuration.nix
@@ -426,7 +432,7 @@ password and type `:r /tmp/pass.txt` to read the hash into your current file.
   users.users.nixos = {
     isNormalUser = true;
     extraGroups = [ "wheel" "networkmanager" ]; # Add "wheel" for sudo access
-    initialHashedPassword = "COPY_YOUR_MKPASSWD_OUTPUT_HERE"; # <-- This is where it goes!
+    initialHashedPassword = "READ_MKPASSWD_OUTPUT_HERE"; # <-- This is where it goes!
     # home = "/home/nixos"; # Optional: Disko typically handles home subvolumes
   };
 
@@ -442,8 +448,14 @@ password and type `:r /tmp/pass.txt` to read the hash into your current file.
 
 ```bash
 sudo mv ~/flake /mnt/etc/nixos/
-sudo nixos-install --flake /mnt/etc/nixos/flake .#hostname
-# if the above command doesn't work try this:
+```
+
+- Give everything a quick once over, insuring your host is set in both your
+  `flake.nix`, and `configuration.nix`. Ensure you changed the username in the
+  `configuration.nix` from `nixos` to your chosen name, this is the name you'll
+  use to login after you enter your encryption passphrase.
+
+```bash
 sudo nixos-install --flake /mnt/etc/nixos/flake#hostname
 ```
 
@@ -452,10 +464,11 @@ sudo nixos-install --flake /mnt/etc/nixos/flake#hostname
 - If everything checks out, reboot the system and you should be prompted to
   enter your `user` and `password` to login to a shell to get started.
 
-- The flake will be placed at `/etc/nixos/flake`, I choose to move it to my home
-  directory. Since the file was first in `/etc` you'll need to adjust the
-  permissions with something like `sudo chown $USER:users ~/flake` and then you
-  can work on it without privilege escalation.
+- The flake will be placed at `/etc/nixos/flake` after the install and reboot, I
+  choose to move it to my home directory. Since the file was first in `/etc`
+  you'll need to adjust the permissions with something like
+  `sudo chown -R $USER:users ~/flake` and then you can work on it without
+  privilege escalation.
 
 - You can check the layout of your btrfs system with:
 
@@ -463,11 +476,4 @@ sudo nixos-install --flake /mnt/etc/nixos/flake#hostname
 sudo btrfs subvolume list /
 ```
 
-- You may notice some `old_roots` in the output, which are snapshots, which are
-  likely created before system upgrades or reboots for rollback purposes. They
-  can be deleted or rolled back as needed.
-
 - [BTRFS Subvolumes](https://btrfs.readthedocs.io/en/latest/Subvolumes.html)
-
-- To continue following along and set up impermanence
-  [Click Here](https://saylesss88.github.io/nix/impermanence.html)
