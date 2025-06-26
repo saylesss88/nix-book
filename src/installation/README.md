@@ -7,29 +7,29 @@ secrets, `lanzaboote` for Secure Boot, or `impermanence` for a stateless system.
 
 ---
 
-## 1. Unencrypted Installation
+## 1. Unencrypted Disko Btrfs Subvol Installation
 
 - **Guide:**
   [Minimal Btrfs-Subvol Install with Disko and Flakes](https://saylesss88.github.io/installation/unencrypted.html)
+
 - **Best for:**
 
   - Users who want a straightforward and quick setup.
 
-  - Users who plan to implement the `impermanence` feature, which is currently
-    designed and tested for this unencrypted Btrfs layout.
+  - [Unencrypted Impermanence](https://saylesss88.github.io/nix/impermanence.html)
 
-- **Note on Impermanence:** If you intend to use `impermanence` as described in
-  its dedicated chapter, you **must** follow this unencrypted layout. The
-  provided scripts and configurations for `impermanence` assume this specific
-  setup and would require significant, careful adjustment for other disk
-  layouts.
+  - You can still add Lanzaboote and sops secrets after the install for a more
+    secure system. To get the full benefits of Lanzaboote it is recommended to
+    use full disk encryption.
 
 ---
 
-## 2. Encrypted Installation
+## 2. Encrypted Disko Btrfs Subvol Installation
 
-- **Manual Encrypted Install Guide:**
-  [Manual Encrypted Install](https://github.com/saylesss88/nix-book/blob/main/src/installation/encrypted_manual.md)
+- **Encrypted Install Guide:**
+  [Encrypted Install](https://saylesss88.github.io/installation/encrypted_manual.html)
+
+- [Encrypted Impermanence](https://saylesss88.github.io/nix/encrypted_impermanence.html)
 
 - **Important Considerations:**
 
@@ -59,7 +59,3 @@ Once your base NixOS system is installed, consider these powerful additions:
 
 - **`impermanence`:** For setting up a stateless NixOS system, where the root
   filesystem reverts to a clean state on every reboot.
-
-  - **Note:** `impermanence` is currently only available and fully supported
-    with the **unencrypted** Btrfs layout as described above. I am actively
-    working on an `impermanence` script for the encrypted setup.

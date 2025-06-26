@@ -6,6 +6,10 @@ full disk encryption and a modern filesystem layout. If you prefer an
 unencrypted setup, you can skip the LUKS and encryption steps, but this guide
 focuses on security and flexibility.
 
+If you choose to set up impermanence, ensure it matches your install. Encrypted
+Setup with Encrypted Impermanence and Unencrypted Setup with Unencrypted
+Impermanence.
+
 1. Get the
    [Nixos Minimal ISO](https://channels.nixos.org/nixos-25.05/latest-nixos-minimal-x86_64-linux.iso)
    Get it on a usb stick, I use Ventoy with Ventoy2Disk.sh. The following is the
@@ -84,6 +88,7 @@ export EDITOR='hx' # or 'vi'
 nix-shell -p git yazi helix mkpasswd
 git config --global user.name "gitUsername"
 git config --global user.email "gitEmail"
+# starter repo containing disk-config set up for impermanence
 git clone https://github.com/saylesss88/my-flake.git
 ```
 
