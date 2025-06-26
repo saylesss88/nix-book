@@ -1,5 +1,12 @@
 # Encrypted Impermanence
 
+<details>
+<summary> ✔️ Click to Expand Table of Contents</summary>
+
+<!-- toc -->
+
+</details>
+
 > ❗ Important Note: This guide details a setup involving encrypted partitions
 > and impermanent NixOS. While powerful, such configurations require careful
 > attention to detail. Incorrect steps, especially concerning encryption keys or

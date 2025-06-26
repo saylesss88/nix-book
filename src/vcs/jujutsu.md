@@ -1,6 +1,13 @@
 # Version Control with JJ
 
-![Jujutsu Logo](/images/jujutsu.png)
+<details>
+<summary> ✔️ Click to Expand Table of Contents</summary>
+
+<!-- toc -->
+
+</details>
+
+![JJ Logo](../images/jujutsu.png)
 
 - You can use jujutsu (jj) with existing Git repositories with one command.
   `jj git init --colocate` or `jj git init --git-repo /path/to/git_repository`.

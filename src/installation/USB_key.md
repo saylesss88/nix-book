@@ -1,5 +1,12 @@
 ## Add a USB stick as a key
 
+<details>
+<summary> ✔️ Click to Expand Table of Contents</summary>
+
+<!-- toc -->
+
+</details>
+
 **Generate the keyfile**
 
 ```bash

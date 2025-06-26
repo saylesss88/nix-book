@@ -1,5 +1,12 @@
 # Nix Paths
 
+<details>
+<summary> ✔️ Click to Expand Table of Contents</summary>
+
+<!-- toc -->
+
+</details>
+
 The following examples are done with a local `nixpkgs` clone located at
 `~/src/nixpkgs`
 

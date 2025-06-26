@@ -1,5 +1,12 @@
 # Functions and NixOS Modules
 
+<details>
+<summary> ✔️ Click to Expand Table of Contents</summary>
+
+<!-- toc -->
+
+</details>
+
 When you start exploring NixOS configurations or tools like Home Manager, you'll
 encounter a concept called Nix Modules. Modules are also functions, but they
 behave differently regarding their arguments, which can be a source of

@@ -1,5 +1,12 @@
 # Version Control with Git
 
+<details>
+<summary> ✔️ Click to Expand Table of Contents</summary>
+
+<!-- toc -->
+
+</details>
+
 First, I'll breefly explain some of the limitations of NixOS Rollbacks and then
 I'll explain how Git compliments them.
 

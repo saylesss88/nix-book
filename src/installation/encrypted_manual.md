@@ -1,5 +1,12 @@
 # Encrypted Manual Setup
 
+<details>
+<summary> ✔️ Click to Expand Table of Contents</summary>
+
+<!-- toc -->
+
+</details>
+
 This guide walks you through a manual, encrypted NixOS installation using Disko
 for disk management and Btrfs for subvolumes. It is designed for users who want
 full disk encryption and a modern filesystem layout. If you prefer an

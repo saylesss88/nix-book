@@ -1,5 +1,12 @@
 # USB Stick Keyfile
 
+<details>
+<summary> ✔️ Click to Expand Table of Contents</summary>
+
+<!-- toc -->
+
+</details>
+
 This allows you to use a USB stick for your keyfile, with a backup in case you
 want or need it. There is a setting `fallbackToPassword` that protects you in
 case something fails with the USB key.
