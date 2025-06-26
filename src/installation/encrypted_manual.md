@@ -434,7 +434,14 @@ file.
     cryptroot = {
       device = "/dev/disk/by-partlabel/luks";
       allowDiscards = true;
-      preLVM = true;
+    };
+  };
+
+  # This complements using zram, putting /tmp on RAM
+    boot = {
+    tmp = {
+      useTmpfs = true;
+      tmpfsSize = "50%";
     };
   };
 
@@ -443,14 +450,6 @@ file.
     enable = true;
     interval = "weekly";
     fileSystems = ["/"];
-  };
-
-  # This complements using zram, putting /tmp on RAM
-  boot = {
-    tmp = {
-      useTmpfs = true;
-      tmpfsSize = "50%";
-    };
   };
 
 
@@ -495,7 +494,6 @@ is aware of this:
     cryptroot = {
       device = "/dev/disk/by-partlabel/luks";
       allowDiscards = true;
-      preLVM = true;
     };
   };
 ```
