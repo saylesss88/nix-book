@@ -47,6 +47,22 @@ If you followed the
 guide, your encrypted subvolume should be located at:
 `/dev/mapper/cryptroot /mnt`
 
+- Your encrypted Btrfs partition, once unlocked by LUKS, will be available at
+  `/dev/mapper/cryptroot` as configured here in the `disk-config.nix`:
+
+```nix
+# disk-config2.nix
+# ... snip ...
+            luks = {
+              size = "100%";
+              label = "luks";
+              content = {
+                type = "luks";
+                name = "cryptroot";
+                content = {
+# ... snip ...
+```
+
 Double check that the paths exist:
 
 ```bash
@@ -103,11 +119,15 @@ you'll just add an `imports = [ ./impermanence.nix ]` to your
     ];
   };
 
+# optional quality of life setting
   security.sudo.extraConfig = ''
     Defaults lecture = never
   '';
 }
 ```
+
+- `/mnt/rollback.log`: this log will be available during the boot process for
+  debugging if the rollback fails, but won't persist.
 
 With the above impermanence script, the btrfs subvolumes are deleted recursively
 and replaced with the `root-blank` snapshot we took during the install.
@@ -115,6 +135,38 @@ and replaced with the `root-blank` snapshot we took during the install.
 I have commented out `"/etc/machine-id"` because we already copied over all of
 the files to their persistent location and the above setting would work once and
 then cause a conflict.
+
+## configuration.nix changes
+
+```nix
+# configuration.nix
+  boot.initrd.luks.devices = {
+    cryptroot = {
+      device = "/dev/disk/by-partlabel/luks";
+      allowDiscards = true;
+      preLVM = true;
+    };
+  };
+```
+
+- This defines how your system's initial ramdisk (`initrd`) should handle a
+  specific encrypted disk during the boot process. It helps with timing and is a
+  more robust way of telling Nix that we are using an encrypted disk.
+
+The following is optional to enable `autoScrub` for btrfs, the wiki shows
+`interval = "monthly";` FYI.
+
+```nix
+# configuration.nix
+  services.btrfs.autoScrub = {
+    enable = true;
+    interval = "weekly";
+    fileSystems = ["/"];
+  };
+```
+
+- Remember to ensure that your `hostname` in your `configuration.nix` matches
+  the `hostname` in your `flake.nix`.
 
 ### Applying Your Impermanence Configuration
 
