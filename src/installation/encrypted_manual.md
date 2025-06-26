@@ -228,6 +228,8 @@ sudo umount /mnt
 
 ## Lets copy all of our files to a persistent location
 
+The following is a one time operation, we're just getting it out of the way now.
+
 ```bash
 sudo mkdir -p /persist/etc
 sudo mkdir -p /persist/var/lib
@@ -241,13 +243,11 @@ sudo cp -a /home/. /persist/home/
 sudo cp -a /root/. /persist/root/
 ```
 
-## /tmp on RAM with zram
+## Setting up zram and /tmp on RAM
 
-- For `/tmp` on RAM use something like the following. I've found that having
-  disko manage swaps causes unnecessary issues. Also, with btrfs it's easy to
-  create a swap after the fact if you choose to.
-
-Using zram follows the ephemeral route:
+While `/tmp` is handled by `tmpfs` (as shown the below `configuration.nix`), you
+can further enhance memory efficiency with `zram` for compressed swap, as shown
+below.
 
 > ```nix
 > {
@@ -368,7 +368,8 @@ hx flake.nix
 
   outputs = inputs@{ nixpkgs, ... }: {
     nixosConfigurations = {
-      hostName = nixpkgs.lib.nixosSystem {
+      # Change `hostName` to your chosen host name
+      nixos = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
           ./configuration.nix
@@ -423,7 +424,26 @@ file.
     ./disk-config.nix
   ];
 
-  networking.hostName = "magic"; # This will match the `hostname` of your flake
+  # initrd encrypted disk setup
+    boot.initrd.luks.devices = {
+    cryptroot = {
+      device = "/dev/disk/by-partlabel/luks";
+      allowDiscards = true;
+      preLVM = true;
+    };
+  };
+
+  # This complements using zram, putting /tmp on RAM
+  boot = {
+    tmp = {
+      useTmpfs = true;
+      tmpfsSize = "50%";
+    };
+  };
+
+
+  # Change me!
+  networking.hostName = "nixos"; # This will match the `hostname` of your flake
 
   networking.networkmanager.enable = true;
 
@@ -438,6 +458,7 @@ file.
 
   time.timeZone = "America/New_York";
 
+# Change me to your chosen username (i.e. change nixos to your username)
   users.users.nixos = {
     isNormalUser = true;
     extraGroups = [ "wheel" "networkmanager" ]; # Add "wheel" for sudo access
@@ -451,6 +472,20 @@ file.
 
   system.stateVersion = "25.05";
 }
+```
+
+Although, just adding the `disk-config.nix` works for prompting you for your
+encryption passphrase adding the following is a more robust way of ensuring Nix
+is aware of this:
+
+```nix
+    boot.initrd.luks.devices = {
+    cryptroot = {
+      device = "/dev/disk/by-partlabel/luks";
+      allowDiscards = true;
+      preLVM = true;
+    };
+  };
 ```
 
 10. Move the flake to `/mnt/etc/nixos` and run `nixos-install`:
@@ -488,4 +523,4 @@ sudo btrfs subvolume list /
 - [BTRFS Subvolumes](https://btrfs.readthedocs.io/en/latest/Subvolumes.html)
 
 - To set up impermanence for this specific layout, follow the link
-[Encrypted Impermanence]()
+  [Encrypted Impermanence](https://saylesss88.github.io/nix/encrypted_impermanence.html)
