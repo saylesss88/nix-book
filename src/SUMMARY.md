@@ -7,6 +7,7 @@
 - [Installation](installation/README.md)
   - [Unencrypted Setups](installation/unencrypted.md)
   - [Encrypted Setups](installation/encrypted_manual.md)
+    - [USB Stick Keyfile](installation/USB_keyfile.md)
 - [Btrfs Impermanence](nix/impermanence.md)
 - [Encrypted Impermanence](nix/encrypted_impermanence.md)
   - [Sops-Nix encrypted secrets](nix/sops-nix.md)
