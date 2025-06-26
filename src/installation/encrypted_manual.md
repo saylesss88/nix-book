@@ -487,4 +487,5 @@ sudo btrfs subvolume list /
 
 - [BTRFS Subvolumes](https://btrfs.readthedocs.io/en/latest/Subvolumes.html)
 
-- [Encrypted Impermanence]
+- To set up impermanence for this specific layout, follow the link
+[Encrypted Impermanence]()

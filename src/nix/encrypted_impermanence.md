@@ -1,5 +1,13 @@
 # Encrypted Impermanence
 
+> ❗ Important Note: This guide details a setup involving encrypted partitions
+> and impermanent NixOS. While powerful, such configurations require careful
+> attention to detail. Incorrect steps, especially concerning encryption keys or
+> persistent data paths, can lead to **permanent data loss**. Please read all
+> instructions thoroughly before proceeding and consider backing up any critical
+> data beforehand. This has only been tested with the disk layout described in
+> [Encrypted Setups](https://saylesss88.github.io/installation/encrypted_manual.html)
+
 ### Getting Started
 
 1. Add impermanence to your `flake.nix`. You will change the `hostname` in the
