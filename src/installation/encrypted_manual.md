@@ -7,11 +7,14 @@
 
 </details>
 
-This guide walks you through a manual, encrypted NixOS installation using Disko
-for disk management and Btrfs for subvolumes. It is designed for users who want
-full disk encryption and a modern filesystem layout. If you prefer an
-unencrypted setup, you can skip the LUKS and encryption steps, but this guide
-focuses on security and flexibility.
+This guide walks you through an encrypted NixOS installation using Disko for
+disk management and Btrfs for subvolumes. It is designed for users who want full
+disk encryption and a modern filesystem layout. If you prefer an unencrypted
+setup, you can skip the LUKS and encryption steps, but this guide focuses on
+security and flexibility.
+
+- For Unencrypted layout
+  [Click Here](https://saylesss88.github.io/installation/unencrypted.html)
 
 If you choose to set up impermanence, ensure it matches your install. Encrypted
 Setup with Encrypted Impermanence and Unencrypted Setup with Unencrypted
@@ -86,8 +89,8 @@ nvme0n1     259:0    0   1,8T  0 disk
 4. Copy the disk configuration to your machine. You can choose one from the
    [examples directory](https://github.com/nix-community/disko/tree/master/example).
 
-- There is still a starter repo that can save you some typing, make sure to
-  carefully review if you decide to use it:
+There is still a starter repo that can save you some typing, make sure to
+carefully review if you decide to use it:
 
 ```bash
 export NIX_CONFIG='experimental-features = nix-command flakes'
@@ -99,21 +102,21 @@ git config --global user.email "gitEmail"
 git clone https://github.com/saylesss88/my-flake.git
 ```
 
-- I prefer `helix` here as it's defaults are great. (i.e., auto closing brackets
-  and much more)
+I prefer `helix` here as it's defaults are great. (i.e., auto closing brackets
+and much more)
 
-- I've moved away from trying to configure `sops` pre install, it adds
-  unnecessary complexity to a minimal install in my opinion.
+If you choose to use the starter repo you won't need to run the next command as
+it is already populated in the repo.
 
-- If you click on the layout you want then click the `Raw` button near the top,
-  then copy the url and use it in the following command:
+If you click on the layout you want then click the `Raw` button near the top,
+then copy the `url` and use it in the following command:
 
 ```bash
 cd /tmp
 curl https://raw.githubusercontent.com/nix-community/disko/refs/heads/master/example/luks-btrfs-subvolumes.nix -o /tmp/disk-config.nix
 ```
 
-- The above curl command is to the `luks-btrfs-subvolumes.nix` layout.
+The above curl command is to the `luks-btrfs-subvolumes.nix` layout.
 
 5. Make Necessary changes, I prepared mine for impermanence with the following:
 
@@ -121,12 +124,25 @@ curl https://raw.githubusercontent.com/nix-community/disko/refs/heads/master/exa
 hx /tmp/disk-config.nix
 ```
 
+Make sure you identify your system disk name with `lsblk` and change the
+`device` attribute below to match your disk.
+
+```bash
+lsblk
+nvme0n1       259:0    0 476.9G  0 disk
+├─nvme0n1p1   259:1    0   512M  0 part  /boot
+└─nvme0n1p2   259:2    0 476.4G  0 part
+```
+
+My disk is `nvme0n1`, change below to match yours:
+
 ```nix
 {
   disko.devices = {
     disk = {
       nvme0n1 = {
         type = "disk";
+        # Make sure this is correct with `lsblk`
         device = "/dev/nvme0n1";
         content = {
           type = "gpt";
@@ -212,7 +228,7 @@ top-level.
 sudo cryptsetup open /dev/disk/by-partlabel/luks cryptroot
 ```
 
-2. Mount the Btrfs top-level (subvolid=5):
+2. Mount the Btrfs top-level (`subvolid=5`):
 
 ```bash
 sudo mount -o subvolid=5 /dev/mapper/cryptroot /mnt
@@ -238,9 +254,11 @@ sudo btrfs subvolume snapshot -r /mnt/root /mnt/root-blank
 sudo umount /mnt
 ```
 
-## Lets copy all of our files to a persistent location
+## Persisting Critical System State
 
 The following is a one time operation, we're just getting it out of the way now.
+This moves all of the important system state to a persistant location, further
+preparing for impermanence.
 
 ```bash
 sudo mkdir -p /persist/etc
@@ -516,8 +534,11 @@ sudo mv ~/flake /mnt/etc/nixos/
   `configuration.nix` from `nixos` to your chosen name, this is the name you'll
   use to login after you enter your encryption passphrase.
 
+The below command uses `#nixos` because that's what the defaults are, you'll
+change it to your chosen hostname.
+
 ```bash
-sudo nixos-install --flake /mnt/etc/nixos/flake#hostname
+sudo nixos-install --flake /mnt/etc/nixos/flake#nixos
 ```
 
 - You will be prompted to enter a new password if everything succeeds.
