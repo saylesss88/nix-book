@@ -433,6 +433,13 @@ file.
     };
   };
 
+  # Enable autoScrub for btrfs
+    services.btrfs.autoScrub = {
+    enable = true;
+    interval = "weekly";
+    fileSystems = ["/"];
+  };
+
   # This complements using zram, putting /tmp on RAM
   boot = {
     tmp = {
@@ -458,8 +465,8 @@ file.
 
   time.timeZone = "America/New_York";
 
-# Change me to your chosen username (i.e. change nixos to your username)
-  users.users.nixos = {
+# Change me to your chosen username (i.e. change nixosUser to your username)
+  users.users.nixosUser = {
     isNormalUser = true;
     extraGroups = [ "wheel" "networkmanager" ]; # Add "wheel" for sudo access
     initialHashedPassword = "READ_MKPASSWD_OUTPUT_HERE"; # <-- This is where it goes!
