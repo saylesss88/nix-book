@@ -15,6 +15,31 @@
 > data beforehand. This has only been tested with the disk layout described in
 > [Encrypted Setups](https://saylesss88.github.io/installation/encrypted_manual.html)
 
+As a system operates, it gradually accumulates state on its root partition. This
+state is stored in various directories such as `/etc` and `/var`, capturing all
+the configuration changes, logs, and other modifications—whether they’re
+well-documented or the result of ad-hoc adjustments made while setting up and
+running services.
+
+**Impermanence**,in the context of operating systems, refers to a setup where
+the majority of the system's root filesystem (`/`) is reset to a pristine state
+on every reboot. This means any changes made to the system (e.g., installing new
+packages, modifying system files outside of configuration management, creating
+temporary files) are discarded upon shutdown or reboot.
+
+Having an impermanent root and `/tmp` has some security benefits as well. By
+reducing your persistent footprint you reduce your chance of leaving behind
+sensitive activity or data. Since Nix can boot with only `/nix` and `/boot`,
+experienced users familiar with "stateless" systems can take advantage of this
+smaller attack surface.
+
+Although this setup does not use `/tmp` as the root filesystem, the root itself
+is restored to its original state upon each reboot, as it was at installation.
+However, by configuring `/tmp` to reside in RAM, you ensure that temporary files
+including sensitive data like passwords are stored only in volatile memory and
+are automatically cleared on shutdown or reboot. This significantly enhances the
+security of temporary data by preventing it from ever being written to disk.
+
 ### Getting Started
 
 1. Add impermanence to your `flake.nix`. You will change the `hostname` in the
