@@ -14,6 +14,10 @@ You may want to check
 does a great job of explaining how to use jj with practical examples. It is
 recommended in the official JJ docs as a more up to date intro.
 
+If you haven't taken the time to deep dive Git, it may be a good time to learn
+about a new way of doing Version Control that is actually less complex and
+easier to menaally map out.
+
 You can use jujutsu (jj) with existing Git repositories with one command.
 `jj git init --colocate` or `jj git init --git-repo /path/to/git_repository`.
 The native repository format for jj is still a work in progress so people
@@ -51,13 +55,13 @@ in {
 
     userName = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
-      default = saylss88; # or "TSawyer87"; # Fallback to "TSawyer87" if userVars.gitUsername is undefined
+      default = "saylss88";  # you can use `or` statements here also
       description = "Jujutsu user name";
     };
 
     userEmail = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
-      default = "sayls87@proton.me";
+      default = "sayls88@proton.me";
       description = "Jujutsu user email";
     };
 
@@ -108,7 +112,8 @@ in {
 ```
 
 To be honest, I have only played around with jj and recently am giving it
-another shot. I'm not sure currently if the meld settings are correct FYI.
+another shot. I'm not sure currently if the meld settings are correct FYI. They
+are filler names and email addresses also.
 
 In my `home.nix` I have this to enable it:
 
@@ -123,7 +128,8 @@ custom = {
 ```
 
 The `custom.jj` module allows me to override the username, email, and whether jj
-is enabled from a single, centralized place within my Nix configuration.
+is enabled from a single, centralized place within my Nix configuration. So only
+if jj is enabled, `lazyjj` and `meld` will be installed.
 
 ## Issues I've Noticed
 
@@ -182,6 +188,8 @@ cd hello-world
 jj git init
 Initialized repo in "."
 ```
+
+---
 
 ### JJ and Git Side by Side
 
@@ -247,6 +255,8 @@ sudo nixos-rebuild switch --flake .
 - I have heard that jj can struggle with big repositories such as Nixpkgs and
   have noticed some issues here and there when using with NixOS. I'm hoping that
   as the project matures, it gets better on this front.
+
+---
 
 ## The 2 main JJ Workflows
 
@@ -324,6 +334,8 @@ sudo nixos-rebuild switch --flake .
 We're still in the nameless commit and can either continue working or run
 `jj desc -m ""` again describing our new change, then `jj new` and `jj squash`
 it's pretty simple. The nameless commit is used as an adhoc staging area.
+
+---
 
 ### The Edit Workflow
 
@@ -411,6 +423,8 @@ nixVim" is its new parent.
 
 `@` has moved to "Adding LSP to nixVim"
 
+---
+
 ## Operation Log and Undo
 
 JJ records every operation (commits, merges, rebases, etc.) in an operation log.
@@ -448,6 +462,8 @@ jj op undo <operation-id>
 jj op restore <operation-id>
 ```
 
+---
+
 ## Conflict Resolution
 
 In JJ, conflicts live inside commits and can be resolved at any time, not just
@@ -471,7 +487,11 @@ using:
 jj resolve
 ```
 
+---
+
 ## Revsets
+
+[Jujutsu Revsets](https://jj-vcs.github.io/jj/latest/revsets/)
 
 JJ includes a powerful query language for selecting commits. For example:
 
@@ -480,6 +500,16 @@ jj log -r "author(alice) & file(*.py)"
 ```
 
 This command lists all commits by Alice that touch Python files.
+
+## Filesets
+
+[Jujutsu Filesets](https://jj-vcs.github.io/jj/latest/filesets/)
+
+Jujutsu supports a functional language for selecting a set of files. Expressions
+in this language are called "filesets" (the idea comes from Mercurial). The
+language consists of file patterns, operators, and functions. --JJ Docs
+
+---
 
 ### Resources
 
