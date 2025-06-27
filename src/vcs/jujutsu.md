@@ -16,7 +16,7 @@ recommended in the official JJ docs as a more up to date intro.
 
 If you haven't taken the time to deep dive Git, it may be a good time to learn
 about a new way of doing Version Control that is actually less complex and
-easier to menaally map out.
+easier to mentally map out in my opinion.
 
 You can use jujutsu (jj) with existing Git repositories with one command.
 `jj git init --colocate` or `jj git init --git-repo /path/to/git_repository`.
@@ -29,10 +29,37 @@ recorded to the working commit. There's no need to explicitly stage changes
 because they are already part of the commit that represents your current working
 state.
 
+## What is the Jujutsu Working Copy
+
+The **working copy** in Jujutsu is an actual **commit** that represents the
+current state of the files you're working on. Unlike Git, where the working copy
+is separate from commits and changes must be explicitly staged and committed, in
+JJ the working copy is a live commit that automatically records changes as you
+modify files.
+
+Adding or removing files in the working copy implicitly tracks or untracks them
+without needing explicit commands like `git add`
+
+The working copy commit acts as a snapshot of your current workspace. When you
+run commands, Jujutsu first syncs the filesystem changes into this commit, then
+performs the requested operation, and finally updates the working copy if needed
+
+To finalize your current changes and start a new set of changes, you use the
+`jj new` command, which creates a new working-copy commit on top of the current
+one. This replaces the traditional Git workflow of staging and committing
+changes separately
+
+Conflicts in the working copy are represented by inserting conflict markers
+directly into the files. Jujutsu tracks the conflicting parts and can
+reconstruct the conflict state from these markers. You resolve conflicts by
+editing these markers and then committing the resolution in the working copy
+
 - This means that you don't need to worry about making a change, running
   `git add .`, running `git commit -m "commit message"` because it's already
   done for you. This is handy with flakes by preventing a "dirty working tree"
   and can instantly be rebuilt after making a change.
+
+## Example JJ Module
 
 - For `lazygit` fans, Nixpkgs has `lazyjj`. I've seen that it's recommended to
   use jj with `meld`. I'll share my `jj.nix` here for an example:
@@ -146,7 +173,7 @@ That said, I recommend doing just that after running something like
 Sometimes the auto staging doesn't pick up the changes in your configuration so
 rebuilding changes nothing, this has been more rare but happens occasionally.
 
-## Here's an example
+## Here's an example of using JJ in an existing Git repo
 
 Say I have my configuration flake in the `~/flakes/` directory that is an
 existing Git repository. To use JJ as the front-end I could do something like:
@@ -165,6 +192,17 @@ bookmarks updated on future pulls":
 
 ```bash
 jj bookmark track main@origin
+```
+
+To push you use `jj git push`
+
+```bash
+jj git push
+# example output after pushing my flake repo
+Rebased 1 descendant commits onto updated working copy
+Changes to push to origin:
+  Move forward bookmark main from b48d4e9b361f to 6fb5e4c02617
+remote: Resolving deltas: 100% (25/25), completed with 12 local objects.
 ```
 
 This command tells jj to track the remote bookmark `main@origin` with a local
