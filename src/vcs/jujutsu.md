@@ -465,6 +465,10 @@ nixVim" is its new parent.
 
 `@` has moved to "Adding LSP to nixVim"
 
+`jj log` example output
+
+![jj log](../images/jj-log.png)
+
 ---
 
 ## Operation Log and Undo
