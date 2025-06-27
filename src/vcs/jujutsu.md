@@ -9,21 +9,41 @@
 
 ![JJ Logo](../images/jujutsu.png)
 
-- You can use jujutsu (jj) with existing Git repositories with one command.
-  `jj git init --colocate` or `jj git init --git-repo /path/to/git_repository`.
-  The native repository format for jj is still a work in progress so people
-  typically use a `git` repository for backend.
+You may want to check
+[Steve's Jujutsu Tutorial](https://steveklabnik.github.io/jujutsu-tutorial/), he
+does a great job of explaining how to use jj with practical examples. It is
+recommended in the official JJ docs as a more up to date intro.
 
-- Unlike `git`, `jj` has no index "staging area". It treats the working copy as
-  an actual commit. When you make changes to files, these changes are
-  automatically recorded to the working commit. There's no need to explicitly
-  stage changes because they are already part of the commit that represents your
-  current working state.
+You can use jujutsu (jj) with existing Git repositories with one command.
+`jj git init --colocate` or `jj git init --git-repo /path/to/git_repository`.
+The native repository format for jj is still a work in progress so people
+typically use a `git` repository for backend.
 
-  - This means that you don't need to worry about making a change, running
-    `git add .`, running `git commit -m "commit message"` because it's already
-    done for you. This is handy with flakes by preventing a "dirty working tree"
-    and can instantly be rebuilt after making a change.
+Unlike `git`, `jj` has no index "staging area". It treats the working copy as an
+actual commit. When you make changes to files, these changes are automatically
+recorded to the working commit. There's no need to explicitly stage changes
+because they are already part of the commit that represents your current working
+state.
+
+- This means that you don't need to worry about making a change, running
+  `git add .`, running `git commit -m "commit message"` because it's already
+  done for you. This is handy with flakes by preventing a "dirty working tree"
+  and can instantly be rebuilt after making a change.
+
+## Issues I've Noticed
+
+I have run into a few issues, such as every flake command reloading every single
+input every time. **What I mean by this is what you see when you run a flake
+command for the first time, it adds all of your flakes inputs.** I believe the
+fix for this is deleting and regenerating your `flake.lock`. The same thing can
+happen when you move your flake from one location to another.
+
+That said, I recommend doing just that after running something like
+`jj git init --colocate`. Delete your `flake.lock` and run `nix flake update`,
+`nix flake lock --recreate-lock-file` still works but is being depreciated.
+
+Sometimes the auto staging doesn't pick up the changes in your configuration so
+rebuilding changes nothing, this has been more rare but happens occasionally.
 
 ## Here's an example
 
@@ -48,7 +68,7 @@ jj bookmark track main@origin
 
 This command tells jj to track the remote bookmark `main@origin` with a local
 bookmark named `main`. It is similar to setting an upstream branch in Git. In
-JJ, there's no concept of a "current branch" -- commits are first-class, and
+JJ, there's no concept of a "current branch" commits are first-class, and
 bookmarks are optional pointers.
 
 **Remote bookmarks** are bookmarks that exist on a remote (like `origin`). jj
@@ -302,10 +322,59 @@ JJ records every operation (commits, merges, rebases, etc.) in an operation log.
 You can view and undo previous operations, making it easy to recover from
 mistakes, a feature not present in Git’s core CLI
 
+```bash
+jj op log
+@  fbf6e626df22 jr@magic 15 minutes ago, lasted 9 milliseconds
+│  new empty commit
+│  args: jj new -B @ -m 'Adding LSP to nixVim'
+○  bde40b7c17cf jr@magic 19 minutes ago, lasted 8 milliseconds
+│  describe commit 2c35d83f75031dc582bf28b64d4af1c218177f90
+│  args: jj desc -m 'Switch from NVF to nixVim'
+○  3a2bfe1c0b0a jr@magic 19 minutes ago, lasted 8 milliseconds
+│  squash commits into 3e8f9f3a6a58fef86906e16e9b4375afb43e73e3
+│  args: jj squash
+○  80abcb58dcb6 jr@magic 21 minutes ago, lasted 8 milliseconds
+│  new empty commit
+│  args: jj new
+○  8c80314cbcd7 jr@magic 21 minutes ago, lasted 8 milliseconds
+│  describe commit 1eac6aa0b88ba014785ee9c1c2ad6e2abc6206e9
+│  args: jj desc -m 'Switch from nixVim to NVF'
+○  44b5789cb4d1 jr@magic 22 minutes ago, lasted 6 milliseconds
+│  track remote bookmark main@origin
+│  args: jj bookmark track main@origin
+○  dbefee04aa85 jr@magic 23 minutes ago, lasted 4 milliseconds
+│  import git head
+│  args: jj git init --git-repo .
+```
+
+```bash
+jj op undo <operation-id>
+# or
+jj op restore <operation-id>
+```
+
 ## Conflict Resolution
 
 In JJ, conflicts live inside commits and can be resolved at any time, not just
 during a merge. This makes rebasing and history editing safer and more flexible
+
+JJ treats conflicts as first-class citizens: conflicts can exist inside commits,
+not just in the working directory. This means if a merge or rebase introduces a
+conflict, the conflicted state is saved in the commit itself, and you can
+resolve it at any time there’s no need to resolve conflicts immediately or use
+“`--continue`” commands as in Git
+
+Here's how it works:
+
+When you check out or create a commit with conflicts, JJ materializes the
+conflicts as markers in your files (similar to Git's conflict markers)
+
+You can resolve conflicts by editing the files to remove the markers, or by
+using:
+
+```bash
+jj resolve
+```
 
 ## Revsets
 
@@ -319,10 +388,10 @@ This command lists all commits by Alice that touch Python files.
 
 ### Resources
 
+- [steves_jj_tutorial](https://steveklabnik.github.io/jujutsu-tutorial/)
+
 - [jj_github](https://github.com/jj-vcs/jj)
 
 - [official_tutorial](https://jj-vcs.github.io/jj/latest/tutorial/)
 
 - [jj_init](https://v5.chriskrycho.com/essays/jj-init/) # very good article
-
-- [steves_jj_tutorial](https://steveklabnik.github.io/jujutsu-tutorial/)
