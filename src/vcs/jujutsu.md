@@ -30,6 +30,101 @@ state.
   done for you. This is handy with flakes by preventing a "dirty working tree"
   and can instantly be rebuilt after making a change.
 
+- For `lazygit` fans, Nixpkgs has `lazyjj`. I've seen that it's recommended to
+  use jj with `meld`. I'll share my `jj.nix` here for an example:
+
+```nix
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}: let
+  cfg = config.custom.jj;
+in {
+  options.custom.jj = {
+    enable = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Enable the Jujutsu (jj) module";
+    };
+
+    userName = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = saylss88; # or "TSawyer87"; # Fallback to "TSawyer87" if userVars.gitUsername is undefined
+      description = "Jujutsu user name";
+    };
+
+    userEmail = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = "sayls87@proton.me";
+      description = "Jujutsu user email";
+    };
+
+    configFile = lib.mkOption {
+      type = lib.types.lines;
+      default = ''
+        [ui]
+        diff-editor = ["nvim", "-c", "DiffEditor $left $right $output"]
+      '';
+      description = "Content of the Jujutsu config.toml file";
+    };
+
+    packages = lib.mkOption {
+      type = lib.types.listOf lib.types.package;
+      default = with pkgs; [lazyjj meld];
+      description = "Additional Jujutsu-related packages to install";
+    };
+
+    settings = lib.mkOption {
+      type = lib.types.attrs;
+      default = {
+        ui = {
+          default-command = ["status" "--no-pager"];
+          diff-editor = ":builtin";
+          merge-editor = ":builtin";
+        };
+      };
+      description = "Jujutsu configuration settings";
+    };
+  };
+
+  config = lib.mkIf cfg.enable {
+    home.packages = cfg.packages;
+
+    home.file.".jj/config.toml".text = cfg.configFile;
+
+    programs.jujutsu = {
+      enable = true;
+      settings = lib.mergeAttrs cfg.settings {
+        user = {
+          name = cfg.userName;
+          email = cfg.userEmail;
+        };
+      };
+    };
+  };
+}
+```
+
+To be honest, I have only played around with jj and recently am giving it
+another shot. I'm not sure currently if the meld settings are correct FYI.
+
+In my `home.nix` I have this to enable it:
+
+```nix
+custom = {
+    jj = {
+        enable = true;
+        userName = "sayls88";
+        userEmail = "sayls88@proton.me";
+    };
+};
+```
+
+The `custom.jj` module allows me to override the username, email, and whether jj
+is enabled from a single, centralized place within my Nix configuration.
+
 ## Issues I've Noticed
 
 I have run into a few issues, such as every flake command reloading every single
