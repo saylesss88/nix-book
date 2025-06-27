@@ -158,7 +158,7 @@ The `custom.jj` module allows me to override the username, email, and whether jj
 is enabled from a single, centralized place within my Nix configuration. So only
 if jj is enabled, `lazyjj` and `meld` will be installed.
 
-![lazyjj](../images/lazyjj.png)
+`lazyjj` example output: ![lazyjj](../images/lazyjj.png)
 
 ## Issues I've Noticed
 
