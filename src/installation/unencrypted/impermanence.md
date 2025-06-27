@@ -12,7 +12,7 @@ the
 
 [Impermanence repo](https://github.com/nix-community/impermanence)
 
-![Impermanence Logo](../images/Impermanence.png)
+![Impermanence Logo](../../images/Impermanence.png)
 
 This guide is for an unencrypted setup, there are a few links at the end for
 encrypted setups. This guide follows the previous
