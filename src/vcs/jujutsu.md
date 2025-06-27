@@ -265,7 +265,7 @@ With JJ a similar workflow could be:
 jj new  # Create a new child commit/start working on a new change
 nix flake update
 sudo nixos-rebuild test --flake .
-jj squash #  equivalent to `git commit -a --amend`
+jj squash #  similar to `git commit -a --amend`
 jj describe -m "update" # Similar to git commit -m
 sudo nixos-rebuild switch --flake .
 ```
