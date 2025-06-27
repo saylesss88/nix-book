@@ -18,6 +18,9 @@ If you haven't taken the time to deep dive Git, it may be a good time to learn
 about a new way of doing Version Control that is actually less complex and
 easier to mentally map out in my opinion.
 
+Jujutsu is a new front-end to Git, and it's a new design for distributed version
+control. --jj init
+
 You can use jujutsu (jj) with existing Git repositories with one command.
 `jj git init --colocate` or `jj git init --git-repo /path/to/git_repository`.
 The native repository format for jj is still a work in progress so people
