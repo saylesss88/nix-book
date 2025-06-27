@@ -267,7 +267,6 @@ nix flake update
 sudo nixos-rebuild test --flake .
 jj squash #  equivalent to `git commit -a --amend`
 jj describe -m "update" # Similar to git commit -m
-jj commit # Only needed if finalizing an explicit commit
 sudo nixos-rebuild switch --flake .
 ```
 
