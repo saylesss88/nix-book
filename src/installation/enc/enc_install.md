@@ -20,6 +20,60 @@ If you choose to set up impermanence, ensure it matches your install. Encrypted
 Setup with Encrypted Impermanence and Unencrypted Setup with Unencrypted
 Impermanence.
 
+## What does LUKS Encryption Protect?
+
+It's important to understand what disk encryption protects and what it doesn't
+protect so you don't have any misconceptions about how safe your data is.
+
+**What LUKS Protects**:
+
+- Data Confidentiality at Rest: LUKS encrypts entire block devices (such as disk
+  partitions or whole drives), ensuring that all data stored on the encrypted
+  device is unreadable without the correct decryption key or passphrase. This
+  protects sensitive information from unauthorized access if the device is lost,
+  stolen, or physically accessed by an attacker.
+
+- Physical Security: If someone gains physical possession of your device (for
+  example, by stealing your laptop or removing a hard drive), LUKS ensures the
+  data remains inaccessible and appears as random, meaningless bytes without the
+  correct credentials.
+
+- Protection Against Offline Attacks: LUKS defends against attackers who attempt
+  to bypass the operating system by booting from another device or removing the
+  drive and mounting it elsewhere. Without the decryption key, the data remains
+  protected.
+
+**What LUKS Does Not Protect**:
+
+- Data in Use: Once the system is booted and the encrypted device is unlocked,
+  the data becomes accessible to the operating system and any user or process
+  with the necessary permissions. LUKS does not protect against attacks on a
+  running system, such as malware, remote exploits, or unauthorized users with
+  access to an unlocked session.
+
+- File-Level Access Control: LUKS encrypts entire partitions or disks, not
+  individual files or directories. It does not provide granular file-level
+  encryption or access control within the operating system.
+
+- Network Attacks: LUKS only protects data stored on disk. It does not encrypt
+  data transmitted over networks or protect against network-based attacks.
+
+- Bootloader and EFI Partitions: The initial bootloader or EFI system partition
+  cannot be encrypted with LUKS, so some parts of the boot process may remain
+  exposed unless additional measures are taken. (i.e., Secure Boot, additional
+  passwords, TPM2)
+
+To Sum it Up: LUKS encryption protects the confidentiality of all data stored on
+an encrypted block device by making it unreadable without the correct passphrase
+or key. This ensures that, if your device is lost or stolen, your data remains
+secure and inaccessible to unauthorized users. However, LUKS does not protect
+data once the system is unlocked and running, nor does it provide file-level
+encryption or protect against malware and network attacks. For comprehensive
+security, LUKS should be combined with strong access controls and other security
+best practices.
+
+## The Install
+
 1. Get the
    [Nixos Minimal ISO](https://channels.nixos.org/nixos-25.05/latest-nixos-minimal-x86_64-linux.iso)
    Get it on a usb stick, I use Ventoy with Ventoy2Disk.sh. The following is the
