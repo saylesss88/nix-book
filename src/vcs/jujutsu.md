@@ -254,8 +254,8 @@ If you're satisfied you can merge:
 git checkout main
 git add . # Stage the change
 git commit -m "update"
-git branch -D update-test
 git merge update-test
+git branch -D update-test
 sudo nixos-rebuild switch --flake .
 ```
 
