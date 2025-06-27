@@ -268,14 +268,31 @@ My disk is `nvme0n1`, change below to match yours:
 }
 ```
 
-If you wanted to add a swap for hibernation, you could add something like the
-following:
+If you want to add swap space for hibernation, you’ll need enough swap to store
+the contents of your system’s RAM. For example, if you have 16GB of RAM, your
+swapfile should be at least 16GB.
+
+To create a swap subvolume for hibernation, you could add something like the
+following to your configuration:
 
 ```nix
 "/persist/swap" = {
-      mountpoint = "/swap";
-      swap.swapfile.size = "8G";
+      mountpoint = "/persist/swap";
+      swap.swapfile.size = "16G";
     };
+```
+
+or for a swapfile:
+
+```nix
+swapDevices = [
+  {
+    device = "/persist/swap/swapfile";
+    size = 16 * 1024; # Size in MB (16GB)
+    # or
+    # size = 16384; # Size in MB (16G);
+  }
+];
 ```
 
 ## Create a Blank Snapshot of /root
