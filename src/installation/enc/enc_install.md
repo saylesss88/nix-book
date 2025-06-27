@@ -571,4 +571,4 @@ sudo btrfs subvolume list /
 - [BTRFS Subvolumes](https://btrfs.readthedocs.io/en/latest/Subvolumes.html)
 
 - To set up impermanence for this specific layout, follow the link
-  [Encrypted Impermanence](https://saylesss88.github.io/nix/encrypted_impermanence.html)
+  [Encrypted Impermanence](https://saylesss88.github.io/installation/enc/encrypted_impermanence.html)
