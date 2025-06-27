@@ -1,4 +1,4 @@
-# Encrypted Manual Setup
+# Encrypted Setups
 
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
@@ -212,6 +212,16 @@ My disk is `nvme0n1`, change below to match yours:
   fileSystems."/var/log".neededForBoot = true;
   fileSystems."/var/lib".neededForBoot = true;
 }
+```
+
+If you wanted to add a swap for hibernation, you could add something like the
+following:
+
+```nix
+"/persist/swap" = {
+      mountpoint = "/swap";
+      swap.swapfile.size = "8G";
+    };
 ```
 
 ## Create a Blank Snapshot of /root

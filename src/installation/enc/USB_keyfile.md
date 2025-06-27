@@ -1,4 +1,4 @@
-## Add a USB stick as a key
+# USB Stick Keyfile
 
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
@@ -6,6 +6,14 @@
 <!-- toc -->
 
 </details>
+
+This allows you to use a USB stick for your keyfile, with a backup in case you
+want or need it. There is a setting `fallbackToPassword` that protects you in
+case something fails with the USB key.
+
+First, I'll show how to set up a dedicated USB stick for a keyfile. (i.e., one
+that is only used for this). After that I will show the process of adding the
+keyfile to a USB stick with existing data on it that you don't want to lose.
 
 **Generate the keyfile**
 
