@@ -489,4 +489,4 @@ This command lists all commits by Alice that touch Python files.
 
 - [official_tutorial](https://jj-vcs.github.io/jj/latest/tutorial/)
 
-- [jj_init](https://v5.chriskrycho.com/essays/jj-init/) # very good article
+- [jj_init](https://v5.chriskrycho.com/essays/jj-init/)
