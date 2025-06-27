@@ -196,17 +196,6 @@ bookmarks updated on future pulls":
 jj bookmark track main@origin
 ```
 
-To push you use `jj git push`
-
-```bash
-jj git push
-# example output after pushing my flake repo
-Rebased 1 descendant commits onto updated working copy
-Changes to push to origin:
-  Move forward bookmark main from b48d4e9b361f to 6fb5e4c02617
-remote: Resolving deltas: 100% (25/25), completed with 12 local objects.
-```
-
 This command tells jj to track the remote bookmark `main@origin` with a local
 bookmark named `main`. It is similar to setting an upstream branch in Git. In
 JJ, there's no concept of a "current branch" commits are first-class, and
@@ -218,6 +207,19 @@ keeps track of the last-seen position of each remote bookmark (e.g.,
 
 > NOTE: JJ is designed for a "branchless" workflow, so bookmarks are more
 > lightweight and flexible than Git branches.
+
+To push you use `jj git push`, (you must first set the bookmark as we did above)
+
+```bash
+jj git push
+# example output after pushing my flake repo
+Rebased 1 descendant commits onto updated working copy
+Changes to push to origin:
+  Move forward bookmark main from b48d4e9b361f to 6fb5e4c02617
+remote: Resolving deltas: 100% (25/25), completed with 12 local objects.
+```
+
+## Create a Repo without an existing Git Repo
 
 **Or** to do this in a directory that isn't already a git repo you can do
 something like:
