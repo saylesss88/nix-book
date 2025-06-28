@@ -24,6 +24,11 @@ recovery keys and confirm that they are correct. Refer to this
 
 ## Important Considerations
 
+I found
+[This Article](https://0pointer.net/blog/authenticated-boot-and-disk-encryption-on-linux.html)
+fairly enlightening as far as the state of Authenticated Boot and Disk
+Encryption on Linux.
+
 Lanzaboote only secures the boot chain. The userspace remains unverified (i.e.,
 the nix store, etc.), to verify userspace you need to implement additional
 integrity checks.
