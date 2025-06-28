@@ -16,10 +16,31 @@ For Windows dual-booters and BitLocker users, you should export your BitLocker
 recovery keys and confirm that they are correct. Refer to this
 [Microsoft support article](https://support.microsoft.com/en-us/windows/find-your-bitlocker-recovery-key-6b71ad27-0b89-ea08-f143-056f5ab347d6)
 
-> ❗ NOTE: There are some serious limitations to this setup, I'd say it could
-> stop the average person. But an experienced hacker could easily bypass this
-> without encryption if they had access to your computer. For more protection
-> look into TPM2 Hardware Requirements and full disk encryption.
+> ❗ NOTE: There are some serious limitations to this setup when used without
+> encryption, I'd say it could stop the average person. But an experienced
+> hacker could easily bypass this without encryption if they had access to your
+> computer. For more protection look into TPM2 Hardware Requirements, full disk
+> encryption, and `boot.initrd.verify`.
+
+## Important Considerations
+
+Lanzaboote only secures the boot chain. The userspace remains unverified (i.e.,
+the nix store, etc.), to verify userspace you need to implement additional
+integrity checks.
+
+Secure boot doesn't verify the OS stored in the Nix store, it's common to rely
+on disk encryption to prevent tampering with and keep the Nix store safe but
+it's not always desirable. (i.e., unattended boot)
+
+Nix does have it's own signature verification system that can verify the system
+closure before moving on to stage two but it will add some time to your builds.
+
+- Follow the
+  [Boot Time Integrety Checks for the nix store](https://discourse.nixos.org/t/boot-time-integrity-checks-for-the-nix-store/36793)
+
+> ❗ NOTE: If you require unattended boot and choose to use Nix's own signature
+> verification system, systemd-boot is required do not continue setting up
+> lanzaboote.
 
 ## Requirements
 
