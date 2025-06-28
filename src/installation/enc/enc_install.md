@@ -7,11 +7,12 @@
 
 </details>
 
-This guide walks you through an encrypted NixOS installation using Disko for
-disk management and Btrfs for subvolumes. It is designed for users who want full
-disk encryption and a modern filesystem layout. If you prefer an unencrypted
-setup, you can skip the LUKS and encryption steps, but this guide focuses on
-security and flexibility.
+NixOS supports file systems that are encrypted using LUKS (Linux Unified Key
+Setup). This guide walks you through an encrypted NixOS installation using Disko
+for disk management and Btrfs for subvolumes. It is designed for users who want
+full disk encryption and a modern filesystem layout. If you prefer an
+unencrypted setup, you can skip the LUKS and encryption steps, but this guide
+focuses on security and flexibility.
 
 - For Unencrypted layout
   [Click Here](https://saylesss88.github.io/installation/unencrypted.html)
@@ -535,7 +536,7 @@ file.
     ./disk-config.nix
   ];
 
-  # initrd encrypted disk setup
+  # systemd Stage 1: if enabled, it handles unlocking of LUKS-encrypted volumes during boot.
     boot.initrd.luks.devices = {
     cryptroot = {
       device = "/dev/disk/by-partlabel/luks";

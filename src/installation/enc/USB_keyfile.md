@@ -21,11 +21,25 @@ keyfile to a USB stick with existing data on it that you don't want to lose.
 sudo dd if=/dev/urandom of=/root/usb-luks.key bs=4096 count=1
 ```
 
+## Keyfile Enrollment Methods
+
 This is for a dedicated USB stick that we will wipe first then add the key.
 
+Disko defaults to LUKS2, FYI.
+
 ```bash
+# cryptsetup works for both LUKS1 and LUKS2 formats but doesn't work for
+# TPM2, FIDO2, and smartcards
 sudo cryptsetup luksAddKey /dev/disk/by-partlabel/luks /root/usb-luks.key
+# OR the following has support for TPM2, FIDO2, and smartcards
+sudo systemd-cryptenroll /dev/disk/by-partlabel/luks --key-file=/root/usb-luks.key
 ```
+
+> ❗ Use `cryptsetup luksAddKey` for traditional setups or if you're using
+> LUKS1.
+>
+> ❗ Use `systemd-cryptenroll` if you want to leverage features like TPM2
+> binding or FIDO2 tokens and your volume is LUKS2.
 
 - `/dev/disk/by-partlabel/luks` refers to your encrypted partition by its
   partition label, which is stable and less likely to change than
@@ -75,11 +89,34 @@ sudo shred -v -n 3 /dev/sda
 sudo fdisk /dev/sda
 ```
 
-- Press `o` to create a new empty DOS partition table.
+1.  Press `o` to create a new empty DOS partition table (if you are creating
+    partitions on a fresh disk or want to wipe existing partitions and start
+    over). Be very careful with this step as it will erase all existing
+    partition information on the disk.
 
-- Press `n` to create the new partition
+2.  Press `n` to create a new partition.
 
-- Press `w` to write the changes.
+- You will then be prompted for the partition type:
+
+  - `p` for a primary partition (you can have up to 4 primary partitions)
+
+  - `e` for an extended partition (which can contain logical partitions)
+
+- Next, you'll be asked for the partition number (e.g., 1, 2, 3, 4).
+
+- Then, you'll be asked for the first sector (press Enter to accept the default,
+  which is usually the first available sector after the previous partition or
+  the beginning of the disk).
+
+- Finally, you'll be asked for the last sector or size (you can specify a size
+  like +10G for 10 Gigabytes, +512M for 512 Megabytes, or press Enter to use the
+  rest of the available space).
+
+3. Press `w` to write the changes to the partition table and exit fdisk.
+
+After pressing `w`, the kernel needs to be aware of the new partition table.
+Sometimes this happens automatically, but if you encounter issues, a reboot or a
+command like `partprobe` (if available and needed) can help.
 
 Formats as FAT32:
 
@@ -110,13 +147,7 @@ sudo cp /root/usb-luks.key /run/media/jr/B7B4-863B/
 sync
 ```
 
-5. Securely Remove the Keyfile from Your System
-
-```bash
-sudo shred --remove --zero /root/usb-luks.key
-```
-
-6. Update your NixOS Configuration
+5. Update your NixOS Configuration
 
 Note the output of `blkid /dev/sda1` and if you have a backup device list that
 also:
@@ -161,6 +192,12 @@ add it so you don't have to enter the whole key:
 
 ```bash
 sudo cryptsetup luksRemoveKey /dev/disk/by-partlabel/luks --key-file /root/usb-luks.key
+```
+
+6. Securely Remove the Keyfile from Your System:
+
+```bash
+sudo shred --remove --zero /root/usb-luks.key
 ```
 
 ## Instructions for Using a USB Stick with Existing Data
