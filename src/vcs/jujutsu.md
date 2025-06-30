@@ -323,9 +323,9 @@ Flake directory making it a `jj` repo as well using git for backend.
 cd flake
 jj git init --colocate
 jj log
-@  lnmmxwko saylesss87@proton.me 2025-06-27 10:14:57 1eac6aa0
+@  lnmmxwko sayls8@proton.me 2025-06-27 10:14:57 1eac6aa0
 │  (empty) (no description set)
-○  qnknltto saylesss87@proton.me 2025-06-27 09:04:08 git_head() 5358483a
+○  qnknltto sayls8@proton.me 2025-06-27 09:04:08 git_head() 5358483a
 │  (empty) jj
 ```
 
@@ -336,11 +336,11 @@ commit (`@`) on top of the `git_head()`
 jj desc -m "Switch from nixVim to NVF"
 jj new  # Create a new empty change
 jj log
-@  nmnmznmm saylesss87@proton.me 2025-06-27 10:16:30 52dd7ee0
+@  nmnmznmm sayls8@proton.me 2025-06-27 10:16:30 52dd7ee0
 │  (empty) (no description set)
-○  lnmmxwko saylesss87@proton.me 2025-06-27 10:16:24 git_head() 3e8f9f3a
+○  lnmmxwko sayls8@proton.me 2025-06-27 10:16:24 git_head() 3e8f9f3a
 │  (empty) Switch from nixVim to NVF
-○  qnknltto saylesss87@proton.me 2025-06-27 09:04:08 5358483a
+○  qnknltto sayls8@proton.me 2025-06-27 09:04:08 5358483a
 │  (empty) jj
 ```
 
@@ -359,9 +359,9 @@ we just make the changes and squash them.
 ```bash
 jj squash  # Squash the commit into its parent commit (i.e., our named commit)
 jj log
-@  zsxsolsq saylesss87@proton.me 2025-06-27 10:18:01 2c35d83f
+@  zsxsolsq sayls8@proton.me 2025-06-27 10:18:01 2c35d83f
 │  (empty) (no description set)
-○  lnmmxwko saylesss87@proton.me 2025-06-27 10:18:01 git_head() 485eaee9
+○  lnmmxwko sayls8@proton.me 2025-06-27 10:18:01 git_head() 485eaee9
 │  (empty) Switch from nixVim to NVF
 ```
 
@@ -412,11 +412,11 @@ For this example, lets say we want to revert back to nixVim:
 ```bash
 jj desc -m "Switch from NVF to nixVim"
 jj log
-@  zsxsolsq saylesss87@proton.me 2025-06-27 10:18:47 606abaa7
+@  zsxsolsq sayls8@proton.me 2025-06-27 10:18:47 606abaa7
 │  (empty) Switch from NVF to nixVim
-○  lnmmxwko saylesss87@proton.me 2025-06-27 10:18:01 git_head() 485eaee9
+○  lnmmxwko sayls8@proton.me 2025-06-27 10:18:01 git_head() 485eaee9
 │  (empty) Switch from nixVim to NVF
-○  qnknltto saylesss87@proton.me 2025-06-27 09:04:08 5358483a
+○  qnknltto sayls8@proton.me 2025-06-27 09:04:08 5358483a
 │  (empty) jj
 ```
 
@@ -445,15 +445,15 @@ You can see below that `@` moved down one commit:
 
 ```bash
 jj log
-○  zsxsolsq saylesss87@proton.me 2025-06-27 10:22:03 ad0713b6
+○  zsxsolsq sayls8@proton.me 2025-06-27 10:22:03 ad0713b6
 │  (empty) Switch from NVF to nixVim
-@  lpnxxxpo saylesss87@proton.me 2025-06-27 10:22:03 bf929946
+@  lpnxxxpo sayls8@proton.me 2025-06-27 10:22:03 bf929946
 │  (empty) Adding LSP to nixVim
-○  lnmmxwko saylesss87@proton.me 2025-06-27 10:18:01 git_head() 485eaee9
+○  lnmmxwko sayls8@proton.me 2025-06-27 10:18:01 git_head() 485eaee9
 │  (empty) Switch from nixVim to NVF
-○  qnknltto saylesss87@proton.me 2025-06-27 09:04:08 5358483a
+○  qnknltto sayls8@proton.me 2025-06-27 09:04:08 5358483a
 │  (empty) jj
-○  qnknltto sayls87@proton.me 2025-06-27 09:04:08 git_head()
+○  qnknltto sayls8@proton.me 2025-06-27 09:04:08 git_head()
 ```
 
 The "Adding LSP to nixVim" commit is directly above "Switch from nixVim to NVF"
