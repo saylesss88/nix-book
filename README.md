@@ -2,8 +2,8 @@
 
 [![Deploy mdBook to User GitHub Pages](https://github.com/saylesss88/nix-book/actions/workflows/deploy-book.yml/badge.svg?branch=main)](https://github.com/saylesss88/nix-book/actions/workflows/deploy-book.yml)
 
-A friendly, comprehensive guide to mastering Nix and NixOS.
-👋 Welcome!
+A friendly, comprehensive guide to mastering Nix and NixOS. 👋 Welcome! If you
+find this useful, please consider leaving a star!
 
 Welcome to my personal journey and guide through the Nix ecosystem! This "book"
 aims to be a practical and understandable resource for anyone looking to dive
@@ -53,19 +53,21 @@ or for a more comfortable reading experience, check out the dedicated website:
 
 - [Link to Chapter 1](https://saylesss88.github.io/)
 
-- Browse the book chapters here on [GitHub](https://github.com/saylesss88/nix-book/tree/main/src).
+- Browse the book chapters here on
+  [GitHub](https://github.com/saylesss88/nix-book/tree/main/src).
 
 🙏 Contributions & Feedback
 
-This book is a living document, and I welcome your input! If you find any errors,
-have suggestions for improvements, or want to contribute a new section, please
-feel free to:
+This book is a living document, and I welcome your input! If you find any
+errors, have suggestions for improvements, or want to contribute a new section,
+please feel free to:
 
 - Reach out to me on Reddit `u/WasabiOk6163`
 
 - Open an Issue: For bug reports, typos, or content suggestions.
 
-- Submit a Pull Request: If you have code changes or want to add content directly.
+- Submit a Pull Request: If you have code changes or want to add content
+  directly.
 
 Your feedback is invaluable and helps make this resource better for everyone!
 
@@ -74,7 +76,8 @@ Your feedback is invaluable and helps make this resource better for everyone!
 This "Nix Book" is open-source and licensed under the Apache License 2.0.
 
 This means you are free to use, modify, and distribute this work, provided you
-adhere to the terms of the license. You can find the full text of the license
-in the LICENSE file within this repository:
+adhere to the terms of the license. You can find the full text of the license in
+the LICENSE file within this repository:
 
-View the [Apache License 2.0](https://github.com/saylesss88/nix-book/tree/main?tab=Apache-2.0-1-ov-file)
+View the
+[Apache License 2.0](https://github.com/saylesss88/nix-book/tree/main?tab=Apache-2.0-1-ov-file)
