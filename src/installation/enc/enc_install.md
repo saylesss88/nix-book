@@ -15,7 +15,7 @@ unencrypted setup, you can skip the LUKS and encryption steps, but this guide
 focuses on security and flexibility.
 
 - For Unencrypted layout
-  [Click Here](https://saylesss88.github.io/installation/unencrypted.html)
+  [Click Here](https://saylesss88.github.io/installation/unencrypted/unencrypted.html)
 
 If you choose to set up impermanence, ensure it matches your install. Encrypted
 Setup with Encrypted Impermanence and Unencrypted Setup with Unencrypted
@@ -26,43 +26,54 @@ Impermanence.
 It's important to understand what disk encryption protects and what it doesn't
 protect so you don't have any misconceptions about how safe your data is.
 
+- [NixOS Wiki FDE](https://wiki.nixos.org/wiki/Full_Disk_Encryption)
+
+- [Arch Wiki Data-at-rest encryption](https://wiki.archlinux.org/title/Data-at-rest_encryption)
+
+- [Authenticated Booot and DE on Linux](https://0pointer.net/blog/authenticated-boot-and-disk-encryption-on-linux.html)
+
+-
+
 **What LUKS Protects**:
 
-- Data Confidentiality at Rest: LUKS encrypts entire block devices (such as disk
-  partitions or whole drives), ensuring that all data stored on the encrypted
-  device is unreadable without the correct decryption key or passphrase. This
-  protects sensitive information from unauthorized access if the device is lost,
-  stolen, or physically accessed by an attacker.
 
-- Physical Security: If someone gains physical possession of your device (for
-  example, by stealing your laptop or removing a hard drive), LUKS ensures the
-  data remains inaccessible and appears as random, meaningless bytes without the
-  correct credentials.
 
-- Protection Against Offline Attacks: LUKS defends against attackers who attempt
-  to bypass the operating system by booting from another device or removing the
-  drive and mounting it elsewhere. Without the decryption key, the data remains
-  protected.
+- **Data Confidentiality at Rest**: LUKS encrypts entire block devices (such as
+  disk partitions or whole drives), ensuring that all data stored on the
+  encrypted device is unreadable without the correct decryption key or
+  passphrase. This protects sensitive information from unauthorized access if
+  the device is lost, stolen, or physically accessed by an attacker.
+
+- **Physical Security**: If someone gains physical possession of your device
+  (for example, by stealing your laptop or removing a hard drive), LUKS ensures
+  the data remains inaccessible and appears as random, meaningless bytes without
+  the correct credentials.
+
+- **Protection Against Offline Attacks**: LUKS defends against attackers who
+  attempt to bypass the operating system by booting from another device or
+  removing the drive and mounting it elsewhere. Without the decryption key, the
+  data remains protected.
 
 **What LUKS Does Not Protect**:
 
-- Data in Use: Once the system is booted and the encrypted device is unlocked,
-  the data becomes accessible to the operating system and any user or process
-  with the necessary permissions. LUKS does not protect against attacks on a
-  running system, such as malware, remote exploits, or unauthorized users with
-  access to an unlocked session.
+- **Data in Use**: Once the system is booted and the encrypted device is
+  unlocked, the data becomes accessible to the operating system and any user or
+  process with the necessary permissions. LUKS does not protect against attacks
+  on a running system, such as malware, remote exploits, or unauthorized users
+  with access to an unlocked session.
 
-- File-Level Access Control: LUKS encrypts entire partitions or disks, not
+- **File-Level Access Control**: LUKS encrypts entire partitions or disks, not
   individual files or directories. It does not provide granular file-level
   encryption or access control within the operating system.
 
-- Network Attacks: LUKS only protects data stored on disk. It does not encrypt
-  data transmitted over networks or protect against network-based attacks.
+- **Network Attacks**: LUKS only protects data stored on disk. It does not
+  encrypt data transmitted over networks or protect against network-based
+  attacks.
 
-- Bootloader and EFI Partitions: The initial bootloader or EFI system partition
-  cannot be encrypted with LUKS, so some parts of the boot process may remain
-  exposed unless additional measures are taken. (i.e., Secure Boot, additional
-  passwords, TPM2)
+- **Bootloader and EFI Partitions**: The initial bootloader or EFI system
+  partition cannot be encrypted with LUKS, so some parts of the boot process may
+  remain exposed unless additional measures are taken. (i.e., Secure Boot,
+  additional passwords, TPM2)
 
 To Sum it Up: LUKS encryption protects the confidentiality of all data stored on
 an encrypted block device by making it unreadable without the correct passphrase
