@@ -32,11 +32,9 @@ protect so you don't have any misconceptions about how safe your data is.
 
 - [Authenticated Booot and DE on Linux](https://0pointer.net/blog/authenticated-boot-and-disk-encryption-on-linux.html)
 
--
+- [Bypassing FDE with TPM2 Unlock](https://oddlama.org/blog/bypassing-disk-encryption-with-tpm2-unlock/)
 
 **What LUKS Protects**:
-
-
 
 - **Data Confidentiality at Rest**: LUKS encrypts entire block devices (such as
   disk partitions or whole drives), ensuring that all data stored on the
@@ -655,3 +653,9 @@ sudo btrfs subvolume list /
 
 - To set up impermanence for this specific layout, follow the link
   [Encrypted Impermanence](https://saylesss88.github.io/installation/enc/encrypted_impermanence.html)
+
+- [systemd-cryptenroll man page](https://www.freedesktop.org/software/systemd/man/latest/systemd-cryptenroll.html)
+
+- [Linux TPM PCR Registry](https://uapi-group.org/specifications/specs/linux_tpm_pcr_registry/)
+
+- [Bypassing FDE with TPM2](https://oddlama.org/blog/bypassing-disk-encryption-with-tpm2-unlock/)
