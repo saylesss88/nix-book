@@ -25,7 +25,7 @@ You can even build it without installing with the following command:
 ```bash
 nix build github:srid/devour-flake \
   -L --no-link --print-out-paths \
-  --override-input flake github:nammayatri/nammayatri | cachix push <name>
+  --override-input flake path/to/flake | cachix push <name>
 ```
 
 This will push all flake outputs to cachix if you have a valid authentication
