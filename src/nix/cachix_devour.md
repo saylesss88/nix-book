@@ -187,8 +187,12 @@ provided as a secret
 You can add devour-flake as an input to your flake for local development:
 
 ```nix
-{ inputs = { devour-flake.url = "github:srid/devour-flake";
-devour-flake.flake = false; }; }
+{
+  inputs = {
+    devour-flake.url = "github:srid/devour-flake";
+    devour-flake.flake = false;
+  };
+}
 ```
 
 And in your flake's `outputs`, add an overlay that makes `devour-flake`
