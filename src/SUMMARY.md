@@ -1,6 +1,7 @@
 - [Getting Started with the Nix Ecosystem](./Getting_Started_with_Nix_1.md)
   - [Nix Language](nix/nix_language.md)
   - [Nix Package Manager](nix/nix_package_manager.md)
+  - [Cachix and the devour-flake](nix/cachix_devour.md)
     - [Nix Paths](nix/nixLang/nix_paths.md)
   - [Version Control with Git](vcs/git.md)
   - [Version Control with JJ](vcs/jujutsu.md)
