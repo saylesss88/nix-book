@@ -47,8 +47,28 @@ or
 
 Example: Let's create a basic specialisation to try out the Niri Window Manager:
 
+- First we have to add the `niri-flake` as an input to our `flake.nix` and add
+  the module to install it:
+
+```nix
+# flake.nix
+inputs = {
+     niri.url = "github:sodiboo/niri-flake";
+};
+```
+
 ```nix
 # configuration.nix
+{ pkgs, inputs, ... }: {
+# ... snip ...
+imports = [
+    inputs.niri.nixosModules.niri
+];
+
+  nixpkgs.overlays = [inputs.niri.overlays.niri];
+
+# ... snip ...
+
   specialisation = {
     niri-test.configuration = {
       system.nixos.tags = ["niri"];
@@ -112,13 +132,23 @@ Example: Let's create a basic specialisation to try out the Niri Window Manager:
       networking.networkmanager.enable = true;
     };
   };
+}
 ```
+
+- I chose to use the nightly version so it was required to add the overlay at
+  the top-level as well as inside the specialisation block.
 
 - In my case running `sudo nixos-rebuild boot --flake .` took forever, first
   running `sudo nixos-rebuild switch` helped.
 
-> ❗ NOTE: This is a minimal example that launches with a few programs installed
-> and a stock waybar.
+> ❗ NOTE: To be clear, to use Niri in a specialisation you need to:
+>
+> - Add the Niri flake as an input to your `flake.nix`.
+> - Import the Niri module and overlay in your `configuration.nix`.
+> - Enable Niri (`programs.niri.enable = true;`) and set the desired package
+>   inside the specialisation block.
+> - If you want to use Niri system-wide (in all boot entries), enable it in the
+>   top-level config instead. (i.e. outside of the specialisation block).
 
 **What this does**:
 
