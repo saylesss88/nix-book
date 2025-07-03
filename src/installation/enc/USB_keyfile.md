@@ -31,15 +31,19 @@ Disko defaults to LUKS2, FYI.
 # cryptsetup works for both LUKS1 and LUKS2 formats but doesn't work for
 # TPM2, FIDO2, and smartcards
 sudo cryptsetup luksAddKey /dev/disk/by-partlabel/luks /root/usb-luks.key
-# OR the following has support for TPM2, FIDO2, and smartcards
-sudo systemd-cryptenroll /dev/disk/by-partlabel/luks --key-file=/root/usb-luks.key
 ```
 
-> ❗ Use `cryptsetup luksAddKey` for traditional setups or if you're using
-> LUKS1.
+> ❗ NOTE: I discovered that you can only enroll your key with `cryptenroll` if
+> you are using version 258 of systemd. You can check your version with:
 >
-> ❗ Use `systemd-cryptenroll` if you want to leverage features like TPM2
-> binding or FIDO2 tokens and your volume is LUKS2.
+> ```bash
+> systemctl --version
+>  systemd 257 (257.6)
+> ```
+>
+> - Unfortunately `nixos-unstable` isn't there yet so `cryptsetup` is required.
+
+**Description**
 
 - `/dev/disk/by-partlabel/luks` refers to your encrypted partition by its
   partition label, which is stable and less likely to change than
@@ -56,6 +60,7 @@ sudo systemd-cryptenroll /dev/disk/by-partlabel/luks --key-file=/root/usb-luks.k
 1.  **Clear Data on USB stick and replace with 0's**
 
 ```bash
+lsblk
 NAME        MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
 sda           8:0    1   239M  0 disk
 sdb           8:16   1   1.4M  0 disk  /run/media/jr/7CD1-149A # Example USB mount

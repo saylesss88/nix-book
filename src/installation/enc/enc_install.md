@@ -214,7 +214,7 @@ My disk is `nvme0n1`, change below to match yours:
             ESP = {
               label = "boot";
               name = "ESP";
-              size = "512M";
+              size = "1G";
               type = "EF00";
               content = {
                 type = "filesystem";
@@ -262,6 +262,11 @@ My disk is `nvme0n1`, change below to match yours:
                       mountpoint = "/var/lib";
                       mountOptions = ["subvol=lib" "compress=zstd" "noatime"];
                     };
+                    "/persist/swap" = {
+                      mountpoint = "/persist/swap";
+                      mountOptions = ["subvol=swap" "noatime" "nodatacow" "compress=no"];
+                      swap.swapfile.size = "18G";
+                    };
                   };
                 };
               };
@@ -278,19 +283,9 @@ My disk is `nvme0n1`, change below to match yours:
 }
 ```
 
-If you want to add swap space for hibernation, you’ll need enough swap to store
-the contents of your system’s RAM. For example, if you have 16GB of RAM, your
-swapfile should be at least 16GB.
-
-To create a swap subvolume for hibernation, you could add something like the
-following to your configuration:
-
-```nix
-"/persist/swap" = {
-      mountpoint = "/persist/swap";
-      swap.swapfile.size = "16G";
-    };
-```
+I have 16G of RAM so to be safe for hibernation I chose to give it some extra
+space. The boot partition is 1G, this extra space is for specialisations and
+lanzaboote.
 
 or for a swapfile:
 
@@ -298,7 +293,7 @@ or for a swapfile:
 swapDevices = [
   {
     device = "/persist/swap/swapfile";
-    size = 16 * 1024; # Size in MB (16GB)
+    size = 18 * 1024; # Size in MB (18GB)
     # or
     # size = 16384; # Size in MB (16G);
   }
@@ -307,13 +302,15 @@ swapDevices = [
 
 ## Create a Blank Snapshot of /root
 
-This will give us more options when it comes to impermanence. (i.e. being able
-to rollback to a fresh snapshot of root on reboot)
+This is essential if you plan on using impermanence with this encrypted setup.
+We take a snapshot of `/root` while it's a clean slate, right after we run disko
+to format the disk.
 
 To access all of the subvolumes, we have to mount the Btrfs partitions
 top-level.
 
-1. Unlock the LUKS device:
+1. Unlock the LUKS device, if not already unlocked as it should be from running
+   disko:
 
 ```bash
 sudo cryptsetup open /dev/disk/by-partlabel/luks cryptroot
@@ -339,29 +336,35 @@ root   home  nix  persist  log  lib  ...
 sudo btrfs subvolume snapshot -r /mnt/root /mnt/root-blank
 ```
 
+5. Verify Your Blank Snapshot:
+
+Before continuing, make sure your blank snapshot exists. This is crucial for
+impermanence to work properly.
+
+```bash
+sudo btrfs subvolume list /mnt
+```
+
+You should see output containing both `root` and `root-blank` subvolumes:
+
+```bash
+ID 256 gen ... path root
+ID 257 gen ... path root-blank
+```
+
+Check that the snapshot is read only, this ensures that our snapshot will remain
+the same as the day we took it. It was set `ro` in disko but lets check anyways:
+
+```bash
+sudo btrfs property get -ts /mnt/root-blank
+# output should be
+ro=true
+```
+
 5. Make sure to unmount:
 
 ```bash
 sudo umount /mnt
-```
-
-## Persisting Critical System State
-
-The following is a one time operation, we're just getting it out of the way now.
-This moves all of the important system state to a persistant location, further
-preparing for impermanence.
-
-```bash
-sudo mkdir -p /persist/etc
-sudo mkdir -p /persist/var/lib
-sudo mkdir -p /persist/var/log
-sudo mkdir -p /persist/home
-sudo mkdir -p /persist/root
-sudo cp -a /etc/. /persist/etc/
-sudo cp -a /var/lib/. /persist/var/lib
-sudo cp -a /var/log/. /persist/var/log
-sudo cp -a /home/. /persist/home/
-sudo cp -a /root/. /persist/root/
 ```
 
 ## Setting up zram and /tmp on RAM
@@ -649,10 +652,45 @@ sudo nixos-install --flake /mnt/etc/nixos/flake#nixos
 sudo btrfs subvolume list /
 ```
 
-- [BTRFS Subvolumes](https://btrfs.readthedocs.io/en/latest/Subvolumes.html)
+## Persisting Critical System State
+
+The following is a one time operation, we're just getting it out of the way now.
+This moves all of the important system state to a persistant location, further
+preparing for impermanence.
+
+It's essential that you have first run the `nixos-install` command to populate
+these directories before copying them over.
+
+```bash
+sudo mkdir -p /mnt/persist/etc
+sudo mkdir -p /mnt/persist/var/lib
+sudo mkdir -p /mnt/persist/var/log
+sudo mkdir -p /mnt/persist/home
+sudo mkdir -p /mnt/persist/root
+sudo cp -a /mnt/etc/. /mnt/persist/etc/
+sudo cp -a /mnt/var/lib/. /mnt/persist/var/lib
+sudo cp -a /mnt/var/log/. /mnt/persist/var/log
+sudo cp -a /mnt/home/. /mnt/persist/home/
+sudo cp -a /mnt/root/. /mnt/persist/root/
+```
+
+Since we are in a live environment, after the install and reboot the `/mnt`
+prefix will be removed.
+
+## Reboot
+
+Now that everything is done, we can safely reboot and ensure that our LUKS
+password/passphrase is accepted as well as our userlevel password and username.
+
+After reboot, you can continue to setup
+[Sops Encrypted Secrets](https://saylesss88.github.io/installation/enc/sops-nix.html)
+and
+[Lanzaboote Secure Boot](https://saylesss88.github.io/installation/enc/lanzaboote.html)
 
 - To set up impermanence for this specific layout, follow the link
   [Encrypted Impermanence](https://saylesss88.github.io/installation/enc/encrypted_impermanence.html)
+
+- [BTRFS Subvolumes](https://btrfs.readthedocs.io/en/latest/Subvolumes.html)
 
 - [systemd-cryptenroll man page](https://www.freedesktop.org/software/systemd/man/latest/systemd-cryptenroll.html)
 
