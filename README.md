@@ -64,7 +64,7 @@ This book is a living document, and I welcome your input! If you find any
 errors, have suggestions for improvements, or want to contribute a new section,
 please feel free to:
 
-- Reach out to me on Reddit `u/WasabiOk6163`
+- Reach out to me on Reddit `u/saylesss88`
 
 - Open an Issue: For bug reports, typos, or content suggestions.
 

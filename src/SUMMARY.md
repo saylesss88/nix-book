@@ -23,6 +23,7 @@
   - [Nix Flake Examples](flakes/flake_examples_4.3.md)
   - [Hack the Helix Flake](flakes/helix_flake_4.4.md)
   - [Extending Flakes with Custom Packages using Overlays](flakes/overlays_4.5.md)
+  - [NixOS Specialisations For Multiple Profiles](flakes/specialisations_4.6.md)
 - [Understanding Top-Level Attributes](./Understanding_Top-Level_Attributes_5.md)
 - [Package Definitions Explained](./Package_Definitions_Explained_6.md)
 - [Intro to Nix Derivations](./Intro_to_Nix_Derivations_7.md)
