@@ -487,6 +487,7 @@ Then he has a `hm/default.nix` with the following
 
 ```nix
 #...snip...
+
  # hydenix home-manager options go here
   hydenix.hm = {
     #! Important options
@@ -497,6 +498,7 @@ Then he has a `hm/default.nix` with the following
         email = null; # git user email eg "john.doe@example.com"
       };
     }
+
     # ... snip ...
 ```
 
