@@ -416,7 +416,7 @@ At this point our graph would look similar to the following:
 
 ![Git Branch 3](../images/git-branch1.png)
 
-If we are satisfied, we can switch back to our main branch and merge
+If we are satisfied, we can switch back to our `main` branch and merge
 `update-test` into it:
 
 ```bash
