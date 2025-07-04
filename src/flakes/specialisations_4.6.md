@@ -137,7 +137,7 @@ imports = [
 ```
 
 I chose to use the nightly version so it was required to add the overlay at the
-top-level as well as inside the specialisation block.
+top-level as well as inside the `specialisation` block.
 
 On my system it sped up build times to first run:
 
@@ -150,7 +150,7 @@ sudo nixos-rebuild boot --flake .
 **What this does**:
 
 - Creates a boot entry called `niri-test` with the Niri Wayland compositor, a
-  test user, and a greetd login manager.
+  test user, and a `greetd` login manager.
 
 - Installs a set of packages and enables PipeWire with ALSA, PulseAudio, and
   JACK support.
@@ -164,9 +164,9 @@ Once you have rebooted and selected your specialisation from the boot menu, you
 can use your system as usual. If you want to add or remove programs, change
 settings, or update your environment within a specialisation, simply:
 
-1.  Edit your configuration: Add or remove packages (e.g., add `firefox` to
+1.  Edit your configuration: Add or remove packages (e.g., add `ghostty` to
     `environment.systemPackages`) or change any other options inside the
-    relevant specialisation block in your NixOS configuration.
+    relevant `specialisation` block in your NixOS configuration.
 
 2.  Apply changes with a rebuild: Run the standard NixOS rebuild command. If you
     are currently running the specialisation you want to update, use:
@@ -193,7 +193,7 @@ sudo /run/current-system/specialisation/<name>/bin/switch-to-configuration switc
 Replace <name> with your specialisation’s name.
 
 Reboot if needed: Most changes apply immediately, but some (like kernel or
-initrd changes) require a reboot for the specialisation to fully take effect
+`initrd` changes) require a reboot for the specialisation to fully take effect
 
 **Tip**:
 
@@ -207,25 +207,25 @@ when rebuilding or switching.
 
 ## Use Cases for Specialisations
 
-- Hardware Profiles: Enable/disable drivers or services for specific hardware
-  (e.g., eGPU, WiFi, or SR-IOV setups)
+- **Hardware Profiles**: Enable/disable drivers or services for specific
+  hardware (e.g., eGPU, WiFi, or SR-IOV setups)
 
-- Desktop Environments: Quickly switch between different desktop environments or
-  compositors (e.g., GNOME, Plasma, Niri)
+- **Desktop Environments**: Quickly switch between different desktop
+  environments or compositors (e.g., GNOME, Plasma, Niri)
 
-- Testing: Safely try out unstable packages, new kernels, or experimental
+- **Testing**: Safely try out unstable packages, new kernels, or experimental
   features without risking your main environment
 
-- User Separation: Create profiles for different users, each with their own
+- **User Separation**: Create profiles for different users, each with their own
   settings, packages, and auto-login
 
-- Secure Environments: Combine with encrypted partitions for more secure,
+- **Secure Environments**: Combine with encrypted partitions for more secure,
   isolated setups
 
 ## Securely Separated Contexts with NixOS Specialisations
 
-I will just explain it here for completeness, if you want to implement this I
-recommend following:
+I will just explain the concept here for completeness, if you want to implement
+this I recommend following:
 
 [Tweag Hard User Separation with NixOS](https://www.tweag.io/blog/2022-11-01-hard-user-separation-with-nixos/)
 
@@ -297,11 +297,8 @@ What You Need
   partitioning and management. LVM allows you to create multiple logical volumes
   on a single physical disk, making it possible to securely separate your work
   and personal environments while sharing a common Nix store. You will use LVM
-  commands such as pvcreate, vgcreate, and lvcreate to prepare your disk layout
-
-You can find a complete example of such a configuration—including disk
-partitioning, encryption, and specialisation setup—on this GitHub repository
-(insert your repository link).
+  commands such as `pvcreate`, `vgcreate`, and `lvcreate` to prepare your disk
+  layout
 
 In summary: With NixOS specialisations and careful disk partitioning, you can
 achieve secure, convenient, and efficient context separation—no need to
