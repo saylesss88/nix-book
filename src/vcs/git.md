@@ -7,6 +7,8 @@
 
 </details>
 
+![Git Logo](../images/git1.png)
+
 First, I'll breefly explain some of the limitations of NixOS Rollbacks and then
 I'll go into how Git compliments them.
 
