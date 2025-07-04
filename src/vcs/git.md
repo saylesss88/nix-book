@@ -8,7 +8,7 @@
 </details>
 
 First, I'll breefly explain some of the limitations of NixOS Rollbacks and then
-I'll explain how Git compliments them.
+I'll go into how Git compliments them.
 
 ## Limitations of NixOS Rollbacks
 
@@ -19,7 +19,7 @@ When you perform rollbacks in NixOS, whether from the boot menu or using
 commands like `nixos-rebuild --rollback` only the contents and symlinks managed
 by the Nix store are affected. The rollback works by switching which system
 generation is active, atomically updating symlinks to point to the previous
-version of all packages, systemd units and services stored in `/nix/store`.
+version of all packages, `systemd` units and services stored in `/nix/store`.
 
 However, it’s important to understand what these rollbacks actually do and what
 they don’t do. What NixOS Rollbacks Cover
@@ -88,6 +88,68 @@ Installing Git on NixOS
 
 You can install Git by adding it to your system packages in your
 configuration.nix or via Home Manager:
+
+## Git Tips
+
+If you develop good git practices on your own repositories it will make it
+easier to contribute with others as well as get help from others.
+
+**Commit Tips**:
+
+**Every time a logical component is completed, commit it**. Smaller commits make
+it easier for other devs and yourself to understand the changes and roll them
+back if necessary. This also makes it easier to share your code with others to
+get help when needed and makes merge conflicts less frequent and complex.
+
+**Finish the component, then commit it**: There's really no reason to commit
+unfinished work, use `git stash` for unfinished work and `git commit` for when
+the logical component is complete. Use common sense and break complex components
+into logical chunks that can be finished quickly to allow yourself to commit
+more often.
+
+**Write Good Commit Messages**: Begin with a summary of your changes, add a line
+of whitespace between the summary and the body of your message. Make it clear
+why this change was necessary. Use consistent language with generated messages
+from commands like `git merge` which is imperative and present tense
+(`<<change>>`, not `<<changed>>` or `<<changes>>`)
+
+A **Git workflow** is a recipe or recommendation for how to use Git to
+accomplish work in a consistent and productive manner. Having a defined workflow
+lets you leverage Git effectively and consistently. This is especially important
+when working on a team.
+
+**Origin** is the _default name_ (alias) for the **remote repository** that your
+**local repository** is connected to, usually the one you cloned from.
+
+**Remote Repositories** are versions of your project that are hosted on the
+internet or network somewhere.
+
+- When you run `git push origin main`, you're telling Git to push your changes
+  to the remote repo called `origin`.
+
+- You can see which URL `origin` points to with `git remote -v`.
+
+- You can have multiple remotes (like `origin`, `upstream`, etc.) each pointing
+  to a different remote repo. Each of which is generally either read-only or
+  read/write for you. Collaborating involves managing these remotes and pushing
+  and pulling data to and from them when you need to share work.
+
+> ❗ You can have a remote repo on your local machine. The word "remote" doesn't
+> imply that the repository is somewhere else, only that it's elsewhere.
+
+- The name `origin` is just a convention, it's not special. It is automatically
+  set when you clone a repo.
+
+**Local** is your local copy of the repository, git tracks the differences
+between **local** and **remote** which is a repo hosted elsewhere (e.g., GitHub
+GitLab etc.)
+
+The **Upstream** in Git typically refers to the original repository from which
+your local repository or fork was derived. The **Upstream** is the remote repo
+that serves as the main source of truth, often the original project you forked
+from. You typically fetch changes from upstream to update your local repo with
+the latest updates from the original project, but you don't push to upstream
+unless you have write access.
 
 ### A Basic Git Workflow
 
@@ -366,3 +428,84 @@ sudo nixos-rebuild switch --flake .
 ```
 
 It's good practice to delete a branch after you've merged and are done with it.
+
+## Configure Git Declaratively
+
+The following example is the `git.nix` from the hydenix project it shows some
+custom options and a way to manage everything from a single location:
+
+```nix
+# git.nix from hydenix: declarative Git configuration for Home Manager
+{ lib, config, ... }:
+
+let
+  cfg = config.hydenix.hm.git;
+in
+{
+
+  options.hydenix.hm.git = {
+    enable = lib.mkOption {
+      type = lib.types.bool;
+      default = config.hydenix.hm.enable;
+      description = "Enable git module";
+    };
+
+    name = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "Git user name";
+    };
+
+    email = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "Git user email";
+    };
+  };
+
+  config = lib.mkIf cfg.enable {
+
+    programs.git = {
+      enable = true;
+      userName = cfg.name;
+      userEmail = cfg.email;
+      extraConfig = {
+        init.defaultBranch = "main";
+        pull.rebase = false;
+      };
+    };
+  };
+}
+```
+
+> ❗ You can easily change the name of the option, everything after `config.` is
+> custom. So you could change it to for example, `config.custom.git` and you
+> would enable it with `custom.git.enable = true;` in your `home.nix` or
+> equivalent.
+
+Then he has a `hm/default.nix` with the following
+
+```nix
+#...snip...
+ # hydenix home-manager options go here
+  hydenix.hm = {
+    #! Important options
+    enable = true;
+      git = {
+        enable = true; # enable git module
+        name = null; # git user name eg "John Doe"
+        email = null; # git user email eg "john.doe@example.com"
+      };
+    }
+    # ... snip ...
+```
+
+You can enable git, and set your git username as well as git email right here.
+
+### Resources
+
+- [GitCommitBestPractices](https://gist.github.com/luismts/495d982e8c5b1a0ced4a57cf3d93cf60)
+
+- [ProGit](https://git-scm.com/book/en/v2)
+
+- [Oh shit Git](https://ohshitgit.com/)
