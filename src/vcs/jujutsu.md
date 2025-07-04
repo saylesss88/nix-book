@@ -14,6 +14,15 @@ You may want to check
 does a great job of explaining how to use jj with practical examples. It is
 recommended in the official JJ docs as a more up to date intro.
 
+After installing JJ you can run `jj help -k tutorial`, for the official guide in
+a pager but like I said Steve's guide is more up to date.
+
+You can find help for nearly every command with the command followed by `--help`
+or `man jj`, `man jj git init`.
+
+> ❗ Pro Tip: Set the environment variable `export MANPAGER='nvim +Man!'` in
+> your shell config to use Neovim as your manpager.
+
 If you haven't taken the time to deep dive Git, it may be a good time to learn
 about a new way of doing Version Control that is actually less complex and
 easier to mentally map out in my opinion.
