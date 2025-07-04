@@ -239,6 +239,73 @@ sudo nixos-rebuild switch --flake .
 git push origin main
 ```
 
+OR, if you have incomplete changes that you don't want to commit yet you can
+stash them with `git stash`:
+
+```bash
+git status
+On branch main
+Your branch is ahead of 'origin/main' by 1 commit.
+  (use "git push" to publish your local commits)
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   home/git.nix
+
+no changes added to commit (use "git add" and/or "git commit -a")
+```
+
+Now we want to switch branches, without committing the incomplete changes to
+`git.nix`:
+
+```bash
+git stash
+Saved working directory and index state WIP on main: 0e46d6b git: lol alias
+
+git status
+On branch main
+Your branch is ahead of 'origin/main' by 1 commit.
+  (use "git push" to publish your local commits)
+
+nothing to commit, working tree clean
+```
+
+> ❗ `git stash` is equivalent to `git stash push`
+
+To see which stashes you have stored, use `git sash list`:
+
+```bash
+git stash list
+stash@{0}: WIP on main: 0e46d6b git: lol alias
+```
+
+To apply the most recent stash:
+
+```bash
+git stash apply
+git add home/git.nix
+On branch main
+Your branch is ahead of 'origin/main' by 1 commit.
+  (use "git push" to publish your local commits)
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   home/git.nix
+
+# or for multiple stashes
+git stash apply stash@{2}
+```
+
+Running `git stash apply` applies the changes that were in your stash but
+doesn't automatically restage them, to apply the changes and stage them in one
+command:
+
+```bash
+git stash apply --index
+```
+
 Now let's create our branch so we can safely update:
 
 ```bash
