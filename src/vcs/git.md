@@ -33,32 +33,32 @@ they don’t do. What NixOS Rollbacks Cover
 
 **Key Limitations**:
 
-- Configuration files are not reverted: Rolling back only changes which system
-  generation is active, it does not revert your actual configuration files (like
-  `configuration.nix` or your flake files)
+- **Configuration files are not reverted**: Rolling back only changes which
+  system generation is active, it does not revert your actual configuration
+  files (like `configuration.nix` or your flake files)
 
-- User data and service data are not rolled back: Only files managed by Nix are
-  affected. Databases, user files, and other persistent data remain unchanged,
-  which can cause problems if, for example, a service migrates its database
-  schema during an upgrade
+- **User data and service data are not rolled back**: Only files managed by Nix
+  are affected. Databases, user files, and other persistent data remain
+  unchanged, which can cause problems if, for example, a service migrates its
+  database schema during an upgrade
 
-- Manual changes persist: Any manual edits to configuration files or system
+- **Manual changes persist**: Any manual edits to configuration files or system
   state outside of Nix are not reverted by a rollback
 
 ## How Git Helps
 
-- Tracks every configuration change: By version-controlling your NixOS configs
-  with Git, you can easily see what changed, when, and why.
+- **Tracks every configuration change**: By version-controlling your NixOS
+  configs with Git, you can easily see what changed, when, and why.
 
-- True config rollback: If a configuration change causes issues, you can use
+- **True config rollback**: If a configuration change causes issues, you can use
   `git checkout` or `git revert` to restore your config files to a previous good
   state, then rebuild your system
 
-- Safer experimentation: You can confidently try new settings or upgrades,
+- **Safer experimentation**: You can confidently try new settings or upgrades,
   knowing you can roll back both your system state (with NixOS generations) and
   your config files (with Git).
 
-- Collaboration and backup: Git lets you share your setup, collaborate with
+- **Collaboration and backup**: Git lets you share your setup, collaborate with
   others, and restore your configuration if your machine is lost or damaged.
 
 In summary: NixOS rollbacks are powerful for system state, but they don’t manage
@@ -70,19 +70,19 @@ your configuration with others. Git is the most popular version control system
 and is used by the NixOS community to track, share, and back up system
 configurations.
 
-Why use Git with NixOS?
+**Why use Git with NixOS?**
 
-- Track every change: Git lets you record every modification to your
+- **Track every change**: Git lets you record every modification to your
   configuration files, so you can always see what changed, when, and why.
 
-- Experiment safely: Try new settings or packages without fear—if something
+- **Experiment safely**: Try new settings or packages without fear—if something
   breaks, you can easily roll back to a previous working state.
 
-- Sync across machines: With Git, you can keep your NixOS setups in sync between
-  your laptop, desktop, or servers, and collaborate with others.
+- **Sync across machines**: With Git, you can keep your NixOS setups in sync
+  between your laptop, desktop, or servers, and collaborate with others.
 
-- Disaster recovery: Accidentally delete your config? With Git, you can restore
-  it from your repository in minutes.
+- **Disaster recovery**: Accidentally delete your config? With Git, you can
+  restore it from your repository in minutes.
 
 Installing Git on NixOS
 
@@ -218,3 +218,84 @@ git commit -m "Describe the new feature or fix"
 ```
 
 ### Basic Branching
+
+Branching means to diverge from the main line of development and continue to do
+work without risking messing up your main branch. There are a few commits on
+your main branch so to visualise this it would look something like this, image
+is from [Pro Git](https://git-scm.com/book/en/v2):
+
+![Git Branch 1](../images/git-branch3.png)
+
+Let's say you haven't ran `nix flake update` in a while and you don't want to
+introduce errors to your working configuration. To do so we can first, make sure
+we don't lose any changes on our main branch:
+
+```bash
+git add .
+git commit -m "Staging changes before switching branches"
+# I always like to make sure the configuration will build before pushing to git
+sudo nixos-rebuild switch --flake .
+# If everything builds and looks correct
+git push origin main
+```
+
+Now let's create our branch so we can safely update:
+
+```bash
+git checkout -b update-test
+Switched to a new branch 'update-test'
+```
+
+`-b` is to switch to the branch that was just created
+
+Some may prefer a more descriptive branch name such as: `update/flake-inputs`, I
+kept it short for the example. Or if your company uses an issue tracker,
+including the ticket number in the branch name can be helpful:
+`update/123-flake-inputs`
+
+The above command is equivalent to:
+
+```bash
+git branch update-test
+git checkout update-test
+```
+
+Now our branches would look something like this, note how both branches
+currently point to the same commit:
+
+![Git Branch 2](../images/git-branch2.png)
+
+Now, lets run our update:
+
+```bash
+nix flake update
+sudo nixos-rebuild test --flake .
+# If everything looks ok let's try applying the changes
+sudo nixos-rebuild switch --flake .
+# And if everything looks ok:
+git add .
+git commit -m "feat: Updated all flake inputs"
+git push origin update-test
+```
+
+> ❗ This is the same workflow for commiting a PR. After you first fork and
+> clone the repo you want to work on, you create a new feature branch and push
+> to that branch on your fork. This allows you to create a PR comparing your
+> changes to their existing configuration.
+
+At this point our graph would look similar to the following:
+
+![Git Branch 3](../images/git-branch1.png)
+
+If we are satisfied, we can switch back to our main branch and merge
+`update-test` into it:
+
+```bash
+git checkout main
+git merge origin/update-test
+git branch -D update-test
+sudo nixos-rebuild test --flake .
+sudo nixos-rebuild switch --flake .
+```
+
+It's good practice to delete a branch after you've merged and are done with it.
