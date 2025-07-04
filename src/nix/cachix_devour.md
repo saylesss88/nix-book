@@ -28,6 +28,10 @@ nix build github:srid/devour-flake \
   --override-input flake path/to/flake | cachix push <name>
 ```
 
+```bash
+nix-shell -p cachix
+```
+
 This will push all flake outputs to cachix if you have a valid authentication
 token and have created a cache already.
 
@@ -52,6 +56,30 @@ cachix use <your-cache-name>
 
 - `cachix use` adds your substitutors and trusted-public-keys to your
   `~/.config/nix/nix.conf` and creates one if it doesn't exist.
+
+**Push All Flake Inputs to Cachix**
+
+Replace `<mycache>` with the name of the cache you just created.
+
+```bash
+nix flake archive --json \
+  | jq -r '.path,(.inputs|to_entries[].value.path)' \
+  | cachix push <mycache>
+```
+
+**Push the Entire /nix/store**
+
+```bash
+nix path-info --all | cachix push <mycache>
+```
+
+**Pushing shell environment**
+
+```bash
+nix develop --profile dev-profile -c true
+# then run
+cachix push <mycache> dev-profile
+```
 
 - For the Flake way of doing things you would create something like the
   following:
@@ -104,7 +132,7 @@ in {
 }
 ```
 
-- The sayls88 entries are my custome cache. To find your trusted key go to the
+- The sayls88 entries are my custom cache. To find your trusted key go to the
   cachix website, click on your cache and it is listed near the top.
 
 - I enable this with `custom.cachix.enable = true;` in my `configuration.nix` or

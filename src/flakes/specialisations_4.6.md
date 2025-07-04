@@ -8,7 +8,7 @@
 </details>
 
 **NixOS specialisations** are a powerful feature that allow you to define
-alternative system configurations—variations—within a single NixOS setup. Each
+alternative system configurations variations within a single NixOS setup. Each
 specialisation can modify or extend the base configuration, and NixOS will
 generate separate boot entries for each, letting you choose at boot time (or
 switch at runtime) which environment to use. This is ideal for testing,
@@ -17,21 +17,21 @@ maintaining multiple configuration files
 
 ## How Specialisations Work
 
-- Specialisations are defined as attributes under the specialisation option in
-  your configuration. Each key (e.g., `niri-test`) represents a named
-  specialisation, and its configuration attribute contains the NixOS options to
-  apply on top of the base system
+Specialisations are defined as attributes under the `specialisation` option in
+your configuration. Each key (e.g., `niri-test`) represents a named
+specialisation, and its configuration attribute contains the NixOS options to
+apply on top of the base system
 
-- Inheritance: By default, a specialisation inherits the parent configuration
-  and applies its changes on top. You can also set
-  `inheritParentConfig = false;` to create a completely separate configuration
+By default, a specialisation inherits the parent configuration and applies its
+changes on top. You can also set `inheritParentConfig = false;` to create a
+completely separate configuration.
 
-- Boot Integration: After running `nixos-rebuild boot`, your bootloader will
-  present extra entries for each specialisation. Selecting one boots into the
-  system with that specialisation's settings applied
+After running `nixos-rebuild boot`, your bootloader will present extra entries
+for each specialisation. Selecting one boots into the system with that
+specialisation's settings applied
 
-- Runtime Switching: You can switch to a specialisation at runtime using
-  activation scripts, e.g.:
+Runtime Switching: You can switch to a specialisation at runtime using
+activation scripts, e.g.:
 
 ```bash
 nixos-rebuild switch --specialisation niri-test
@@ -47,8 +47,8 @@ or
 
 Example: Let's create a basic specialisation to try out the Niri Window Manager:
 
-- First we have to add the `niri-flake` as an input to our `flake.nix` and add
-  the module to install it:
+First we have to add the `niri-flake` as an input to our `flake.nix` and add the
+module to install it:
 
 ```nix
 # flake.nix
@@ -65,6 +65,7 @@ imports = [
     inputs.niri.nixosModules.niri
 ];
 
+# This is the top-level overlay
   nixpkgs.overlays = [inputs.niri.overlays.niri];
 
 # ... snip ...
@@ -135,20 +136,16 @@ imports = [
 }
 ```
 
-- I chose to use the nightly version so it was required to add the overlay at
-  the top-level as well as inside the specialisation block.
+I chose to use the nightly version so it was required to add the overlay at the
+top-level as well as inside the specialisation block.
 
-- In my case running `sudo nixos-rebuild boot --flake .` took forever, first
-  running `sudo nixos-rebuild switch` helped.
+On my system it sped up build times to first run:
 
-> ❗ NOTE: To be clear, to use Niri in a specialisation you need to:
->
-> - Add the Niri flake as an input to your `flake.nix`.
-> - Import the Niri module and overlay in your `configuration.nix`.
-> - Enable Niri (`programs.niri.enable = true;`) and set the desired package
->   inside the specialisation block.
-> - If you want to use Niri system-wide (in all boot entries), enable it in the
->   top-level config instead. (i.e. outside of the specialisation block).
+```bash
+sudo nixos-rebuild switch --flake .
+# And Then Run
+sudo nixos-rebuild boot --flake .
+```
 
 **What this does**:
 
@@ -200,13 +197,13 @@ initrd changes) require a reboot for the specialisation to fully take effect
 
 **Tip**:
 
-- Each specialisation can have its own set of installed programs. Only those
-  listed in the environment.systemPackages (or enabled via modules) inside the
-  specialisation block will be available when you boot into that context.
+Each specialisation can have its own set of installed programs. Only those
+listed in the `environment.systemPackages` (or enabled via modules) inside the
+`specialisation` block will be available when you boot into that context.
 
-- You manage and update your specialisation just like your main NixOS system—no
-  special commands or workflow are required beyond specifying the specialisation
-  when rebuilding or switching.
+You manage and update your specialisation just like your main NixOS system no
+special commands or workflow are required beyond specifying the specialisation
+when rebuilding or switching.
 
 ## Use Cases for Specialisations
 
@@ -226,6 +223,11 @@ initrd changes) require a reboot for the specialisation to fully take effect
   isolated setups
 
 ## Securely Separated Contexts with NixOS Specialisations
+
+I will just explain it here for completeness, if you want to implement this I
+recommend following:
+
+[Tweag Hard User Separation with NixOS](https://www.tweag.io/blog/2022-11-01-hard-user-separation-with-nixos/)
 
 <details>
 <summary> ✔️ Click To Expand Section on Separate Contexts </summary>
@@ -320,12 +322,15 @@ compromise between security and manageability.
 config = lib.mkIf (config.specialisation != {}) { ... }
 ```
 
-This ensures those settings aren't inherited by specialisations
+- This condition checks if you're in a specialisation.
 
-- Runtime Limitations: Not all changes (e.g., kernel or initrd) can be fully
-  applied at runtime; a reboot is required for those
+- Any settings inside this block will **not** be inherited by specialisations,
+  keeping them exclusive to the main system.
 
-- Modularity: Specialisations work well with modular NixOS configs—keep
+- Runtime Limitations: Not all changes (e.g., kernel or `initrd`) can be fully
+  applied at runtime; a reboot is required for those.
+
+- Modularity: Specialisations work well with modular NixOS configs keep
   hardware, user, and service configs in separate files for easier management
 
 References to Official Documentation and Community Resources
