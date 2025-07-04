@@ -49,6 +49,8 @@ they don’t do. What NixOS Rollbacks Cover
 
 ## How Git Helps
 
+![Git Logo 2](../images/git3.png)
+
 - **Tracks every configuration change**: By version-controlling your NixOS
   configs with Git, you can easily see what changed, when, and why.
 
@@ -92,6 +94,8 @@ You can install Git by adding it to your system packages in your
 configuration.nix or via Home Manager:
 
 ## Git Tips
+
+![Octocat](../images/octocat.png)
 
 If you develop good git practices on your own repositories it will make it
 easier to contribute with others as well as get help from others.
@@ -154,6 +158,8 @@ the latest updates from the original project, but you don't push to upstream
 unless you have write access.
 
 ### A Basic Git Workflow
+
+![Git logo 3](../images/git2.png)
 
 1. Initialize your Repository:
 

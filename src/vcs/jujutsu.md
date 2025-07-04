@@ -43,6 +43,8 @@ state.
 
 ## What is the Jujutsu Working Copy
 
+![SourceTree image](../images/sourcetree.png)
+
 The **working copy** in Jujutsu is an actual **commit** that represents the
 current state of the files you're working on. Unlike Git, where the working copy
 is separate from commits and changes must be explicitly staged and committed, in
