@@ -16,6 +16,45 @@ keep sensitive data safe. See the
 [Sops-Nix Guide](https://saylesss88.github.io/installation/enc/sops-nix.html)
 for details.
 
+It's also important to understand that **all files in the `/nix/store` are
+world-readable by default** This has important security implications for anyone
+managing sensitive data on a NixOS system.
+
+What Does "World-Readable" Mean?
+
+- All files in /nix/store are readable by any user on the sytem.
+
+- This is by design, the nix store is intended to be shared, immutable store of
+  all packages and configuration files.
+
+- Permissions are typically set to `r-xr-xr-x`(read and execute for everyone)
+
+**Security Implications**
+
+- Never store secrets or sensitive data in plane text in the Nix store.
+
+- If you include secrets directly in your configuration, they will end up in the
+  `/nix/store` and be accessible to any user or process on the system.
+
+- This applies to files, environment variables, and any data embedded in
+  derivations.
+
+**Best Practices**
+
+- Always use a secrets management tool (like `sops-nix` or `agenix`) that
+  decrypts secrets at activation time and stores them outside the Nix store,
+  with restricted permissions.
+
+- Do not embed secrets directly in Nix expressions or configuration files that
+  will be build into the store.
+
+- Even hashed passwords can be vulnerable when stored in a public repository, be
+  conscious of what you store where.
+
+- If you’re unsure about what’s safe to share, start with a private repository.
+  This gives you time to learn about secrets management and review your
+  configuration before making anything public.
+
 First, I'll breefly explain some of the limitations of NixOS Rollbacks and then
 I'll go into how Git compliments them.
 
