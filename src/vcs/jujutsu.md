@@ -42,7 +42,8 @@ undo capabilities, and a branchless model that reduces common pitfalls of Git.
 1. Working Copy as Commit
 
 - In JJ your working copy is always a real commit. Any changes you make are
-  automatically recorded in this working commit.
+  automatically recorded in this working commit. The working copy is always
+  (`@`) and the Parent commit is always `(@-)` keep this in mind.
 
 - There is **no staging area** (index) as in Git. You do not need to run
   `git add` or `git commit` for every change. Modifications are always tracked
@@ -123,6 +124,22 @@ actual commit. When you make changes to files, these changes are automatically
 recorded to the working commit. There's no need to explicitly stage changes
 because they are already part of the commit that represents your current working
 state.
+
+**Simplified Workflow**
+
+```bash
+# Make some changes and commit them
+jj new main
+jj desc @ -m "My feature"
+# ...edit files...
+jj commit -a
+
+# Push just this change to the remote
+jj git push --change @
+```
+
+It's fairly easy to see where the changes are, (i.e., they don't say `(empty)`)
+and push them. Usually `@` or `@-`
 
 ## What is the Jujutsu Working Copy
 
