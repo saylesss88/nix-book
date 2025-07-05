@@ -144,15 +144,7 @@ performs the requested operation, and finally updates the working copy if needed
 To finalize your current changes and start a new set of changes, you use the
 `jj new` command, which creates a new working-copy commit on top of the current
 one. This replaces the traditional Git workflow of staging and committing
-changes separately. When you run `jj new` you will be in what Git would call a
-detached HEAD, and that's jujustu's standard state. You make your changes in a
-commit that isn't associated with a branch since JJ is designed for a branchless
-workflow and you have to be more explicit about where you want to push those
-changes. This is a safety feature to prevent you from sharing the wrong thing to
-the wrong location, when you are ready to push your changes you tell JJ by
-running `jj bookmark set main`, this lets JJ know that you are aware and want to
-push to the main branch. After this you can run `jj git push` to push from your
-local `main` branch to your remote `main`.
+changes separately.
 
 Conflicts in the working copy are represented by inserting conflict markers
 directly into the files. Jujutsu tracks the conflicting parts and can
@@ -224,6 +216,7 @@ in {
           pushall = ["git" "push" "--all"];
           dmain = ["diff" "-r" "main"];
           l = ["log" "-T" "builtin_log_compact"];
+          lf = ["log" "-r" "all()"];
         };
       };
       description = "Jujutsu configuration settings";
@@ -313,7 +306,9 @@ The JJ Push Model
 
 **Typical JJ Push Workflow**
 
-1. Check out where your working copy and Parent commit are:
+1. Check out where your working copy and Parent commit are, you will notice that
+   jj highlights the minimal amount of characters needed to reference this
+   change:
 
 ```bash
 jj st
@@ -324,17 +319,25 @@ Parent commit (@-): ywyvxrts 986d16f5 main | test3
 ```
 
 - We can see that `ywy` is the `main` branch so lets create our change on top of
-  that.
+  that. We can also see that it's (`@-`), and this is actually what `main` will
+  always be. Once I understood this everything came together.
 
 ```bash
-jj new ywy
+jj new @-
 Working copy  (@) now at: kxwrsmmu bc7e8144 (empty) (no description set)
 Parent commit (@-)      : ywyvxrts 986d16f5 main | test3
 Added 0 files, modified 1 files, removed 0 files
-jj desc kxw -m "Add a devShell"
+jj desc @ -m "Add a devShell"
 Working copy  (@) now at: kxwrsmmu eacafd73 (empty) Add a devShell
 Parent commit (@-)      : ywyvxrts 986d16f5 main | test3
 ```
+
+Being more explicit about your commands ensures both you and jj know where
+everything should go. (i.e. `jj desc @ -m` explicitly describes `@`, the working
+copy.) This will save you some headaches.
+
+Our new change, the Working copy is now built off of `main`. The working copy
+will always be (`@`).
 
 Make some changes
 
@@ -355,36 +358,12 @@ jj bookmark set main
 jj git push
 ```
 
-1. Do your work, make changes, describe them, and create new commits as needed.
-
-2. Move a bookmark to your latest commit:
-
-```bash
-jj bookmark set main
-```
-
-or create a new bookmark:
-
-```bash
-jj bookmark create feature-x
-```
-
-3. Push the bookmark:
-
-```bash
-jj git push
-```
-
-or push a specific bookmark, or all bookmarks:
-
-```bash
-jj git push --bookmark main
-jj git push --all
-```
-
 If you forget to move a bookmark, JJ will warn you and nothing will be pushed.
 This is a safety feature, not a bug. That's what the `upmain` alias does, moves
 the bookmark to `main`.
+
+If you really have problems, `jj git push --change @` explicitly pushes the
+working copy.
 
 This is a bit different than Git and takes some getting used to but you don't
 need to move the bookmark after every commit, just when you want to push. I know
