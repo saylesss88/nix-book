@@ -55,7 +55,8 @@ undo capabilities, and a branchless model that reduces common pitfalls of Git.
 
 - Bookmarks do not move automatically. You must explicitly move a bookmark
   (e.g., `main`) to your latest commit before pushing. You do this with
-  `jj bookmark set main` or `jj bookmark set master`
+  `jj bookmark set main` or `jj bookmark set master`. The FAQ mentions using
+  `jj bookmark move`.
 
 - Only commits referenced by bookmarks are pushed to remotes, preventing
   accidental sharing of unfinished work.
@@ -266,6 +267,9 @@ if jj is enabled, `lazyjj` and `meld` will be installed.
 
 ![jj tree](../images/jj2.png)
 
+Pushing to remote has been the biggest pain point so far, the branchless
+paradigm with gits branch centric flow causes you to be conscious of this fact.
+
 I have run into a few issues, such as every flake command reloading every single
 input every time. **What I mean by this is what you see when you run a flake
 command for the first time, it adds all of your flakes inputs.** I believe the
@@ -307,7 +311,49 @@ The JJ Push Model
   This is to prevent accidental pushes and gives you more control over what gets
   shared.
 
-Typical JJ Push Workflow
+**Typical JJ Push Workflow**
+
+1. Check out where your working copy and Parent commit are:
+
+```bash
+jj st
+Working copy changes:
+M README.md
+Working copy  (@) : mnkrokmt 7f0558f8 say hello and goodbye
+Parent commit (@-): ywyvxrts 986d16f5 main | test3
+```
+
+- We can see that `ywy` is the `main` branch so lets create our change on top of
+  that.
+
+```bash
+jj new ywy
+Working copy  (@) now at: kxwrsmmu bc7e8144 (empty) (no description set)
+Parent commit (@-)      : ywyvxrts 986d16f5 main | test3
+Added 0 files, modified 1 files, removed 0 files
+jj desc kxw -m "Add a devShell"
+Working copy  (@) now at: kxwrsmmu eacafd73 (empty) Add a devShell
+Parent commit (@-)      : ywyvxrts 986d16f5 main | test3
+```
+
+Make some changes
+
+```bash
+jj st
+Working copy changes:
+A dev/flake.lock
+A dev/flake.nix
+Working copy  (@) : kxwrsmmu 42b011cd Add a devShell
+Parent commit (@-): ywyvxrts 986d16f5 main | test3
+```
+
+Now I'm done, and since we built this change on top of `main` the following
+command will tell jj we know what we want to push:
+
+```bash
+jj bookmark set main
+jj git push
+```
 
 1. Do your work, make changes, describe them, and create new commits as needed.
 
@@ -547,6 +593,28 @@ sudo nixos-rebuild switch --flake .
 We're still in the nameless commit and can either continue working or run
 `jj desc -m ""` again describing our new change, then `jj new` and `jj squash`
 it's pretty simple. The nameless commit is used as an adhoc staging area.
+
+When you are ready to push, it's important to know where your working copy
+currently is and if it's attached to a bookmark. It's common for `jj new` to
+detach the head, all you have to do is tell JJ which branch to attach to, then
+push:
+
+```bash
+jj st
+Working copy changes:
+M hosts/magic/configuration.nix
+M hosts/magic/container.nix
+Working copy  (@) : youptvvn 988e6fc9 (no description set)
+Parent commit (@-): qlwqromx 4bb754fa mdbook container
+```
+
+The above output means that the working copy has modifications (`M`) in two
+files. And these changes are not yet committed.
+
+```bash
+jj bookmark set main
+jj git push
+```
 
 ---
 
