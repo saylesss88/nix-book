@@ -194,6 +194,72 @@ That said, I recommend doing just that after running something like
 Sometimes the auto staging doesn't pick up the changes in your configuration so
 rebuilding changes nothing, this has been more rare but happens occasionally.
 
+One of the most fundamental differences between Jujutsu and Git is how pushing
+works. If you’re coming from Git, it’s important to understand this shift so you
+don’t get tripped up by “nothing happened” warnings or missing changes on your
+remote.
+
+- In Git, you're always "on" a branch (e.g., `main`).
+
+- When you make a commit, the branch pointer automatically moves forward.
+
+- `git push` pushes the current branch's new commits to the remote.
+
+- If you forget to switch branches, you might accidentally push to the wrong
+  place, but you rarely have to think about "moving" the branch pointer
+  yourself.
+
+The JJ Push Model
+
+- JJ has no concept of a "currrent branch"
+
+- Bookmarks do not move automatically. When you make a new commit, the bookmark
+  (e.g., `main`) stays where it was. You must explicitly move it to your new
+  commit with `jj bookmark set main` (or create a new one).
+
+- JJ only pushes commits that are referenced by bookmarks. If your latest work
+  isn't pointed to by a bookmark, `jj git push` will do nothing and warn you.
+  This is to prevent accidental pushes and gives you more control over what gets
+  shared.
+
+Typical JJ Push Workflow
+
+1. Do your work, make changes, describe them, and create new commits as needed.
+
+2. Move a bookmark to your latest commit:
+
+```bash
+jj bookmark set main
+```
+
+or create a new bookmark:
+
+```bash
+jj bookmark create feature-x
+```
+
+3. Push the bookmark:
+
+```bash
+jj git push
+```
+
+or push a specific bookmark, or all bookmarks:
+
+```bash
+jj git push --bookmark main
+jj git push --all
+```
+
+If you forget to move a bookmark, JJ will warn you and nothing will be pushed.
+This is a safety feature, not a bug. That's what the `upmain` alias does, moves
+the bookmark to `main`.
+
+This is a bit different than Git and takes some getting used to but you don't
+need to move the bookmark after every commit, just when you want to push. I know
+I've made the mistake of pushing to the wrong branch before this should prevent
+that.
+
 ## Here's an example of using JJ in an existing Git repo
 
 Say I have my configuration flake in the `~/flakes/` directory that is an
