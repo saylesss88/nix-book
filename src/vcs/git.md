@@ -9,6 +9,13 @@
 
 ![Git Logo](../images/git1.png)
 
+⚠️ **Important**: Never commit secrets (passwords, API keys, tokens, etc.) in
+plain text to your Git repository. If you plan to publish your NixOS
+configuration, always use a secrets management tool like sops-nix or agenix to
+keep sensitive data safe. See the
+[Sops-Nix Guide](https://saylesss88.github.io/installation/enc/sops-nix.html)
+for details.
+
 First, I'll breefly explain some of the limitations of NixOS Rollbacks and then
 I'll go into how Git compliments them.
 

@@ -224,6 +224,8 @@ To push you use `jj git push`, (you must first set the bookmark as we did above)
 
 ```bash
 jj git push
+# or the full command is
+jj git push --bookmark main
 # example output after pushing my flake repo
 Rebased 1 descendant commits onto updated working copy
 Changes to push to origin:
