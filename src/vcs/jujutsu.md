@@ -90,6 +90,7 @@ editing these markers and then committing the resolution in the working copy
   lib,
   config,
   pkgs,
+  # userVars ? {},
   ...
 }: let
   cfg = config.custom.jj;
@@ -103,23 +104,14 @@ in {
 
     userName = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
-      default = "saylss88";  # you can use `or` statements here also
+      default = "sayls8";
       description = "Jujutsu user name";
     };
 
     userEmail = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
-      default = "sayls88@proton.me";
+      default = "sayls8@proton.me";
       description = "Jujutsu user email";
-    };
-
-    configFile = lib.mkOption {
-      type = lib.types.lines;
-      default = ''
-        [ui]
-        diff-editor = ["nvim", "-c", "DiffEditor $left $right $output"]
-      '';
-      description = "Content of the Jujutsu config.toml file";
     };
 
     packages = lib.mkOption {
@@ -132,9 +124,22 @@ in {
       type = lib.types.attrs;
       default = {
         ui = {
-          default-command = ["status" "--no-pager"];
-          diff-editor = ":builtin";
+          default-command = ["status"];
+          diff-editor = ["nvim" "-c" "DiffEditor" "$left" "$right" "$output"];
           merge-editor = ":builtin";
+        };
+        git = {
+          auto-local-bookmark = true;
+        };
+        aliases = {
+          tug = ["bookmark" "move" "--from" "heads(::@- & bookmarks())" "--to" "@-"];
+          upmain = ["bookmark" "set" "main"];
+          squash-desc = ["squash" "::@" "-d" "@"];
+          rebase-main = ["rebase" "-d" "main"];
+          amend = ["describe" "-m"];
+          pushall = ["git" "push" "--all"];
+          dmain = ["diff" "-r" "main"];
+          l = ["log" "-T" "builtin_log_compact"];
         };
       };
       description = "Jujutsu configuration settings";
@@ -143,8 +148,6 @@ in {
 
   config = lib.mkIf cfg.enable {
     home.packages = cfg.packages;
-
-    home.file.".jj/config.toml".text = cfg.configFile;
 
     programs.jujutsu = {
       enable = true;
@@ -157,11 +160,8 @@ in {
     };
   };
 }
-```
 
-To be honest, I have only played around with jj and recently am giving it
-another shot. I'm not sure currently if the meld settings are correct FYI. They
-are filler names and email addresses also.
+```
 
 In my `home.nix` I have this to enable it:
 
