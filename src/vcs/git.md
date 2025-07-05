@@ -192,6 +192,8 @@ internet or network somewhere.
 - The name `origin` is just a convention, it's not special. It is automatically
   set when you clone a repo.
 
+![git local remote](../images/git_local-remote.png)
+
 **Local** is your local copy of the repository, git tracks the differences
 between **local** and **remote** which is a repo hosted elsewhere (e.g., GitHub
 GitLab etc.)
@@ -234,6 +236,8 @@ state of your working configuration before you make any changes.
     mistakes. This two-step process, staging with `git add` and saving with
     `git commit` is at the heart of how Git tracks and manages changes over
     time.
+
+![git commit add](../images/git-add-commit.png)
 
 2. Make and Track Changes:
 

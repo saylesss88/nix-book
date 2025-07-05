@@ -30,6 +30,81 @@ or `man jj`, `man jj git init`.
 > ❗ Pro Tip: Set the environment variable `export MANPAGER='nvim +Man!'` in
 > your shell config to use Neovim as your manpager.
 
+## Introduction
+
+Jujutsu (jj) is a modern, Git-compatible version control system designed to
+simplify and improve the developer experience. It offers a new approach to
+distributed version control, focusing on a more intuitive workflow, powerful
+undo capabilities, and a branchless model that reduces common pitfalls of Git.
+
+**Key Concepts**
+
+1. Working Copy as Commit
+
+- In JJ your working copy is always a real commit. Any changes you make are
+  automatically recorded in this working commit.
+
+- There is **no staging area** (index) as in Git. You do not need to run
+  `git add` or `git commit` for every change. Modifications are always tracked
+  in the current commit.
+
+2. Branchless Workflow and Bookmarks
+
+- JJ does not have the concept of a "current branch." Instead, it uses
+  bookmarks, which are named pointers to specific commits.
+
+- Bookmarks do not move automatically. You must explicitly move a bookmark
+  (e.g., `main`) to your latest commit before pushing. You do this with
+  `jj bookmark set main` or `jj bookmark set master`
+
+- Only commits referenced by bookmarks are pushed to remotes, preventing
+  accidental sharing of unfinished work.
+
+3. Automatic Tracking and Simpler Workflow
+
+- Adding or removing files is automatically tracked, no need for explicit `add`
+  or `rm` commands.
+
+- The working copy acts as a live snapshot of your workspace. Commands first
+  sync filesystem changes into this commit, then perform the requested
+  operation, and finally update the working copy if needed.
+
+4. Operation Log and Undo
+
+- JJ records every operation (commits, merges, rebases, etc.) in an **operation
+  log**.
+
+- You can view and undo any previous operation, not just the most recent one,
+  making it easy to recover from mistakes, a feature not present in Git’s core
+  CLI.
+
+5. First-Class Conflict Handling
+
+- Conflicts are stored inside commits, not just in the working directory. You
+  can resolve them at any time, not just during a merge or rebase.
+
+- Conflict markers are inserted directly into files, and JJ can reconstruct the
+  conflict state from these markers. You can resolve conflicts by editing the
+  files or using `jj resolve`.
+
+6. Revsets and Filesets
+
+- **Revsets**: JJ's powerful query language for selecting sets of commits,
+  inspired by Mercurial. For example, `jj log -r "author(alice) & file(*.py)"`
+  lists all commits by Alice that touch Python files.
+
+- **Filesets**:JJ supports a functional language for selecting sets of files,
+  allowing advanced file-based queries and operations.
+
+| Feature              | Git                      | Jujutsu (jj)                                |
+| :------------------- | :----------------------- | :------------------------------------------ |
+| Staging Area         | Yes (git add/index)      | No, working copy is always a commit         |
+| Commit Workflow      | Stage → Commit           | All changes auto-recorded in working commit |
+| Branches             | Central to workflow      | Optional, bookmarks used for sharing        |
+| Undo/Redo            | Limited, complex         | Easy, operation log for undo                |
+| Conflict Handling    | Manual, can be confusing | Conflicts tracked in commits, easier to fix |
+| Integration with Git | Native                   | Fully compatible, can switch back anytime   |
+
 If you haven't taken the time to deep dive Git, it may be a good time to learn
 about a new way of doing Version Control that is actually less complex and
 easier to mentally map out in my opinion.
@@ -68,7 +143,15 @@ performs the requested operation, and finally updates the working copy if needed
 To finalize your current changes and start a new set of changes, you use the
 `jj new` command, which creates a new working-copy commit on top of the current
 one. This replaces the traditional Git workflow of staging and committing
-changes separately
+changes separately. When you run `jj new` you will be in what Git would call a
+detached HEAD, and that's jujustu's standard state. You make your changes in a
+commit that isn't associated with a branch since JJ is designed for a branchless
+workflow and you have to be more explicit about where you want to push those
+changes. This is a safety feature to prevent you from sharing the wrong thing to
+the wrong location, when you are ready to push your changes you tell JJ by
+running `jj bookmark set main`, this lets JJ know that you are aware and want to
+push to the main branch. After this you can run `jj git push` to push from your
+local `main` branch to your remote `main`.
 
 Conflicts in the working copy are represented by inserting conflict markers
 directly into the files. Jujutsu tracks the conflicting parts and can
@@ -180,6 +263,8 @@ is enabled from a single, centralized place within my Nix configuration. So only
 if jj is enabled, `lazyjj` and `meld` will be installed.
 
 ## Issues I've Noticed
+
+![jj tree](../images/jj2.png)
 
 I have run into a few issues, such as every flake command reloading every single
 input every time. **What I mean by this is what you see when you run a flake
@@ -638,6 +723,14 @@ This command lists all commits by Alice that touch Python files.
 Jujutsu supports a functional language for selecting a set of files. Expressions
 in this language are called "filesets" (the idea comes from Mercurial). The
 language consists of file patterns, operators, and functions. --JJ Docs
+
+## Summary
+
+Jujutsu (jj) offers a streamlined, branchless, and undo-friendly approach to
+version control, fully compatible with Git but designed to be easier to use and
+reason about. Its workflows, operation log, and conflict handling provide a
+safer and more flexible environment for managing code changes, making it a
+compelling alternative for both new and experienced developers.
 
 ---
 
