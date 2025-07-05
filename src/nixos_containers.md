@@ -7,16 +7,16 @@ packages, and (optionally) network stack.
 
 **Common Use Cases**
 
-- Isolating services: Run a web server, database, or any service in its own
+- **Isolating services**: Run a web server, database, or any service in its own
   container, so it can’t interfere with the main system or other services
 
-- Testing and development: Try out new configurations, packages, or services in
-  a sandboxed environment.
+- **Testing and development**: Try out new configurations, packages, or services
+  in a sandboxed environment.
 
-- Reproducible deployments: Because containers are defined declaratively, you
-  can reproduce the exact same environment anywhere.
+- **Reproducible deployments**: Because containers are defined declaratively,
+  you can reproduce the exact same environment anywhere.
 
-- Running multiple versions of a service: For example, testing different
+- **Running multiple versions of a service**: For example, testing different
   versions of Git or HTTP servers side by side.
 
 ## Hosting an mdBook or Offline Git Server
@@ -40,3 +40,10 @@ containers.mdbook = {
   };
 };
 ```
+
+- `ephemeral`: if true, the container resets on each restart.
+
+- `autoStart`: Ensures the container starts automatically at boot.
+
+- `config`: Defines the containers NixOS configuration, just like a regular
+  NixOS system.
