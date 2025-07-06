@@ -107,6 +107,9 @@ undo capabilities, and a branchless model that reduces common pitfalls of Git.
 | Conflict Handling    | Manual, can be confusing | Conflicts tracked in commits, easier to fix |
 | Integration with Git | Native                   | Fully compatible, can switch back anytime   |
 
+7. Anonymous branches: In Git a branch is a pointer to a commit that needs a
+   name.
+
 If you haven't taken the time to deep dive Git, it may be a good time to learn
 about a new way of doing Version Control that is actually less complex and
 easier to mentally map out in my opinion.
@@ -506,14 +509,127 @@ sudo nixos-rebuild switch --flake .
 
 With JJ a similar workflow could be:
 
+1. Run `jj st` to see what you have:
+
 ```bash
-jj new @-  # Create a new commit off of main (Parent Commit)
-nix flake update
-sudo nixos-rebuild test --flake .
-jj squash #  similar to `git commit -a --amend`
-jj describe -m "update" # Similar to git commit -m
-sudo nixos-rebuild switch --flake .
+jj st
+The working copy has no changes.
+Working copy  (@) : ttkstzzn 3f55c42c (empty) (no description set)
+Parent commit (@-): wppknozq e3558ef5 main@origin | jj diff
 ```
+
+If you don't have a description set for the working copy set it now.
+
+```bash
+jj desc @ -m "enable vim"
+jj st
+The working copy has no changes.
+Working copy  (@) : ttkstzzn 63fda123 (empty) enable vim
+Parent commit (@-): wppknozq e3558ef5 main@origin | jj diff
+```
+
+2. Start from the working copy (which is mutable). The working copy in JJ is
+   itself a commit that you can edit and squash changes into. Since `main` is
+   immutable, you can create your new change by working on top of the working
+   copy commit.
+
+Create a new change off of the working copy:
+
+```bash
+jj new @
+```
+
+3. Make your edits:
+
+```bash
+jj st
+Working copy changes:
+M home/editors/vim.nix
+Working copy  (@) : qrsxltmt 494b5f18 (no description set)
+Parent commit (@-): wytnnnto a07e775c (empty) enable vim
+```
+
+4. Squash your changes into the new change:
+
+```bash
+jj squash
+The working copy has no changes.
+Working copy  (@) : tmlwppnu ba06bb99 (empty) (no description set)
+Parent commit (@-): wytnnnto 52928ed9 enable vim
+```
+
+This moves your working copy changes into the new commit you just created.
+
+5. Describe the new change, this might feel weird but the `jj squash` command
+   created a new commit that you have to describe again:
+
+```bash
+jj desc @ -m "Enabled Vim"
+Working copy  (@) : tmlwppnu 5c1569c3 (empty) Enabled Vim
+Parent commit (@-): wytnnnto 52928ed9 enable vim
+```
+
+6. Set the bookmark to the Parent commit that was squashed into:
+
+```bash
+jj bookmark set wyt
+```
+
+7. Finally Push to the remote repository:
+
+```bash
+jj git push --allow-new
+Changes to push to origin:
+  Add bookmark wyt to 5c1569c35b22
+remote: Resolving deltas: 100% (4/4), completed with 4 local objects.
+remote:
+remote: Create a pull request for 'wyt' on GitHub by visiting:
+remote:      https://github.com/sayls8/flake/pull/new/wyt
+remote:
+```
+
+This command does the following:
+
+- Uploads your bookmark and the associated commit to the remote repository
+  (e.g., GitHub).
+
+- If the bookmark is new (not present on the remote), --allow-new tells JJ it’s
+  okay to create it remotely.
+
+- After pushing, GitHub (or your code host) will usually suggest creating a pull
+  request for your new branch/bookmark, allowing you or your collaborators to
+  review and merge the change into main.
+
+**Merging your Change into `main`**
+
+Option 1. Go to the URL suggested in the output, visit in this case:
+
+```bash
+https://github.com/sayls8/flake/pull/new/wyt
+```
+
+- Click Create PR
+
+- Click Merge PR if it shows it can merge cleanly.
+
+Option 2.
+
+1. Switch to `main` (if not already there):
+
+```bash
+jj bookmark set main
+```
+
+2. Create a new change that combines the new change with `main`:
+
+```bash
+jj new tml wyt -m "Merge: enable vim"
+```
+
+This creates a new commit with both `tml` and `wyt` as parents, which is how JJ
+handles merges (since `jj merge` depreciated).
+
+---
 
 - With `jj` you're creating a new commit rather than a new branch.
 
@@ -523,8 +639,7 @@ sudo nixos-rebuild switch --flake .
 
 - Merging: Git's merge command is explicit. In `jj`, the concept is similar, but
   since there's no branch, you're "merging" by moving your working commit to
-  include these changes. The `jj squash` here acts like merging the changes into
-  the main line of development.
+  include these changes.
 
 - No need to delete branches: Since there are no branches in `jj`, there's no
   equivalent to `git branch -D` to clean up. Instead commits that are no longer
