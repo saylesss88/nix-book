@@ -9,32 +9,41 @@
 
 ![JJ Logo](../images/jujutsu.png)
 
-⚠️ **Important**: Never commit secrets (passwords, API keys, tokens, etc.) in
-plain text to your Git repository. If you plan to publish your NixOS
+⚠️ **Security Reminder**: Never commit secrets (passwords, API keys, tokens,
+etc.) in plain text to your Git repository. If you plan to publish your NixOS
 configuration, always use a secrets management tool like sops-nix or agenix to
 keep sensitive data safe. See the
 [Sops-Nix Guide](https://saylesss88.github.io/installation/enc/sops-nix.html)
 for details.
 
-You may want to check
-[Steve's Jujutsu Tutorial](https://steveklabnik.github.io/jujutsu-tutorial/), he
-does a great job of explaining how to use jj with practical examples. It is
-recommended in the official JJ docs as a more up to date intro.
-
-After installing JJ you can run `jj help -k tutorial`, for the official guide in
-a pager but like I said Steve's guide is more up to date.
-
-You can find help for nearly every command with the command followed by `--help`
-(e.g., `jj git init --help`, `jj git push --help`)
-
-## Introduction
+## Getting Started
 
 Jujutsu (jj) is a modern, Git-compatible version control system designed to
 simplify and improve the developer experience. It offers a new approach to
 distributed version control, focusing on a more intuitive workflow, powerful
 undo capabilities, and a branchless model that reduces common pitfalls of Git.
 
-**Key Concepts**
+**Recommended resources**:
+
+- [Steve's Jujutsu Tutorial](https://steveklabnik.github.io/jujutsu-tutorial/)
+  (most up to date). Steve does an excellent job explaining the ins and outs of
+  Jujutsu.
+
+- Official:
+
+```bash
+jj help -k tutorial
+```
+
+- Command help:
+
+```bash
+jj <command> --help
+jj git init --help
+jj git push --help
+```
+
+## 🔑 Key Concepts
 
 <details>
 <summary> ✔️ Click to Expand Key Concepts </summary>
@@ -51,13 +60,12 @@ undo capabilities, and a branchless model that reduces common pitfalls of Git.
 
 2. Branchless Workflow and Bookmarks
 
-- JJ does not have the concept of a "current branch." Instead, it uses
-  bookmarks, which are named pointers to specific commits.
+- JJ does not have the concept of a "current branch." Instead, use bookmarks,
+  which are named pointers to specific commits.
 
-- Bookmarks do not move automatically. You must explicitly move a bookmark
-  (e.g., `main`) to your latest commit before pushing. You do this with
-  `jj bookmark set main` or `jj bookmark set master`. The FAQ mentions using
-  `jj bookmark move`.
+- Bookmarks do not move automatically. Commands like `jj new` and `jj commit`
+  move the working copy, but the bookmark stays were it was. Use
+  `jj bookmark move` to move bookmarks. (e.g., `jj bookmark move main`).
 
 - Only commits referenced by bookmarks are pushed to remotes, preventing
   accidental sharing of unfinished work.
@@ -74,13 +82,16 @@ undo capabilities, and a branchless model that reduces common pitfalls of Git.
 4. Operation Log and Undo
 
 - JJ records every operation (commits, merges, rebases, etc.) in an **operation
-  log**.
+  log**. Inspect it with: `jj op log`
 
 - You can view and undo any previous operation, not just the most recent one,
   making it easy to recover from mistakes, a feature not present in Git’s core
   CLI.
 
 5. First-Class Conflict Handling
+
+Conflicts happen when JJ can't figure out how to merge different changes made to
+the same file.
 
 - Conflicts are stored inside commits, not just in the working directory. You
   can resolve them at any time, not just during a merge or rebase.
@@ -132,21 +143,44 @@ state.
 
 **Simplified Workflow**
 
-```bash
-# Make some changes and commit them
-jj new main
-jj desc @ -m "My feature"
-# ...edit files...
-jj commit -a
+Check where you're at, JJ doesn't care about commits without descriptions but
+Git and GitHub do:
 
-# Push just this change to the remote
-jj git push --change @
+```bash
+jj st
+Working copy  (@) now at: zuknrzrx 8a20bfa7 (empty) (no description set)
+Parent commit (@-)      : yzppulzo bdd64e8d main | (empty) "Enable Rofi and update nu func for jj"
 ```
 
-It's fairly easy to see where the changes are, (i.e., they don't say `(empty)`)
-and push them. Usually `@` or `@-`
+We can see that the Working copy is `(empty)` and has `(no description set)`,
+lets give it a description:
+
+```bash
+jj desc -m "My feature"
+# ...edit files...
+# Check where we're at again
+jj st
+Working copy changes:
+M home/jj.nix
+Working copy  (@) : zuknrzrx bcd3d965 My feature
+Parent commit (@-): yzppulzo bdd64e8d main | (empty) "Enable Rofi and update nu func for jj"
+
+# Tell JJ which branch we're interested in
+jj bookmark set main
+# Push this change to main
+jj git push
+Changes to push to origin:
+  Move forward bookmark main from bdd64e8d6ea5 to bcd3d96567f8
+remote: Resolving deltas: 100% (3/3), completed with 3 local objects.
+Warning: The working-copy commit in workspace 'default' became immutable, so a new commit has been created on top of it.
+Working copy  (@) now at: ktlywzlx 8e88ddbe (empty) (no description set)
+Parent commit (@-)      : zuknrzrx bcd3d965 main | My feature
+```
 
 ## What is the Jujutsu Working Copy
+
+<details>
+<summary> ✔️ Click To Expand Working Copy Description </summary>
 
 ![SourceTree image](../images/sourcetree.png)
 
@@ -177,6 +211,8 @@ editing these markers and then committing the resolution in the working copy
   `git add .`, running `git commit -m "commit message"` because it's already
   done for you. This is handy with flakes by preventing a "dirty working tree"
   and can instantly be rebuilt after making a change.
+
+</details>
 
 ## Example JJ Module
 
@@ -386,6 +422,11 @@ If you forget to move a bookmark, JJ will warn you and nothing will be pushed.
 This is a safety feature, not a bug. That's what the `upmain` alias does, moves
 the bookmark to `main`.
 
+```nix
+# home-manager alias
+upmain = ["bookmark" "set" "main"];
+```
+
 If you really have problems, `jj git push --change @` explicitly pushes the
 working copy.
 
@@ -414,9 +455,9 @@ Initialized repo in "."
   to the main branch in scripts and commands without hardcoding the branch name.
 
 **Bookmarks** in jj are named pointers to specific revisions, similar to
-branches in Git. When you first run `jj git init --git-branch .` in a git repo,
-you will likely get a Hint saying "Run the following command to keep local
-bookmarks updated on future pulls".:
+branches in Git. When you first run `jj git init --colocate` in a git repo, you
+will likely get a Hint saying "Run the following command to keep local bookmarks
+updated on future pulls".:
 
 ```bash
 jj bookmark list
@@ -600,6 +641,37 @@ This command does the following:
   request for your new branch/bookmark, allowing you or your collaborators to
   review and merge the change into main.
 
+### Zsh function to squash and push in 1 command
+
+<details>
+<summary> ✔️ Click to Expand Zsh Function </summary>
+
+> Another option is to use a shell function to do a few steps for you. The
+> following is a zsh function to squash and push at the same time:
+>
+> ```zsh
+> # ... snip ...
+>  initContent = ''
+>
+>             jj-squash-push() {
+>                echo "Enter commit message:"
+>                read -r msg
+>                jj squash -r @
+>                jj describe -m "$msg"
+>                jj bookmark set main
+>                jj git push
+>              }
+> '';
+> # ... snip ...
+> ```
+>
+> - Once you're edits are comple and you're ready to run `jj squash`, run
+>   `jj-squash-push` instead. It will prompt you for a squashed commit message,
+>   then push for you. You can easily remove the last `jj git push` step to have
+>   a `jj-squash` func also.
+
+</details>
+
 **Merging your Change into `main`**
 
 Option 1. Go to the URL suggested in the output, visit in this case:
@@ -627,9 +699,13 @@ jj new tml wyt -m "Merge: enable vim"
 ```
 
 This creates a new commit with both `tml` and `wyt` as parents, which is how JJ
-handles merges (since `jj merge` depreciated).
+handles merges (since `jj merge` depreciated). JJ merges are additive and
+history-preserving by design especially for folks used to Git's fast-forward and
+squash options.
 
 ---
+
+### Summary
 
 - With `jj` you're creating a new commit rather than a new branch.
 
@@ -765,7 +841,7 @@ jj git push
 
 This workflow adds a few new commands `jj edit`, and `jj next`.
 
-Heres the workflow:
+Here's the workflow:
 
 1. Create a new change to work on the new feature with `jj new`
 
