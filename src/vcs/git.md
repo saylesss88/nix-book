@@ -97,6 +97,9 @@ they don’t do. What NixOS Rollbacks Cover
 
 ![Git Logo 2](../images/git3.png)
 
+- The [gh-cli](https://docs.github.com/en/github-cli/github-cli/quickstart),
+  simplifies quite a few things for working with GitHub from the command line.
+
 - **Tracks every configuration change**: By version-controlling your NixOS
   configs with Git, you can easily see what changed, when, and why.
 
@@ -146,7 +149,33 @@ configuration.nix or via Home Manager:
 If you develop good git practices on your own repositories it will make it
 easier to contribute with others as well as get help from others.
 
-**Commit Tips**:
+## Atomic Commits
+
+**Atomic commits** are a best practice in Git where each commit represents a
+single, focused, and complete change to the codebase. The main chacacteristics
+of atomic commits are:
+
+- **One purpose**: Each commit should address only one logical change or task.
+
+- **Complete**: The commit should leave the codebase in a working state.
+
+- **Descriptive**: The commit message should be able to clearly summarize the
+  change in a single sentence.
+
+**Why Atomic Commits Matter**
+
+- **Easier debugging**: You can use tools like `git bisect` to quickly find
+  which commit introduced a bug, since each commit is isolated.
+
+- **Simpler reverts**: You can revert without affecting unrelated changes.
+
+- **Better collaboration**: Code reviews and merges are more manageable when
+  changes are small and focused.
+
+When you lump together a bunch of changes into a single commit it can lead to
+quite a few undesirable consequences. They make it harder to track down bugs,
+it's more difficult to revert undesired changes without reverting desired ones,
+make larger tickets harder to manage.
 
 **Every time a logical component is completed, commit it**. Smaller commits make
 it easier for other devs and yourself to understand the changes and roll them
@@ -163,7 +192,117 @@ more often.
 of whitespace between the summary and the body of your message. Make it clear
 why this change was necessary. Use consistent language with generated messages
 from commands like `git merge` which is imperative and present tense
-(`<<change>>`, not `<<changed>>` or `<<changes>>`)
+(`<<change>>`, not `<<changed>>` or `<<changes>>`).
+
+## Time Travel in Git
+
+<details>
+<summary> ✔️ Click to Expand Time Travel Section </summary>
+
+**View an old commit**:
+
+```bash
+git checkout <commit_hash>
+```
+
+This puts you in a "detached HEAD" state, letting you explore code as it was at
+that commit. To return, checkout your branch again.
+
+**Go back and keep history (revert)**:
+
+```bash
+git revert <commit_hash>
+```
+
+**Go back and rewrite history (reset)**:
+
+- Soft reset (keep changes staged):
+
+```bash
+git reset --soft <commit_hash>
+```
+
+- Mixed reset (keep changes in working directory):
+
+```bash
+git reset <commit_hash>
+```
+
+- Hard reset (discard all changes after the commit):
+
+```bash
+git reset --hard <commit_hash>
+```
+
+Use the above command with caution, it can delete commits from history.
+
+- Relative time travel:
+
+```bash
+git reset --hard HEAD@{5.minutes.ago}
+```
+
+or
+
+```bash
+git reset --hard HEAD@{yesterday}
+```
+
+**Create a branch from the past**:
+
+```bash
+git checkout -b <new-brach> <commit_hash>
+```
+
+This starts a new branch from any previous commit, preserving current changes.
+
+</details>
+
+Some repositories have guidelines, such as Nixpkgs:
+
+<details>
+<summary> ✔️ Click to Expand Nixpkgs Commit Conventions </summary>
+
+**Commit conventions**
+
+- Create a commit for each logical unit.
+
+- Check for unnecessary whitespace with git diff --check before committing.
+
+- If you have commits pkg-name: oh, forgot to insert whitespace: squash commits
+  in this case. Use git rebase -i. See Squashing Commits for additional
+  information.
+
+- For consistency, there should not be a period at the end of the commit
+  message's summary line (the first line of the commit message).
+
+- When adding yourself as maintainer in the same pull request, make a separate
+  commit with the message maintainers: add <handle>. Add the commit before those
+  making changes to the package or module. See Nixpkgs Maintainers for details.
+
+  Make sure you read about any commit conventions specific to the area you're
+  touching. See: Commit conventions for changes to pkgs. Commit conventions for
+  changes to lib. Commit conventions for changes to nixos. Commit conventions
+  for changes to doc, the Nixpkgs manual.
+
+**Writing good commit messages**
+
+In addition to writing properly formatted commit messages, it's important to
+include relevant information so other developers can later understand why a
+change was made. While this information usually can be found by digging code,
+mailing list/Discourse archives, pull request discussions or upstream changes,
+it may require a lot of work.
+
+Package version upgrades usually allow for simpler commit messages, including
+attribute name, old and new version, as well as a reference to the relevant
+release notes/changelog. Every once in a while a package upgrade requires more
+extensive changes, and that subsequently warrants a more verbose message.
+
+Pull requests should not be squash merged in order to keep complete commit
+messages and GPG signatures intact and must not be when the change doesn't make
+sense as a single commit.
+
+</details>
 
 A **Git workflow** is a recipe or recommendation for how to use Git to
 accomplish work in a consistent and productive manner. Having a defined workflow
@@ -341,7 +480,7 @@ git commit -m "Describe the new feature or fix"
 
 Branching means to diverge from the main line of development and continue to do
 work without risking messing up your main branch. There are a few commits on
-your main branch so to visualise this it would look something like this, image
+your main branch so to visualize this it would look something like this, image
 is from [Pro Git](https://git-scm.com/book/en/v2):
 
 ![Git Branch 1](../images/git-branch3.png)
@@ -486,6 +625,18 @@ sudo nixos-rebuild switch --flake .
 ```
 
 It's good practice to delete a branch after you've merged and are done with it.
+
+## Merging and Rebasing Branches
+
+To combine two seperate branches into one unified history you typically use
+`git merge` or `git rebase`.
+
+`git merge` takes two commit pointers and finds a common base commit between
+them, it then creates a "merge commit" that combines the changes.
+
+`git rebase` is used to move a sequence of commits to a new base commit.
+
+![Git rebase](../images/rebase.png)
 
 ## Configure Git Declaratively
 

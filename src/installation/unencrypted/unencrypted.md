@@ -63,12 +63,11 @@ When a new Btrfs filesystem is created, it starts with a "top-level" subvolume
 deleted or replaced, and it is the default mount point unless changed with btrfs
 subvolume set-default.
 
-Subvolumes can also have storage quotas set using Btrfs’s quota groups
-(qgroups), but otherwise, they all draw from the same underlying storage pool.
-Thanks to features like deduplication and snapshots, subvolumes can share data
-efficiently at the extent level.While ZFS is a solid choice and offers some
-benefits over BTRFS, I recommend looking into it before making your own
-decision.
+Subvolumes can also have storage quotas set using Btrfs’s quota groups , but
+otherwise, they all draw from the same underlying storage pool. Thanks to
+features like deduplication and snapshots, subvolumes can share data efficiently
+at the extent level.While ZFS is a solid choice and offers some benefits over
+BTRFS, I recommend looking into it before making your own decision.
 
 </details>
 
@@ -98,7 +97,29 @@ disk partitioning tool. Sourced from the
    [Ventoy TarBall](https://sourceforge.net/projects/ventoy/files/v1.1.05/ventoy-1.1.05-linux.tar.gz/download)
    download, untar it with `tar -xzf ventoy-1.1.05-linux.tar.gz`, and make it
    executable with `chmod +x Ventoy2Disk.sh`, and finally execute it with
-   `sudo bash Ventoy2Disk.sh` Follow the prompts to finish the install.
+   `sudo ./Ventoy2Disk.sh` Follow the prompts to finish the install.
+
+You'll have to run it on for the USB drive you're trying to use, you can do that
+by unplugging the USB stick and running `lsblk`, then plug it in again and run:
+
+```bash
+lsblk -f
+NAME          FSTYPE      FSVER LABEL   UUID                                 FSAVAIL FSUSE% MOUNTPOINTS
+sda
+└─sda1        vfat        FAT32 MYUSB   46E8-9304
+sdb           vfat        FAT12         F054-697D                               1.4M     0% /run/media/jr/F054-697D
+nvme0n1
+├─nvme0n1p1   vfat        FAT32         BCD8-8C51                               1.8G    12% /boot
+```
+
+- `sdb` is a USB plugin for a mouse. `sda` is the USB stick that I want to
+  target here:
+
+```bash
+sudo ./Ventoy2Disk.sh -i /dev/sda
+# Or to force overwrite an existing Ventoy entry
+sudo ./Ventoy2Disk.sh -I /dev/sda
+```
 
 2. The minimal installer uses `wpa_supplicant` instead of NetworkManager, to
    enable networking run the following:

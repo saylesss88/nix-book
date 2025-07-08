@@ -11,11 +11,11 @@
     available on your fork when you later try to create a PR against them, or
     when you want to create a feature branch from them on your fork.
 
-- Click `<> Code` and Clone the Repo. `saylesss88` is the name of my GitHub,
-  yours will obviously be different.
+- Click `<> Code` and Clone the Repo. `sayls8` is the name of my GitHub, yours
+  will obviously be different.
 
 ```bash
-git clone git@github.com:saylesss88/nixpkgs.git
+git clone git@github.com:sayls8/nixpkgs.git
 ```
 
 Figure out the branch that should be used for this change by going through
@@ -33,8 +33,8 @@ git remote add upstream https://github.com/NixOS/nixpkgs.git
 git fetch upstream
 # Show currently configured remote repository
 git remote -v
-origin  git@github.com:saylesss88/nixpkgs.git (fetch)
-origin  git@github.com:saylesss88/nixpkgs.git (push)
+origin  git@github.com:sayls8/nixpkgs.git (fetch)
+origin  git@github.com:sayls8/nixpkgs.git (push)
 upstream        https://github.com/NixOS/nixpkgs.git (fetch)
 upstream        https://github.com/NixOS/nixpkgs.git (push)
 ```
@@ -43,7 +43,7 @@ upstream        https://github.com/NixOS/nixpkgs.git (push)
 
 This output confirms that:
 
-- `origin` is your personal fork on GitHub (`saylesss88/nixpkgs.git`). When you
+- `origin` is your personal fork on GitHub (`sayls8/nixpkgs.git`). When you
   `git push origin ...`, your changes go here.
 
 - `upstream` is the official Nixpkgs repository (`NixOS/nixpkgs.git`). When you
@@ -209,8 +209,8 @@ git push origin my-feature-branch
 
 5. Create a Pull Request
 
-Go to <https://github.com/saylesss88/nixpkgs>. (your fork) Click the PR prompt
-for my-feature-branch. Set the base branch to `NixOS/nixpkgs:master` (or
+Go to <https://github.com/sayls8/nixpkgs>. (your fork) Click the PR prompt for
+my-feature-branch. Set the base branch to `NixOS/nixpkgs:master` (or
 `nixos-24.11`). Write a PR description: Purpose of the change. Related issues
 (e.g., Fixes #1234). Testing steps (e.g., `nix-build -A <package-name>`). Submit
 and respond to feedback.

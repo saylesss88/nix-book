@@ -67,6 +67,38 @@ nix flake archive --json \
   | cachix push <mycache>
 ```
 
+You should see output similar to the following:
+
+```bash
+Pushing 637 paths (2702 are already present) using zstd to cache sayls8 ⏳
+
+✓ /nix/store/0aqvmjvhkar3j2f7zag2wjl4073apnvk-vimplugin-crates.nvim-2025-05-30 (734.65 KiB)
+✓ /nix/store/02wm10zck7rb836kr0h3afjxl80866dp-X-Restart-Triggers-keyd (184.00 B)
+✓ /nix/store/0asdaaax0lf1wa6m6lqqdvc8kp6qn3f6-dconf-cleanup (1008.00 B)
+✓ /nix/store/09ki2jlh6sqbn01yw6n15h8d55ihxygf-helix-tree-sitter-mojo-3d7c53b8038f9ebbb57cd2e61296180aa5c1cf64 (601.37 KiB)
+✓ /nix/store/0i2c29nldqvb9pnypvp3ika4i7fhc0ck-devour-output (312.00 B)
+✓ /nix/store/0c0mwfb78xm862a7g4h9fhgzn55zppj6-helix-term (29.88 MiB)
+✓ /nix/store/0fhdpb2qck1kbngq1dlc8lyqqadj2pb1-hyprcursor-0.1.12+date=2025-06-05_45fcc10-lib (487.30 KiB)
+✓ /nix/store/0mfpi51bswgd91l8clqcz6mxy5k5zcd4-vimplugin-auto-pairs-2019-02-27 (40.60 KiB)
+✓ /nix/store/0k2zq8y78vrhhkf658j6i45vz3y89v11-helix-tree-sitter-tcl-56ad1fa6a34ba800e5495d1025a9b0fda338d5b8 (110.25 KiB)
+✓ /nix/store/0qxmahrw935136dbxkmvrg14fgnzi6bb-vimplugin-obsidian.nvim-2025-07-01 (493.02 KiB)
+✓ /nix/store/0wjppqzcbnlf9srhr6k27pz403j3mg2j-hm-session-vars.sh (1.86 KiB)
+✓ /nix/store/0z41071z33zg1zqyasccc3cfhxj389k0-helix-tree-sitter-swift-57c1c6d6ffa1c44b330182d41717e6fe37430704 (2.77 MiB)
+✓ /nix/store/0n5f1x8lpc93zm81bxrfh6yccyngvrdl-unit-plymouth-read-write.service (1.19 KiB)
+✓ /nix/store/0z8ac35n89lv2knzaj6kkp0cfxr6pmgc-hm_face.png (300.60 KiB)
+✓ /nix/store/0zp5846pry5rknnvzz81zlvj4ghnkxp5-hyprutils-0.8.1+date=2025-07-07_a822973 (421.64 KiB)
+✓ /nix/store/118ihgwjw6kp0528igns3pnvzbszljmg-unit-dbus.service (1.34 KiB)
+✓ /nix/store/0pajdq9mfgkcdwbqp38j7d4clc9h9iik-hm_.mozillafirefoxdefault.keep (112.00 B)
+✓ /nix/store/0nlvffvpx6s8mpd2rpnqb1bl5idd16yk-hm-dconf.ini (224.00 B)
+✓ /nix/store/1fiqgqvi574rdckav0ikdh8brwdhvh69-vimplugin-alpha-nvim-2025-05-26 (69.38 KiB)
+✓ /nix/store/1fqxw31p1llag0g7wg7izq22x5msz47r-vimplugin-persistence.nvim-2025-02-25 (37.74
+```
+
+> ❗ NOTE: The effectiveness of pushing the rest to cachix depend on your
+> network speed. I actually noticed a slow down after pushing the `nix/store`.
+> Pushing the `nix/store` is rarely necessary and can be very slow and
+> bandwidth-intensive. Most users will only need to push relevent outputs.
+
 **Push the Entire /nix/store**
 
 ```bash
@@ -265,7 +297,7 @@ quickly build and push all outputs as needed.
 
 What Gets Built and Cached?
 
-devour-flake detects and builds all standard outputs of a flake, including:
+`devour-flake` detects and builds all standard outputs of a flake, including:
 
 - packages
 
