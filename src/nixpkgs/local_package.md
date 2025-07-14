@@ -1,19 +1,22 @@
 # Creating and Building a Local Package within a Nixpkgs Clone
 
-While an actual submission to Nixpkgs involves more steps, this chapter
-demonstrates the fundamental pattern for creating a package. Every package
-recipe is a file that declares a function. This function takes the packages
-dependencies as argument.
+This chapter demonstrates the fundamental pattern for creating a package. Every
+package recipe is a file that declares a function. This function takes the
+packages dependencies as argument.
 
 In this example we'll make a simple package with `coreutils` and build it.
 Demonstrating the process of building and testing a local package.
 
-This chapter will assume you have already have a cloned fork of Nixpkgs.
+This chapter will assume you have already have a cloned fork of Nixpkgs. I
+choose to clone mine to the `~/src/` directory.
 
 ## Create your Package directory and a `default.nix`
 
+For this example, we'll create a package called `testPackage` and will place it
+in the `nixpkgs/pkgs/misc` directory.
+
 ```bash
-cd misc
+cd ~/src/nixpkgs/pkgs/misc
 mkdir testPackage && cd testPackage
 hx default.nix
 ```
