@@ -8,48 +8,7 @@ dependencies as argument.
 In this example we'll make a simple package with `coreutils` and build it.
 Demonstrating the process of building and testing a local package.
 
-## Clone Nixpkgs
-
-First, we'll clone Nixpkgs and try to find a good spot to put our package. We're
-just building a test package so `nixpkgs/pkgs/misc` could be a good place to
-start. We'll call our package `testPackage`.
-
-```bash
-cd ~
-mkdir src && cd src
-git clone https://github.com/NixOS/nixpkgs.git
-cd nixpkgs/pkgs
-ls # Try to find a catagory that your pkg fits in
-╭────┬────────────────┬──────┬─────────┬─────────────╮
-│  # │      name      │ type │  size   │  modified   │
-├────┼────────────────┼──────┼─────────┼─────────────┤
-│  0 │ README.md      │ file │ 50.6 kB │ 2 hours ago │
-│  1 │ applications   │ dir  │   398 B │ 2 hours ago │
-│  2 │ build-support  │ dir  │  2.5 kB │ 2 hours ago │
-│  3 │ by-name        │ dir  │  2.9 kB │ 2 hours ago │
-│  4 │ common-updater │ dir  │   286 B │ 2 hours ago │
-│  5 │ data           │ dir  │    82 B │ 2 hours ago │
-│  6 │ desktops       │ dir  │   164 B │ 2 hours ago │
-│  7 │ development    │ dir  │   882 B │ 2 hours ago │
-│  8 │ games          │ dir  │  1.5 kB │ 2 hours ago │
-│  9 │ kde            │ dir  │   116 B │ 2 hours ago │
-│ 10 │ misc           │ dir  │   390 B │ 2 hours ago │
-│ 11 │ os-specific    │ dir  │    42 B │ 2 hours ago │
-│ 12 │ pkgs-lib       │ dir  │    68 B │ 2 hours ago │
-│ 13 │ servers        │ dir  │  1.0 kB │ 2 hours ago │
-│ 14 │ shells         │ dir  │    46 B │ 2 hours ago │
-│ 15 │ stdenv         │ dir  │   178 B │ 2 hours ago │
-│ 16 │ test           │ dir  │   702 B │ 2 hours ago │
-│ 17 │ tools          │ dir  │   342 B │ 2 hours ago │
-│ 18 │ top-level      │ dir  │  2.3 kB │ 2 hours ago │
-╰────┴────────────────┴──────┴─────────┴─────────────╯
-```
-
-Ad-hoc semi-regular structure, if you need to make a new package we first make a
-directory with the name of the package and a `default.nix` in said directory:
-
-> ❗ NOTE: In this example we will use the `misc` directory, it is now
-> recommended to use the `by-name` directory. Explained further down.
+This chapter will assume you have already have a cloned fork of Nixpkgs.
 
 ## Create your Package directory and a `default.nix`
 
@@ -117,10 +76,10 @@ Nixpkgs uses different conventions for package placement:
 - **Older categories (e.g., `pkgs/misc/`, `pkgs/applications/`):** Packages
   within these directories typically use `default.nix` as their definition file
   (e.g., `pkgs/misc/testPackage/default.nix`). **These packages are NOT
-  automatically included** in the top-level `pkgs` set; they _must_ be
-  explicitly added via a `callPackage` entry in
-  `pkgs/top-level/all-packages.nix`. This is the method demonstrated in this
-  chapter for our `testPackage`.
+  automatically included** in the top-level `pkgs` set; they _must_ be This
+  chapter will assume you have already have a cloned fork of Nixpkgs. explicitly
+  added via a `callPackage` entry in `pkgs/top-level/all-packages.nix`. This is
+  the method demonstrated in this chapter for our `testPackage`.
 
 - **The new `pkgs/by-name/` convention:** This is the _preferred location for
   new packages_.
@@ -270,5 +229,7 @@ cd ~/nixpkgs
 git add pkgs/misc/testPackage/
 nix edit .#testPackage
 ```
+
+I used `nix edit` here to ensure it was picked up properly.
 
 The `default.nix` that we've been working on should open in your `$EDITOR`
