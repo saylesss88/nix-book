@@ -323,3 +323,7 @@ References:
 [Discourse Cachix for Flakes](https://discourse.nixos.org/t/how-to-set-up-cachix-in-flake-based-nixos-config/31781)
 
 [Cachix docs: Flakes](https://docs.cachix.org/installation#flakes)
+
+[Tweag Evaluation Caching](https://www.tweag.io/blog/2020-06-25-eval-cache/#:~:text=The%20overhead%20for%20creating%20the,nixpkgs%20blender%20takes%204.9%20seconds.)
+
+[Scrive Caching](https://scrive.github.io/nix-workshop/06-infrastructure/01-caching-nix.html)

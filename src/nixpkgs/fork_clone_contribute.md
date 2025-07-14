@@ -25,6 +25,8 @@ When in doubt use `master`, that's where most changes should go. This can be
 changed later by
 [rebasing](https://github.com/NixOS/nixpkgs/blob/master/CONTRIBUTING.md#rebasing-between-branches-ie-from-master-to-staging)
 
+Add [Nixpkgs](https://github.com/NixOS/nixpkgs) as your upstream:
+
 ```bash
 cd nixpkgs
 
@@ -53,7 +55,7 @@ This setup ensures you can easily pull updates from the original project and
 push your contributions to your own fork.
 
 ```bash
-# Shows a ton of branches
+# Shows a ton of remote branches
 git branch -r | grep upstream
 # Narrow it down
 git branch -r | grep upstream | grep nixos-
@@ -65,10 +67,14 @@ Next Steps for Contributing
 
 ```bash
 git checkout master
-git fetch upstream
 git pull upstream master
 git push origin master
 ```
+
+- `git pull upstream master` is equivalent to running `git fetch upstream`
+  followed by `git merge upstream/master` into your current branch (`master`).
+
+- `git push origin master` updates your forks remote with the fetched changes.
 
 This keeps your fork in sync to avoid conflicts.
 
@@ -85,26 +91,26 @@ git checkout -b my-feature-branch # name should represent the feature
 
 [Packaging Conventions](https://github.com/NixOS/nixpkgs/blob/master/pkgs/README.md#conventions)
 
-New package: Add to
+**New package**: Add to
 `pkgs/by-name/<first-two-letters>/<package-name>/default.nix`.
 
-Example structure:
+**Example structure**:
 
 ```nix
 { lib, stdenv, fetchFromGitHub }: stdenv.mkDerivation {
 pname = "xyz"; version = "1.2.3"; src = fetchFromGitHub { ... }; ... }
 ```
 
-Update package: Edit version and `sha256` in the package’s `default.nix`. Use
-`nix-prefetch-url` to update hashes:
+**Update package**: Edit version and `sha256` in the package’s `default.nix`.
+Use `nix-prefetch-url` to update hashes:
 
 ```bash
 nix-prefetch-url <source-url>
 ```
 
-Fix a bug: Modify files in `pkgs/`, `nixos/modules/`, or elsewhere.
+**Fix a bug**: Modify files in `pkgs/`, `nixos/modules/`, or elsewhere.
 
-Test locally:
+**Test locally**:
 
 Build:
 
@@ -112,7 +118,7 @@ Build:
 nix-build -A <package-name>
 ```
 
-Test in a shell:
+**Test in a shell**:
 
 ```bash
  bash nix-shell -p <package-name>
@@ -126,7 +132,7 @@ nixos-rebuild test
 
 Follow the Nixpkgs Contributing Guide.
 
-4. Commit and Push
+4. **Commit and Push**
 
 Commit with a clear message, make sure to follow
 [commit conventions](https://github.com/NixOS/nixpkgs/blob/master/CONTRIBUTING.md#commit-conventions):
@@ -207,6 +213,15 @@ Push:
 git push origin my-feature-branch
 ```
 
+When you push your feature branch, it will output a link that you can follow to
+complete the PR on GitHub.
+
+If you have the `gh-cli` set up you can also do this from the command line:
+
+```bash
+gh pr create --repo NixOS/nixpkgs --base master --head sayls8:feat/my-package
+```
+
 5. Create a Pull Request
 
 Go to <https://github.com/sayls8/nixpkgs>. (your fork) Click the PR prompt for
@@ -225,7 +240,7 @@ Edit, commit, and push:
 git add . git commit -m "<package-name>: address feedback" git push origin my-feature-branch
 ```
 
-Rebase if needed: bash
+Rebase if needed:
 
 ```bash
 git fetch upstream
