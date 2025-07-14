@@ -10,6 +10,12 @@ Demonstrating the process of building and testing a local package.
 This chapter will assume you have already have a cloned fork of Nixpkgs. I
 choose to clone mine to the `~/src/` directory.
 
+You can check out the `nixpkgs/pkgs/README.md`
+[Here](https://github.com/NixOS/nixpkgs/tree/master/pkgs)
+
+The Nixpkgs Contributing Guide can be found
+[Here](https://github.com/NixOS/nixpkgs/blob/master/CONTRIBUTING.md)
+
 ## Create your Package directory and a `default.nix`
 
 For this example, we'll create a package called `testPackage` and will place it
