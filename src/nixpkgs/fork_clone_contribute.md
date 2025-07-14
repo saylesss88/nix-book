@@ -121,7 +121,7 @@ nix-build -A <package-name>
 **Test in a shell**:
 
 ```bash
- bash nix-shell -p <package-name>
+nix-shell -p <package-name>
 ```
 
 For NixOS modules:
