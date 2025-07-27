@@ -353,7 +353,16 @@ others help with compliance for `lynis`.
 
 ## Encrypted DNS
 
-[Cloudflare Dns Encryption Explained](https://blog.cloudflare.com/dns-encryption-explained/)
+The
+[Domain Name System (DNS)](https://www.cloudflare.com/learning/dns/what-is-dns/)
+is the address book of the Internet. When you visit cloudflare.com or any other
+site, your browser will ask a DNS resolver for the IP address where the website
+can be found. Unfortunately, these DNS queries and answers are typically
+unprotected. Encrypting DNS would improve user privacy and security. In this
+post, we will look at two mechanisms for encrypting DNS, known as
+[DNS over TLS (DoT) and DNS over HTTPS (DoH)](https://www.cloudflare.com/learning/dns/dns-over-tls/),
+and explain how they
+work.--[Cloudflare Dns Encryption Explained](https://blog.cloudflare.com/dns-encryption-explained/)
 
 The following sets up dnscrypt-proxy using DoH (DNS over HTTPS) with an oisd
 blocklist:
@@ -441,6 +450,8 @@ encrypted transports (DNS-over-HTTPS/DoH, DNSCrypt, optionally
 DNS-over-TLS/DoT).
 
 ## Firewalls
+
+[Cloudflare What is a Firewall](https://www.cloudflare.com/learning/security/what-is-a-firewall/)
 
 NixOS includes an integrated firewall based on iptables/nftables.
 
