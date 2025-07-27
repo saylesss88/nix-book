@@ -12,10 +12,20 @@
 Securing your NixOS system begins with a philosophy of minimalism, explicit
 configuration, and proactive control.
 
-> ⚠️ Warning: I am not a security professional, this is meant to show some of
-> your options when hardening NixOS. You will have to judge for yourself if
-> something fits your needs or is unnecessary for your setup. Always do your own
-> research, hardening and isolating processes can naturally cause some issues.
+> ⚠️ Warning: I am not a security expert, this is meant to show some of your
+> options when hardening NixOS. You will have to judge for yourself if something
+> fits your needs or is unnecessary for your setup. Always do your own research,
+> hardening and isolating processes can naturally cause some issues. There are
+> also performance tradeoffs with added protection.
+
+> **Security information**: Changing SSH configuration settings can
+> significantly impact the security of your system(s). It is crucial to have a
+> solid understanding of what you are doing before making any adjustments. Avoid
+> blindly copying and pasting examples, including those from this Wiki page,
+> without conducting a thorough analysis. Failure to do so may compromise the
+> security of your system(s) and lead to potential vulnerabilities. Take the
+> time to comprehend the implications of your actions and ensure that any
+> changes made are done thoughtfully and with care. --NixOS Wiki
 
 ## Minimal Installation with LUKS
 
@@ -53,7 +63,7 @@ declaratively.
 Protect your sectets, the following guide is on setting up Sops on NixOS:
 [Sops Encrypted Secrets](https://saylesss88.github.io/installation/enc/sops-nix.html)
 
-## The Kernel
+## Hardening the Kernel
 
 From the following discourse, it looks like the following is now enabled by
 default
@@ -92,7 +102,7 @@ zcat /proc/config.gz | grep CONFIG_HARDENED_USERCOPY
 zcat /proc/config.gz | grep CONFIG_STACKPROTECTOR
 ```
 
-Or you can harden the kernel you're using:
+**Or** you can harden the kernel you're using:
 
 ```nix
   boot.kernel.sysctl = {
@@ -171,18 +181,18 @@ than enabling broad module imports or convenience meta-packages.
 **Run services as unprivileged users**: Wherever possible, configure system
 services to run with a dedicated user and group, not as root.
 
-Use NixOS’s fine-grained service options: For example, set systemd sandboxing
-options (ProtectHome, PrivateTmp, NoNewPrivileges), and use NixOS modules’
-user/group settings for daemons.
+**Use NixOS’s fine-grained service options**: For example, set systemd
+sandboxing options (ProtectHome, PrivateTmp, NoNewPrivileges), and use NixOS
+modules’ user/group settings for daemons.
 
-Secure the Boot & Init Process Enable Secure Boot: Use modules like lanzaboote
-to enforce EFI Secure Boot, ensuring only signed kernels are loaded.
+**Secure the Boot & Init Process Enable Secure Boot**: Use modules like
+lanzaboote to enforce EFI Secure Boot, ensuring only signed kernels are loaded.
 
-Encrypt your root and data partitions: Use LUKS+ext4 or btrfs for storage with
-strong passphrases or keyfiles.
+**Encrypt your root and data partitions**: Use LUKS to encrypt your partitions,
+some even encrypt their swap.
 
 Keep the Attack Surface Small Disable unused features and daemons: Comment out
-or set enable = false; for modules like CUPS, Samba, avahi, etc., if you don’t
+or set `enable = false;` for modules like CUPS, Samba, avahi, etc., if you don’t
 need printing, filesharing, or zeroconf networking.
 
 ## Hardening Systemd
@@ -191,7 +201,44 @@ need printing, filesharing, or zeroconf networking.
 
 `systemd` is the core "init system" and service manager that controls how
 services, daemons, and basic system processes are started, stopped and
-supervised on modern Linux distrobutions, including NixOS.
+supervised on modern Linux distributions, including NixOS.
+
+`systemd` is a suite of basic building blocks for a Linux system. It provides a
+system and service manager that runs as `PID 1` and starts the rest of the
+system.
+
+Because it launches and supervises almost all system services, hardening systemd
+means raising the baseline security of your entire system.
+
+`dbus-broker` is generally considered more secure and robust but isn't the
+default as of yet. To set `dbus-broker` as the default:
+
+```nix
+  users.groups.netdev = {};
+  services = {
+    usbguard.enable = false;
+    dbus.implementation = "broker";
+    logrotate.enable = true;
+    journald = {
+      storage = "volatile"; # Store logs in memory
+      upload.enable = false; # Disable remote log upload (the default)
+    };
+  };
+```
+
+- `dbus-broker` is more resilient to resource exhaustion attacks and integrates
+  better with Linux security features.
+
+- Setting `storage = "volatile"` tells journald to keep log data only in memory.
+  There is a tradeoff though, If you need long-term auditing or troubleshooting
+  after a reboot, this will not preserve system logs.
+
+- `upload.enable` is for forwarding log messages to remote servers, setting this
+  to false prevents accidental leaks of potentially sensitive or internal system
+  information.
+
+- Enabling `logrotate` prevents your disk from filling with excessive
+  legacy/service log files.
 
 You can check the security status with:
 
@@ -201,7 +248,13 @@ systemd-analyze security
 systemd-analyze security NetworkManager
 ```
 
-[Biggest Myths about Systemd](https://0pointer.de/blog/projects/the-biggest-myths.html)
+Further reading on systemd:
+
+- [systemd.io](https://systemd.io/)
+
+- [Rethinking PID 1](https://0pointer.de/blog/projects/systemd.html)
+
+- [Biggest Myths about Systemd](https://0pointer.de/blog/projects/the-biggest-myths.html)
 
 The following is a repo containing many of the Systemd hardening settings in
 NixOS format:
@@ -239,6 +292,97 @@ harden settings for systemd services.
 systemd-analyze security bluetooth
 → Overall exposure level for bluetooth.service: 3.3 OK 🙂
 ```
+
+## Hardening Networking
+
+## Encrypted DNS
+
+[Cloudflare Dns Encryption Explained](https://blog.cloudflare.com/dns-encryption-explained/)
+
+The following sets up dnscrypt-proxy using DoH (DNS over HTTPS) with an oisd
+blocklist:
+
+```nix
+# dnscrypt-proxy.nix
+{
+  pkgs,
+  lib,
+  inputs,
+  ...
+}: let
+  blocklist_base = builtins.readFile inputs.oisd;
+  extraBlocklist = '''';
+  blocklist_txt = pkgs.writeText "blocklist.txt" ''
+    ${extraBlocklist}
+    ${blocklist_base}
+  '';
+  hasIPv6Internet = true;
+  StateDirectory = "dnscrypt-proxy";
+in {
+  networking = {
+    # Set DNS nameservers to the local host addresses for iPv4 (`127.0.0.1`) & iPv6 (::1)
+    nameservers = ["127.0.0.1" "::1"];
+    # If using dhcpcd
+    # dhcpcd.extraConfig = "nohook resolv.conf";
+    # If using NetworkManager
+    networkmanager.dns = "none";
+  };
+  services.resolved.enable = lib.mkForce false;
+  # See https://wiki.nixos.org/wiki/Encrypted_DNS
+  services.dnscrypt-proxy2 = {
+    enable = true;
+    # See https://github.com/DNSCrypt/dnscrypt-proxy/blob/master/dnscrypt-proxy/example-dnscrypt-proxy.toml
+    settings = {
+      sources.public-resolvers = {
+        urls = [
+          "https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/public-resolvers.md"
+          "https://download.dnscrypt.info/resolvers-list/v3/public-resolvers.md"
+        ];
+        minisign_key = "RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3"; # See https://github.com/DNSCrypt/dnscrypt-resolvers/blob/master/v3/public-resolvers.md
+        cache_file = "/var/lib/${StateDirectory}/public-resolvers.md";
+      };
+
+      # Use servers reachable over IPv6 -- Do not enable if you don't have IPv6 connectivity
+      ipv6_servers = hasIPv6Internet;
+      block_ipv6 = ! hasIPv6Internet;
+      blocked_names.blocked_names_file = blocklist_txt;
+      require_dnssec = true;
+      require_nolog = false;
+      require_nofilter = true;
+      doh_servers = true;
+      odoh_servers = false;
+      force_tcp = true;
+
+      # If you want, choose a specific set of servers that come from your sources.
+      # Here it's from https://github.com/DNSCrypt/dnscrypt-resolvers/blob/master/v3/public-resolvers.md
+      # If you don't specify any, dnscrypt-proxy will automatically rank servers
+      # that match your criteria and choose the best one.
+      # server_names = [ ... ];
+    };
+  };
+
+  systemd.services.dnscrypt-proxy2.serviceConfig.StateDirectory = StateDirectory;
+}
+```
+
+```bash
+sudo systemctl status dnscrypt-proxy2
+# verify that dnscrypt-proxy is listening
+sudo ss -lnp | grep 53
+# Test a DNS query, if you get valid responses it's working
+dig @127.0.0.1 example.com +short
+# check the logs
+sudo journalctl -u dnscrypt-proxy2
+```
+
+dnscrypt-proxy2 dnscrypt-proxy2 acts as your local DNS caching resolver.
+
+All DNS clients on your system (dig, curl, most apps, except Firefox which has
+its own proxy) use dnscrypt-proxy2.
+
+dnscrypt-proxy2 filters ads/trackers (using oisd), enforces DNSSEC, and uses
+encrypted transports (DNS-over-HTTPS/DoH, DNSCrypt, optionally
+DNS-over-TLS/DoT).
 
 ## Firewalls
 
@@ -291,6 +435,11 @@ nftables:
 }
 ```
 
+The firewall ensures only your authorized, local encrypted DNS proxy process can
+speak DNS with the outside world, and that all other DNS requests from any other
+process are blocked unless they're to `127.0.0.1` (our local proxy). This is a
+robust policy against both DNS leaks and local compromise.
+
 Review listening ports: After each rebuild, use `ss -tlpn` or `netstat` to see
 which services are accepting connections. Close or firewall anything
 unnecessary.
@@ -304,6 +453,11 @@ Firejail is a SUID program that reduces the risk of security breaches by
 restricting the running environment of untrusted applications using
 [Linux namespaces](https://lwn.net/Articles/531114/) and
 [seccomp-bpf](https://l3net.wordpress.com/2015/04/13/firejail-seccomp-guide/)--[Firejail Security Sandbox](https://firejail.wordpress.com/)
+
+It provides sandboxing and access restriction per application, much like what
+AppArmor/SELinux does at a kernel level. However, it's not as secure or
+comprehensive as kernel-enforced MAC systems (AppArmor/SELinux), since it's a
+userspace tool and can potentially be bypassed by privilege escalation exploits.
 
 ## Securing SSH
 
@@ -449,95 +603,6 @@ Control USB/Removable access: Use `services.usbguard` to restrict which USB
 devices are accepted. Be particularly careful if your authentication keyfiles
 are on USB devices.
 
-## Encrypted DNS
-
-[Cloudflare Dns Encryption Explained](https://blog.cloudflare.com/dns-encryption-explained/)
-
-The following sets up dnscrypt-proxy using DoH (DNS over HTTPS) with an oisd
-blocklist:
-
-```nix
-# dnscrypt-proxy.nix
-{
-  pkgs,
-  lib,
-  inputs,
-  ...
-}: let
-  blocklist_base = builtins.readFile inputs.oisd;
-  extraBlocklist = '''';
-  blocklist_txt = pkgs.writeText "blocklist.txt" ''
-    ${extraBlocklist}
-    ${blocklist_base}
-  '';
-  hasIPv6Internet = true;
-  StateDirectory = "dnscrypt-proxy";
-in {
-  networking = {
-    # Set DNS nameservers to the local host addresses for iPv4 (`127.0.0.1`) & iPv6 (::1)
-    nameservers = ["127.0.0.1" "::1"];
-    # If using dhcpcd
-    # dhcpcd.extraConfig = "nohook resolv.conf";
-    # If using NetworkManager
-    networkmanager.dns = "none";
-  };
-  services.resolved.enable = lib.mkForce false;
-  # See https://wiki.nixos.org/wiki/Encrypted_DNS
-  services.dnscrypt-proxy2 = {
-    enable = true;
-    # See https://github.com/DNSCrypt/dnscrypt-proxy/blob/master/dnscrypt-proxy/example-dnscrypt-proxy.toml
-    settings = {
-      sources.public-resolvers = {
-        urls = [
-          "https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/public-resolvers.md"
-          "https://download.dnscrypt.info/resolvers-list/v3/public-resolvers.md"
-        ];
-        minisign_key = "RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3"; # See https://github.com/DNSCrypt/dnscrypt-resolvers/blob/master/v3/public-resolvers.md
-        cache_file = "/var/lib/${StateDirectory}/public-resolvers.md";
-      };
-
-      # Use servers reachable over IPv6 -- Do not enable if you don't have IPv6 connectivity
-      ipv6_servers = hasIPv6Internet;
-      block_ipv6 = ! hasIPv6Internet;
-      blocked_names.blocked_names_file = blocklist_txt;
-      require_dnssec = true;
-      require_nolog = false;
-      require_nofilter = true;
-      doh_servers = true;
-      odoh_servers = false;
-      force_tcp = true;
-
-      # If you want, choose a specific set of servers that come from your sources.
-      # Here it's from https://github.com/DNSCrypt/dnscrypt-resolvers/blob/master/v3/public-resolvers.md
-      # If you don't specify any, dnscrypt-proxy will automatically rank servers
-      # that match your criteria and choose the best one.
-      # server_names = [ ... ];
-    };
-  };
-
-  systemd.services.dnscrypt-proxy2.serviceConfig.StateDirectory = StateDirectory;
-}
-```
-
-```bash
-sudo systemctl status dnscrypt-proxy2
-# verify that dnscrypt-proxy is listening
-sudo ss -lnp | grep 53
-# Test a DNS query, if you get valid responses it's working
-dig @127.0.0.1 example.com +short
-# check the logs
-sudo journalctl -u dnscrypt-proxy2
-```
-
-dnscrypt-proxy2 dnscrypt-proxy2 acts as your local DNS caching resolver.
-
-All DNS clients on your system (dig, curl, most apps, except Firefox which has
-its own proxy) use dnscrypt-proxy2.
-
-dnscrypt-proxy2 filters ads/trackers (using oisd), enforces DNSSEC, and uses
-encrypted transports (DNS-over-HTTPS/DoH, DNSCrypt, optionally
-DNS-over-TLS/DoT).
-
 ## USB interfaces
 
 Usbguard can whitelist wanted usb devices and block the rest. Be careful here,
@@ -570,8 +635,113 @@ For example:
 }
 ```
 
-## SeLinux
+## SeLinux/AppArmor MAC (Mandatory Access Control)
+
+**AppArmor**: Stable, supported, easier for most users; enable with one line,
+but profile coverage may be incomplete. From my understanding the main issue is
+that there are no default profiles so you have to write your own and since
+apparmor.d isn't fully supported it makes it a bit more complicated.
+
+I was able to get it configured for `sshd` with the following:
+
+```nix
+
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}: {
+  # Enable AppArmor support in D-Bus
+  services.dbus.apparmor = "enabled";
+  security = {
+    apparmor = {
+      enable = true;
+      enableCache = true;
+      killUnconfinedConfinables = true;
+
+      # Only need packages that provide real, used profiles and tools
+      packages = with pkgs; [apparmor-utils apparmor-profiles];
+
+      includes = {
+        "abstractions/base" = ''
+          /nix/store/*/bin/** mr,
+          /nix/store/*/lib/** mr,
+          /nix/store/** r,
+          ${pkgs.coreutils}/bin/* rix,
+          ${pkgs.coreutils-full}/bin/* rix,
+        '';
+      };
+
+      # Example starter policies
+      policies = {
+        sshd = {
+          profile = ''
+            #include <tunables/global>
+            /run/current-system/sw/bin/sshd {
+              /nix/store/** rix,
+              # ...
+            }
+          '';
+          # Optionally, you may be able to add (if supported):
+          # enforce = true;
+          # enable = true;
+        };
+
+      };
+    };
+  };
+
+  environment.systemPackages = with pkgs; [
+    apparmor-utils
+    apparmor-parser
+    apparmor-profiles
+    # Optional: community/contrib profiles you intend to use
+    # roddhjav-apparmor-rules # incomplete apparmor.d
+  ];
+
+  # If you want PAM integration (useful)
+  security.pam = {
+    services.sshd.enableAppArmor = true;
+  };
+}
+```
+
+```bash
+sudo aa-status
+apparmor module is loaded.
+1 profiles are loaded.
+1 profiles are in enforce mode.
+   /run/current-system/sw/bin/sshd
+0 profiles are in complain mode.
+0 profiles are in prompt mode.
+0 profiles are in kill mode.
+0 profiles are in unconfined mode.
+0 processes have profiles defined.
+0 processes are in enforce mode.
+0 processes are in complain mode.
+0 processes are in prompt mode.
+0 processes are in kill mode.
+0 processes are unconfined but have a profile defined.
+0 processes are in mixed mode.
+```
+
+**SELinux**: Experimental, not fully integrated, recent progress for
+advanced/curious users; expect rough edges and manual intervention if you want
+to try it. Most find SELinux more complex to configure and maintain than
+AppArmor.
+
+This isn't meant to be a comprehensive guide, more to get people thinking about
+security on NixOS.
 
 ## Resources
 
 - [AppArmor and apparmor.d on NixOS](https://hedgedoc.grimmauld.de/s/hWcvJEniW#)
+
+- [SELinux on NixOS](https://tristanxr.com/post/selinux-on-nixos/)
+
+- [Paranoid NixOS](https://xeiaso.net/blog/paranoid-nixos-2021-07-18/)
+
+- [NixOS Security](https://wiki.nixos.org/wiki/Security)
+
+- [Luks Encrypted File Systems](https://nixos.org/manual/nixos/unstable/index.html#sec-luks-file-systems)
