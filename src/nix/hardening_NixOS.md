@@ -166,7 +166,8 @@ zcat /proc/config.gz | grep CONFIG_STACKPROTECTOR
   };
 ```
 
-Note: The above settings are fairly aggressive
+Note: The above settings are fairly aggressive and can break common programs, I
+attempted to leave comment warnings.
 
 ## Best Practices
 
