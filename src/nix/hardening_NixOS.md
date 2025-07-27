@@ -27,6 +27,9 @@ configuration, and proactive control.
 > time to comprehend the implications of your actions and ensure that any
 > changes made are done thoughtfully and with care. --NixOS Wiki
 
+Containers and VMs are beyond the scope of this chapter but can also enhance
+security if configured correctly.
+
 ## Minimal Installation with LUKS
 
 Begin with NixOS’s minimal installation image. This gives you a base system with
@@ -195,6 +198,11 @@ some even encrypt their swap.
 Keep the Attack Surface Small Disable unused features and daemons: Comment out
 or set `enable = false;` for modules like CUPS, Samba, avahi, etc., if you don’t
 need printing, filesharing, or zeroconf networking.
+
+**Use HTTPS**: This one is simple but has big benifits, there is usually an
+extension or setting for this on most browsers. It ensures that all data
+exchanged between your browser and the website you're visiting is encrypted.
+This means that if it's intercepted, they won't be able to read your data.
 
 ## Hardening Systemd
 
