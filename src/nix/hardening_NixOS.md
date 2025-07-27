@@ -294,6 +294,61 @@ systemd-analyze security bluetooth
 → Overall exposure level for bluetooth.service: 3.3 OK 🙂
 ```
 
+## Lynis and other tools
+
+Lynis is a security auditing tool for systems based on UNIX like Linux, macOS,
+BSD, and others.--[lynis repo](https://github.com/CISOfy/lynis)
+
+Installation:
+
+```nix
+environment.systemPackages = [
+pkgs.lynis
+pkgs.chkrootkit
+pkgs.clamav
+pkgs.aide
+ ];
+```
+
+Usage:
+
+```bash
+sudo lynis show commands
+sudo lynis audit system
+ Lynis security scan details:
+
+  Hardening index : 78 [###############     ]
+  Tests performed : 231
+  Plugins enabled : 0
+
+  Components:
+  - Firewall               [V]
+  - Malware scanner        [V]
+```
+
+- Lynis will give you more recommendations for securing your system as well.
+
+Example cron job for `chkrootkit`:
+
+```nix
+{pkgs, ...}: {
+  services.cron = {
+    enable = true;
+    # messages.enable = true;
+    systemCronJobs = [
+      # Every Sunday at 2:10 AM, run chkrootkit as root, log output for review
+      "10 2 * * 0 root ${pkgs.chkrootkit}/bin/chkrootkit | logger -t chkrootkit"
+    ];
+  };
+}
+```
+
+The above cron job will use `chkrootkit` to automatically scan for known rootkit
+signatures. It can detect hidden processes and network connections.
+
+I got the recommendation for `clamav` from the Paranoid NixOS blog post and the
+others help with compliance for `lynis`.
+
 ## Hardening Networking
 
 ## Encrypted DNS
