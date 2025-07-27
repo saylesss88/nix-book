@@ -46,8 +46,6 @@ Practical Lanzaboote Secure Boot setup for NixOS:
 
 ## Encrypted Secrets
 
-![Encrypt](../images/encrypt.png)
-
 Never store secrets in plain text in repositories. Use something like
 `sops-nix`, which lets you keep encrypted secrets under version control
 declaratively.
@@ -56,8 +54,6 @@ Protect your sectets, the following guide is on setting up Sops on NixOS:
 [Sops Encrypted Secrets](https://saylesss88.github.io/installation/enc/sops-nix.html)
 
 ## The Kernel
-
-![Kernel](../images/kernel.png)
 
 From the following discourse, it looks like the following is now enabled by
 default
