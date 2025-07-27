@@ -375,6 +375,20 @@ work.--[Cloudflare Dns Encryption Explained](https://blog.cloudflare.com/dns-enc
 The following sets up dnscrypt-proxy using DoH (DNS over HTTPS) with an oisd
 blocklist:
 
+Add `oisd` to your flake inputs:
+
+```nix
+# flake.nix
+inputs = {
+    oisd = {
+      url = "https://big.oisd.nl/domainswild";
+      flake = false;
+    };
+};
+```
+
+And the import the following into your `configuration.nix`:
+
 ```nix
 # dnscrypt-proxy.nix
 {
@@ -448,12 +462,12 @@ dig @127.0.0.1 example.com +short
 sudo journalctl -u dnscrypt-proxy2
 ```
 
-dnscrypt-proxy2 dnscrypt-proxy2 acts as your local DNS caching resolver.
+`dnscrypt-proxy2` acts as your local DNS caching resolver.
 
-All DNS clients on your system (dig, curl, most apps, except Firefox which has
-its own proxy) use dnscrypt-proxy2.
+All DNS clients on your system (`dig`, `curl`, most apps, except Firefox which
+has its own proxy) use `dnscrypt-proxy2`.
 
-dnscrypt-proxy2 filters ads/trackers (using oisd), enforces DNSSEC, and uses
+`dnscrypt-proxy2` filters ads/trackers (using oisd), enforces DNSSEC, and uses
 encrypted transports (DNS-over-HTTPS/DoH, DNSCrypt, optionally
 DNS-over-TLS/DoT).
 
@@ -464,7 +478,7 @@ clients and the wider internet. In NixOS, you can set up various types of
 proxies (HTTP, SOCKS, transparent, caching, privacy-focused) declaratively in
 your system config.
 
-Types of Proxy Servers HTTP/HTTPS Forward Proxy, Controls and filters outbound
+Types of Proxy Servers: HTTP/HTTPS Forward Proxy, Controls and filters outbound
 web traffic from client machines (e.g., for content filtering or caching).
 
 SOCKS Proxy: Works for all TCP traffic, commonly used for anonymity or routing
