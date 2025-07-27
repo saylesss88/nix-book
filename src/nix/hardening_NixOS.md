@@ -816,7 +816,9 @@ Monitoring, Logging, and Auditing Enable audit logging: Set
 <details>
 <summary> ✔️ Click to expand `auditd` example </summary>
 
-A starting point for an auditd configuration could look like:
+To enable the Linux Audit Daemon (`auditd`) and define a very basic rule set,
+you can use the following NixOS configuration. This example demonstrates how to
+log every program execution (`execve`) on a 64-bit architecture.
 
 ```nix
 # modules/security/auditd-minimal.nix (or directly in configuration.nix)
