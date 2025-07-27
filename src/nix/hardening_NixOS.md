@@ -96,8 +96,6 @@ imports = [
 ];
 
 custom.security.doas.enable = true;
-# or to disable
-custom.security.doas.enable = false;
 ```
 
 ## Secure Boot
