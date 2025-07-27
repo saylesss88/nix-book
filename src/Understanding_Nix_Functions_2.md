@@ -46,7 +46,7 @@ The Nix expression evaluator has a bunch of functions and constants built in:
 
 </details>
 
-## Lamdas
+## Lambdas
 
 Nix functions are anonymous (lambdas) (e.g., `x: x + 2`), and technically take a
 single parameter. However, that single parameter is very often an attribute set,
@@ -487,7 +487,7 @@ And finally the `builder.sh` that `autotools.nix` declares for the `args`
 attribute:
 
 ```bash
-!#/bin/bash
+#!/bin/bash
 set -e
 unset PATH
 for p in $buildInputs $baseInputs; do

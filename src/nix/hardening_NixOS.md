@@ -63,7 +63,7 @@ Never store secrets in plain text in repositories. Use something like
 `sops-nix`, which lets you keep encrypted secrets under version control
 declaratively.
 
-Protect your sectets, the following guide is on setting up Sops on NixOS:
+Protect your secrets, the following guide is on setting up Sops on NixOS:
 [Sops Encrypted Secrets](https://saylesss88.github.io/installation/enc/sops-nix.html)
 
 ## Hardening the Kernel
@@ -117,7 +117,7 @@ zcat /proc/config.gz | grep CONFIG_STACKPROTECTOR
     "fs.protected_regular" = 2;
     "fs.suid_dumpable" = false;
     "kernel.kptr_restrict" = 2;
-    # Note: certian container runtimes or browser sandboxes might rely on the following
+    # Note: certain container runtimes or browser sandboxes might rely on the following
     "kernel.unprivileged_bpf_disabled" = true;
 
     ## TCP hardening
@@ -145,7 +145,7 @@ zcat /proc/config.gz | grep CONFIG_STACKPROTECTOR
     "net.ipv6.conf.default.accept_redirects" = 0;
     # Protects against SYN flood attacks
     "net.ipv4.tcp_syncookies" = 1;
-    # Incomplete protection again TIME-WAIT assassination
+    # Incomplete protection against TIME-WAIT assassination
     "net.ipv4.tcp_rfc1337" = 1;
     # disable unprivileged user namespaces, Note: Docker, and other apps may need this
     "kernel.unprivileged_userns_clone" = 0;
@@ -199,7 +199,7 @@ Keep the Attack Surface Small Disable unused features and daemons: Comment out
 or set `enable = false;` for modules like CUPS, Samba, avahi, etc., if you don’t
 need printing, filesharing, or zeroconf networking.
 
-**Use HTTPS**: This one is simple but has big benifits, there is usually an
+**Use HTTPS**: This one is simple but has big benefits, there is usually an
 extension or setting for this on most browsers. It ensures that all data
 exchanged between your browser and the website you're visiting is encrypted.
 This means that if it's intercepted, they won't be able to read your data.

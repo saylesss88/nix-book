@@ -92,7 +92,7 @@ include `description` and `inputs`.
 ```
 
 I typically see `nixConfig` used for extra-substituters for cachix. This is a
-general-purpose way to define Nix configuration oprions that apply when this
+general-purpose way to define Nix configuration options that apply when this
 flake is evaluated or built. It ties into your `/etc/nix/nix.conf` or
 `~/.config/nix/nix.conf`.
 
@@ -202,7 +202,7 @@ Example:
 ```nix
 nix repl
 nix-repl> :l <nixpkgs>
-nix-repl> lib.genAttrs [ "boom" "bash" ] (name: "sonic" + namd)
+nix-repl> lib.genAttrs [ "boom" "bash" ] (name: "sonic" + name)
 ```
 
 **Output**:

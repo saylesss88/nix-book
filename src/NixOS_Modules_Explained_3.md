@@ -120,7 +120,7 @@ single file configuration gets too large to search through and maintain
 conveniently.
 
 This is where **modules** come in allowing you to break up your configuration
-into logical parts. You're `boot.nix` will contain settings and options related
+into logical parts. Your `boot.nix` will contain settings and options related
 to the actual boot process. You're `services.nix` will only have services and so
 on...
 
