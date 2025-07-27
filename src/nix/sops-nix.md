@@ -231,6 +231,7 @@ this location below.
     defaultSopsFile = ../../.sops.yaml; # Or the correct path to your .sops.yaml
     # Don't mix sshKeyPaths and keyFile
     age.sshKeyPaths = [];
+
     age.keyFile = "/home/jr/sops/age/keys.txt";
 
     secrets = {

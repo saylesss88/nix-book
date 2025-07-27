@@ -3,7 +3,7 @@
   - [Nix Package Manager](nix/nix_package_manager.md)
   - [Cachix and the devour-flake](nix/cachix_devour.md)
     - [Nix Paths](nix/nixLang/nix_paths.md)
-    - [Hardening NixOS](nix/nixLang/hardening_nixos.md)
+    - [Hardening NixOS](nix/hardening_NixOS.md)
   - [Version Control with Git](vcs/git.md)
   - [Version Control with JJ](vcs/jujutsu.md)
 - [Installation](installation/README.md)
