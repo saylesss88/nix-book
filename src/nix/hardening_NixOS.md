@@ -457,6 +457,34 @@ dnscrypt-proxy2 filters ads/trackers (using oisd), enforces DNSSEC, and uses
 encrypted transports (DNS-over-HTTPS/DoH, DNSCrypt, optionally
 DNS-over-TLS/DoT).
 
+## Proxy Servers
+
+Proxy servers let you control, monitor, or anonymize network traffic between
+clients and the wider internet. In NixOS, you can set up various types of
+proxies (HTTP, SOCKS, transparent, caching, privacy-focused) declaratively in
+your system config.
+
+Types of Proxy Servers HTTP/HTTPS Forward Proxy, Controls and filters outbound
+web traffic from client machines (e.g., for content filtering or caching).
+
+SOCKS Proxy: Works for all TCP traffic, commonly used for anonymity or routing
+through Tor.
+
+Reverse Proxy: Handles incoming web traffic to one or more backend services
+(usually handled by NGINX, Apache, Caddy).
+
+Popular Proxy Packages on NixOS Squid (caching HTTP proxy)
+
+Privoxy (privacy-enhancing HTTP proxy; can chain with Tor)
+
+shadowsocks-libev (SOCKS5 proxy for privacy/bypassing censorship)
+
+3proxy (lightweight multiprotocol proxy)
+
+Tor (SOCKS5 proxy with strong anonymity)
+
+TODO: Provide a Proxy Server Example
+
 ## Firewalls
 
 [Cloudflare What is a Firewall](https://www.cloudflare.com/learning/security/what-is-a-firewall/)
