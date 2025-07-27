@@ -39,6 +39,67 @@ Use LUKS encryption to protect your data at rest, the following guide is a
 minimal disko encrypted installation:
 [Encrypted Install](https://saylesss88.github.io/installation/enc/enc_install.html)
 
+For a more minimalist version of `sudo` with a smaller codebase and attack
+surface, consider `doas`. Replace `userName` with your username:
+
+```nix
+# doas.nix
+{
+  lib,
+  config,
+  pkgs, # Add pkgs if you need to access user information
+  ...
+}: let
+  cfg = config.custom.security.doas;
+in {
+  options.custom.security.doas = {
+    enable = lib.mkEnableOption "doas";
+  };
+
+  config = lib.mkIf cfg.enable {
+    # Disable sudo
+    security.sudo.enable = false;
+
+    # Enable and configure `doas`.
+    security.doas = {
+      enable = true;
+      extraRules = [
+        {
+          # Grant doas access specifically to your user
+          users = ["userName"]; # <--- Only give access to your user
+          # persist = true; # Convenient but less secure
+          # noPass = true;    # Convenient but even less secure
+          keepEnv = true; # Often necessary
+          # Optional: You can also specify which commands they can run, e.g.:
+          # cmd = "ALL"; # Allows running all commands (default if not specified)
+          # cmd = "/run/current-system/sw/bin/nixos-rebuild"; # Only allow specific command
+        }
+      ];
+    };
+
+    # Add an alias to the shell for backward-compat and convenience.
+    environment.shellAliases = {
+      sudo = "doas";
+    };
+  };
+}
+```
+
+You would then import this into your `configuration.nix` and enable/disable it
+with the following:
+
+```nix
+# configuration.nix
+
+imports = [
+    ./doas.nix
+];
+
+custom.security.doas.enable = true;
+# or to disable
+custom.security.doas.enable = false;
+```
+
 ## Secure Boot
 
 ![Virus](../images/virus1.png)
@@ -68,16 +129,32 @@ Protect your sectets, the following guide is on setting up Sops on NixOS:
 
 ## Hardening the Kernel
 
-From the following discourse, it looks like the following is now enabled by
-default
-[Discourse](https://discourse.nixos.org/t/enabling-hardened-profile/63107):
+NixOS provides a `hardened` profile that applies a set of security-focused
+kernel and system configurations. This profile is defined in
+`nixpkgs/nixos/modules/profiles/hardened.nix`.
+
+As of **NixOS 23.11 "Raccoon"** (and reflected in `nixos-unstable` from commit
+`8aa75139c278964c70a41315b741088c59f0f979`), this profile is now **enabled by
+default**.
+
+This means that for most recent NixOS installations, the following configuration
+is implicitly applied:
 
 ```nix
 profiles.hardened.enable = true;
 ```
 
-- There is a proposal to remove it FYI:
-  [Discourse](https://discourse.nixos.org/t/proposal-to-deprecate-the-hardened-profile/63081)
+**Note on Future Changes**:
+
+- It's important to be aware that the status of the hardened profile is under
+  active discussion within the NixOS community. There is a proposal to deprecate
+  or remove it in future releases, as discussed in this:
+  [Discourse thread](https://discourse.nixos.org/t/proposal-to-deprecate-the-hardened-profile/63081)
+  System administrators should monitor NixOS release notes and announcemnts for
+  updates regarding this profile's status.
+
+- There is an open Pull Request regarding the above thread:
+  [PR#383438](https://github.com/NixOS/nixpkgs/pull/383438)
 
 You can also use the hardened kernel:
 
@@ -89,6 +166,12 @@ Check all `sysctl` parameters:
 
 ```bash
 sysctl -a
+```
+
+Or a specific parameter:
+
+```bash
+sysctl -a | grep "kernel.kptr_restrict"
 ```
 
 Check Active Linux Security Modules:
@@ -357,6 +440,43 @@ signatures. It can detect hidden processes and network connections.
 I got the recommendation for `clamav` from the Paranoid NixOS blog post and the
 others help with compliance for `lynis`.
 
+### Advanced Hardening with `nix-mineral` (Community Project)
+
+<details>
+<summary> ✔️ Click to Expand section on `nix-mineral` </summary>
+
+For users seeking a more comprehensive and opinionated approach to system
+hardening beyond the built-in `hardened` profile, the community project
+[`nix-mineral`](https://github.com/cynicsketch/nix-mineral) offers a declarative
+NixOS module.
+
+`nix-mineral` aims to apply a wide array of security configurations, focusing on
+tweaking kernel parameters, system settings, and file permissions to reduce the
+attack surface. Its features include, but are not limited to: hardened `sysctl`
+options, boot parameter adjustments, root login restrictions, privacy
+enhancements (MAC randomization, Whonix machine-id), comprehensive module
+blacklisting, firewall configuration, AppArmor integration, and USBGuard
+enablement.
+
+**Important Considerations:**
+
+- **Community Project Status:** `nix-mineral` is a community-maintained project
+  and is not officially part of the Nixpkgs repository or NixOS documentation.
+  Its development status is explicitly stated as "Alpha software," meaning it
+  may introduce stability issues or unexpected behavior.
+- **Opinionated Configuration:** It applies a broad set of hardening measures
+  that might impact system functionality or compatibility with certain
+  applications. Users should thoroughly review its source code and test its
+  effects in a non-critical environment before deploying.
+- **Complementary to Core Hardening:** While comprehensive, it's a layer on top
+  of NixOS's inherent security benefits and the `profiles.hardened` option.
+
+For detailed information on `nix-mineral`'s capabilities and current status,
+refer directly to its
+[GitHub repository](https://github.com/cynicsketch/nix-mineral).
+
+</details>
+
 ## Hardening Networking
 
 ## Encrypted DNS
@@ -473,6 +593,9 @@ DNS-over-TLS/DoT).
 
 ## Proxy Servers
 
+<details>
+<summary> ✔️ Click to Expand section on Proxy Servers </summary>
+
 Proxy servers let you control, monitor, or anonymize network traffic between
 clients and the wider internet. In NixOS, you can set up various types of
 proxies (HTTP, SOCKS, transparent, caching, privacy-focused) declaratively in
@@ -498,6 +621,8 @@ shadowsocks-libev (SOCKS5 proxy for privacy/bypassing censorship)
 Tor (SOCKS5 proxy with strong anonymity)
 
 TODO: Provide a Proxy Server Example
+
+</details>
 
 ## Firewalls
 
@@ -687,6 +812,32 @@ security advisories.
 
 Monitoring, Logging, and Auditing Enable audit logging: Set
 `security.auditd.enable = true;` for system-level event logging.
+
+<details>
+<summary> ✔️ Click to expand `auditd` example </summary>
+
+A starting point for an auditd configuration could look like:
+
+```nix
+# modules/security/auditd-minimal.nix (or directly in configuration.nix)
+{
+  boot.kernelParams = ["audit=1"];
+  security.auditd.enable = true;
+  security.audit.enable = true;
+  security.audit.rules = [
+    # Log all program executions on 64-bit architecture
+    "-a exit,always -F arch=b64 -S execve"
+  ];
+}
+```
+
+- `audit=1` Enables auditing at the kernel level very early in the boot process.
+  Without this, some events could be missed.
+
+- `security.auditd.enable = true;` Ensures the `auditd` userspace daemon is
+  started.
+
+</details>
 
 **Monitor denied accesses**: Configure `security.apparmor` or `security.selinux`
 as a mandatory access control layer, and regularly check logs for AppArmor or
