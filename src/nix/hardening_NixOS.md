@@ -18,15 +18,6 @@ configuration, and proactive control.
 > hardening and isolating processes can naturally cause some issues. There are
 > also performance tradeoffs with added protection.
 
-> **Security information**: Changing SSH configuration settings can
-> significantly impact the security of your system(s). It is crucial to have a
-> solid understanding of what you are doing before making any adjustments. Avoid
-> blindly copying and pasting examples, including those from this Wiki page,
-> without conducting a thorough analysis. Failure to do so may compromise the
-> security of your system(s) and lead to potential vulnerabilities. Take the
-> time to comprehend the implications of your actions and ensure that any
-> changes made are done thoughtfully and with care. --NixOS Wiki
-
 Containers and VMs are beyond the scope of this chapter but can also enhance
 security if configured correctly.
 
@@ -715,6 +706,15 @@ userspace tool and can potentially be bypassed by privilege escalation exploits.
 
 ## Securing SSH
 
+> **Security information**: Changing SSH configuration settings can
+> significantly impact the security of your system(s). It is crucial to have a
+> solid understanding of what you are doing before making any adjustments. Avoid
+> blindly copying and pasting examples, including those from this Wiki page,
+> without conducting a thorough analysis. Failure to do so may compromise the
+> security of your system(s) and lead to potential vulnerabilities. Take the
+> time to comprehend the implications of your actions and ensure that any
+> changes made are done thoughtfully and with care. --NixOS Wiki
+
 First of all, if you don't use SSH don't enable it in the first place. If you do
 use SSH, it's important to understand what that opens you up to.
 
@@ -803,27 +803,33 @@ algorithms, and best practices:
 }
 ```
 
-Harden Authentication and Access Use key-based SSH, disable passwords: Set
-`services.openssh.settings.PasswordAuthentication = false;` and use SSH keys
-generated with strong algorithms (e.g., Ed25519).
+Fail2Ban is an intrusion prevention software framework. It's designed to prevent
+brute-force attacks by scanning log files for suspicious activity, such as
+repeated failed login attempts.
 
-Restrict SSH access: Use AllowUsers, limit sources with firewall rules, and
-disable root login.
+OpenSSH is the primary tool for secure remote access for NixOS. Enabling it
+activates the OpenSSH server on the system, allowing incoming SSH connections.
 
-Use multi-factor authentication (MFA): For both SSH and desktop login,
-optionally integrate U2F, TOTP, or smartcard support.
+The above configuration is a robust setup for securing an SSH server by:
 
-System Update and Maintenance Regularly update and upgrade: Use nixos-rebuild
-frequently and review channel or flake updates to patch vulnerabilities quickly.
+- Preventing brute-force attacks with Fail2Ban
 
-Audit installed packages: Use `nix-store --gc` and `nix-collect-garbage` to
-minimize leftover, unused software.
+- Eliminating password authentication in favor of more secure SSH keys
 
-Automate security updates: Consider scheduled builds or notifications for NixOS
-security advisories.
+- Restricting user access and preventing root login
 
-Monitoring, Logging, and Auditing Enable audit logging: Set
-`security.auditd.enable = true;` for system-level event logging.
+- Disabling potentially risky forwarding features (tunnel, TCP, agent)
+
+- Enforce the use of strong, modern cryptographic algorithms for all SSH
+  communications.
+
+- Enhanced logging for better auditing.
+
+Further Reading:
+
+- [OpenSSH](https://www.openssh.com/)
+
+- [Wikipedia Fail2Ban](https://en.wikipedia.org/wiki/Fail2ban)
 
 <details>
 <summary> ✔️ Click to expand `auditd` example </summary>
@@ -851,23 +857,17 @@ log every program execution (`execve`) on a 64-bit architecture.
 - `security.auditd.enable = true;` Ensures the `auditd` userspace daemon is
   started.
 
+- While often enabled together, `security.audit.enable` specifically refers to
+  enabling the NixOS module for audit rules generation.
+
+- `execve` (program executions)
+
 </details>
 
-**Monitor denied accesses**: Configure `security.apparmor` as a mandatory access
-control layer, and regularly check logs for AppArmor.
-
-**Review logs with `journalctl`**: Check system logs for unauthorized access
-attempts or configuration errors.
-
-**Advanced Hardening Implement sandboxing**: For server workloads or exposed
-applications, consider running them in `systemd-nspawn` containers, Firejail, or
-with user namespaces for isolation.
-
-**Deploy mandatory access control (MAC)**: Enable and tune AppArmor for
-application-level confinement. Write or port profiles for critical apps and
-services.
-
 ## USB Port Protection
+
+It's important to protect your USB ports to prevent BadUSB attacks, data
+exfiltration, unauthorized device access, malware injection, etc.
 
 ```bash
 nix-shell -p usbguard
@@ -883,8 +883,6 @@ sudo usbguard generate-policy > ~/usbguard-rules.conf
 Control USB/Removable access: Use `services.usbguard` to restrict which USB
 devices are accepted. Be particularly careful if your authentication keyfiles
 are on USB devices.
-
-## USB interfaces
 
 Usbguard can whitelist wanted usb devices and block the rest. Be careful here,
 don't just enable it without adding rules.
@@ -915,6 +913,14 @@ For example:
   users.users.jr.extraGroups = ["usbguard"];
 }
 ```
+
+Further Reading:
+
+- [Wikipedia BadUSB](https://en.wikipedia.org/wiki/BadUSB)
+
+- [USBGuard](https://usbguard.github.io/)
+
+- [NixCraft USBGuard](https://www.cyberciti.biz/security/how-to-protect-linux-against-rogue-usb-devices-using-usbguard/)
 
 ## SeLinux/AppArmor MAC (Mandatory Access Control)
 
