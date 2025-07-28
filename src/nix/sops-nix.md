@@ -229,7 +229,6 @@ this location below.
 {...}: {
   sops = {
     defaultSopsFile = ../../.sops.yaml; # Or the correct path to your .sops.yaml
-    age.sshKeyPaths = [];
     age.keyFile = "/home/jr/sops/age/keys.txt";
 
     secrets = {
