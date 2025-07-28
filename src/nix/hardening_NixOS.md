@@ -123,8 +123,8 @@ has complete control over everything in the system. The kernel is also
 responsible for preventing and mitigating conflicts between different processes
 --[Wikipedia](<https://en.wikipedia.org/wiki/Kernel_(operating_system)>)
 
-With the kernel being responsible for so much, you can see why it's so critical
-to harden it as much as possible.
+With the kernel being responsible for so much it's common for bad actors to
+attack it, making it essential to harden the kernel as much as possible.
 
 NixOS provides a `hardened` profile that applies a set of security-focused
 kernel and system configurations. This profile is defined in
