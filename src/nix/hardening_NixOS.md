@@ -131,12 +131,7 @@ NixOS provides a `hardened` profile that applies a set of security-focused
 kernel and system configurations. This profile is defined in
 `nixpkgs/nixos/modules/profiles/hardened.nix`.
 
-As of **NixOS 23.11 "Raccoon"** (and reflected in `nixos-unstable` from commit
-`8aa75139c278964c70a41315b741088c59f0f979`), this profile is now **enabled by
-default**.
-
-This means that for most recent NixOS installations, the following configuration
-is implicitly applied:
+For users of the NixOS unstable channel, the following is applied by default:
 
 ```nix
 profiles.hardened.enable = true;
@@ -148,8 +143,6 @@ profiles.hardened.enable = true;
   active discussion within the NixOS community. There is a proposal to deprecate
   or remove it in future releases, as discussed in this:
   [Discourse thread](https://discourse.nixos.org/t/proposal-to-deprecate-the-hardened-profile/63081)
-  System administrators should monitor NixOS release notes and announcemnts for
-  updates regarding this profile's status.
 
 - There is an open Pull Request regarding the above thread:
   [PR#383438](https://github.com/NixOS/nixpkgs/pull/383438)
