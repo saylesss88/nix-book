@@ -178,11 +178,16 @@ zcat /proc/config.gz | grep CONFIG_STACKPROTECTOR
     # system console of a Linux kernel to perform some low-level commands.
     # Disable it, since we don't need it, and is a potential security concern.
     "kernel.sysrq" = 0;
+    # prevent unintentional writes to an attacker-controlled FIFO, 2 applies to group writable sticky directories.
     "fs.protected_fifos" = 2;
+    # avoids writes to an attacker-controlled regular file, where a program is expected to create one
     "fs.protected_regular" = 2;
+    # prevent memory dumps of potentially sensitive info
     "fs.suid_dumpable" = false;
+    # restrictions on exposing kernel addresses via /proc, with 2, pointers are replaced with 0's
     "kernel.kptr_restrict" = 2;
     # Note: certian container runtimes or browser sandboxes might rely on the following
+    # Prevents BTI and BHI attacks
     "kernel.unprivileged_bpf_disabled" = true;
 
     ## TCP hardening
