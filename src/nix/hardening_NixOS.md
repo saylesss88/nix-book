@@ -152,7 +152,10 @@ You can also use the hardened kernel:
 boot.kernelPackages = pkgs.linuxPackages_latest_hardened;
 ```
 
-Check all `sysctl` parameters:
+`sysctl` is a tool that allows you to view or modify kernel settings and
+enable/disable different features.
+
+Check all `sysctl` parameters (long output):
 
 ```bash
 sysctl -a
@@ -192,7 +195,7 @@ zcat /proc/config.gz | grep CONFIG_STACKPROTECTOR
     "fs.protected_regular" = 2;
     # prevent memory dumps of potentially sensitive info
     "fs.suid_dumpable" = false;
-    # restrictions on exposing kernel addresses via /proc, with 2, pointers are replaced with 0's
+    # prevent pointer leaks
     "kernel.kptr_restrict" = 2;
     # Note: certian container runtimes or browser sandboxes might rely on the following
     # Prevents BTI and BHI attacks
