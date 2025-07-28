@@ -472,16 +472,19 @@ from being intercepted and viewed by others.
 
 There are 3 main types of DNS protection:
 
-- DNS over HTTPS (DoH): Uses the HTTPS protocol to encrypt data between the
+- **DNS over HTTPS (DoH)**: Uses the HTTPS protocol to encrypt data between the
   client and the resolver.
 
-- DNS over TLS (DoT): Similar to (DoH), differs in the methods used for
+- **DNS over TLS (DoT)**: Similar to (DoH), differs in the methods used for
   encryption and delivery using a separate port from HTTPS.
 
-- DNSCrypt: Uses end-to-end encryption with the added benefit of being able to
-  prevent DNS spoofing attacks.
+- **DNSCrypt**: Uses end-to-end encryption with the added benefit of being able
+  to prevent DNS spoofing attacks.
 
 Useful resources:
+
+<details>
+<summary> ✔️ Click to Expand DNS Resources </summary>
 
 - [NixOS Wiki Encrypted DNS](https://wiki.nixos.org/wiki/Encrypted_DNS)
 
@@ -494,6 +497,8 @@ Useful resources:
 - [Cloudflare Dns Encryption Explained](https://blog.cloudflare.com/dns-encryption-explained/)
 
 - [NordVPN Encrypted Dns Traffic](https://nordvpn.com/blog/encrypted-dns-traffic/)
+
+</details>
 
 The following sets up dnscrypt-proxy using DoH (DNS over HTTPS) with an oisd
 blocklist, they both come directly from the Wiki:
