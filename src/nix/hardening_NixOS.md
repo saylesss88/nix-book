@@ -845,11 +845,11 @@ control layer, and regularly check logs for AppArmor.
 **Review logs with `journalctl`**: Check system logs for unauthorized access
 attempts or configuration errors.
 
-Advanced Hardening Implement sandboxing: For server workloads or exposed
-applications, consider running them in `systemd-nspawn`, Firejail, or with user
-namespaces for isolation.
+**Advanced Hardening Implement sandboxing**: For server workloads or exposed
+applications, consider running them in `systemd-nspawn` containers, Firejail, or
+with user namespaces for isolation.
 
-Deploy mandatory access control (MAC): Enable and tune AppArmor or SELinux for
+**Deploy mandatory access control (MAC)**: Enable and tune AppArmor for
 application-level confinement. Write or port profiles for critical apps and
 services.
 
@@ -1009,6 +1009,12 @@ security on NixOS.
 
 - [Paranoid NixOS](https://xeiaso.net/blog/paranoid-nixos-2021-07-18/)
 
-- [NixOS Security](https://wiki.nixos.org/wiki/Security)
+- [NixOS Wiki Security](https://wiki.nixos.org/wiki/Security)
 
 - [Luks Encrypted File Systems](https://nixos.org/manual/nixos/unstable/index.html#sec-luks-file-systems)
+
+- [Discourse A Modern and Secure Desktop](https://discourse.nixos.org/t/a-modern-and-secure-desktop-setup/41154)
+
+- [notashelf NixOS Security 1 Systemd](https://notashelf.dev/posts/insecurities-remedies-i)
+
+- [ryanseipp hardening-nixos](https://ryanseipp.com/post/hardening-nixos/)
