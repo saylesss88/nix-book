@@ -479,19 +479,40 @@ refer directly to its
 
 ## Encrypted DNS
 
-The
-[Domain Name System (DNS)](https://www.cloudflare.com/learning/dns/what-is-dns/)
-is the address book of the Internet. When you visit cloudflare.com or any other
-site, your browser will ask a DNS resolver for the IP address where the website
-can be found. Unfortunately, these DNS queries and answers are typically
-unprotected. Encrypting DNS would improve user privacy and security. In this
-post, we will look at two mechanisms for encrypting DNS, known as
-[DNS over TLS (DoT) and DNS over HTTPS (DoH)](https://www.cloudflare.com/learning/dns/dns-over-tls/),
-and explain how they
-work.--[Cloudflare Dns Encryption Explained](https://blog.cloudflare.com/dns-encryption-explained/)
+DNS (Domain Name System) resolution is the process of translating a website's
+domain name into its corresponding IP address. By default, this traffic isn't
+encrypted, which means anyone on the network, from your ISP to potential
+hackers, can see the websites you're trying to visit. **Encrypted DNS** uses
+protocols to scramble this information, protecting your queries and responses
+from being intercepted and viewed by others.
+
+There are 3 main types of DNS protection:
+
+- DNS over HTTPS (DoH): Uses the HTTPS protocol to encrypt data between the
+  client and the resolver.
+
+- DNS over TLS (DoT): Similar to (DoH), differs in the methods used for
+  encryption and delivery using a separate port from HTTPS.
+
+- DNSCrypt: Uses end-to-end encryption with the added benefit of being able to
+  prevent DNS spoofing attacks.
+
+Useful resources:
+
+- [NixOS Wiki Encrypted DNS](https://wiki.nixos.org/wiki/Encrypted_DNS)
+
+- [Domain Name System (DNS)](https://www.cloudflare.com/learning/dns/what-is-dns/)
+
+- [Wikipedia DNS over HTTPS (DoH)](https://en.wikipedia.org/wiki/DNS_over_HTTPS)
+
+- [Wikipedia DNS over TLS (DoT)](https://en.wikipedia.org/wiki/DNS_over_TLS)
+
+- [Cloudflare Dns Encryption Explained](https://blog.cloudflare.com/dns-encryption-explained/)
+
+- [NordVPN Encrypted Dns Traffic](https://nordvpn.com/blog/encrypted-dns-traffic/)
 
 The following sets up dnscrypt-proxy using DoH (DNS over HTTPS) with an oisd
-blocklist:
+blocklist, they both come directly from the Wiki:
 
 Add `oisd` to your flake inputs:
 
@@ -554,9 +575,6 @@ in {
       require_dnssec = true;
       require_nolog = false;
       require_nofilter = true;
-      doh_servers = true;
-      odoh_servers = false;
-      force_tcp = true;
 
       # If you want, choose a specific set of servers that come from your sources.
       # Here it's from https://github.com/DNSCrypt/dnscrypt-resolvers/blob/master/v3/public-resolvers.md
@@ -580,10 +598,13 @@ dig @127.0.0.1 example.com +short
 sudo journalctl -u dnscrypt-proxy2
 ```
 
-`dnscrypt-proxy2` acts as your local DNS caching resolver.
+`dnscrypt-proxy2` acts as your local DNS resolver listening on your machine
+(`127.0.0.1`) for IPv4 and `::1` for iPv6.
 
-All DNS clients on your system (`dig`, `curl`, most apps, except Firefox which
-has its own proxy) use `dnscrypt-proxy2`.
+`inputs.oisd` refers to the flake input oisd blocklist, it prevents your device
+from connecting to unwanted or harmful domains.
+
+- [oisd.nl](https://oisd.nl/) the oisd website
 
 `dnscrypt-proxy2` filters ads/trackers (using oisd), enforces DNSSEC, and uses
 encrypted transports (DNS-over-HTTPS/DoH, DNSCrypt, optionally
@@ -596,8 +617,7 @@ DNS-over-TLS/DoT).
 
 Proxy servers let you control, monitor, or anonymize network traffic between
 clients and the wider internet. In NixOS, you can set up various types of
-proxies (HTTP, SOCKS, transparent, caching, privacy-focused) declaratively in
-your system config.
+proxies (HTTP, SOCKS, DNS, etc.) declaratively in your system config.
 
 Types of Proxy Servers: HTTP/HTTPS Forward Proxy, Controls and filters outbound
 web traffic from client machines (e.g., for content filtering or caching).
@@ -608,7 +628,9 @@ through Tor.
 Reverse Proxy: Handles incoming web traffic to one or more backend services
 (usually handled by NGINX, Apache, Caddy).
 
-Popular Proxy Packages on NixOS Squid (caching HTTP proxy)
+Popular Proxy Packages on NixOS:
+
+Squid (caching HTTP proxy)
 
 Privoxy (privacy-enhancing HTTP proxy; can chain with Tor)
 
@@ -684,10 +706,9 @@ Review listening ports: After each rebuild, use `ss -tlpn` or `netstat` to see
 which services are accepting connections. Close or firewall anything
 unnecessary.
 
-Use the built-in firewall: Enable and configure networking.firewall to allow
-only explicitly required ports.
-
 ## Firejail
+
+- [NixOS Wiki Firejail](https://wiki.nixos.org/wiki/Firejail)
 
 Firejail is a SUID program that reduces the risk of security breaches by
 restricting the running environment of untrusted applications using
