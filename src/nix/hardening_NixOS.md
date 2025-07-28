@@ -839,9 +839,8 @@ log every program execution (`execve`) on a 64-bit architecture.
 
 </details>
 
-**Monitor denied accesses**: Configure `security.apparmor` or `security.selinux`
-as a mandatory access control layer, and regularly check logs for AppArmor or
-SELinux policy denials.
+**Monitor denied accesses**: Configure `security.apparmor` as a mandatory access
+control layer, and regularly check logs for AppArmor.
 
 **Review logs with `journalctl`**: Check system logs for unauthorized access
 attempts or configuration errors.
