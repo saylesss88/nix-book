@@ -120,7 +120,7 @@ Protect your sectets, the following guide is on setting up Sops on NixOS:
 
 NixOS provides a `hardened` profile that applies a set of security-focused
 kernel and system configurations. This profile is defined in
-`nixpkgs/nixos/modules/profiles/hardened.nix`.
+[nixpkgs/nixos/modules/profiles/hardened.nix](https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/profiles/hardened.nix)
 
 For users of the NixOS unstable channel, the following is applied by default:
 
