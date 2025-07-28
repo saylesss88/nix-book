@@ -240,7 +240,7 @@ zcat /proc/config.gz | grep CONFIG_STACKPROTECTOR
 ```
 
 Note: The above settings are fairly aggressive and can break common programs, I
-attempted to leave comment warnings.
+left comment warnings.
 
 ## Best Practices
 
@@ -301,6 +301,10 @@ default as of yet. To set `dbus-broker` as the default:
     journald = {
       storage = "volatile"; # Store logs in memory
       upload.enable = false; # Disable remote log upload (the default)
+      extraConfig = ''
+        SystemMaxUse=500M
+        SystemMaxFileSize=50M
+      '';
     };
   };
 ```
@@ -317,7 +321,10 @@ default as of yet. To set `dbus-broker` as the default:
   information.
 
 - Enabling `logrotate` prevents your disk from filling with excessive
-  legacy/service log files.
+  **legacy/service** log files. These are the classic plain-text logs.
+
+- Systemd uses `journald` which stores logs in a binary format which we take
+  care of with the `extraConfig` settings.
 
 You can check the security status with:
 
