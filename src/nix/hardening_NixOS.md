@@ -118,6 +118,14 @@ Protect your sectets, the following guide is on setting up Sops on NixOS:
 
 ## Hardening the Kernel
 
+The kernel is a computer program at the core of the operating system that always
+has complete control over everything in the system. The kernel is also
+responsible for preventing and mitigating conflicts between different processes
+--[Wikipedia](<https://en.wikipedia.org/wiki/Kernel_(operating_system)>)
+
+With the kernel being responsible for so much, you can see why it's so critical
+to harden it as much as possible.
+
 NixOS provides a `hardened` profile that applies a set of security-focused
 kernel and system configurations. This profile is defined in
 [nixpkgs/nixos/modules/profiles/hardened.nix](https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/profiles/hardened.nix)
@@ -240,7 +248,9 @@ zcat /proc/config.gz | grep CONFIG_STACKPROTECTOR
 ```
 
 Note: The above settings are fairly aggressive and can break common programs, I
-left comment warnings.
+left comment warnings. The following guide explains kernel hardening and some of
+the parameters above:
+[Linux Hardening Guide](https://madaidans-insecurities.github.io/guides/linux-hardening.html)
 
 ## Best Practices
 
@@ -1055,3 +1065,5 @@ security on NixOS.
 - [notashelf NixOS Security 1 Systemd](https://notashelf.dev/posts/insecurities-remedies-i)
 
 - [ryanseipp hardening-nixos](https://ryanseipp.com/post/hardening-nixos/)
+
+- [madaidans Linux Hardening Guide](https://madaidans-insecurities.github.io/guides/linux-hardening.html)
