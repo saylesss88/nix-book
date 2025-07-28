@@ -116,7 +116,7 @@ Save it and move on, this file and `sops.nix` are safe to version control.
 
 5. sops-nix's automatic decryption feature using system SSH host keys only works
    with ed25519 host keys for deriving Age decryption keys. Therefore, for
-   system decryption, ensure your using ed25519 not rsa keys:
+   system decryption, ensure you're using ed25519 not rsa keys:
 
 ```bash
 ssh-keygen -t ed25519 -C "your_email@example.com"
