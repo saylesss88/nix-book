@@ -26,8 +26,8 @@ configuration, and proactive control.
 > came from `--Source`, you can often click to check for yourself. Much of the
 > information comes directly from the wiki or other respected sources that are
 > also linked in multiple places. Although this is a work in progress, if you
-> use a little common sense you could end up with a much more secure NixOS
-> system.
+> use a little common sense with a bit of caution you could end up with a much
+> more secure NixOS system that fits your needs.
 
 Containers and VMs are beyond the scope of this chapter but can also enhance
 security if configured correctly.
@@ -767,6 +767,10 @@ AppArmor.
 
 This isn't meant to be a comprehensive guide, more to get people thinking about
 security on NixOS.
+
+See the following guide on hardening networking:
+
+- [Hardening Networking](https://saylesss88.github.io/nix/hardening_networking.html)
 
 ## Resources
 
