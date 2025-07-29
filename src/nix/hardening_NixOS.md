@@ -147,12 +147,11 @@ come from the madaidans-insecurities guide with a few optimizations:
     # kexec is used to boot another kernel during runtime and can be abused
     "kernel.kexec_load_disabled" = 1;
     # Kernel self-protection
-    # The Magic SysRq key is a key combo that allows users connected to the
-    # system console of a Linux kernel to perform some low-level commands.
-    # Disable it, since we don't need it, and is a potential security concern.
+    # SysRq exposes a lot of potentially dangerous debugging functionality to unprivileged users
+    # 4 makes it so a user can only use the secure attention key. A value of 0 would disable completely
     "kernel.sysrq" = 4;
     # disable unprivileged user namespaces, Note: Docker, NH, and other apps may need this
-    # "kernel.unprivileged_userns_clone" = 0; # commented out because it makes NH fail
+    # "kernel.unprivileged_userns_clone" = 0; # commented out because it makes NH and other programs fail
     # restrict all usage of performance events to the CAP_PERFMON capability
     "kernel.perf_event_paranoid" = 3;
 
@@ -236,11 +235,8 @@ the parameters above:
 
 ## Hardening Boot Parameters
 
-Kernel parameters are special options that NixOS passes to the Linux kernel at
-boot time. These parameters can control the kernel’s behavior, such as enabling
-security features or modifying hardware settings, similar to what sysctl options
-accomplish at runtime. In NixOS, you set kernel parameters declaratively using
-the `boot.kernelParams` list in your `configuration.nix` file.
+`boot.kernelParams` can be used to set additional kernel command line arguments
+at boot time. It can only be used for built-in modules.
 
 For example to add a few of the recommendations from `madaidans-insecurities`
 you could add the following:
