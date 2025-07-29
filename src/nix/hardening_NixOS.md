@@ -12,13 +12,22 @@
 Securing your NixOS system begins with a philosophy of minimalism, explicit
 configuration, and proactive control.
 
-> ⚠️ Warning: I am not a security expert, this is meant to show some of your
-> options when hardening NixOS. You will have to judge for yourself if something
-> fits your needs or is unnecessary for your setup. Always do your own research,
-> hardening and isolating processes can naturally cause some issues. There are
-> also performance tradeoffs with added protection. Take what you find useful
-> and leave the rest, there is a lot to cover so it's easy for it to get
-> convoluted.
+> ⚠️ Warning: I am not a security expert. This guide presents various options
+> for hardening NixOS, but it is your responsibility to evaluate whether each
+> adjustment suits your specific needs and environment. Security hardening and
+> process isolation can introduce stability challenges, compatibility issues, or
+> unexpected behavior. Additionally, these protections often come with
+> performance tradeoffs. Always conduct thorough research, there are no plug and
+> play one size fits all security solutions.
+
+> That said, I don't just pull the information out of my ass or have AI generate
+> it for me. I personally test everything in here and provide links for your
+> convenience to check for yourself. `--Source` means the proceeding paragraph
+> came from `--Source`, you can often click to check for yourself. Much of the
+> information comes directly from the wiki or other respected sources that are
+> also linked in multiple places. Although this is a work in progress, if you
+> use a little common sense you could end up with a much more secure NixOS
+> system.
 
 Containers and VMs are beyond the scope of this chapter but can also enhance
 security if configured correctly.
@@ -238,40 +247,96 @@ the parameters above:
 `boot.kernelParams` can be used to set additional kernel command line arguments
 at boot time. It can only be used for built-in modules.
 
-For example to add a few of the recommendations from `madaidans-insecurities`
-you could add the following:
+You can find the following settings in the above guide in the Kernel
+self-protection section:
 
 ```nix
 # boot.nix
-boot.kernelParams = [
-    # ... snip ...
-    # prevent heap exploitations
-    "slab_nomerge"
-    # mitigate use-after-free vulnerabilities
-    "init_on_alloc=1"
-    "init_on_free=1"
-    # randomises page allocator freelists
-    "page_alloc.shuffel=1"
-];
+      kernelParams = [
+        # make it harder to influence slab cache layout
+        "slab_nomerge"
+        # enables zeroing of memory during allocation and free time
+        # helps mitigate use-after-free vulnerabilaties
+        "init_on_alloc=1"
+        "init_on_free=1"
+        # randomizes page allocator freelist, improving security by
+        # making page allocations less predictable
+        "page_alloc.shuffel=1"
+        # enables Kernel Page Table Isolation, which mitigates Meltdown and
+        # prevents some KASLR bypasses
+        "pti=on"
+        # randomizes the kernel stack offset on each syscall
+        # making attacks that rely on a deterministic stack layout difficult
+        "randomize_kstack_offset=on"
+        # disables vsyscalls, they've been replaced with vDSO
+        "vsyscall=none"
+        # disables debugfs, which exposes sensitive info about the kernel
+        "debugfs=off"
+        # certain exploits cause an "oops", this makes the kernel panic if an "oops" occurs
+        "oops=panic"
+        # only alows kernel modules that have been signed with a valid key to be loaded
+        # making it harder to load malicious kernel modules
+        # can make VirtualBox or Nvidia drivers unusable
+        "module.sig_enforce=1"
+        # prevents user space code excalation
+        "lockdown=confidentiality"
+        # "rd.udev.log_level=3"
+        # "udev.log_priority=3"
+      ];
 ```
 
 There are many more recommendations in the
 [Linux Hardening Guide](https://madaidans-insecurities.github.io/guides/linux-hardening.html)
 
-There are also some boot parameters that are recommended to blacklist, to do so
-you would use:
+In the above guide, the following are in the Blacklisting kernel modules
+section:
 
 ```nix
-boot.blacklistedKernelModules = [
-    # Datagram Congestion Control Protocol
-    "dccp"
-    # Stream Control Transmission Protocol
-    "sctp"
-];
+      blacklistedKernelModules = [
+        # Obscure networking protocols
+        "dccp"
+        "sctp"
+        "rds"
+        "tipc"
+        "n-hdlc"
+        "ax25"
+        "netrom"
+        "x25"
+        "rose"
+        "decnet"
+        "econet"
+        "af_802154"
+        "ipx"
+        "appletalk"
+        "psnap"
+        "p8023"
+        "p8022"
+        "can"
+        "atm"
+        # Various rare filesystems
+        "cramfs"
+        "freevxfs"
+        "jffs2"
+        "hfs"
+        "hfsplus"
+        "udf"
+
+        # Not so rare filesystems
+        # "squashfs"
+        # "cifs"
+        # "nfs"
+        # "nfsv3"
+        # "nfsv4"
+        # "ksmbd"
+        # "gfs2"
+        # vivid driver is only useful for testing purposes and has been the
+        # cause of privilege escalation vulnerabilities
+        # "vivid"
+      ];
 ```
 
-As with the `kernelParameters` above, there are much more suggestions in the
-guide.
+As with the `kernelParameters` above, there are more suggestions in the guide, I
+have used the above parameters and had no issues.
 
 ## Hardening Systemd
 
