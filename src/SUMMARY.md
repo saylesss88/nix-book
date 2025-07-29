@@ -4,6 +4,7 @@
   - [Cachix and the devour-flake](nix/cachix_devour.md)
     - [Nix Paths](nix/nixLang/nix_paths.md)
     - [Hardening NixOS](nix/hardening_NixOS.md)
+    - [Hardening Networking](nix/hardening_networking.md)
   - [Version Control with Git](vcs/git.md)
   - [Version Control with JJ](vcs/jujutsu.md)
 - [Installation](installation/README.md)

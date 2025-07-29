@@ -16,7 +16,9 @@ configuration, and proactive control.
 > options when hardening NixOS. You will have to judge for yourself if something
 > fits your needs or is unnecessary for your setup. Always do your own research,
 > hardening and isolating processes can naturally cause some issues. There are
-> also performance tradeoffs with added protection.
+> also performance tradeoffs with added protection. Take what you find useful
+> and leave the rest, there is a lot to cover so it's easy for it to get
+> convoluted.
 
 Containers and VMs are beyond the scope of this chapter but can also enhance
 security if configured correctly.
@@ -26,68 +28,11 @@ security if configured correctly.
 Begin with NixOS’s minimal installation image. This gives you a base system with
 only essential tools and no extras that could introduce vulnerabilities.
 
+- [Minimal ISO Download (64-bit Intel/AMD)](https://channels.nixos.org/nixos-25.05/latest-nixos-minimal-x86_64-linux.iso)
+
 Use LUKS encryption to protect your data at rest, the following guide is a
 minimal disko encrypted installation:
 [Encrypted Install](https://saylesss88.github.io/installation/enc/enc_install.html)
-
-For a more minimalist version of `sudo` with a smaller codebase and attack
-surface, consider `doas`. Replace `userName` with your username:
-
-```nix
-# doas.nix
-{
-  lib,
-  config,
-  pkgs, # Add pkgs if you need to access user information
-  ...
-}: let
-  cfg = config.custom.security.doas;
-in {
-  options.custom.security.doas = {
-    enable = lib.mkEnableOption "doas";
-  };
-
-  config = lib.mkIf cfg.enable {
-    # Disable sudo
-    security.sudo.enable = false;
-
-    # Enable and configure `doas`.
-    security.doas = {
-      enable = true;
-      extraRules = [
-        {
-          # Grant doas access specifically to your user
-          users = ["userName"]; # <--- Only give access to your user
-          # persist = true; # Convenient but less secure
-          # noPass = true;    # Convenient but even less secure
-          keepEnv = true; # Often necessary
-          # Optional: You can also specify which commands they can run, e.g.:
-          # cmd = "ALL"; # Allows running all commands (default if not specified)
-          # cmd = "/run/current-system/sw/bin/nixos-rebuild"; # Only allow specific command
-        }
-      ];
-    };
-
-    # Add an alias to the shell for backward-compat and convenience.
-    environment.shellAliases = {
-      sudo = "doas";
-    };
-  };
-}
-```
-
-You would then import this into your `configuration.nix` and enable/disable it
-with the following:
-
-```nix
-# configuration.nix
-
-imports = [
-    ./doas.nix
-];
-
-custom.security.doas.enable = true;
-```
 
 ## Secure Boot
 
@@ -110,8 +55,8 @@ Practical Lanzaboote Secure Boot setup for NixOS:
 ## Encrypted Secrets
 
 Never store secrets in plain text in repositories. Use something like
-`sops-nix`, which lets you keep encrypted secrets under version control
-declaratively.
+[sops-nix](https://github.com/Mic92/sops-nix), which lets you keep encrypted
+secrets under version control declaratively.
 
 Protect your sectets, the following guide is on setting up Sops on NixOS:
 [Sops Encrypted Secrets](https://saylesss88.github.io/installation/enc/sops-nix.html)
@@ -180,6 +125,8 @@ zcat /proc/config.gz | grep CONFIG_SECURITY_SELINUX
 zcat /proc/config.gz | grep CONFIG_HARDENED_USERCOPY
 zcat /proc/config.gz | grep CONFIG_STACKPROTECTOR
 ```
+
+## Using sysctl on an existing kernel
 
 **Or** you can harden the kernel you're using:
 
@@ -251,41 +198,9 @@ zcat /proc/config.gz | grep CONFIG_STACKPROTECTOR
 ```
 
 Note: The above settings are fairly aggressive and can break common programs, I
-left comment warnings. The following guide explains kernel hardening and some of
+left comment warnings. The following guide explains kernel hardening and many of
 the parameters above:
 [Linux Hardening Guide](https://madaidans-insecurities.github.io/guides/linux-hardening.html)
-
-## Best Practices
-
-**Explicitly enable each service**: In your `configuration.nix`, only enable
-networking, SSH, desktop environments, and applications as needed. Remove or
-avoid legacy daemons and sample services.
-
-**Principle of Least Privilege Limit installed software**: Each program or
-service added is potential attack surface. Install packages individually rather
-than enabling broad module imports or convenience meta-packages.
-
-**Run services as unprivileged users**: Wherever possible, configure system
-services to run with a dedicated user and group, not as root.
-
-**Use NixOS’s fine-grained service options**: For example, set systemd
-sandboxing options (ProtectHome, PrivateTmp, NoNewPrivileges), and use NixOS
-modules’ user/group settings for daemons.
-
-**Secure the Boot & Init Process Enable Secure Boot**: Use modules like
-lanzaboote to enforce EFI Secure Boot, ensuring only signed kernels are loaded.
-
-**Encrypt your root and data partitions**: Use LUKS to encrypt your partitions,
-some even encrypt their swap.
-
-Keep the Attack Surface Small Disable unused features and daemons: Comment out
-or set `enable = false;` for modules like CUPS, Samba, avahi, etc., if you don’t
-need printing, filesharing, or zeroconf networking.
-
-**Use HTTPS**: This one is simple but has big benifits, there is usually an
-extension or setting for this on most browsers. It ensures that all data
-exchanged between your browser and the website you're visiting is encrypted.
-This means that if it's intercepted, they won't be able to read your data.
 
 ## Hardening Systemd
 
@@ -446,279 +361,6 @@ signatures. It can detect hidden processes and network connections.
 
 I got the recommendation for `clamav` from the Paranoid NixOS blog post and the
 others help with compliance for `lynis`.
-
-### Advanced Hardening with `nix-mineral` (Community Project)
-
-<details>
-<summary> ✔️ Click to Expand section on `nix-mineral` </summary>
-
-For users seeking a more comprehensive and opinionated approach to system
-hardening beyond the built-in `hardened` profile, the community project
-[`nix-mineral`](https://github.com/cynicsketch/nix-mineral) offers a declarative
-NixOS module.
-
-`nix-mineral` aims to apply a wide array of security configurations, focusing on
-tweaking kernel parameters, system settings, and file permissions to reduce the
-attack surface. Its features include, but are not limited to: hardened `sysctl`
-options, boot parameter adjustments, root login restrictions, privacy
-enhancements (MAC randomization, Whonix machine-id), comprehensive module
-blacklisting, firewall configuration, AppArmor integration, and USBGuard
-enablement.
-
-**Important Considerations:**
-
-- **Community Project Status:** `nix-mineral` is a community-maintained project
-  and is not officially part of the Nixpkgs repository or NixOS documentation.
-  Its development status is explicitly stated as "Alpha software," meaning it
-  may introduce stability issues or unexpected behavior.
-- **Opinionated Configuration:** It applies a broad set of hardening measures
-  that might impact system functionality or compatibility with certain
-  applications. Users should thoroughly review its source code and test its
-  effects in a non-critical environment before deploying.
-- **Complementary to Core Hardening:** While comprehensive, it's a layer on top
-  of NixOS's inherent security benefits and the `profiles.hardened` option.
-
-For detailed information on `nix-mineral`'s capabilities and current status,
-refer directly to its
-[GitHub repository](https://github.com/cynicsketch/nix-mineral).
-
-</details>
-
-## Hardening Networking
-
-## Encrypted DNS
-
-DNS (Domain Name System) resolution is the process of translating a website's
-domain name into its corresponding IP address. By default, this traffic isn't
-encrypted, which means anyone on the network, from your ISP to potential
-hackers, can see the websites you're trying to visit. **Encrypted DNS** uses
-protocols to scramble this information, protecting your queries and responses
-from being intercepted and viewed by others.
-
-There are 3 main types of DNS protection:
-
-- **DNS over HTTPS (DoH)**: Uses the HTTPS protocol to encrypt data between the
-  client and the resolver.
-
-- **DNS over TLS (DoT)**: Similar to (DoH), differs in the methods used for
-  encryption and delivery using a separate port from HTTPS.
-
-- **DNSCrypt**: Uses end-to-end encryption with the added benefit of being able
-  to prevent DNS spoofing attacks.
-
-Useful resources:
-
-<details>
-<summary> ✔️ Click to Expand DNS Resources </summary>
-
-- [NixOS Wiki Encrypted DNS](https://wiki.nixos.org/wiki/Encrypted_DNS)
-
-- [Domain Name System (DNS)](https://www.cloudflare.com/learning/dns/what-is-dns/)
-
-- [Wikipedia DNS over HTTPS (DoH)](https://en.wikipedia.org/wiki/DNS_over_HTTPS)
-
-- [Wikipedia DNS over TLS (DoT)](https://en.wikipedia.org/wiki/DNS_over_TLS)
-
-- [Cloudflare Dns Encryption Explained](https://blog.cloudflare.com/dns-encryption-explained/)
-
-- [NordVPN Encrypted Dns Traffic](https://nordvpn.com/blog/encrypted-dns-traffic/)
-
-</details>
-
-The following sets up dnscrypt-proxy using DoH (DNS over HTTPS) with an oisd
-blocklist, they both come directly from the Wiki:
-
-Add `oisd` to your flake inputs:
-
-```nix
-# flake.nix
-inputs = {
-    oisd = {
-      url = "https://big.oisd.nl/domainswild";
-      flake = false;
-    };
-};
-```
-
-And the import the following into your `configuration.nix`:
-
-```nix
-# dnscrypt-proxy.nix
-{
-  pkgs,
-  lib,
-  inputs,
-  ...
-}: let
-  blocklist_base = builtins.readFile inputs.oisd;
-  extraBlocklist = '''';
-  blocklist_txt = pkgs.writeText "blocklist.txt" ''
-    ${extraBlocklist}
-    ${blocklist_base}
-  '';
-  hasIPv6Internet = true;
-  StateDirectory = "dnscrypt-proxy";
-in {
-  networking = {
-    # Set DNS nameservers to the local host addresses for iPv4 (`127.0.0.1`) & iPv6 (::1)
-    nameservers = ["127.0.0.1" "::1"];
-    # If using dhcpcd
-    # dhcpcd.extraConfig = "nohook resolv.conf";
-    # If using NetworkManager
-    networkmanager.dns = "none";
-  };
-  services.resolved.enable = lib.mkForce false;
-  # See https://wiki.nixos.org/wiki/Encrypted_DNS
-  services.dnscrypt-proxy2 = {
-    enable = true;
-    # See https://github.com/DNSCrypt/dnscrypt-proxy/blob/master/dnscrypt-proxy/example-dnscrypt-proxy.toml
-    settings = {
-      sources.public-resolvers = {
-        urls = [
-          "https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/public-resolvers.md"
-          "https://download.dnscrypt.info/resolvers-list/v3/public-resolvers.md"
-        ];
-        minisign_key = "RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3"; # See https://github.com/DNSCrypt/dnscrypt-resolvers/blob/master/v3/public-resolvers.md
-        cache_file = "/var/lib/${StateDirectory}/public-resolvers.md";
-      };
-
-      # Use servers reachable over IPv6 -- Do not enable if you don't have IPv6 connectivity
-      ipv6_servers = hasIPv6Internet;
-      block_ipv6 = ! hasIPv6Internet;
-      blocked_names.blocked_names_file = blocklist_txt;
-      require_dnssec = true;
-      require_nolog = false;
-      require_nofilter = true;
-
-      # If you want, choose a specific set of servers that come from your sources.
-      # Here it's from https://github.com/DNSCrypt/dnscrypt-resolvers/blob/master/v3/public-resolvers.md
-      # If you don't specify any, dnscrypt-proxy will automatically rank servers
-      # that match your criteria and choose the best one.
-      # server_names = [ ... ];
-    };
-  };
-
-  systemd.services.dnscrypt-proxy2.serviceConfig.StateDirectory = StateDirectory;
-}
-```
-
-```bash
-sudo systemctl status dnscrypt-proxy2
-# verify that dnscrypt-proxy is listening
-sudo ss -lnp | grep 53
-# Test a DNS query, if you get valid responses it's working
-dig @127.0.0.1 example.com +short
-# check the logs
-sudo journalctl -u dnscrypt-proxy2
-```
-
-`dnscrypt-proxy2` acts as your local DNS resolver listening on your machine
-(`127.0.0.1`) for IPv4 and `::1` for iPv6.
-
-`inputs.oisd` refers to the flake input oisd blocklist, it prevents your device
-from connecting to unwanted or harmful domains.
-
-- [oisd.nl](https://oisd.nl/) the oisd website
-
-`dnscrypt-proxy2` filters ads/trackers (using oisd), enforces DNSSEC, and uses
-encrypted transports (DNS-over-HTTPS/DoH, DNSCrypt, optionally
-DNS-over-TLS/DoT).
-
-## Proxy Servers
-
-<details>
-<summary> ✔️ Click to Expand section on Proxy Servers </summary>
-
-Proxy servers let you control, monitor, or anonymize network traffic between
-clients and the wider internet. In NixOS, you can set up various types of
-proxies (HTTP, SOCKS, DNS, etc.) declaratively in your system config.
-
-Types of Proxy Servers: HTTP/HTTPS Forward Proxy, Controls and filters outbound
-web traffic from client machines (e.g., for content filtering or caching).
-
-SOCKS Proxy: Works for all TCP traffic, commonly used for anonymity or routing
-through Tor.
-
-Reverse Proxy: Handles incoming web traffic to one or more backend services
-(usually handled by NGINX, Apache, Caddy).
-
-Popular Proxy Packages on NixOS:
-
-Squid (caching HTTP proxy)
-
-Privoxy (privacy-enhancing HTTP proxy; can chain with Tor)
-
-shadowsocks-libev (SOCKS5 proxy for privacy/bypassing censorship)
-
-3proxy (lightweight multiprotocol proxy)
-
-Tor (SOCKS5 proxy with strong anonymity)
-
-TODO: Provide a Proxy Server Example
-
-</details>
-
-## Firewalls
-
-[Cloudflare What is a Firewall](https://www.cloudflare.com/learning/security/what-is-a-firewall/)
-
-NixOS includes an integrated firewall based on iptables/nftables.
-
-[Beginners guide to nftables](https://linux-audit.com/networking/nftables/nftables-beginners-guide-to-traffic-filtering/)
-
-[Arch Wiki nftables](https://wiki.archlinux.org/title/Nftables)
-
-The following firewall setup is based on the dnscrypt setup above utilizing
-nftables:
-
-```nix
-{...}: {
-  networking.nftables = {
-    enable = true;
-
-    ruleset = ''
-      table inet filter {
-        chain output {
-          # Allow localhost DNS for dnscrypt-proxy2
-          ip daddr 127.0.0.1 udp dport 53 accept
-          ip6 daddr ::1 udp dport 53 accept
-          ip daddr 127.0.0.1 tcp dport 53 accept
-          ip6 daddr ::1 tcp dport 53 accept
-          # Allow dnscrypt-proxy2 to talk to upstream
-          # ps -o uid,user,pid,cmd -C dnscrypt-proxy; Copy UID #
-          meta skuid 62396 udp dport { 443, 853 } accept
-          meta skuid 62396 tcp dport { 443, 853 } accept
-          # Block all other outbound DNS
-          udp dport { 53, 853 } drop
-          tcp dport { 53, 853 } drop
-        }
-      }
-    '';
-  };
-
-  networking.firewall = {
-    enable = true;
-    allowedTCPPorts = [
-      53 # DNS
-      22 # SSH
-      80 # HTTP
-      443 # HTTPS
-    ];
-    allowedUDPPorts = [
-      53 # DNS
-    ];
-  };
-}
-```
-
-The firewall ensures only your authorized, local encrypted DNS proxy process can
-speak DNS with the outside world, and that all other DNS requests from any other
-process are blocked unless they're to `127.0.0.1` (our local proxy). This is a
-robust policy against both DNS leaks and local compromise.
-
-Review listening ports: After each rebuild, use `ss -tlpn` or `netstat` to see
-which services are accepting connections. Close or firewall anything
-unnecessary.
 
 ## Firejail
 
@@ -899,48 +541,31 @@ log every program execution (`execve`) on a 64-bit architecture.
 It's important to protect your USB ports to prevent BadUSB attacks, data
 exfiltration, unauthorized device access, malware injection, etc.
 
-```bash
-nix-shell -p usbguard
-```
+- [USBGuard](https://usbguard.github.io)
 
-```bash
-sudo usbguard generate-policy > ~/usbguard-rules.conf
-```
-
-> 🚧 Make sure not to just enable this, you need to set up rules or you can end
-> up with some persistent problems.
-
-Control USB/Removable access: Use `services.usbguard` to restrict which USB
-devices are accepted. Be particularly careful if your authentication keyfiles
-are on USB devices.
-
-Usbguard can whitelist wanted usb devices and block the rest. Be careful here,
-don't just enable it without adding rules.
-
-```bash
-sudo usbguard generate-policy > /etc/usbguard/rules.conf
-```
-
-For example:
+You can safely use the following USBGuard configuration in your NixOS
+`configuration.nix` to block high-risk composite USB devices (such as those
+combining mass storage and keyboard functions), while still allowing standard
+USB thumb drives. This setup significantly reduces the likelihood of BadUSB
+attacks. If you use legitimate devices that combine multiple interfaces, you may
+need to tailor the rules to your hardware.
 
 ```nix
-{pkgs, ...}: {
-  environment.systemPackages = [pkgs.usbguard-notifier];
-  services.usbguard = {
-    enable = true;
-    rules = ''
-      allow id 1d6b:0002 serial "0000:05:00.3" name "xHCI Host Controller" hash "4a4NgfdUaJO43rkCzmWRSeHHR/uUh5+SNsXnhosm9qs=" parent-hash "ldMchY4Tt4GPUYo30eNGvai+Fs/EdnVY3vMyxJUq4Nk=" with-interface 09:00:00 with-connect-type ""
-      allow id 1d6b:0003 serial "0000:05:00.3" name "xHCI Host Controller" hash "d+DNGWARDtv9nEK2ZvnNOCtFernuMu5/e/oZ7kCppqQ=" parent-hash "ldMchY4Tt4GPUYo30eNGvai+Fs/EdnVY3vMyxJUq4Nk=" with-interface 09:00:00 with-connect-type ""
-      # Add default policy
-      block unknown
-    '';
-    # Optional: Configure these as needed for your security posture
-    presentDevicePolicy = "apply-policy"; # Or "keep"
-    IPCAllowedGroups = ["usbguard" "wheel"]; # If you want wheel group to manage
-  };
-
-  # If your user needs to interact with usbguard (e.g., via usbguard-cli)
-  users.users.jr.extraGroups = ["usbguard"];
+{ ... }:
+{
+    services.usbguard = {
+        enable = true;
+        dbus.enable = true;
+        IPCAllowedGroups = [ "usbguard" "wheel" ];
+        rules = ''
+        allow with-interface equals { 08:*:* }
+        # Reject devices with suspicious combination of interfaces
+        reject with-interface all-of { 08:*:* 03:00:* }
+        reject with-interface all-of { 08:*:* 03:01:* }
+        reject with-interface all-of { 08:*:* e0:*:* }
+        reject with-interface all-of { 08:*:* 02:*:* }
+        '';
+    };
 }
 ```
 
@@ -952,96 +577,76 @@ Further Reading:
 
 - [NixCraft USBGuard](https://www.cyberciti.biz/security/how-to-protect-linux-against-rogue-usb-devices-using-usbguard/)
 
-## SeLinux/AppArmor MAC (Mandatory Access Control)
+## Doas over sudo
 
-**AppArmor**: Stable, supported, easier for most users; enable with one line,
-but profile coverage may be incomplete. From my understanding the main issue is
-that there are no default profiles so you have to write your own and since
-apparmor.d isn't fully supported it makes it a bit more complicated.
-
-I was able to get it configured for `sshd` with the following:
+For a more minimalist version of `sudo` with a smaller codebase and attack
+surface, consider `doas`. Replace `userName` with your username:
 
 ```nix
-
+# doas.nix
 {
-  pkgs,
   lib,
   config,
+  pkgs, # Add pkgs if you need to access user information
   ...
-}: {
-  # Enable AppArmor support in D-Bus
-  services.dbus.apparmor = "enabled";
-  security = {
-    apparmor = {
-      enable = true;
-      enableCache = true;
-      killUnconfinedConfinables = true;
-
-      # Only need packages that provide real, used profiles and tools
-      packages = with pkgs; [apparmor-utils apparmor-profiles];
-
-      includes = {
-        "abstractions/base" = ''
-          /nix/store/*/bin/** mr,
-          /nix/store/*/lib/** mr,
-          /nix/store/** r,
-          ${pkgs.coreutils}/bin/* rix,
-          ${pkgs.coreutils-full}/bin/* rix,
-        '';
-      };
-
-      # Example starter policies
-      policies = {
-        sshd = {
-          profile = ''
-            #include <tunables/global>
-            /run/current-system/sw/bin/sshd {
-              /nix/store/** rix,
-              # ...
-            }
-          '';
-          # Optionally, you may be able to add (if supported):
-          # enforce = true;
-          # enable = true;
-        };
-
-      };
-    };
+}: let
+  cfg = config.custom.security.doas;
+in {
+  options.custom.security.doas = {
+    enable = lib.mkEnableOption "doas";
   };
 
-  environment.systemPackages = with pkgs; [
-    apparmor-utils
-    apparmor-parser
-    apparmor-profiles
-    # Optional: community/contrib profiles you intend to use
-    # roddhjav-apparmor-rules # incomplete apparmor.d
-  ];
+  config = lib.mkIf cfg.enable {
+    # Disable sudo
+    security.sudo.enable = false;
 
-  # If you want PAM integration (useful)
-  security.pam = {
-    services.sshd.enableAppArmor = true;
+    # Enable and configure `doas`.
+    security.doas = {
+      enable = true;
+      extraRules = [
+        {
+          # Grant doas access specifically to your user
+          users = ["userName"]; # <--- Only give access to your user
+          # persist = true; # Convenient but less secure
+          # noPass = true;    # Convenient but even less secure
+          keepEnv = true; # Often necessary
+          # Optional: You can also specify which commands they can run, e.g.:
+          # cmd = "ALL"; # Allows running all commands (default if not specified)
+          # cmd = "/run/current-system/sw/bin/nixos-rebuild"; # Only allow specific command
+        }
+      ];
+    };
+
+    # Add an alias to the shell for backward-compat and convenience.
+    environment.shellAliases = {
+      sudo = "doas";
+    };
   };
 }
 ```
 
-```bash
-sudo aa-status
-apparmor module is loaded.
-1 profiles are loaded.
-1 profiles are in enforce mode.
-   /run/current-system/sw/bin/sshd
-0 profiles are in complain mode.
-0 profiles are in prompt mode.
-0 profiles are in kill mode.
-0 profiles are in unconfined mode.
-0 processes have profiles defined.
-0 processes are in enforce mode.
-0 processes are in complain mode.
-0 processes are in prompt mode.
-0 processes are in kill mode.
-0 processes are unconfined but have a profile defined.
-0 processes are in mixed mode.
+You would then import this into your `configuration.nix` and enable/disable it
+with the following:
+
+```nix
+# configuration.nix
+
+imports = [
+    ./doas.nix
+];
+
+custom.security.doas.enable = true;
 ```
+
+## SeLinux/AppArmor MAC (Mandatory Access Control)
+
+**AppArmor** is available on NixOS, but is still in a somewhat experimental and
+evolving state. There are only a few profiles that have been adapted to NixOS,
+see here
+[Discourse on default-profiles](https://discourse.nixos.org/t/apparmor-default-profiles/16780)
+Which guides you here
+[apparmor/includes.nix](https://github.com/NixOS/nixpkgs/blob/2acaef7a85356329f750819a0e7c3bb4a98c13fe/nixos/modules/security/apparmor/includes.nix)
+where you can see some of the abstractions and tunables to follow progress.
 
 **SELinux**: Experimental, not fully integrated, recent progress for
 advanced/curious users; expect rough edges and manual intervention if you want
@@ -1052,6 +657,43 @@ This isn't meant to be a comprehensive guide, more to get people thinking about
 security on NixOS.
 
 ## Resources
+
+### Advanced Hardening with `nix-mineral` (Community Project)
+
+<details>
+<summary> ✔️ Click to Expand section on `nix-mineral` </summary>
+
+For users seeking a more comprehensive and opinionated approach to system
+hardening beyond the built-in `hardened` profile, the community project
+[`nix-mineral`](https://github.com/cynicsketch/nix-mineral) offers a declarative
+NixOS module.
+
+`nix-mineral` aims to apply a wide array of security configurations, focusing on
+tweaking kernel parameters, system settings, and file permissions to reduce the
+attack surface. Its features include, but are not limited to: hardened `sysctl`
+options, boot parameter adjustments, root login restrictions, privacy
+enhancements (MAC randomization, Whonix machine-id), comprehensive module
+blacklisting, firewall configuration, AppArmor integration, and USBGuard
+enablement.
+
+**Important Considerations:**
+
+- **Community Project Status:** `nix-mineral` is a community-maintained project
+  and is not officially part of the Nixpkgs repository or NixOS documentation.
+  Its development status is explicitly stated as "Alpha software," meaning it
+  may introduce stability issues or unexpected behavior.
+- **Opinionated Configuration:** It applies a broad set of hardening measures
+  that might impact system functionality or compatibility with certain
+  applications. Users should thoroughly review its source code and test its
+  effects in a non-critical environment before deploying.
+- **Complementary to Core Hardening:** While comprehensive, it's a layer on top
+  of NixOS's inherent security benefits and the `profiles.hardened` option.
+
+For detailed information on `nix-mineral`'s capabilities and current status,
+refer directly to its
+[GitHub repository](https://github.com/cynicsketch/nix-mineral).
+
+</details>
 
 - [AppArmor and apparmor.d on NixOS](https://hedgedoc.grimmauld.de/s/hWcvJEniW#)
 
