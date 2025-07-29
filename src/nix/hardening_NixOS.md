@@ -63,13 +63,8 @@ Protect your sectets, the following guide is on setting up Sops on NixOS:
 
 ## Hardening the Kernel
 
-The kernel is a computer program at the core of the operating system that always
-has complete control over everything in the system. The kernel is also
-responsible for preventing and mitigating conflicts between different processes
---[Wikipedia](<https://en.wikipedia.org/wiki/Kernel_(operating_system)>)
-
-With the kernel being responsible for so much it's common for bad actors to
-attack it, making it essential to harden the kernel as much as possible.
+Given the kernel's central role, it's a frequent target for malicious actors,
+making robust hardening essential.
 
 NixOS provides a `hardened` profile that applies a set of security-focused
 kernel and system configurations. This profile is defined in
@@ -128,63 +123,98 @@ zcat /proc/config.gz | grep CONFIG_STACKPROTECTOR
 
 ## Using sysctl on an existing kernel
 
-**Or** you can harden the kernel you're using:
+**Or** you can harden the kernel you're using `sysctl`, the following parameters
+come from the madaidans-insecurities guide with a few optimizations:
 
 ```nix
   boot.kernel.sysctl = {
-    # The Magic SysRq key is a key combo that allows users connected to the
-    # system console of a Linux kernel to perform some low-level commands.
-    # Disable it, since we don't need it, and is a potential security concern.
-    "kernel.sysrq" = 0;
-    # prevent unintentional writes to an attacker-controlled FIFO, 2 applies to group writable sticky directories.
-    "fs.protected_fifos" = 2;
-    # avoids writes to an attacker-controlled regular file, where a program is expected to create one
-    "fs.protected_regular" = 2;
-    # prevent memory dumps of potentially sensitive info
     "fs.suid_dumpable" = false;
     # prevent pointer leaks
     "kernel.kptr_restrict" = 2;
+    # restrict kernel log to CAP_SYSLOG capability
+    "kernel.dmesg_restrict" = 1;
     # Note: certian container runtimes or browser sandboxes might rely on the following
-    # Prevents BTI and BHI attacks
-    "kernel.unprivileged_bpf_disabled" = true;
+    # restrict eBPF to the CAP_BPF capability
+    "kernel.unprivileged_bpf_disabled" = 1;
+    # should be enabled along with bpf above
+    # "net.core.bpf_jit_harden" = 2;
+    # restrict loading TTY line disciplines to the CAP_SYS_MODULE
+    "dev.tty.ldisk_autoload" = 0;
+    # prevent exploit of use-after-free flaws
+    "vm.unprivileged_userfaultfd" = 0;
+    # kexec is used to boot another kernel during runtime and can be abused
+    "kernel.kexec_load_disabled" = 1;
+    # Kernel self-protection
+    # The Magic SysRq key is a key combo that allows users connected to the
+    # system console of a Linux kernel to perform some low-level commands.
+    # Disable it, since we don't need it, and is a potential security concern.
+    "kernel.sysrq" = 4;
+    # disable unprivileged user namespaces, Note: Docker, and other apps may need this
+    "kernel.unprivileged_userns_clone" = 0;
+    # restrict all usage of performance events to the CAP_PERFMON capability
+    "kernel.perf_event_paranoid" = 3;
 
-    ## TCP hardening
-    # Prevent bogus ICMP errors from filling up logs.
-    "net.ipv4.icmp_ignore_bogus_error_responses" = 1;
-    # Reverse path filtering causes the kernel to do source validation of
-    # packets received from all interfaces. This can mitigate IP spoofing.
-    "net.ipv4.conf.all.forwarding" = 0;
+    # Network
+    # protect against SYN flood attacks (denial of service attack)
+    "net.ipv4.tcp_syncookies" = 1;
+    # protection against TIME-WAIT assassination
+    "net.ipv4.tcp_rfc1337" = 1;
+    # enable source validation of packets received (prevents IP spoofing)
     "net.ipv4.conf.default.rp_filter" = 1;
     "net.ipv4.conf.all.rp_filter" = 1;
-    # Do not accept IP source route packets (we're not a router)
-    "net.ipv4.conf.all.accept_source_route" = 0;
-    "net.ipv6.conf.all.accept_source_route" = 0;
-    "net.ipv6.conf.all.forwarding" = 0;
-    # Don't send ICMP redirects (again, we're not a router)
-    "net.ipv4.conf.all.send_redirects" = 0;
-    "net.ipv4.conf.default.send_redirects" = 0;
-    # "net.core.bpf_jit_harden" = 2;
-    # Refuse ICMP redirects (MITM mitigations)
+
     "net.ipv4.conf.all.accept_redirects" = 0;
     "net.ipv4.conf.default.accept_redirects" = 0;
     "net.ipv4.conf.all.secure_redirects" = 0;
     "net.ipv4.conf.default.secure_redirects" = 0;
+    # Protect against IP spoofing
     "net.ipv6.conf.all.accept_redirects" = 0;
     "net.ipv6.conf.default.accept_redirects" = 0;
-    # Protects against SYN flood attacks
-    "net.ipv4.tcp_syncookies" = 1;
-    # Incomplete protection again TIME-WAIT assassination
-    "net.ipv4.tcp_rfc1337" = 1;
-    # disable unprivileged user namespaces, Note: Docker, and other apps may need this
-    "kernel.unprivileged_userns_clone" = 0;
-    # memory protection (64-bit systems)
+    "net.ipv4.conf.all.send_redirects" = 0;
+    "net.ipv4.conf.default.send_redirects" = 0;
+
+    # prevent man-in-the-middle attacks
+    "net.ipv4.icmp_echo_ignore_all" = 1;
+
+    # ignore ICMP request, helps avoid Smurf attacks
+    "net.ipv4.conf.all.forwarding" = 0;
+    "net.ipv4.conf.default.accept_source_route" = 0;
+    "net.ipv4.conf.all.accept_source_route" = 0;
+    "net.ipv6.conf.all.accept_source_route" = 0;
+    "net.ipv6.conf.default.accept_source_route" = 0;
+    # Reverse path filtering causes the kernel to do source validation of
+    "net.ipv6.conf.all.forwarding" = 0;
+    "net.ipv6.conf.all.accept_ra" = 0;
+    "net.ipv6.conf.default.accept_ra" = 0;
+
+    ## TCP hardening
+    # Prevent bogus ICMP errors from filling up logs.
+    "net.ipv4.icmp_ignore_bogus_error_responses" = 1;
+
+    # Disable TCP SACK
+    "net.ipv4.tcp_sack" = 0;
+    "net.ipv4.tcp_dsack" = 0;
+    "net.ipv4.tcp_fack" = 0;
+
+    # Userspace
+    # restrict usage of ptrace
+    "kernel.yama.ptrace_scope" = 2;
+
+    # ASLR memory protection (64-bit systems)
     "vm.mmap_rnd_bits" = 32;
+    "vm.mmap_rnd_compat_bits" = 16;
+
+    # only permit symlinks to be followed when outside of a world-writable sticky directory
+    "fs.protected_symlinks" = 1;
+    "fs.protected_hardlinks" = 1;
+    # Prevent creating files in potentially attacker-controlled environments
+    "fs.protected_fifos" = 2;
+    "fs.protected_regular" = 2;
+
     # Randomize memory
     "kernel.randomize_va_space" = 2;
     # Exec Shield (Stack protection)
     "kernel.exec-shield" = 1;
-    "kernel.randomize_va_space" = 2;
-
 
     ## TCP optimization
     # TCP Fast Open is a TCP extension that reduces network latency by packing
