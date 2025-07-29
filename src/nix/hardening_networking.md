@@ -7,6 +7,29 @@
 
 </details>
 
+> ⚠️ I am not a security expert, but I have carefully researched and tested the
+> configurations in this chapter personally.Not every setting or method will be
+> appropriate or necessary for all setups; some may cause compatibility or
+> connectivity issues depending on your environment and needs.
+>
+> Always carefully research any changes before applying them, especially when
+> they affect critical components like DNS or firewalls. Network hardening can
+> occasionally disrupt legitimate services, degrade performance, or block access
+> in unexpected ways.
+>
+> Test adjustments in a controlled environment first, understand the tradeoffs
+> involved, and only use what fits your threat model and workflow. Security is
+> complex, and it’s important to tailor your approach to your unique
+> requirements. Take what’s useful, adapt as needed, and don’t hesitate to seek
+> expert guidance for advanced scenarios.
+
+A few simple things you can do to help protect your network:
+
+- Always use HTTPS
+
+- Check sketchy urls first with
+  [VirusTotal](https://www.virustotal.com/gui/home/url)
+
 ## Encrypted DNS
 
 DNS (Domain Name System) resolution is the process of translating a website's
