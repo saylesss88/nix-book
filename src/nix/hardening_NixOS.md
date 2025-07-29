@@ -258,6 +258,21 @@ boot.kernelParams = [
 There are many more recommendations in the
 [Linux Hardening Guide](https://madaidans-insecurities.github.io/guides/linux-hardening.html)
 
+There are also some boot parameters that are recommended to blacklist, to do so
+you would use:
+
+```nix
+boot.blacklistedKernelModules = [
+    # Datagram Congestion Control Protocol
+    "dccp"
+    # Stream Control Transmission Protocol
+    "sctp"
+];
+```
+
+As with the `kernelParameters` above, there are much more suggestions in the
+guide.
+
 ## Hardening Systemd
 
 ![Hacker](../images/hacker.png)
