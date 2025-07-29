@@ -27,7 +27,9 @@ configuration, and proactive control.
 > information comes directly from the wiki or other respected sources that are
 > also linked in multiple places. Although this is a work in progress, if you
 > use a little common sense with a bit of caution you could end up with a much
-> more secure NixOS system that fits your needs.
+> more secure NixOS system that fits your needs. To those that read my
+> **multiple warnings that this is a work in progress** and gave actionable
+> feedback thank you!
 
 Containers and VMs are beyond the scope of this chapter but can also enhance
 security if configured correctly.
