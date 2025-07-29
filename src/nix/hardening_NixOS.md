@@ -392,20 +392,6 @@ signatures. It can detect hidden processes and network connections.
 I got the recommendation for `clamav` from the Paranoid NixOS blog post and the
 others help with compliance for `lynis`.
 
-## Firejail
-
-- [NixOS Wiki Firejail](https://wiki.nixos.org/wiki/Firejail)
-
-Firejail is a SUID program that reduces the risk of security breaches by
-restricting the running environment of untrusted applications using
-[Linux namespaces](https://lwn.net/Articles/531114/) and
-[seccomp-bpf](https://l3net.wordpress.com/2015/04/13/firejail-seccomp-guide/)--[Firejail Security Sandbox](https://firejail.wordpress.com/)
-
-It provides sandboxing and access restriction per application, much like what
-AppArmor/SELinux does at a kernel level. However, it's not as secure or
-comprehensive as kernel-enforced MAC systems (AppArmor/SELinux), since it's a
-userspace tool and can potentially be bypassed by privilege escalation exploits.
-
 ## Securing SSH
 
 > **Security information**: Changing SSH configuration settings can
@@ -573,32 +559,6 @@ exfiltration, unauthorized device access, malware injection, etc.
 
 - [USBGuard](https://usbguard.github.io)
 
-You can safely use the following USBGuard configuration in your NixOS
-`configuration.nix` to block high-risk composite USB devices (such as those
-combining mass storage and keyboard functions), while still allowing standard
-USB thumb drives. This setup significantly reduces the likelihood of BadUSB
-attacks. If you use legitimate devices that combine multiple interfaces, you may
-need to tailor the rules to your hardware.
-
-```nix
-{ ... }:
-{
-    services.usbguard = {
-        enable = true;
-        dbus.enable = true;
-        IPCAllowedGroups = [ "usbguard" "wheel" ];
-        rules = ''
-        allow with-interface equals { 08:*:* }
-        # Reject devices with suspicious combination of interfaces
-        reject with-interface all-of { 08:*:* 03:00:* }
-        reject with-interface all-of { 08:*:* 03:01:* }
-        reject with-interface all-of { 08:*:* e0:*:* }
-        reject with-interface all-of { 08:*:* 02:*:* }
-        '';
-    };
-}
-```
-
 Further Reading:
 
 - [Wikipedia BadUSB](https://en.wikipedia.org/wiki/BadUSB)
@@ -667,6 +627,22 @@ imports = [
 
 custom.security.doas.enable = true;
 ```
+
+> ❗ NOTE:
+
+## Firejail
+
+- [NixOS Wiki Firejail](https://wiki.nixos.org/wiki/Firejail)
+
+Firejail is a SUID program that reduces the risk of security breaches by
+restricting the running environment of untrusted applications using
+[Linux namespaces](https://lwn.net/Articles/531114/) and
+[seccomp-bpf](https://l3net.wordpress.com/2015/04/13/firejail-seccomp-guide/)--[Firejail Security Sandbox](https://firejail.wordpress.com/)
+
+It provides sandboxing and access restriction per application, much like what
+AppArmor/SELinux does at a kernel level. However, it's not as secure or
+comprehensive as kernel-enforced MAC systems (AppArmor/SELinux), since it's a
+userspace tool and can potentially be bypassed by privilege escalation exploits.
 
 ## SeLinux/AppArmor MAC (Mandatory Access Control)
 
