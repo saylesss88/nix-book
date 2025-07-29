@@ -66,6 +66,8 @@ Protect your sectets, the following guide is on setting up Sops on NixOS:
 Given the kernel's central role, it's a frequent target for malicious actors,
 making robust hardening essential.
 
+- [NixOS Wiki Linux Kernel](https://wiki.nixos.org/wiki/Linux_kernel)
+
 NixOS provides a `hardened` profile that applies a set of security-focused
 kernel and system configurations. This profile is defined in
 [nixpkgs/nixos/modules/profiles/hardened.nix](https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/profiles/hardened.nix)
@@ -230,6 +232,34 @@ come from the madaidans-insecurities guide with a few optimizations:
 Note: The above settings are fairly aggressive and can break common programs, I
 left comment warnings. The following guide explains kernel hardening and many of
 the parameters above:
+[Linux Hardening Guide](https://madaidans-insecurities.github.io/guides/linux-hardening.html)
+
+## Hardening Boot Parameters
+
+Kernel parameters are special options that NixOS passes to the Linux kernel at
+boot time. These parameters can control the kernel’s behavior, such as enabling
+security features or modifying hardware settings, similar to what sysctl options
+accomplish at runtime. In NixOS, you set kernel parameters declaratively using
+the `boot.kernelParams` list in your `configuration.nix` file.
+
+For example to add a few of the recommendations from `madaidans-insecurities`
+you could add the following:
+
+```nix
+# boot.nix
+boot.kernelParams = [
+    # ... snip ...
+    # prevent heap exploitations
+    "slab_nomerge"
+    # mitigate use-after-free vulnerabilities
+    "init_on_alloc=1"
+    "init_on_free=1"
+    # randomises page allocator freelists
+    "page_alloc.shuffel=1"
+];
+```
+
+There are many more recommendations in the
 [Linux Hardening Guide](https://madaidans-insecurities.github.io/guides/linux-hardening.html)
 
 ## Hardening Systemd
