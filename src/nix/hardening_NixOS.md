@@ -149,8 +149,8 @@ come from the madaidans-insecurities guide with a few optimizations:
     # system console of a Linux kernel to perform some low-level commands.
     # Disable it, since we don't need it, and is a potential security concern.
     "kernel.sysrq" = 4;
-    # disable unprivileged user namespaces, Note: Docker, and other apps may need this
-    "kernel.unprivileged_userns_clone" = 0;
+    # disable unprivileged user namespaces, Note: Docker, NH, and other apps may need this
+    # "kernel.unprivileged_userns_clone" = 0; # commented out because it makes NH fail
     # restrict all usage of performance events to the CAP_PERFMON capability
     "kernel.perf_event_paranoid" = 3;
 
