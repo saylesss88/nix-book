@@ -141,7 +141,7 @@ come from the madaidans-insecurities guide with a few optimizations:
 
 ```nix
   boot.kernel.sysctl = {
-    "fs.suid_dumpable" = false;
+    "fs.suid_dumpable" = 0;
     # prevent pointer leaks
     "kernel.kptr_restrict" = 2;
     # restrict kernel log to CAP_SYSLOG capability
@@ -243,6 +243,22 @@ Note: The above settings are fairly aggressive and can break common programs, I
 left comment warnings. The following guide explains kernel hardening and many of
 the parameters above:
 [Linux Hardening Guide](https://madaidans-insecurities.github.io/guides/linux-hardening.html)
+
+> ❗ If you are ever unsure about a setting that you want to harden and think
+> that it could possibly break your system you can always use a specialisation
+> reversing the action and choose it's generation at boot up. For example, to
+> force-reverse the above settings you could:
+>
+> ```nix
+> # configuration.nix
+> specialisation.no-kernel-mods.configuration = {
+>    boot.kernel.sysctl = lib.mkForce {}
+> };
+> ```
+>
+> - You would see a generation named `no-kernel-mods` in your generation menu at
+>   boot up giving you a safety hatch. You shouldn't need it here, but on more
+>   sketchy or experimental settings it doesn't hurt to have an out.
 
 ## Hardening Boot Parameters
 
