@@ -26,20 +26,66 @@ configuration, and proactive control.
 > came from `--Source`, you can often click to check for yourself. Much of the
 > information comes directly from the wiki or other respected sources that are
 > also linked in multiple places. Although this is a work in progress, if you
-> use a little common sense with a bit of caution you could end up with a much
-> more secure NixOS system that fits your needs. To those that read my
-> **multiple warnings that this is a work in progress** and gave actionable
-> feedback thank you!
+> use some common sense with a bit of caution you could end up with a more
+> secure NixOS system that fits your needs.
 
 Containers and VMs are beyond the scope of this chapter but can also enhance
 security if configured correctly.
+
+## Best Practices
+
+**Audit and remove local user accounts that are no longer needed**: Regularly
+review and remove unused or outdated accounts to reduce your system’s attack
+surface, improve compliance, and ensure only authorized users have access.
+
+**Only install, enable, and run what is needed**: Disable or uninstall
+unnecessary software and services to minimize potential vulnerabilities. Take
+advantage of NixOS’s easy package management and minimalism to keep your system
+lean and secure.
+
+**Avoid permanently installing temporary tools**: Use tools like `nix-shell`,
+`comma`, and `nix-direnv` to test or run software temporarily. This prevents
+clutter and reduces potential risks from unused software lingering on the
+system.
+
+**Update regularly**: Keep your system and software up to date to receive the
+latest security patches. Delaying updates leaves known vulnerabilities open to
+exploitation.
+
+**Apply the Principle of Least Privilege**: Never run tools or services as root
+unless absolutely necessary. Create dedicated users and groups with the minimum
+required permissions to limit potential damage if compromised. See the doas
+example. [Check the doas example here](#doas-over-sudo)
+
+**Use strong passwords and passphrases**: Aim for at least 14–16 characters by
+combining several unrelated words, symbols, and numbers. For example:
+sunset-CoffeeHorse$guitar!. Strong passphrases are both memorable and secure.
+
+**Use a password manager and enable multi-factor authentication (MFA)**: Manage
+unique, strong passwords effectively with a trusted manager and protect accounts
+with MFA wherever possible for a second layer of defense.
+
+After establishing some standard best practices, it’s time to dive deeper into
+system hardening, the process of adding layered safeguards throughout your NixOS
+setup. This next section guides you through concrete steps and options for
+hardening critical areas of your system: from encryption and secure boot to
+managing secrets, tightening kernel security, and leveraging platform-specific
+tools.
 
 ## Minimal Installation with LUKS
 
 Begin with NixOS’s minimal installation image. This gives you a base system with
 only essential tools and no extras that could introduce vulnerabilities.
 
+## Manual Encrypted Install Following the Manual
+
 - [Minimal ISO Download (64-bit Intel/AMD)](https://channels.nixos.org/nixos-25.05/latest-nixos-minimal-x86_64-linux.iso)
+
+- [NixOS Manual Installation](https://nixos.org/manual/nixos/stable/#sec-installation)
+
+- [NixOS Wiki Full Disk Encryption](https://wiki.nixos.org/wiki/Full_Disk_Encryption)
+
+## Guided Encrypted install using disko
 
 Use LUKS encryption to protect your data at rest, the following guide is a
 minimal disko encrypted installation:
@@ -68,6 +114,12 @@ Practical Lanzaboote Secure Boot setup for NixOS:
 Never store secrets in plain text in repositories. Use something like
 [sops-nix](https://github.com/Mic92/sops-nix), which lets you keep encrypted
 secrets under version control declaratively.
+
+Another option is [agenix](https://github.com/ryantm/agenix)
+
+- [NixOS Wiki Agenix](https://wiki.nixos.org/wiki/Agenix)
+
+## Sops-nix Guide
 
 Protect your secrets, the following guide is on setting up Sops on NixOS:
 [Sops Encrypted Secrets](https://saylesss88.github.io/installation/enc/sops-nix.html)
@@ -259,6 +311,8 @@ the parameters above:
 > - You would see a generation named `no-kernel-mods` in your generation menu at
 >   boot up giving you a safety hatch. You shouldn't need it here, but on more
 >   sketchy or experimental settings it doesn't hurt to have an out.
+> - You can obviously add whichever parameters you had before you started making
+>   changes rather than `lib.mkForce {}`, this is just an example.
 
 ## Hardening Boot Parameters
 
