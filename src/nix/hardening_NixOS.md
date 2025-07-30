@@ -69,7 +69,7 @@ Never store secrets in plain text in repositories. Use something like
 [sops-nix](https://github.com/Mic92/sops-nix), which lets you keep encrypted
 secrets under version control declaratively.
 
-Protect your sectets, the following guide is on setting up Sops on NixOS:
+Protect your secrets, the following guide is on setting up Sops on NixOS:
 [Sops Encrypted Secrets](https://saylesss88.github.io/installation/enc/sops-nix.html)
 
 ## Hardening the Kernel
@@ -834,3 +834,5 @@ refer directly to its
 - [ryanseipp hardening-nixos](https://ryanseipp.com/post/hardening-nixos/)
 
 - [madaidans Linux Hardening Guide](https://madaidans-insecurities.github.io/guides/linux-hardening.html)
+
+- [Hardening-Linux-Servers](https://cybersecuritynews.com/hardening-linux-servers)
