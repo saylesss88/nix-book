@@ -25,10 +25,26 @@
 
 A few simple things you can do to help protect your network:
 
-- Always use HTTPS
+- HTTPS encrypts the data between a web browser and a website. This is
+  especially important for services that need logging into such as a bank
+  account, email, etc. Most browsers either have a setting or an extension to
+  enforce HTTPS everywhere. For example with Firefox, you go to "Settings", then
+  "Privacy & Security" and scroll down to HTTPS-Only Mode and choose "Enable
+  HTTPS-Only Mode in all windows". Below that you'll see "DNS over HTTPS" where
+  you can choose between "Increased Protection" or "Max Protection". On android,
+  you first have to go to the about Firefox section and tap the Firefox Logo to
+  enable developer settings in order to see the DNS over HTTPS settings. There
+  are ways to do this declaratively as well FYI.
+
+- [Discourse Declare Firefox extensions and settings](https://discourse.nixos.org/t/declare-firefox-extensions-and-settings/36265)
 
 - Check sketchy urls first with
-  [VirusTotal](https://www.virustotal.com/gui/home/url)
+  [VirusTotal](https://www.virustotal.com/gui/home/url) where you can plug the
+  URL into a scanner to ensure it's safe.
+
+Further reading:
+
+- [Cloudflare What is HTTPS](https://cloudflare.com/learning/ssl/what-is-https)
 
 ## Encrypted DNS
 
