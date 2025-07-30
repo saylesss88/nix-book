@@ -681,8 +681,6 @@ log every program execution (`execve`) on a 64-bit architecture.
 It's important to protect your USB ports to prevent BadUSB attacks, data
 exfiltration, unauthorized device access, malware injection, etc.
 
-- [USBGuard](https://usbguard.github.io)
-
 Further Reading:
 
 - [Wikipedia BadUSB](https://en.wikipedia.org/wiki/BadUSB)
@@ -752,7 +750,9 @@ imports = [
 custom.security.doas.enable = true;
 ```
 
-> ❗ NOTE:
+> ❗ NOTE: Many people opt for the less secure `groups = ["wheel"];` in the
+> above configuration instead of `users = ["userName"];` to give wider access,
+> the choice is yours.
 
 ## Firejail
 
@@ -804,24 +804,12 @@ NixOS module.
 
 `nix-mineral` aims to apply a wide array of security configurations, focusing on
 tweaking kernel parameters, system settings, and file permissions to reduce the
-attack surface. Its features include, but are not limited to: hardened `sysctl`
-options, boot parameter adjustments, root login restrictions, privacy
-enhancements (MAC randomization, Whonix machine-id), comprehensive module
-blacklisting, firewall configuration, AppArmor integration, and USBGuard
-enablement.
-
-**Important Considerations:**
+attack surface.
 
 - **Community Project Status:** `nix-mineral` is a community-maintained project
   and is not officially part of the Nixpkgs repository or NixOS documentation.
   Its development status is explicitly stated as "Alpha software," meaning it
   may introduce stability issues or unexpected behavior.
-- **Opinionated Configuration:** It applies a broad set of hardening measures
-  that might impact system functionality or compatibility with certain
-  applications. Users should thoroughly review its source code and test its
-  effects in a non-critical environment before deploying.
-- **Complementary to Core Hardening:** While comprehensive, it's a layer on top
-  of NixOS's inherent security benefits and the `profiles.hardened` option.
 
 For detailed information on `nix-mineral`'s capabilities and current status,
 refer directly to its
