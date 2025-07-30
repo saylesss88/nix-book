@@ -72,6 +72,48 @@ secrets under version control declaratively.
 Protect your secrets, the following guide is on setting up Sops on NixOS:
 [Sops Encrypted Secrets](https://saylesss88.github.io/installation/enc/sops-nix.html)
 
+## Userborn declarative user management
+
+Userborn is the recommended way to manage users if you don't want to rely on the
+Perl script. It aims to eventually replace the Perl script by
+default.--[NixOS Manual](https://nixos.org/manual/stable/#sec-user-management)
+
+Enable it with:
+
+```nix
+# configuration.nix or equivalent
+services.userborn.enable = true;
+```
+
+If you store `/etc` on `tmpfs` or if `/etc` is immutable the following can be
+useful:
+
+```nix
+services.userborn.passwordFilesLocation = "/persist/etc";
+```
+
+Features:
+
+- Create system (UID < 1000) and normal (UID >= 1000) users.
+
+- Update user (password, description (gecos), home directory, shell) and group
+  (members) information.
+
+- Prohibit UID/GID re-use.
+
+- Simple JSON config format.
+
+- Create per-user groups if no explicit primary group is provided.
+
+- Warn about insecure password hashing schemes.
+
+Although you can manage users imperatively, declarative user management enhances
+reproducibility, security, and auditing. Userborn implements immutable users by
+re-mounting the password files read-only. This means that unlike when using the
+Perl script, trying to add a new user (e.g. via `useradd`) will fail right away.
+
+[Userborn Repo](https://github.com/nikstur/userborn)
+
 ## Hardening the Kernel
 
 Given the kernel's central role, it's a frequent target for malicious actors,
