@@ -20,14 +20,14 @@ configuration, and proactive control.
 > performance tradeoffs. Always conduct thorough research, there are no plug and
 > play one size fits all security solutions.
 
-> That said, I don't just pull the information out of my ass or have AI generate
-> it for me. I personally test everything in here and provide links for your
-> convenience to check for yourself. `--Source` means the proceeding paragraph
-> came from `--Source`, you can often click to check for yourself. Much of the
-> information comes directly from the wiki or other respected sources that are
-> also linked in multiple places. Although this is a work in progress, if you
-> use some common sense with a bit of caution you could end up with a more
-> secure NixOS system that fits your needs.
+> That said, I typically write about what I'm implementing myself to deepen
+> understanding and share what works for me. Accuracy is important to me so if
+> you catch a mistake, please let me know so I can fix it. `--Source` means the
+> proceeding paragraph came from `--Source`, you can often click to check for
+> yourself. Much of the information comes directly from the wiki or other
+> respected sources that are also linked in multiple places. If you use some
+> common sense with a bit of caution you could end up with a more secure NixOS
+> system that fits your needs.
 
 Containers and VMs are beyond the scope of this chapter but can also enhance
 security if configured correctly.
