@@ -128,7 +128,30 @@ by default
 I misunderstood the above thread, it means that **if** the file is imported that
 it's enabled by default.
 
+For flakes, you can pass `modulesPath` through `specialArgs`:
+
 ```nix
+# flake.nix
+# ...snip...
+  outputs = {
+    self,
+    nixpkgs,
+    home-manager,
+    treefmt-nix,
+    systems,
+    ...
+  } @ inputs: let
+    system = "x86_64-linux";
+    modulesPath = "${inputs.nixpkgs}/nixos/modules";
+    # ...snip...
+      specialArgs = {
+        inherit inputs host username myLib overlays modulesPath;
+      };
+    # ...snip...
+```
+
+```nix
+# configuration.nix
 { pkgs, modulesPath, ... }:
 
 {
