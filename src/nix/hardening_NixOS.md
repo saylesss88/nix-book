@@ -413,11 +413,9 @@ have used the above parameters and had no issues.
 
 `systemd` is the core "init system" and service manager that controls how
 services, daemons, and basic system processes are started, stopped and
-supervised on modern Linux distributions, including NixOS.
-
-`systemd` is a suite of basic building blocks for a Linux system. It provides a
-system and service manager that runs as `PID 1` and starts the rest of the
-system.
+supervised on modern Linux distributions, including NixOS. It provides a suite
+of basic building blocks for a Linux system as well as a system and service
+manager that runs as `PID 1` and starts the rest of the system.
 
 Because it launches and supervises almost all system services, hardening systemd
 means raising the baseline security of your entire system.
@@ -583,7 +581,8 @@ ssh-keygen -t ed25519 -a 32 -f ~/.ssh/id_ed25519_github_$(date +%Y-%m-%d) -C "SS
 
 - `-t` is for type
 
-- `-a 32` sets the number of KDF rounds
+- `-a 32` sets the number of KDF rounds. The standard is usually good enough,
+  adding extra rounds can make it harder to brute-force.
 
 - `-f` is for filename
 
