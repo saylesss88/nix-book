@@ -594,10 +594,10 @@ The `ed25519` algorithm is significantly faster and more secure when compared to
 `RSA`. You can also specify the key derivation function (KDF) rounds to
 strengthen protection even more.
 
-For example, to generate a strong key for :
+For example, to generate a strong key for MdBook:
 
 ```bash
-ssh-keygen -t ed25519 -a 32 -f ~/.ssh/id_ed25519_github_$(date +%Y-%m-%d) -C "SSH Key for Mdbook"
+ssh-keygen -t ed25519 -a 32 -f ~/.ssh/id_ed25519_github_$(date +%Y-%m-%d) -C "SSH Key for MdBook"
 ```
 
 - `-t` is for type
@@ -614,15 +614,16 @@ ssh-keygen -t ed25519 -a 32 -f ~/.ssh/id_ed25519_github_$(date +%Y-%m-%d) -C "SS
 
 **What’s safe to share?**
 
-    Your public key (used to encrypt files and verify signatures)
+- Your public key (used to encrypt files and verify signatures)
 
-    Your key ID (identifies your key, useful for sharing public keys or configs)
+- Your key ID (identifies your key, useful for sharing public keys or configs)
 
 **What must never be shared?**
 
-    Your private (secret) key, usually in your ~/.gnupg/private-keys-v1.d/ directory.
+- Your private (secret) key, usually in your ~/.gnupg/private-keys-v1.d/
+  directory.
 
-    Your passphrase for your private key.
+- Your passphrase for your private key.
 
 ```nix
 # home.nix or equivalent
@@ -688,6 +689,9 @@ Enable in your `home.nix` or equivalent:
 custom.pgp.enable = true;
 ```
 
+`gpg --full-generate-key` can be used to generate a basic keypair, adding
+`--expert` gives more options and capabilities needed for `gpg-agent`.
+
 To generate a pgp key you can do the following:
 
 ```bash
@@ -697,7 +701,8 @@ gpg --expert --full-generate-key
 - Choose the default (11) ECC (set your own capabilities)
 
 - Choose `A` for Authenticate capabilities, which is the only setting required
-  for this.
+  for this. Additional subkeys may be created for encryption, sign, and/or
+  authentication capabilities.
 
 - Choose (1) Default Curve 25519
 
@@ -818,13 +823,17 @@ Test, these should match:
 
 ```bash
 echo "$SSH_AUTH_SOCK"
+# output
 /run/user/1000/gnupg/d.wft5hcsny4qqq3g31c76534j/S.gpg-agent.ssh
+
 gpgconf --list-dirs agent-ssh-socket
+# output
 /run/user/1000/gnupg/d.wft5hcsny4qqq3g31c76834j/S.gpg-agent.ssh
 ```
 
 ```bash
 ssh-add -L
+# output
 ssh-ed25519 AABBC3NzaC1lZDI1NTE5AAAAIGXwhVokJ6cKgodYT+0+0ZrU0sBqMPPRDPJqFxqRtM+I (none)
 ```
 
