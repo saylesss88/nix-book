@@ -610,6 +610,18 @@ ssh-keygen -t ed25519 -a 32 -f ~/.ssh/id_ed25519_github_$(date +%Y-%m-%d) -C "SS
 </details>
 <summary> ✔️ Click to expand PGP installation and key generation example </summary>
 
+**What’s safe to share?**
+
+    Your public key (used to encrypt files and verify signatures)
+
+    Your key ID (identifies your key, useful for sharing public keys or configs)
+
+**What must never be shared?**
+
+    Your private (secret) key, usually in your ~/.gnupg/private-keys-v1.d/ directory.
+
+    Your passphrase for your private key.
+
 ```nix
 # home.nix or equivalent
 {
@@ -637,7 +649,7 @@ ssh-keygen -t ed25519 -a 32 -f ~/.ssh/id_ed25519_github_$(date +%Y-%m-%d) -C "SS
         pinentryPackage = pkgs.pinentry-gnome3;
       };
 
-      ## Add SSH key
+      ## We will put our keygrip here
       gpg-agent.sshKeys = [];
     };
     home.packages = [pkgs.gnupg];
@@ -816,6 +828,75 @@ ssh-ed25519 AABBC3NzaC1lZDI1NTE5AAAAIGXwhVokJ6cKgodYT+0+0ZrU0sBqMPPRDPJqFxqRtM+I
 
 - Mine shows `(none)` because I left the comment field blank when creating the
   key and doesn't affect functionality.
+
+## Encrypt a File with PGP
+
+### List your keys and get the key ID
+
+```bash
+gpg --list-keys --keyid-format LONG
+```
+
+Example output:
+
+```bash
+pub   rsa4096/ABCDEF1234567890 2024-01-01 [SC]
+uid           [ultimate] Your Name <you@example.com>
+sub   rsa4096/1234567890ABCDEF 2024-01-01 [E]
+```
+
+- The part after the slash on the `pub` line is your key ID (`ABCDEF1234567890`
+  in the example)
+
+- You can also use your email or name to refer to the key in most commands.
+
+### Encrypt a file for yourself
+
+```bash
+echo "This file will be encrypted" > file.txt
+```
+
+```bash
+gpg --encrypt --recipient ABCDEF1234567890 file.txt
+```
+
+```bash
+ls
+│  7 │ file.txt            │ file │     28 B │ now           │
+│  8 │ file.txt.gpg        │ file │    191 B │ now           │
+```
+
+`gpg --encrypt` doesn't modify the original file. It creates a new encrypted
+file by default with `gpg` amended to the filename.
+
+```bash
+gpg --decrypt file.txt.gpg
+gpg: encrypted with cv25519 key, ID 0x4AC131B80CEC833E, created 2025-07-31
+      "GPG Key <sayls8@proton.me>"
+This file will be encrypted
+```
+
+- You will be asked for the passphrase you used when creating the key in order
+  to decrypt the file.
+
+There is much more you can do with PGP beyond simple file encryption:
+
+- Sign files and commits: Prove that content really came from you.
+
+- Encrypt for multiple recipients: Share encrypted data with teammates using
+  their public keys.
+
+- Use smartcards or YubiKeys: Store your private key on hardware for extra
+  security.
+
+- Verify software releases: Check that downloaded files are genuine using the
+  developer’s signature.
+
+- Integrate with Git: Sign tags and commits so others can trust your repository
+  history.
+
+This guide only scratches the surface — once your PGP key and `gpg-agent` are
+set up, these capabilities become easy to add to your workflow.
 
 </details>
 
