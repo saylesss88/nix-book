@@ -134,7 +134,7 @@ For flakes, you could do something like the following:
 { pkgs, inputs, ... }: let
    modulesPath = "${inputs.nixpkgs}/nixos/modules";
 
-{
+in {
   imports = [ "${modulesPath}/profiles/hardened.nix" ];
 }
 ```
