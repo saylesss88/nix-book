@@ -120,38 +120,19 @@ NixOS provides a `hardened` profile that applies a set of security-focused
 kernel and system configurations. This profile is defined in
 [nixpkgs/nixos/modules/profiles/hardened.nix](https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/profiles/hardened.nix)
 
-The following discourse thread explains how the `profiles.hardened` is enabled
-by default
+The following discourse thread explains the use of `profiles.hardened`:
 
 - [Discourse Thread Enabling hardened profile](https://discourse.nixos.org/t/enabling-hardened-profile/63107)
 
 I misunderstood the above thread, it means that **if** the file is imported that
 it's enabled by default.
 
-For flakes, you can pass `modulesPath` through `specialArgs`, hopefully there's
-enough context to see what you need:
-
-```nix
-# flake.nix
-# ...snip...
-  outputs = {
-    self,
-    nixpkgs,
-    home-manager,
-    ...
-  } @ inputs: let
-    system = "x86_64-linux";
-    modulesPath = "${inputs.nixpkgs}/nixos/modules";
-    # ...snip...
-      specialArgs = {
-        inherit inputs host username myLib overlays modulesPath;
-      };
-    # ...snip...
-```
+For flakes, you could do something like the following:
 
 ```nix
 # configuration.nix
-{ pkgs, modulesPath, ... }:
+{ pkgs, inputs, ... }: let
+   modulesPath = "${inputs.nixpkgs}/nixos/modules";
 
 {
   imports = [ "${modulesPath}/profiles/hardened.nix" ];
