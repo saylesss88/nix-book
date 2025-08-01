@@ -572,6 +572,8 @@ others help with compliance for `lynis`.
 
 1. Use normal SSH keys generated with `ssh-keygen`
 
+**OR**
+
 2. Use a GPG key with `gpg-agent` (which acts as your SSH agent).
 
 My setup caused conflicts when enabling `programs.ssh.startAgent` so I chose
