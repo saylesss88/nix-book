@@ -594,6 +594,8 @@ Further reading:
 
 ## Key generation
 
+### ssh-keygen
+
 The `ed25519` algorithm is significantly faster and more secure when compared to
 `RSA`. You can also specify the key derivation function (KDF) rounds to
 strengthen protection even more.
@@ -610,6 +612,8 @@ ssh-keygen -t ed25519 -a 32 -f ~/.ssh/id_ed25519_github_$(date +%Y-%m-%d) -C "SS
   adding extra rounds can make it harder to brute-force.
 
 - `-f` is for filename
+
+**OR**
 
 ## Install GNUPG and gpg-agent for Home Manager
 
