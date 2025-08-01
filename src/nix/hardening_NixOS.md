@@ -768,6 +768,14 @@ Add the keygrip number to your `gpg-agent.sshKeys` and rebuild:
 gpg-agent.sshKeys = ["6BD11826F3845BC222127FE3D22C92C91BB3FB32"];
 ```
 
+- By itself, a keygrip cannot be used to reconstruct your private key. It's
+  derived from the public key material, not from the secret key itself so it's
+  safe to version control. Don't put your keygrip in a public repo if you don't
+  want people to know you use that key for signing/authentication. It's not a
+  security risk, but it leaks a tiny bit of metadata.
+
+- Never version-control your private key files or `.gnupg` contents.
+
 Add the following to your shell config:
 
 ```bash
