@@ -38,10 +38,10 @@ A few simple things you can do to help protect your network:
   to enable developer settings in order to see the DNS over HTTPS settings.
   There are ways to do this declaratively as well FYI.
 
+- [Discourse Declare Firefox extensions and settings](https://discourse.nixos.org/t/declare-firefox-extensions-and-settings/36265)
+
 - In networking, a port is a virtual software-based point where network
   connections start and end. HTTPS uses port 443, and HTTP uses port 80
-
-- [Discourse Declare Firefox extensions and settings](https://discourse.nixos.org/t/declare-firefox-extensions-and-settings/36265)
 
 - Check sketchy urls first with
   [VirusTotal](https://www.virustotal.com/gui/home/url) where you can plug the
