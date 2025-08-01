@@ -570,11 +570,13 @@ others help with compliance for `lynis`.
 > ❗ NOTE: I am going to show two approaches for SSH authentication. You should
 > typically choose **one**:
 
-1. Use normal SSH keys generated with `ssh-keygen`
+1. Use normal SSH keys generated with `ssh-keygen`, this is recommended unless
+   you have a good reason for not using it.
 
 **OR**
 
-2. Use a GPG key with `gpg-agent` (which acts as your SSH agent).
+2. Use a GPG key with `gpg-agent` (which acts as your SSH agent). Complex, and
+   harder to understand in my opinion.
 
 My setup caused conflicts when enabling `programs.ssh.startAgent` so I chose
 `gpg-agent` personally.
@@ -587,6 +589,8 @@ Further reading:
 - [Arch Wiki OpenSSH](https://wiki.archlinux.org/title/OpenSSH)
 
 - [Gentoo GnuPG](https://wiki.gentoo.org/wiki/GnuPG)
+
+- [A Visual Explanation of GPG Subkeys](https://rgoulter.com/blog/posts/programming/2022-06-10-a-visual-explanation-of-gpg-subkeys.html)
 
 ## Key generation
 
@@ -611,6 +615,19 @@ ssh-keygen -t ed25519 -a 32 -f ~/.ssh/id_ed25519_github_$(date +%Y-%m-%d) -C "SS
 
 </details>
 <summary> ✔️ Click to expand PGP installation and key generation example </summary>
+
+**PGP (Pretty Good Privacy)** and **GPG (GNU Privacy Guard)**. While distinct,
+they are deeply interconnected and, for the rest of this section, I'll use the
+terms interchangeably.
+
+**PGP** was the original, groundbreaking software that brought robust public-key
+cryptography to the masses. It set the standard for secure email communication.
+However, PGP later became a commercial product.
+
+To provide a free and open-source alternative that anyone could use and inspect,
+**GPG** was created. Crucially, **GPG** is a complete implementation of the
+OpenPGP standard. This open standard acts as a universal language for encryption
+and digital signatures.
 
 **What’s safe to share?**
 
