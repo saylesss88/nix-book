@@ -810,6 +810,11 @@ gpg-agent.sshKeys = ["6BD11826F3845BC222127FE3D22C92C91BB3FB32"];
   want people to know you use that key for signing/authentication. It's not a
   security risk, but it leaks a tiny bit of metadata.
 
+The following article mentions the keygrip being computed from public elements
+of the key:
+
+- [gnupg-users what-is-a-keygrip](https://gnupg-users.gnupg.narkive.com/q5JtahdV/gpg-agent-what-is-a-keygrip)
+
 - Never version-control your private key files or `.gnupg` contents.
 
 Add the following to your shell config:
