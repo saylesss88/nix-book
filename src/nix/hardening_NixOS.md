@@ -128,7 +128,8 @@ by default
 I misunderstood the above thread, it means that **if** the file is imported that
 it's enabled by default.
 
-For flakes, you can pass `modulesPath` through `specialArgs`:
+For flakes, you can pass `modulesPath` through `specialArgs`, hopefully there's
+enough context to see what you need:
 
 ```nix
 # flake.nix
@@ -137,8 +138,6 @@ For flakes, you can pass `modulesPath` through `specialArgs`:
     self,
     nixpkgs,
     home-manager,
-    treefmt-nix,
-    systems,
     ...
   } @ inputs: let
     system = "x86_64-linux";
@@ -161,6 +160,12 @@ For flakes, you can pass `modulesPath` through `specialArgs`:
 
 - Now after importing the above module into your configuration,
   `profiles.hardened` is enabled by default.
+
+- The PR and other discourse thread were based off of my initial
+  misunderstanding of this being enabled by default. You could add
+  `profiles.hardened.enable = true;` to your configuration to be forwards
+  compatible if they do change the option to default to false but it's currently
+  unnecessary.
 
 You can also use the hardened kernel:
 
