@@ -1128,6 +1128,16 @@ exfiltration, unauthorized device access, malware injection, etc.
 To get a list of your connected USB devices you can use `lsusb` from the
 `usbutils` package.
 
+```bash
+lsusb
+```
+
+To list the devices recognized by USBGuard, run:
+
+```bash
+sudo usbguard list-devices
+```
+
 - [MyNixOS services.usbguard](https://mynixos.com/options/services.usbguard)
 
 ```nix
@@ -1149,6 +1159,7 @@ in {
     services.usbguard = {
       enable = true;
       IPCAllowedUsers = ["root" "your-user"];
+    # presentDevicePolicy refers to how to treat USB devices that are already connected when the daemon starts
       presentDevicePolicy = "allow";
       rules = ''
         # allow `only` devices with mass storage interfaces (USB Mass Storage)
@@ -1169,9 +1180,16 @@ in {
 }
 ```
 
+The above settings can be found in
+[RedHat UsbGuard](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/7/html/security_guide/sec-using-usbguard)
+
 The only `allow` rule is for devices with **only** mass storage interfaces
 (`08:*:*`) i.e., USB Mass storage devices, devices like keyboards and mice
 (which use interface class `03:*:*`) implicitly **not allowed**.
+
+The `reject` rules reject devices with a suspicious combination of interfaces. A
+USB drive that implements a keyboard or a network interface is very suspicious,
+these `reject` rules prevent that.
 
 The `presentDevicePolicy = "allow";` allows any device that is present at daemon
 start up even if they're not explicitly allowed. However, newly plugged in
@@ -1179,6 +1197,10 @@ devices must match an `allow` rule or get denied implicitly. I have a keyboard,
 and mouse usb device connected and it works without uncommenting the line,
 `allow with-interface equals { 03:*:* }` since they were both plugged in at
 daemon start up.
+
+The `presentDevicePolicy` should be one of: # one of `"apply-policy"`(default,
+evaluate the rule set for every present device), `"block"`, `"reject"`, `"keep"`
+(keep whatever state the device is currently in), or `"allow"`
 
 And enable it with the following in your `configuration.nix` or equivalent:
 
