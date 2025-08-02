@@ -567,6 +567,15 @@ others help with compliance for `lynis`.
 
 ## Securing SSH
 
+> **Security information**: Changing SSH configuration settings can
+> significantly impact the security of your system(s). It is crucial to have a
+> solid understanding of what you are doing before making any adjustments. Avoid
+> blindly copying and pasting examples, including those from this Wiki page,
+> without conducting a thorough analysis. Failure to do so may compromise the
+> security of your system(s) and lead to potential vulnerabilities. Take the
+> time to comprehend the implications of your actions and ensure that any
+> changes made are done thoughtfully and with care. --NixOS Wiki
+
 > ❗ NOTE: I am going to show two approaches for SSH authentication. You should
 > typically choose **one**:
 
@@ -943,15 +952,6 @@ This guide only scratches the surface — once your PGP key and `gpg-agent` are
 set up, these capabilities become easy to add to your workflow.
 
 </details>
-
-> **Security information**: Changing SSH configuration settings can
-> significantly impact the security of your system(s). It is crucial to have a
-> solid understanding of what you are doing before making any adjustments. Avoid
-> blindly copying and pasting examples, including those from this Wiki page,
-> without conducting a thorough analysis. Failure to do so may compromise the
-> security of your system(s) and lead to potential vulnerabilities. Take the
-> time to comprehend the implications of your actions and ensure that any
-> changes made are done thoughtfully and with care. --NixOS Wiki
 
 First of all, if you don't use SSH don't enable it in the first place. If you do
 use SSH, it's important to understand what that opens you up to.
