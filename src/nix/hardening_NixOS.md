@@ -617,7 +617,7 @@ ssh-keygen -t ed25519 -a 32 -f ~/.ssh/id_ed25519_github_$(date +%Y-%m-%d) -C "SS
 
 ## Install GNUPG and gpg-agent for Home Manager
 
-</details>
+<details>
 <summary> ✔️ Click to expand PGP installation and key generation example </summary>
 
 **PGP (Pretty Good Privacy)** and **GPG (GNU Privacy Guard)**. While distinct,
