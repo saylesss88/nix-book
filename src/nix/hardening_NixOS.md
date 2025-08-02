@@ -641,13 +641,15 @@ and digital signatures.
 
 **What must never be shared?**
 
-- Your private (secret) key, usually in your ~/.gnupg/private-keys-v1.d/
+- Your private (secret) key, usually in your `~/.gnupg/private-keys-v1.d/`
   directory.
 
 - Your passphrase for your private key.
 
+Home Manager module with `gpg-agent`, `gnupg`, and `pinentry-gnome3`:
+
 ```nix
-# home.nix or equivalent
+# gpg-agent.nix
 {
   config,
   lib,
@@ -707,7 +709,12 @@ Enable in your `home.nix` or equivalent:
 
 ```nix
 # home.nix
+# ... snip ...
+imports = [
+    ./gpg-agent.nix
+];
 custom.pgp.enable = true;
+# ... snip ...
 ```
 
 `gpg --full-generate-key` can be used to generate a basic keypair, adding
