@@ -790,11 +790,7 @@ gpg --armor --export ABCDEF1234567890
 
 2. Paste the exported block.
 
-**Add Keygrip to `sshcontrol` for SSH agent**
-
-A keygrip is a unique identifier for the private part of a GPG key. Unlike key
-IDs, which refer to public keys, keygrips are used by `gpg-agent` to locate and
-authorize private keys for SSH authentication.
+**Add Keygrip to `sshcontrol` for gpg-agent**
 
 ```bash
 gpg --list-secret-keys --with-keygrip --with-colons
