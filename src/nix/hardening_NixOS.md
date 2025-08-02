@@ -293,24 +293,6 @@ left comment warnings. The following guide explains kernel hardening and many of
 the parameters above:
 [Linux Hardening Guide](https://madaidans-insecurities.github.io/guides/linux-hardening.html)
 
-> ❗ If you are ever unsure about a setting that you want to harden and think
-> that it could possibly break your system you can always use a specialisation
-> reversing the action and choose it's generation at boot up. For example, to
-> force-reverse the above settings you could:
->
-> ```nix
-> # configuration.nix
-> specialisation.no-kernel-mods.configuration = {
->    boot.kernel.sysctl = lib.mkForce {}
-> };
-> ```
->
-> - You would see a generation named `no-kernel-mods` in your generation menu at
->   boot up giving you a safety hatch. You shouldn't need it here, but on more
->   sketchy or experimental settings it doesn't hurt to have an out.
-> - You can obviously add whichever parameters you had before you started making
->   changes rather than `lib.mkForce {}`, this is just an example.
-
 ## Hardening Boot Parameters
 
 `boot.kernelParams` can be used to set additional kernel command line arguments
@@ -600,6 +582,8 @@ Further reading:
 - [Gentoo GnuPG](https://wiki.gentoo.org/wiki/GnuPG)
 
 - [A Visual Explanation of GPG Subkeys](https://rgoulter.com/blog/posts/programming/2022-06-10-a-visual-explanation-of-gpg-subkeys.html)
+
+- [Secure Secure Shell](https://blog.stribik.technology/2015/01/04/secure-secure-shell.html)
 
 ## Key generation
 
@@ -1067,7 +1051,7 @@ Further Reading:
 
 - [OpenSSH](https://www.openssh.com/)
 
-- [Wikipedia Fail2Ban](https://en.wikipedia.org/wiki/Fail2ban)
+- [DigitalOcean how fail2ban works](https://www.digitalocean.com/community/tutorials/how-fail2ban-works-to-protect-services-on-a-linux-server)
 
 ## Encrypted Secrets
 
@@ -1122,9 +1106,26 @@ log every program execution (`execve`) on a 64-bit architecture.
 It's important to protect your USB ports to prevent BadUSB attacks, data
 exfiltration, unauthorized device access, malware injection, etc.
 
+- [MyNixOS services.usbguard](https://mynixos.com/options/services.usbguard)
+
+> ❗ If you are ever unsure about a setting that you want to harden and think
+> that it could possibly break your system you can always use a specialisation
+> reversing the action and choose it's generation at boot up. For example, to
+> force-reverse the above settings you could:
+>
+> ```nix
+> # configuration.nix
+> specialisation.no-usbguard.configuration = {
+>     services.usbguard.enable = lib.mkForce false;
+> };
+> ```
+>
+> - This is a situation where I recommend this, it's easy to lock yourself out
+>   of your keyboard, mouse, etc. when trying to configure this.
+
 Further Reading:
 
-- [Wikipedia BadUSB](https://en.wikipedia.org/wiki/BadUSB)
+- [NinjaOne BadUSB](https://www.ninjaone.com/it-hub/endpoint-security/what-is-badusb/)
 
 - [USBGuard](https://usbguard.github.io/)
 
