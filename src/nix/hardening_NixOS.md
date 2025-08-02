@@ -432,7 +432,6 @@ default as of yet. To set `dbus-broker` as the default:
 ```nix
   users.groups.netdev = {};
   services = {
-    usbguard.enable = false;
     dbus.implementation = "broker";
     logrotate.enable = true;
     journald = {
@@ -1126,7 +1125,70 @@ log every program execution (`execve`) on a 64-bit architecture.
 It's important to protect your USB ports to prevent BadUSB attacks, data
 exfiltration, unauthorized device access, malware injection, etc.
 
+To get a list of your connected USB devices you can use `lsusb` from the
+`usbutils` package.
+
 - [MyNixOS services.usbguard](https://mynixos.com/options/services.usbguard)
+
+```nix
+# usbguard.nix
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}: let
+  inherit (lib) mkIf;
+  cfg = config.custom.security.usbguard;
+in {
+  options.custom.security.usbguard = {
+    enable = lib.mkEnableOption "usbguard";
+  };
+
+  config = mkIf cfg.enable {
+    services.usbguard = {
+      enable = true;
+      IPCAllowedUsers = ["root" "your-user"];
+      presentDevicePolicy = "allow";
+      rules = ''
+        # allow `only` devices with mass storage interfaces (USB Mass Storage)
+        allow with-interface equals { 08:*:* }
+        # allow mice and keyboards
+        # allow with-interface equals { 03:*:* }
+
+        # Reject devices with suspicious combination of interfaces
+        reject with-interface all-of { 08:*:* 03:00:* }
+        reject with-interface all-of { 08:*:* 03:01:* }
+        reject with-interface all-of { 08:*:* e0:*:* }
+        reject with-interface all-of { 08:*:* 02:*:* }
+      '';
+    };
+
+    environment.systemPackages = [pkgs.usbguard];
+  };
+}
+```
+
+The only `allow` rule is for devices with **only** mass storage interfaces
+(`08:*:*`) i.e., USB Mass storage devices, devices like keyboards and mice
+(which use interface class `03:*:*`) implicitly **not allowed**.
+
+The `presentDevicePolicy = "allow";` allows any device that is present at daemon
+start up even if they're not explicitly allowed. However, newly plugged in
+devices must match an `allow` rule or get denied implicitly. I have a keyboard,
+and mouse usb device connected and it works without uncommenting the line,
+`allow with-interface equals { 03:*:* }` since they were both plugged in at
+daemon start up.
+
+And enable it with the following in your `configuration.nix` or equivalent:
+
+```nix
+# configuration.nix
+imports = [
+    usbguard.nix
+];
+custom.security.usbguard.enable = true;
+```
 
 > ❗ If you are ever unsure about a setting that you want to harden and think
 > that it could possibly break your system you can always use a specialisation
