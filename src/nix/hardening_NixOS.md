@@ -117,17 +117,29 @@ making robust hardening essential.
 - [NixOS Wiki Linux Kernel](https://wiki.nixos.org/wiki/Linux_kernel)
 
 NixOS provides a `hardened` profile that applies a set of security-focused
-kernel and system configurations. This profile is defined in
-[nixpkgs/nixos/modules/profiles/hardened.nix](https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/profiles/hardened.nix)
+kernel and system configurations.
 
 The following discourse thread explains the use of `profiles.hardened`:
 
 - [Discourse Thread Enabling hardened profile](https://discourse.nixos.org/t/enabling-hardened-profile/63107)
 
 I misunderstood the above thread, it means that **if** the file is imported that
-it's enabled by default.
+it's enabled by default. If you look at `profiles/hardened.nix` you'll see that
+it defaults to true:
 
-For flakes, you could do something like the following:
+```nix
+# nixpkgs/nixos/modules/profiles/hardened.nix
+# ... snip ...
+{
+  options.profiles.hardened = mkEnableOption "hardened" // {
+    default = true;
+    example = false;
+  };
+# ... snip ...
+```
+
+For flakes, you could do something like the following in your
+`configuration.nix` or equivalent:
 
 ```nix
 # configuration.nix
@@ -136,17 +148,27 @@ For flakes, you could do something like the following:
 
 in {
   imports = [ "${modulesPath}/profiles/hardened.nix" ];
+
 }
 ```
 
 - Now after importing the above module into your configuration,
   `profiles.hardened` is enabled by default.
 
-- The PR and other discourse thread were based off of my initial
-  misunderstanding of this being enabled by default. You could add
-  `profiles.hardened.enable = true;` to your configuration to be forwards
-  compatible if they do change the option to default to false but it's currently
-  unnecessary.
+- There is a proposal to remove it completely, so you may want to think twice
+  before enabling it and read the following
+  [Discourse Thread](https://discourse.nixos.org/t/proposal-to-deprecate-the-hardened-profile/63081)
+  Talking about removing it completely because of reasons listed in the above
+  thread.
+
+- [PR #383438](https://github.com/NixOS/nixpkgs/pull/383438)
+
+- If you do decide to use the hardened profile, if you decide to continue
+  hardening your system you need to know exactly what `profiles.hardened`
+  enables/disables so you avoid duplicate entries and conflicts. Check
+  [hardened.nix](https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/profiles/hardened.nix).
+
+## Choosing the Hardened Kernel
 
 You can also use the hardened kernel:
 
@@ -183,7 +205,9 @@ zcat /proc/config.gz | grep CONFIG_HARDENED_USERCOPY
 zcat /proc/config.gz | grep CONFIG_STACKPROTECTOR
 ```
 
-## Using sysctl on an existing kernel
+## OR Harden your existing Kernel
+
+If you chose the hardened kernel don't follow this section.
 
 **Or** you can harden the kernel you're using `sysctl`, the following parameters
 come from the madaidans-insecurities guide with a few optimizations:
