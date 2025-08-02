@@ -1207,7 +1207,7 @@ And enable it with the following in your `configuration.nix` or equivalent:
 ```nix
 # configuration.nix
 imports = [
-    usbguard.nix
+    ./usbguard.nix
 ];
 custom.security.usbguard.enable = true;
 ```
