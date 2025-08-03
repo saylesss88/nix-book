@@ -1044,6 +1044,9 @@ algorithms, and best practices:
 }
 ```
 
+- Much of the OpenSSH hardening settings adapted to NixOS came from:
+  [ryanseipp hardening-nixos](https://ryanseipp.com/post/hardening-nixos/)
+
 Fail2Ban is an intrusion prevention software framework. It's designed to prevent
 brute-force attacks by scanning log files for suspicious activity, such as
 repeated failed login attempts.
@@ -1382,3 +1385,7 @@ refer directly to its
 - [madaidans Linux Hardening Guide](https://madaidans-insecurities.github.io/guides/linux-hardening.html)
 
 - [Hardening-Linux-Servers](https://cybersecuritynews.com/hardening-linux-servers)
+
+- [linux-audit Linux Server hardening best practices](https://linux-audit.com/linux-server-hardening-most-important-steps-to-secure-systems/)
+
+- [linux-audit Linux security guide extended](https://linux-audit.com/linux-security-guide-extended-version/)
