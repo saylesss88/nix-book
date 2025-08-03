@@ -40,6 +40,8 @@ A few simple things you can do to help protect your network:
 
 - [Discourse Declare Firefox extensions and settings](https://discourse.nixos.org/t/declare-firefox-extensions-and-settings/36265)
 
+- [Cloudflare What is HTTPS](https://cloudflare.com/learning/ssl/what-is-https)
+
 - In networking, a port is a virtual software-based point where network
   connections start and end. HTTPS uses port 443, and HTTP uses port 80
 
@@ -51,9 +53,44 @@ A few simple things you can do to help protect your network:
   a QR scan checker to ensure the code isn't malicious. There are different apps
   for this on Android and IOS.
 
-Further reading:
+### Choosing a secure Browser
 
-- [Cloudflare What is HTTPS](https://cloudflare.com/learning/ssl/what-is-https)
+On a hardened Linux system, the browser is most often the weakest link exposed
+to the internet, and so security, privacy, and anti-tracking features of
+browsers are now as important, or even more important than platform-level
+protections.
+
+Tor routes your internet traffic through a global volunteer-operated network,
+masking your IP address and activities from local observers, ISPs, websites, and
+surveillance systems. This helps you protect personal information and maintain
+anonymity when browsing, communicating, or using online services.
+
+- [Tor on NixOS](https://wiki.nixos.org/wiki/Tor)
+
+  - [Tor Browser User Manual](https://tb-manual.torproject.org/)
+
+  - [How to Use Tor](https://ssd.eff.org/module/how-to-use-tor)
+
+SearXNG is a privacy-respecting metasearch engine that aggregates results from
+various search services, such as Google, DuckDuckGo, etc without tracking you or
+profiling your searches.
+
+- [SearXNG on NixOS](https://wiki.nixos.org/wiki/SearXNG)
+
+  - [Welcome to SearXNG](https://docs.searxng.org/)
+
+If the above browsers aren't for you, you can harden the browser you're using
+now. I personally still like Firefox and have hardened it for daily use while
+using Tor in situations where I want more privacy.
+
+- [Firefox Hardening Guide](https://brainfucksec.github.io/firefox-hardening-guide)
+
+- [STIG Firefox Hardening](https://simeononsecurity.com/guides/enhance-firefox-security-configuring-guide/)
+
+- [Mozilla Firefox Security Technical Implementation Guide](https://stigviewer.com/stigs/mozilla_firefox)
+  The STIG for Mozilla Firefox (Security Technical Implementation Guide) is a
+  set of security configuration standards developed by the U.S. Department of
+  Defense.
 
 ## Encrypted DNS
 
@@ -251,6 +288,19 @@ speak DNS with the outside world, and that all other DNS requests from any other
 process are blocked unless they're to `127.0.0.1` (our local proxy). This is a
 robust policy against both DNS leaks and local compromise.
 
-Review listening ports: After each rebuild, use `ss -tlpn` or `netstat` to see
-which services are accepting connections. Close or firewall anything
+Review listening ports: After each rebuild, use `ss -tlpn`, `nmap` or `netstat`
+to see which services are accepting connections. Close or firewall anything
 unnecessary.
+
+## OpenSnitch
+
+- [NixOS Wiki OpenSnitch](https://wiki.nixos.org/wiki/OpenSnitch)
+
+[Opensnitch](https://github.com/evilsocket/opensnitch) is an open-source
+application firewall that focuses on monitoring and controlling outgoing network
+connections on a per-application basis.
+
+This can be used to block apps from accessing the internet that shouldn't need
+to (i.e., block telemetry and more). Opensnitch will report that the app has
+attempted to make an outbound internet connection and block it or allow it based
+on the rules you set.
