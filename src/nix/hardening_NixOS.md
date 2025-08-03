@@ -1307,6 +1307,11 @@ custom.security.doas.enable = true;
 
 - [NixOS Wiki Firejail](https://wiki.nixos.org/wiki/Firejail)
 
+- [Arch Wiki Firejail](https://wiki.archlinux.org/title/Firejail)
+
+> ❗ WARNING: Running untrusted code is never safe, sandboxing cannot change
+> this. --Arch Wiki
+
 Firejail is a SUID program that reduces the risk of security breaches by
 restricting the running environment of untrusted applications using
 [Linux namespaces](https://lwn.net/Articles/531114/) and
@@ -1389,3 +1394,7 @@ refer directly to its
 - [linux-audit Linux Server hardening best practices](https://linux-audit.com/linux-server-hardening-most-important-steps-to-secure-systems/)
 
 - [linux-audit Linux security guide extended](https://linux-audit.com/linux-security-guide-extended-version/)
+
+- [Arch Wiki Security](https://wiki.archlinux.org/title/Security)
+
+- [Gentoo Security_Handbook Concepts](https://wiki.gentoo.org/wiki/Security_Handbook/Concepts)
