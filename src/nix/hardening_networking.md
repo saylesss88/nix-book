@@ -85,6 +85,8 @@ anonymity when browsing, communicating, or using online services.
 
   - [How to Use Tor](https://ssd.eff.org/module/how-to-use-tor)
 
+  - [Cool Graphic Showing Secure Connections with Tor](https://torproject.github.io/manual/secure-connections/)
+
 #### SearXNG
 
 SearXNG is a privacy-respecting metasearch engine that aggregates results from
