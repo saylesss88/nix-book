@@ -60,24 +60,28 @@ to the internet, and so security, privacy, and anti-tracking features of
 browsers are now as important, or even more important than platform-level
 protections.
 
+#### Tor Browser
+
 Tor routes your internet traffic through a global volunteer-operated network,
 masking your IP address and activities from local observers, ISPs, websites, and
 surveillance systems. This helps you protect personal information and maintain
 anonymity when browsing, communicating, or using online services.
 
 - [Tor on NixOS](https://wiki.nixos.org/wiki/Tor)
-
   - [Tor Browser User Manual](https://tb-manual.torproject.org/)
 
   - [How to Use Tor](https://ssd.eff.org/module/how-to-use-tor)
+
+#### SearXNG
 
 SearXNG is a privacy-respecting metasearch engine that aggregates results from
 various search services, such as Google, DuckDuckGo, etc without tracking you or
 profiling your searches.
 
 - [SearXNG on NixOS](https://wiki.nixos.org/wiki/SearXNG)
-
   - [Welcome to SearXNG](https://docs.searxng.org/)
+
+#### Hardening Other Browsers
 
 If the above browsers aren't for you, you can harden the browser you're using
 now. I personally still like Firefox and have hardened it for daily use while
@@ -91,6 +95,18 @@ using Tor in situations where I want more privacy.
   The STIG for Mozilla Firefox (Security Technical Implementation Guide) is a
   set of security configuration standards developed by the U.S. Department of
   Defense.
+
+**LibreWolf** is an open-source fork of Firefox with a strong focus on privacy,
+security, and user freedom. LibreWolf enables always HTTPS, includes
+uBlockOrigin, and only includes privacy focused search engines by default among
+other strong defaults. Also, since LibreWolf is a fork of Firefox most of the
+other hardening options work for it as well.
+
+- [NixOS Wiki LibreWolf](https://wiki.nixos.org/wiki/Librewolf), the options in
+  the wiki make it less secure but more compatible with common websites.
+
+- [LibreWolf Features](https://librewolf.net/docs/features/) You still need to
+  enable DNS over HTTPS through privacy settings.
 
 ## Encrypted DNS
 

@@ -36,7 +36,28 @@ security if configured correctly.
 
 **Audit and remove local user accounts that are no longer needed**: Regularly
 review and remove unused or outdated accounts to reduce your system’s attack
-surface, improve compliance, and ensure only authorized users have access.
+surface, improve compliance, and ensure only authorized users have access. The
+following setting ensures that user (and group) management is fully declarative:
+
+```nix
+# configuration.nix
+# All users must be declared
+users.mutableUsers = false;
+```
+
+With `users.mutableUsers = false;`, all non-declaratively managed (imperative)
+user management including creation, modification, or password changes will fail
+or be reset on rebuild. User and group definitions become entirely controlled by
+your system configuration for maximum reproducibility and security. If you need
+to add, remove, or modify users, you must do so in your `configuration.nix` and
+rebuild the system.
+
+> NOTE: There is mention of making
+> [userborn](https://github.com/nikstur/userborn) the default for NixOS in the
+> future. It can be more secure by prohibiting UID/GID re-use and giving
+> warnings about insecure password hashing schemes. From the userborn docs all
+> that is clear is how to install it, I see no mention on how to use it or how
+> to convert from declarative NixOS users to userborn.
 
 **Only install, enable, and run what is needed**: Disable or uninstall
 unnecessary software and services to minimize potential vulnerabilities. Take
@@ -955,6 +976,8 @@ This guide only scratches the surface — once your PGP key and `gpg-agent` are
 set up, these capabilities become easy to add to your workflow.
 
 </details>
+
+### OpenSSH Server
 
 First of all, if you don't use SSH don't enable it in the first place. If you do
 use SSH, it's important to understand what that opens you up to.
