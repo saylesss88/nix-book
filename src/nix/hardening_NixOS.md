@@ -59,6 +59,32 @@ rebuild the system.
 > that is clear is how to install it, I see no mention on how to use it or how
 > to convert from declarative NixOS users to userborn.
 
+You can also specify which users or groups are allowed to do anything with the
+Nix daemon and Nix package manager. The following setting will only allow
+members of the `wheel` group access to commands that require elevated
+privileges, such as installing or modifying system-wide packages:
+
+```nix
+# configuration.nix
+{ ... }:
+{
+  nix.allowedUsers = [ "@wheel" ];
+}
+```
+
+**OR** Only allow the `root` user:
+
+```nix
+# configuration.nix
+{ ... }:
+{
+  nix.allowedUsers = [ "root" ];
+}
+```
+
+This is more restrictive and much less convenient, think twice before going this
+restrictive.
+
 **Only install, enable, and run what is needed**: Disable or uninstall
 unnecessary software and services to minimize potential vulnerabilities. Take
 advantage of NixOS’s easy package management and minimalism to keep your system
