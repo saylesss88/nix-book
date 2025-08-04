@@ -53,6 +53,25 @@ A few simple things you can do to help protect your network:
   a QR scan checker to ensure the code isn't malicious. There are different apps
   for this on Android and IOS.
 
+- Don't use your browsers "remember my password" function, disable and delete
+  the history. Use a password manager instead.
+
+- If you need to enter your credentials for something, don't click use Google or
+  FaceBook to create the account. Doing so opens up all of those services if one
+  of them gets compromised. Take the extra time to create an account with it's
+  own unique password.
+
+- Use passkeys to store complex passwords that can be opened with your
+  fingerprint.
+
+- For every single possible option you should enable 2 factor authentication.
+  The days of getting by with the bare minimum are gone.
+
+I never liked the argument, "I'm not doing anything illegal so I don't care if
+they spy on me and make a profit off of my data". Regardless of what you do
+online, I think it's your business and yours alone. Why make it easy on them if
+you can limit your exposure?
+
 ### Choosing a secure Browser
 
 On a hardened Linux system, the browser is most often the weakest link exposed
@@ -107,6 +126,33 @@ other hardening options work for it as well.
 
 - [LibreWolf Features](https://librewolf.net/docs/features/) You still need to
   enable DNS over HTTPS through privacy settings.
+
+### Virtual Private Networks (VPNs)
+
+A **VPN** (Virtual Private Network) encrypts your Internet connection and routes
+your traffic through a VPN provider’s servers, masking your IP address from
+local network observers, ISPs, and websites. Using a VPN can prevent your ISP or
+local Wi-Fi owner from tracking what sites you visit (they only see a connection
+to the VPN), and can help circumvent some regional restrictions or filtering.
+
+However, VPNs simply shift your trust: Instead of your ISP seeing your activity,
+your VPN provider can, so you must trust their privacy policies and
+infrastructure. Quality and privacy protections vary widely from one VPN company
+to another.
+
+You can use a VPN with Tor, but it's not recommended unless you're an advanced
+user who knows how to configure both in a way that doesn't compromise your
+privacy.
+
+**Popular VPNs on NixOS**
+
+- [Mullvad VPN](https://wiki.nixos.org/wiki/Mullvad_VPN)
+
+- [WireGuard VPN](https://wiki.nixos.org/wiki/WireGuard)
+
+- [Tailscale](https://wiki.nixos.org/wiki/Tailscale)
+
+- [OpenVPN](https://wiki.nixos.org/wiki/OpenVPN)
 
 ## Encrypted DNS
 
