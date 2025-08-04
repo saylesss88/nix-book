@@ -68,7 +68,7 @@ privileges, such as installing or modifying system-wide packages:
 # configuration.nix
 { ... }:
 {
-  nix.allowedUsers = [ "@wheel" ];
+  nix.settings.allowed-users = [ "@wheel" ];
 }
 ```
 
