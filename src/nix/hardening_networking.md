@@ -30,42 +30,34 @@ A few simple things you can do to help protect your network:
 - HTTPS encrypts the data between a web browser and a website. This is
   especially important for services that need logging into such as a bank
   account, email, etc. Most browsers either have a setting or an extension to
-  enforce HTTPS everywhere. For example with Firefox, you go to "Settings", then
-  "Privacy & Security" and scroll down to HTTPS-Only Mode and choose "Enable
-  HTTPS-Only Mode in all windows". Below that you'll see "DNS over HTTPS" where
-  you can choose between "Increased Protection" or "Max Protection". On android,
-  you first have to go to the "About Firefox" section and tap the Firefox Logo
-  to enable developer settings in order to see the DNS over HTTPS settings.
-  There are ways to do this declaratively as well FYI.
+  enforce HTTPS everywhere, use it.
 
 - [Discourse Declare Firefox extensions and settings](https://discourse.nixos.org/t/declare-firefox-extensions-and-settings/36265)
 
 - [Cloudflare What is HTTPS](https://cloudflare.com/learning/ssl/what-is-https)
 
-- In networking, a port is a virtual software-based point where network
-  connections start and end. HTTPS uses port 443, and HTTP uses port 80
-
 - Check sketchy urls first with
   [VirusTotal](https://www.virustotal.com/gui/home/url) where you can plug the
   URL into a scanner to ensure it's safe.
+
+- Take potentially dangerous PDFs, office documents, or images and convert them
+  to a safe PDF with [dangerzone](https://github.com/freedomofpress/dangerzone)
 
 - This may be unrelated but don't scan random QR codes either, you can download
   a QR scan checker to ensure the code isn't malicious. There are different apps
   for this on Android and IOS.
 
 - Don't use your browsers "remember my password" function, disable and delete
-  the history. Use a password manager instead.
+  the history. Use a password manager instead. (security not usability)
 
 - If you need to enter your credentials for something, don't click use Google or
   FaceBook to create the account. Doing so opens up all of those services if one
   of them gets compromised. Take the extra time to create an account with it's
-  own unique password.
+  own unique password and user.
 
-- Use passkeys to store complex passwords that can be opened with your
-  fingerprint.
+- Use passkeys to store complex passwords.
 
-- For every single possible option you should enable 2 factor authentication.
-  The days of getting by with the bare minimum are gone.
+- Use 2 factor authentication everywhere possible.
 
 I never liked the argument, "I'm not doing anything illegal so I don't care if
 they spy on me and make a profit off of my data". Regardless of what you do
@@ -88,6 +80,8 @@ anonymity when browsing, communicating, or using online services.
 
 - [Tor on NixOS](https://wiki.nixos.org/wiki/Tor)
   - [Tor Browser User Manual](https://tb-manual.torproject.org/)
+
+  - [Tor staying-anonymous](https://support.torproject.org/faq/staying-anonymous/)
 
   - [How to Use Tor](https://ssd.eff.org/module/how-to-use-tor)
 
