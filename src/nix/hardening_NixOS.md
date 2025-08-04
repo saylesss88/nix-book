@@ -32,6 +32,13 @@ configuration, and proactive control.
 Containers and VMs are beyond the scope of this chapter but can also enhance
 security if configured correctly.
 
+It's crucial to **document every change** you make. By creating smaller,
+feature-complete commits, each with a descriptive message, you're building a
+clear history. This approach makes it far simpler to revert a breaking change
+and quickly identify what went wrong. Over time, this discipline allows you to
+create security-focused checklists and ensure all angles are covered, building a
+more robust and secure system.
+
 ## Best Practices
 
 **Audit and remove local user accounts that are no longer needed**: Regularly
@@ -78,7 +85,7 @@ privileges, such as installing or modifying system-wide packages:
 # configuration.nix
 { ... }:
 {
-  nix.allowedUsers = [ "root" ];
+  nix.settings.allowed-users = [ "root" ];
 }
 ```
 

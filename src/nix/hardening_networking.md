@@ -112,7 +112,8 @@ now. For example, Firefox has a lot of documentation on hardening:
 - [Mozilla Firefox Security Technical Implementation Guide](https://stigviewer.com/stigs/mozilla_firefox)
   The STIG for Mozilla Firefox (Security Technical Implementation Guide) is a
   set of security configuration standards developed by the U.S. Department of
-  Defense.
+  Defense. They are created by the Defense Information Systems Agency (DISA) to
+  secure and harden DoD information systems and software.
 
 **LibreWolf** is an open-source fork of Firefox with a strong focus on privacy,
 security, and user freedom. LibreWolf enables always HTTPS, includes
