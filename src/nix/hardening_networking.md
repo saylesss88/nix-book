@@ -103,8 +103,7 @@ profiling your searches.
 #### Hardening Other Browsers
 
 If the above browsers aren't for you, you can harden the browser you're using
-now. I personally still like Firefox and have hardened it for daily use while
-using Tor in situations where I want more privacy.
+now. For example, Firefox has a lot of documentation on hardening:
 
 - [Firefox Hardening Guide](https://brainfucksec.github.io/firefox-hardening-guide)
 
@@ -122,7 +121,7 @@ other strong defaults. Also, since LibreWolf is a fork of Firefox most of the
 other hardening options work for it as well.
 
 - [NixOS Wiki LibreWolf](https://wiki.nixos.org/wiki/Librewolf), the options in
-  the wiki make it less secure but more compatible with common websites.
+  the wiki make it less secure and aren't recommended settings to use.
 
 - [LibreWolf Features](https://librewolf.net/docs/features/) You still need to
   enable DNS over HTTPS through privacy settings.
@@ -146,7 +145,8 @@ privacy.
 
 **Popular VPNs on NixOS**
 
-- [Mullvad VPN](https://wiki.nixos.org/wiki/Mullvad_VPN)
+- [Mullvad VPN](https://wiki.nixos.org/wiki/Mullvad_VPN) Mullvad VPN uses
+  WireGuard under the hood and only works if `systemd-resolvd` is enabled.
 
 - [WireGuard VPN](https://wiki.nixos.org/wiki/WireGuard)
 
