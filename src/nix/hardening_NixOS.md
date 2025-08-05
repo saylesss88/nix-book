@@ -240,7 +240,8 @@ boot.kernelPackages = pkgs.linux_6_6_hardened;
 You can inspect
 [nixpkgs/pkgs/os-specific/linux/kernel/hardened/patches.json](https://github.com/NixOS/nixpkgs/blob/master/pkgs/os-specific/linux/kernel/hardened/patches.json)
 to see the metadata of the patches that are applied. You can then follow the
-links in the `.json` file to see the patches.
+links in the `.json` file to see the patches. When I did this, the browser
+opened up Thunar so I could save the file and then review it.
 
 > ❗ NOTE: Always check the `linux-kernels.nix` file for the latest available
 > versions, as older kernels are regularly removed from Nixpkgs.
@@ -276,8 +277,12 @@ zcat /proc/config.gz | grep CONFIG_STACKPROTECTOR
 
 ## Further Hardening with sysctl
 
+My understanding here has changed, the `sysctl` hardening settings further
+reinforce kernel-level protections. The hardened kernel includes security
+patches and stricter defaults, but it doesn't cover all runtime tunables.
+
 You can also harden the kernel you're using `sysctl`, the following parameters
-come from the madaidans-insecurities guide with a few optimizations:
+come from the `madaidans-insecurities` guide with a few optimizations:
 
 ```nix
   boot.kernel.sysctl = {
