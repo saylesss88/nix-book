@@ -601,6 +601,11 @@ sudo lynis audit system
   - Malware scanner        [V]
 ```
 
+- The "Lynis hardening index" is an overall impression on how well a system is
+  hardened. However, this is just an indicator on measures taken - not a
+  percentage of how safe a system might be. A score over 75 typically indicates
+  a system with more than average safety measures implemented.
+
 - Lynis will give you more recommendations for securing your system as well.
 
 Example cron job for `chkrootkit`:

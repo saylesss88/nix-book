@@ -42,20 +42,28 @@ A few simple things you can do to help protect your network:
 
 - Take potentially dangerous PDFs, office documents, or images and convert them
   to a safe PDF with [dangerzone](https://github.com/freedomofpress/dangerzone)
+  Be especially careful with torrents.
 
 - This may be unrelated but don't scan random QR codes either, you can download
   a QR scan checker to ensure the code isn't malicious. There are different apps
   for this on Android and IOS.
 
-- Don't use your browsers "remember my password" function, disable and delete
-  the history. Use a password manager instead. (security not usability)
+- Don't use your browsers "remember my password" or "Autofill" functions,
+  disable and delete the history. Use a password manager instead. (security not
+  usability)
 
 - If you need to enter your credentials for something, don't click use Google or
   FaceBook to create the account. Doing so opens up all of those services if one
   of them gets compromised. Take the extra time to create an account with it's
   own unique password and user.
 
-- Use passkeys to store complex passwords.
+- Delete cookies and site data when the browser is closed. (security not
+  usability). I believe this is the default on LibreWolf, I recently started
+  using this and it's not too bad with bitwarden.
+
+- Use passkeys to store complex passwords, use your password manager to generate
+  unique and complex passphrases/passwords for you and save them right away.
+  Make sure to follow the next suggestion for your password manager.
 
 - Use 2 factor authentication everywhere possible.
 
@@ -147,8 +155,11 @@ in {
     programs.librewolf = {
       enable = true;
       policies = {
+        # A bit annoying
         DontCheckDefaultBrowser = true;
+        # Pocket is insecure according to DoD
         DisablePocket = true;
+        # No imperative updates
         DisableAppUpdate = true;
       };
       settings = {
@@ -234,8 +245,8 @@ The `xdg` settings at the end make LibreWolf the defaults for what is listed.
 
 Thanks to `JosefKatic` for putting the above settings in NixOS format.
 
-There is more hardening that can be done but this should be a good starting
-point for a hardened version of LibreWolf.
+There are more hardening parameters that can be set but this should be a good
+starting point for a hardened version of LibreWolf.
 
 </details>
 
@@ -354,12 +365,13 @@ in {
     enable = true;
     # See https://github.com/DNSCrypt/dnscrypt-proxy/blob/master/dnscrypt-proxy/example-dnscrypt-proxy.toml
     settings = {
+      # See https://github.com/DNSCrypt/dnscrypt-resolvers/blob/master/v3/public-resolvers.md
       sources.public-resolvers = {
         urls = [
           "https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/public-resolvers.md"
           "https://download.dnscrypt.info/resolvers-list/v3/public-resolvers.md"
         ];
-        minisign_key = "RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3"; # See https://github.com/DNSCrypt/dnscrypt-resolvers/blob/master/v3/public-resolvers.md
+        minisign_key = "RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3";
         cache_file = "/var/lib/${StateDirectory}/public-resolvers.md";
       };
 
@@ -368,6 +380,7 @@ in {
       block_ipv6 = ! hasIPv6Internet;
       blocked_names.blocked_names_file = blocklist_txt;
       require_dnssec = true;
+      # Logs can get large very quickly...
       require_nolog = false;
       require_nofilter = true;
 
@@ -384,6 +397,7 @@ in {
 ```
 
 ```bash
+# You should see that dnscrypt-proxy chooses the Server with the lowest initial latency
 sudo systemctl status dnscrypt-proxy2
 # verify that dnscrypt-proxy is listening
 sudo ss -lnp | grep 53
