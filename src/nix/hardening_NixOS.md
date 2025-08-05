@@ -224,11 +224,26 @@ in {
 
 ## Choosing the Hardened Kernel
 
-You can also use the hardened kernel:
+The `linuxPackages_latest_hardened` attribute has been deprecated. If you want
+to use a hardened kernel, you must specify a versioned package that is currently
+supported.
+
+You can find the available hardened kernel packages by searching
+[pkgs/top-level/linux-kernels.nix](https://github.com/NixOS/nixpkgs/blob/master/pkgs/top-level/linux-kernels.nix)
+
+For example, to use a specific version, you would configure it like this:
 
 ```nix
-boot.kernelPackages = pkgs.linuxPackages_latest_hardened;
+boot.kernelPackages = pkgs.linux_6_6_hardened;
 ```
+
+You can inspect
+[nixpkgs/pkgs/os-specific/linux/kernel/hardened/patches.json](https://github.com/NixOS/nixpkgs/blob/master/pkgs/os-specific/linux/kernel/hardened/patches.json)
+to see the metadata of the patches that are applied. You can then follow the
+links in the `.json` file to see the patches.
+
+> ❗ NOTE: Always check the `linux-kernels.nix` file for the latest available
+> versions, as older kernels are regularly removed from Nixpkgs.
 
 `sysctl` is a tool that allows you to view or modify kernel settings and
 enable/disable different features.
@@ -259,11 +274,9 @@ zcat /proc/config.gz | grep CONFIG_HARDENED_USERCOPY
 zcat /proc/config.gz | grep CONFIG_STACKPROTECTOR
 ```
 
-## OR Harden your existing Kernel
+## Further Hardening with sysctl
 
-If you chose the hardened kernel don't follow this section.
-
-**Or** you can harden the kernel you're using `sysctl`, the following parameters
+You can also harden the kernel you're using `sysctl`, the following parameters
 come from the madaidans-insecurities guide with a few optimizations:
 
 ```nix
