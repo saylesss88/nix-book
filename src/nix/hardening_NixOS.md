@@ -98,9 +98,9 @@ advantage of NixOS’s easy package management and minimalism to keep your syste
 lean and secure.
 
 **Avoid permanently installing temporary tools**: Use tools like `nix-shell`,
-`comma`, and `nix-direnv` to test or run software temporarily. This prevents
-clutter and reduces potential risks from unused software lingering on the
-system.
+`comma`, `devShells` and `nix-direnv` to test or run software temporarily. This
+prevents clutter and reduces potential risks from unused software lingering on
+the system.
 
 **Update regularly**: Keep your system and software up to date to receive the
 latest security patches. Delaying updates leaves known vulnerabilities open to
@@ -108,8 +108,8 @@ exploitation.
 
 **Apply the Principle of Least Privilege**: Never run tools or services as root
 unless absolutely necessary. Create dedicated users and groups with the minimum
-required permissions to limit potential damage if compromised. See the doas
-example. [Check the doas example here](#doas-over-sudo)
+required permissions to limit potential damage if compromised.
+[Check the doas example here](#doas-over-sudo)
 
 **Use strong passwords and passphrases**: Aim for at least 14–16 characters by
 combining several unrelated words, symbols, and numbers. For example:
@@ -118,6 +118,12 @@ combining several unrelated words, symbols, and numbers. For example:
 **Use a password manager and enable multi-factor authentication (MFA)**: Manage
 unique, strong passwords effectively with a trusted manager and protect accounts
 with MFA wherever possible for a second layer of defense.
+
+**Follow reputable sources**: STIGs are configuration standards developed by the
+Defense Information Systems Agency (DISA) to secure systems and software for the
+U.S. Department of Defense (DoD). They are considered a highly authoritative
+source for system hardening.There are recommendations for hardening all kinds of
+software in the [Stig Viewer](https://stigviewer.com/stigs)
 
 After establishing some standard best practices, it’s time to dive deeper into
 system hardening, the process of adding layered safeguards throughout your NixOS
@@ -144,6 +150,25 @@ only essential tools and no extras that could introduce vulnerabilities.
 Use LUKS encryption to protect your data at rest, the following guide is a
 minimal disko encrypted installation:
 [Encrypted Install](https://saylesss88.github.io/installation/enc/enc_install.html)
+
+## Impermanence
+
+Impermanence, especially when using a `tmpfs` as the root filesystem, provides
+several significant security benefits. The core principle is that impermanence
+defeats persistence, a fundamental goal for any attacker.
+
+When you use a root-as-tmpfs setup on NixOS, the boot process loads the entire
+operating system from the read-only Nix store into a `tmpfs` in RAM. The mutable
+directories, such as `/etc` and `/var`, are then created on this RAM disk. When
+the system is shut down, the `tmpfs` is wiped, leaving the on-disk storage
+untouched and secure.
+
+This means you get a fresh, secure boot every time, making it much harder for an
+attacker to maintain a presence on your system.
+
+- [Erase your Darlings (ZFS)](https://grahamc.com/blog/erase-your-darlings/)
+
+- [Encrypted BTRFS Impermanence Guide](https://saylesss88.github.io/installation/enc/encrypted_impermanence.html)
 
 ## Secure Boot
 
@@ -228,10 +253,11 @@ The `linuxPackages_latest_hardened` attribute has been deprecated. If you want
 to use a hardened kernel, you must specify a versioned package that is currently
 supported.
 
-You can find the available hardened kernel packages by searching
+You can find the latest available hardened kernel packages by searching
 [pkgs/top-level/linux-kernels.nix](https://github.com/NixOS/nixpkgs/blob/master/pkgs/top-level/linux-kernels.nix)
 
-For example, to use a specific version, you would configure it like this:
+For example, to use the latest available `6.6`, you would configure it like
+this:
 
 ```nix
 boot.kernelPackages = pkgs.linux_6_6_hardened;
@@ -241,7 +267,8 @@ You can inspect
 [nixpkgs/pkgs/os-specific/linux/kernel/hardened/patches.json](https://github.com/NixOS/nixpkgs/blob/master/pkgs/os-specific/linux/kernel/hardened/patches.json)
 to see the metadata of the patches that are applied. You can then follow the
 links in the `.json` file to see the patches. When I did this, the browser
-opened up Thunar so I could save the file and then review it.
+opened up Thunar so I could save the file and then review it. It is very complex
+and hard to understand FYI.
 
 > ❗ NOTE: Always check the `linux-kernels.nix` file for the latest available
 > versions, as older kernels are regularly removed from Nixpkgs.
