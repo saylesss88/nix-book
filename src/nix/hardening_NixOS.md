@@ -202,23 +202,12 @@ The following discourse thread explains the use of `profiles.hardened`:
 
 - [Discourse Thread Enabling hardened profile](https://discourse.nixos.org/t/enabling-hardened-profile/63107)
 
-I misunderstood the above thread, it means that **if** the file is imported that
-it's enabled by default. If you look at `profiles/hardened.nix` you'll see that
-it defaults to true:
-
-```nix
-# nixpkgs/nixos/modules/profiles/hardened.nix
-# ... snip ...
-{
-  options.profiles.hardened = mkEnableOption "hardened" // {
-    default = true;
-    example = false;
-  };
-# ... snip ...
-```
+The thread is just mentioning that **if** you import `profiles/hardened.nix`
+into your `configuration.nix` that `profiles.hardened.enable` defaults to
+`true`.
 
 For flakes, you could do something like the following in your
-`configuration.nix` or equivalent:
+`configuration.nix` or equivalent to import `hardened.nix`:
 
 ```nix
 # configuration.nix
@@ -234,18 +223,16 @@ in {
 - Now after importing the above module into your configuration,
   `profiles.hardened` is enabled by default.
 
-- There is a proposal to remove it completely, so you may want to think twice
-  before enabling it and read the following
+- There is a proposal to remove it completely that has gained ground, the
+  following thread discusses why and the PR is related to this:
   [Discourse Thread](https://discourse.nixos.org/t/proposal-to-deprecate-the-hardened-profile/63081)
-  Talking about removing it completely because of reasons listed in the above
-  thread.
 
 - [PR #383438](https://github.com/NixOS/nixpkgs/pull/383438)
 
-- If you do decide to use the hardened profile, if you decide to continue
-  hardening your system you need to know exactly what `profiles.hardened`
-  enables/disables so you avoid duplicate entries and conflicts. Check
-  [hardened.nix](https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/profiles/hardened.nix).
+- Check
+  [hardened.nix](https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/profiles/hardened.nix)
+  to see exactly what adding it enables to avoid duplicates and conflicts moving
+  on.
 
 ## Choosing the Hardened Kernel
 
@@ -267,14 +254,40 @@ You can inspect
 [nixpkgs/pkgs/os-specific/linux/kernel/hardened/patches.json](https://github.com/NixOS/nixpkgs/blob/master/pkgs/os-specific/linux/kernel/hardened/patches.json)
 to see the metadata of the patches that are applied. You can then follow the
 links in the `.json` file to see the patches. When I did this, the browser
-opened up Thunar so I could save the file and then review it. It is very complex
-and hard to understand FYI.
+opened up Thunar so I could save the file and then review it. If you do so you
+will get a diff of all of the changes for that patch. If you don't know what
+you're looking for its fairly complex.
 
 > ❗ NOTE: Always check the `linux-kernels.nix` file for the latest available
 > versions, as older kernels are regularly removed from Nixpkgs.
 
+### sysctl
+
 `sysctl` is a tool that allows you to view or modify kernel settings and
 enable/disable different features.
+
+Since it is difficult to see exactly what enabling the hardened_kernel does.
+Before rebuilding, you could do something like this to see exactly what is
+added:
+
+```bash
+sysctl -a > before.txt
+```
+
+And after the rebuild:
+
+```bash
+sysctl -a > after.txt
+```
+
+And finally run a `diff` on them:
+
+```bash
+diff before.txt after.txt
+```
+
+You can also diff against `after.txt` for future changes to avoid duplicates,
+this seems easier to me than trying to parse through the patches.
 
 Check all `sysctl` parameters (long output):
 
@@ -421,8 +434,8 @@ the parameters above:
 `boot.kernelParams` can be used to set additional kernel command line arguments
 at boot time. It can only be used for built-in modules.
 
-You can find the following settings in the above guide in the Kernel
-self-protection section:
+You can find the following settings in the above guide in the "Kernel
+self-protection" section:
 
 ```nix
 # boot.nix
