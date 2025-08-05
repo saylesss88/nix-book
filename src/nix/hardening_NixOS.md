@@ -242,7 +242,16 @@ in {
   on. I included this for completeness, considering that the PR to remove the
   hardened profile completely I would think twice before enabling it.
 
-## Choosing the Hardened Kernel
+## Choosing your Kernel
+
+The Linux kernel is typically released under two forms: stable and long-term
+support (LTS). Choosing either has consequences, do your research.
+[Stable vs. LTS kernels](https://madaidans-insecurities.github.io/guides/linux-hardening.html#stable-vs-lts)
+
+**OR**, you can choose the hardened kernel for a kernel that prioritizes
+security over everything else.
+
+### The Hardened Kernel
 
 The `linuxPackages_latest_hardened` attribute has been deprecated. If you want
 to use a hardened kernel, you must specify a versioned package that is currently
