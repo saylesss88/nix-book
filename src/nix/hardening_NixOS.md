@@ -194,7 +194,7 @@ Useful Resources:
 Practical Lanzaboote Secure Boot setup for NixOS:
 [Guide:Secure Boot on NixOS with Lanzaboote](https://saylesss88.github.io/installation/enc/lanzaboote.html)
 
-## Hardening the Kernel
+### The Kernel
 
 Given the kernel's central role, it's a frequent target for malicious actors,
 making robust hardening essential.
@@ -247,6 +247,8 @@ in {
 The Linux kernel is typically released under two forms: stable and long-term
 support (LTS). Choosing either has consequences, do your research.
 [Stable vs. LTS kernels](https://madaidans-insecurities.github.io/guides/linux-hardening.html#stable-vs-lts)
+
+- [The Linux Kernel Archives Active kernel releases](https://www.kernel.org/category/releases.html)
 
 **OR**, you can choose the hardened kernel for a kernel that prioritizes
 security over everything else.
