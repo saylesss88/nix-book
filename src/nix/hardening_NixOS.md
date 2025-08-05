@@ -262,11 +262,11 @@ supported.
 You can find the latest available hardened kernel packages by searching
 [pkgs/top-level/linux-kernels.nix](https://github.com/NixOS/nixpkgs/blob/master/pkgs/top-level/linux-kernels.nix)
 
-For example, to use the latest available `6.6`, you would configure it like
+For example, to use the latest available `6.12`, you would configure it like
 this:
 
 ```nix
-boot.kernelPackages = pkgs.linux_6_6_hardened;
+boot.kernelPackages = pkgs.linux_6_12_hardened;
 ```
 
 You can inspect
