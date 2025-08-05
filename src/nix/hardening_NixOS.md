@@ -169,10 +169,16 @@ attacker to maintain a presence on your system.
 - [Erase your Darlings (ZFS)](https://grahamc.com/blog/erase-your-darlings/)
 
 - [Encrypted BTRFS Impermanence Guide](https://saylesss88.github.io/installation/enc/encrypted_impermanence.html)
+  Only follow this guide if you also followed the encrypted disko install,
+  impermanence is designed to be destructive and needs to match your config
+  exactly.
 
 ## Secure Boot
 
 ![Virus](../images/virus1.png)
+
+Enable a UEFI password or Administrator password where it requires
+authentication in order to access the UEFI/BIOS.
 
 Secure Boot helps ensure only signed, trusted kernels and bootloaders are
 executed at startup.
