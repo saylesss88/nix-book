@@ -214,6 +214,9 @@ The `xdg` settings at the end make LibreWolf the defaults for what is listed.
 
 Thanks to `JosefKatic` for putting the above settings in NixOS format.
 
+There is more hardening that can be done but this should be a good starting
+point for a hardened version of LibreWolf.
+
 </details>
 
 ### Virtual Private Networks (VPNs)
