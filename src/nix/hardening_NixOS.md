@@ -244,6 +244,15 @@ in {
 
 ## Choosing your Kernel
 
+See which kernel you're currently using with:
+
+```bash
+# show the kernel release
+uname -r
+# show kernel version, hostname, and architecture
+uname -a
+```
+
 The Linux kernel is typically released under two forms: stable and long-term
 support (LTS). Choosing either has consequences, do your research.
 [Stable vs. LTS kernels](https://madaidans-insecurities.github.io/guides/linux-hardening.html#stable-vs-lts)
