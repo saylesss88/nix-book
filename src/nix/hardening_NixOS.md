@@ -230,15 +230,17 @@ in {
   `profiles.hardened` is enabled by default.
 
 - There is a proposal to remove it completely that has gained ground, the
-  following thread discusses why and the PR is related to this:
+  following thread discusses why:
   [Discourse Thread](https://discourse.nixos.org/t/proposal-to-deprecate-the-hardened-profile/63081)
 
-- [PR #383438](https://github.com/NixOS/nixpkgs/pull/383438)
+- [PR #383438](https://github.com/NixOS/nixpkgs/pull/383438) Proposed removal
+  PR.
 
 - Check
   [hardened.nix](https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/profiles/hardened.nix)
   to see exactly what adding it enables to avoid duplicates and conflicts moving
-  on.
+  on. I included this for completeness, considering that the PR to remove the
+  hardened profile completely I would think twice before enabling it.
 
 ## Choosing the Hardened Kernel
 
