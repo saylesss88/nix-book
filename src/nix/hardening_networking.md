@@ -128,7 +128,7 @@ other hardening options work for it as well.
 Example LibreWolf config implementing many of the STIG recommendations:
 
 <details>
-<summary> ✔️ Click to expand LibreWolf Example </details>
+<summary> ✔️ Click to expand LibreWolf Example </summary>
 
 ```nix
 {pkgs, ...}: {
