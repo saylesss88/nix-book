@@ -60,8 +60,6 @@ further explained in this chapter:
 
 - **Use Encrypted Storage**, set up disk encryption (LUKS)
 
-- **Set up secure boot** with Lanzaboote
-
 - **Update your system often**
 
 - **Declare everything** and restrict capabilities where possible to only accept
@@ -83,6 +81,10 @@ networking.firewall.enable = true;
 
 - **Prefer secure defaults**, use HTTPS-Only Mode and avoid using autofill for
   passwords in browsers.
+
+- Secure boot is still in a stage where I shouldn't recommend it for everyone.
+  I'll just say that I haven't had any problems with it and found it fairly easy
+  to set up.
 
 ## Best Practices
 
