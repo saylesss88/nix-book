@@ -20,6 +20,10 @@ This book covers a range of topics to help you harness the power of Nix:
   Manager, and a minimal Btrfs-Subvol install with Disko and Flakes, including
   Btrfs Impermanence.
 
+- Hardening NixOS: A deep dive into security and hardening practices with NixOS
+
+- Hardening Networking: Configure dnscrypt-proxy, firewalls, and more.
+
 - Understanding Nix Functions: Explores practical Nix functions and their role
   with NixOS Modules.
 
@@ -51,7 +55,9 @@ experience smoother and more enjoyable.
 📖 How to Read the Book
 
 You can read the book directly here on GitHub by navigating through the folders,
-or for a more comfortable reading experience, check out the dedicated website:
+or for a more comfortable reading experience, check out the dedicated website. I
+tried to write it in a way where you could jump to the chapter you're interested
+in and still be able to follow along:
 
 - [Link to Chapter 1](https://saylesss88.github.io/)
 
