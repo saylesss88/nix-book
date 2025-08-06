@@ -39,7 +39,8 @@ and quickly identify what went wrong. Over time, this discipline allows you to
 create security-focused checklists and ensure all angles are covered, building a
 more robust and secure system.
 
-Check out the [README] for baseline hardening recommendations.
+Check out the [Hardening README](https://saylesss88.github.io/nix/index.html)
+for baseline hardening recommendations.
 
 ## Hardening Basics
 
