@@ -39,6 +39,51 @@ and quickly identify what went wrong. Over time, this discipline allows you to
 create security-focused checklists and ensure all angles are covered, building a
 more robust and secure system.
 
+There is a lot covered in this chapter which can be overwhelming. I recommend as
+a baseline to at least configure the following **for everyone** which will be
+further explained in this chapter:
+
+📌 **How to Use This Guide**
+
+- Start here, apply the below essentials first. These rarely interfere with
+  normal usage and dramatically improve baseline security.
+
+- Read warnings, advanced hardening can break compatibility or cause data loss!
+  Pause and research before enabling anything not listed above unless you
+  understand the consequences.
+
+- Document your changes, keep track of applied settings so you can undo or
+  adjust if something breaks
+
+- Test after changes, reboot or review logs for warnings/errors after making
+  changes.
+
+- **Use Encrypted Storage**, set up disk encryption (LUKS)
+
+- **Set up secure boot** with Lanzaboote
+
+- **Update your system often**
+
+- **Declare everything** and restrict capabilities where possible to only accept
+  declared configuration. Force declarative user management and restrict nix
+  operations to admins.
+
+- **Use strong, unique passwords** and don't reuse passwords. Use a password
+  manager
+
+- **Enable multi-factor authentication (MFA) wherever possible**
+
+- **Only enable what you use** and actively disable what's no longer needed
+
+- **Ensure at least a basic firewall is active**:
+
+```nix
+networking.firewall.enable = true;
+```
+
+- **Prefer secure defaults**, use HTTPS-Only Mode and avoid using autofill for
+  passwords in browsers.
+
 ## Best Practices
 
 **Audit and remove local user accounts that are no longer needed**: Regularly
@@ -118,12 +163,6 @@ combining several unrelated words, symbols, and numbers. For example:
 **Use a password manager and enable multi-factor authentication (MFA)**: Manage
 unique, strong passwords effectively with a trusted manager and protect accounts
 with MFA wherever possible for a second layer of defense.
-
-**Follow reputable sources**: STIGs are configuration standards developed by the
-Defense Information Systems Agency (DISA) to secure systems and software for the
-U.S. Department of Defense (DoD). They are considered a highly authoritative
-source for system hardening.There are recommendations for hardening all kinds of
-software in the [Stig Viewer](https://stigviewer.com/stigs)
 
 After establishing some standard best practices, it’s time to dive deeper into
 system hardening, the process of adding layered safeguards throughout your NixOS
@@ -1545,3 +1584,13 @@ refer directly to its
 - [Arch Wiki Security](https://wiki.archlinux.org/title/Security)
 
 - [Gentoo Security_Handbook Concepts](https://wiki.gentoo.org/wiki/Security_Handbook/Concepts)
+
+- STIGs are configuration standards developed by the Defense Information Systems
+  Agency (DISA) to secure systems and software for the U.S. Department of
+  Defense (DoD). They are considered a highly authoritative source for system
+  hardening.There are recommendations for hardening all kinds of software in the
+  [Stig Viewer](https://stigviewer.com/stigs)
+
+- [CIS Benchmarks](https://www.cisecurity.org/cis-benchmarks)
+
+- [NSA Cybersecurity Directorate](https://github.com/nsacyber)
