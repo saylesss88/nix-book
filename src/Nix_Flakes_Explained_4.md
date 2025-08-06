@@ -92,7 +92,7 @@ include `description` and `inputs`.
 ```
 
 I typically see `nixConfig` used for extra-substituters for cachix. This is a
-general-purpose way to define Nix configuration oprions that apply when this
+general-purpose way to define Nix configuration options that apply when this
 flake is evaluated or built. It ties into your `/etc/nix/nix.conf` or
 `~/.config/nix/nix.conf`.
 
@@ -202,7 +202,7 @@ Example:
 ```nix
 nix repl
 nix-repl> :l <nixpkgs>
-nix-repl> lib.genAttrs [ "boom" "bash" ] (name: "sonic" + namd)
+nix-repl> lib.genAttrs [ "boom" "bash" ] (name: "sonic" + name)
 ```
 
 **Output**:
@@ -400,7 +400,6 @@ They have two different formats:
 - Flakes do provide some advantages when it comes to discoverability of outputs.
 
 - For Example, two helpful commands to inspect a flake are:
-
   - [nix flake show](https://nix.dev/manual/nix/2.28/command-ref/new-cli/nix3-flake-show)
     command: Show the outputs provided by a flake.
 
@@ -409,7 +408,6 @@ They have two different formats:
 
   - Any Nix CLI command that is run against a flake -- like `nix build`,
     `nix develop`, `nix flake show` -- generate a `flake.lock` file for you.
-
     - The `flake.lock` file ensures that all flake inputs are pinned to specific
       revisions and that Flakes have purely deterministic outputs.
 
@@ -586,7 +584,6 @@ destructure specific attributes like pkgs.
 
 2. **Binding the Entire Set:** It binds the entire input attribute set to the
    variable inputs.
-
    - Example `flake.nix`:
 
 ```nix

@@ -120,14 +120,13 @@ single file configuration gets too large to search through and maintain
 conveniently.
 
 This is where **modules** come in allowing you to break up your configuration
-into logical parts. You're `boot.nix` will contain settings and options related
-to the actual boot process. You're `services.nix` will only have services and so
+into logical parts. Your `boot.nix` will contain settings and options related to
+the actual boot process. You're `services.nix` will only have services and so
 on...
 
 - These modules are placed in a logical path relative to either your
   `configuration.nix` or equivalent or if you're using flakes relative to your
   `flake.nix` or equivalent.
-
   - The `imports` mechanism takes paths to other modules as its argument and
     combines them to be included in the evaluation of the system configuration.
 
