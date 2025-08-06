@@ -43,6 +43,9 @@ A few simple things you can do to help protect your network:
 - [Surveillance Self-Defence](https://ssd.eff.org/) has a lot of helpful info to
   protect your privacy.
 
+- [What is Fingerprinting](https://ssd.eff.org/module/what-fingerprinting),more
+  than you realize is being tracked constantly.
+
 - Take potentially dangerous PDFs, office documents, or images and convert them
   to a safe PDF with [dangerzone](https://github.com/freedomofpress/dangerzone)
   Be especially careful with torrents.
