@@ -21,13 +21,19 @@ configuration, and proactive control.
 > play one size fits all security solutions.
 
 > That said, I typically write about what I'm implementing myself to deepen
-> understanding and share what works for me. Accuracy is important to me so if
-> you catch a mistake, please let me know so I can fix it. `--Source` means the
-> proceeding paragraph came from `--Source`, you can often click to check for
-> yourself. Much of the information comes directly from the wiki or other
-> respected sources that are also linked in multiple places. If you use some
-> common sense with a bit of caution you could end up with a more secure NixOS
-> system that fits your needs.
+> understanding and share what works for me. `--Source` means the proceeding
+> paragraph came from `--Source`, you can often click to check for yourself. If
+> you use some common sense with a bit of caution you could end up with a more
+> secure NixOS system that fits your needs.
+
+> Much of this guide draws inspiration or recommendations from the well-known
+> [Linux Hardening Guide](https://madaidans-insecurities.github.io/guides/linux-hardening.html)
+> by Madaidan's Insecurities. Madaidan’s work is widely regarded in technical
+> and security circles as one of the most comprehensive and rigorously
+> researched sources on practical Linux security, frequently cited for its depth
+> and actionable advice. For example, much of the original basis for hardening
+> for [nix-mineral](https://github.com/cynicsketch/nix-mineral) came from this
+> guide as well.
 
 Containers and VMs are beyond the scope of this chapter but can also enhance
 security if configured correctly.
@@ -39,8 +45,9 @@ and quickly identify what went wrong. Over time, this discipline allows you to
 create security-focused checklists and ensure all angles are covered, building a
 more robust and secure system.
 
-Check out the [Hardening README](https://saylesss88.github.io/nix/index.html)
-for baseline hardening recommendations.
+Check out the
+[Hardening NixOS Baseline Hardening README](https://saylesss88.github.io/nix/index.html)
+for baseline hardening recommendations and best practices.
 
 ## Minimal Installation with LUKS
 
@@ -95,11 +102,16 @@ executed at startup.
 
 Useful Resources:
 
+<details>
+<summary> ✔️ Click to Expand Secure Boot Resources </summary>
+
 - [The Strange State of Authenticated Boot and Encryption](https://0pointer.net/blog/authenticated-boot-and-disk-encryption-on-linux.html)
 
 - [NixOS Wiki Secure Boot](https://wiki.nixos.org/wiki/Secure_Boot)
 
 - [lanzaboote repo](https://github.com/nix-community/lanzaboote)
+
+</details>
 
 Practical Lanzaboote Secure Boot setup for NixOS:
 [Guide:Secure Boot on NixOS with Lanzaboote](https://saylesss88.github.io/installation/enc/lanzaboote.html)
@@ -576,16 +588,34 @@ Usage:
 
 ```bash
 sudo lynis show commands
-sudo lynis audit system
- Lynis security scan details:
+# Output:
+Commands:
+lynis audit
+lynis configure
+lynis generate
+lynis show
+lynis update
+lynis upload-only
 
-  Hardening index : 78 [###############     ]
-  Tests performed : 231
+sudo lynis audit system
+# Output:
+  Lynis security scan details:
+
+  Hardening index : 79 [###############     ]
+  Tests performed : 234
   Plugins enabled : 0
 
   Components:
   - Firewall               [V]
   - Malware scanner        [V]
+
+  Scan mode:
+  Normal [V]  Forensics [ ]  Integration [ ]  Pentest [ ]
+
+  Lynis modules:
+  - Compliance status      [?]
+  - Security audit         [V]
+  - Vulnerability scan     [V]
 ```
 
 - The "Lynis hardening index" is an overall impression on how well a system is
@@ -646,6 +676,9 @@ headless CI/CD environments, `ssh-keygen` is required.
 
 Further reading:
 
+<details>
+<summary> ✔️ Click to Expand Resourses on OpenSSH </summary>
+
 - [Arch Wiki OpenSSH](https://wiki.archlinux.org/title/OpenSSH)
 
 - [Gentoo GnuPG](https://wiki.gentoo.org/wiki/GnuPG)
@@ -653,6 +686,8 @@ Further reading:
 - [A Visual Explanation of GPG Subkeys](https://rgoulter.com/blog/posts/programming/2022-06-10-a-visual-explanation-of-gpg-subkeys.html)
 
 - [Secure Secure Shell](https://blog.stribik.technology/2015/01/04/secure-secure-shell.html)
+
+</details>
 
 ## Key generation
 

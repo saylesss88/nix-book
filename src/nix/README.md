@@ -38,11 +38,23 @@ system with minimal risk of breaking workflows or causing admin headaches.
   utilizes nftables is shared in the
   [Hardening Networking Chapter](https://saylesss88.github.io/nix/hardening_networking.html)
 
+The firewall is enabled by default on NixOS. To explicitly ensure it's enabled,
+add the following to your `configuration.nix` or equivalent:
+
 ```nix
 # configuration.nix
 # this denies incoming connections but allows outgoing and established connections
 networking.firewall.enable = true;
 ```
+
+Many services provide an option to open the required firewall ports
+automatically. For example:
+
+```nix
+services.tor.openFirewall = true;
+```
+
+This prevents you from having to manually open ports
 
 **Audit and remove local user accounts that are no longer needed**: Regularly
 review and remove unused or outdated accounts to reduce your system’s attack
@@ -132,9 +144,10 @@ journalctl -b
 journalctl -b -1
 ```
 
-After establishing some standard best practices, it’s time to dive deeper into
-system hardening, the process of adding layered safeguards throughout your NixOS
-setup. This next section guides you through concrete steps and options for
-hardening critical areas of your system: from encryption and secure boot to
-managing secrets, tightening kernel security, and leveraging platform-specific
-tools. [Hardening NixOS](https://saylesss88.github.io/nix/hardening_NixOS.html)
+After establishing some standard best practices and a hardened base, it’s time
+to dive deeper into system hardening, the process of adding layered safeguards
+throughout your NixOS setup. This next section guides you through concrete steps
+and options for hardening critical areas of your system: from encryption and
+secure boot to managing secrets, tightening kernel security, and leveraging
+platform-specific tools.
+[Hardening NixOS](https://saylesss88.github.io/nix/hardening_NixOS.html)
