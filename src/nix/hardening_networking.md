@@ -40,9 +40,15 @@ A few simple things you can do to help protect your network:
   [VirusTotal](https://www.virustotal.com/gui/home/url) where you can plug the
   URL into a scanner to ensure it's safe.
 
+- [Surveillance Self-Defence](https://ssd.eff.org/) has a lot of helpful info to
+  protect your privacy.
+
 - Take potentially dangerous PDFs, office documents, or images and convert them
   to a safe PDF with [dangerzone](https://github.com/freedomofpress/dangerzone)
   Be especially careful with torrents.
+
+- Use a metadata-cleaner before you publish or share images, audio, video, etc.
+  Nixpkgs has `pkgs.metadata-cleaner` and `pkgs.mat2`
 
 - This may be unrelated but don't scan random QR codes either, you can download
   a QR scan checker to ensure the code isn't malicious. There are different apps
