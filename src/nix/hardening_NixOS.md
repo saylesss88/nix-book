@@ -39,54 +39,9 @@ and quickly identify what went wrong. Over time, this discipline allows you to
 create security-focused checklists and ensure all angles are covered, building a
 more robust and secure system.
 
-There is a lot covered in this chapter which can be overwhelming. I recommend as
-a baseline to at least configure the following **for everyone** which will be
-further explained in this chapter:
+Check out the [README] for baseline hardening recommendations.
 
-📌 **How to Use This Guide**
-
-- Start here, apply the below essentials first. These rarely interfere with
-  normal usage and dramatically improve baseline security.
-
-- Read warnings, advanced hardening can break compatibility or cause data loss!
-  Pause and research before enabling anything not listed above unless you
-  understand the consequences.
-
-- Document your changes, keep track of applied settings so you can undo or
-  adjust if something breaks
-
-- Test after changes, reboot or review logs for warnings/errors after making
-  changes.
-
-- **Use Encrypted Storage**, set up disk encryption (LUKS)
-
-- **Update your system often**
-
-- **Declare everything** and restrict capabilities where possible to only accept
-  declared configuration. Force declarative user management and restrict nix
-  operations to admins.
-
-- **Use strong, unique passwords** and don't reuse passwords. Use a password
-  manager
-
-- **Enable multi-factor authentication (MFA) wherever possible**
-
-- **Only enable what you use** and actively disable what's no longer needed
-
-- **Ensure at least a basic firewall is active**:
-
-```nix
-networking.firewall.enable = true;
-```
-
-- **Prefer secure defaults**, use HTTPS-Only Mode and avoid using autofill for
-  passwords in browsers.
-
-- Secure boot is still in a stage where I shouldn't recommend it for everyone.
-  I'll just say that I haven't had any problems with it and found it fairly easy
-  to set up.
-
-## Best Practices
+## Hardening Basics
 
 **Audit and remove local user accounts that are no longer needed**: Regularly
 review and remove unused or outdated accounts to reduce your system’s attack
