@@ -35,6 +35,9 @@ configuration, and proactive control.
 > for [nix-mineral](https://github.com/cynicsketch/nix-mineral) came from this
 > guide as well.
 
+> You can do a lot to secure NixOS but if anonymity is paramount, I recommend
+> booting into a [Tails USB stick](https://tails.net/).
+
 Containers and VMs are beyond the scope of this chapter but can also enhance
 security if configured correctly.
 
