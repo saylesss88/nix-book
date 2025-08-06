@@ -109,21 +109,12 @@ Practical Lanzaboote Secure Boot setup for NixOS:
 Given the kernel's central role, it's a frequent target for malicious actors,
 making robust hardening essential.
 
-- [NixOS Wiki Linux Kernel](https://wiki.nixos.org/wiki/Linux_kernel)
-
 NixOS provides a `hardened` profile that applies a set of security-focused
 kernel and system configurations.
 
-The following discourse thread explains the use of `profiles.hardened`:
-
-- [Discourse Thread Enabling hardened profile](https://discourse.nixos.org/t/enabling-hardened-profile/63107)
-
-The thread is just mentioning that **if** you import `profiles/hardened.nix`
-into your `configuration.nix` that `profiles.hardened.enable` defaults to
-`true`.
-
 For flakes, you could do something like the following in your
-`configuration.nix` or equivalent to import `hardened.nix`:
+`configuration.nix` or equivalent to import `hardened.nix` and enable
+`profiles.hardened`:
 
 ```nix
 # configuration.nix
@@ -136,9 +127,6 @@ in {
 }
 ```
 
-- Now after importing the above module into your configuration,
-  `profiles.hardened` is enabled by default.
-
 - There is a proposal to remove it completely that has gained ground, the
   following thread discusses why:
   [Discourse Thread](https://discourse.nixos.org/t/proposal-to-deprecate-the-hardened-profile/63081)
@@ -149,8 +137,8 @@ in {
 - Check
   [hardened.nix](https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/profiles/hardened.nix)
   to see exactly what adding it enables to avoid duplicates and conflicts moving
-  on. I included this for completeness, considering that the PR to remove the
-  hardened profile completely I would think twice before enabling it.
+  on. I included this for completeness, the choice is yours if you want to use
+  it or not.
 
 ## Choosing your Kernel
 
@@ -188,13 +176,12 @@ this:
 boot.kernelPackages = pkgs.linux_6_12_hardened;
 ```
 
+- If you decide to use this, read further before rebuilding.
+
 You can inspect
 [nixpkgs/pkgs/os-specific/linux/kernel/hardened/patches.json](https://github.com/NixOS/nixpkgs/blob/master/pkgs/os-specific/linux/kernel/hardened/patches.json)
 to see the metadata of the patches that are applied. You can then follow the
-links in the `.json` file to see the patches. When I did this, the browser
-opened up Thunar so I could save the file and then review it. If you do so you
-will get a diff of all of the changes for that patch. If you don't know what
-you're looking for its fairly complex.
+links in the `.json` file to see the patch diffs.
 
 > ❗ NOTE: Always check the `linux-kernels.nix` file for the latest available
 > versions, as older kernels are regularly removed from Nixpkgs.
@@ -203,29 +190,6 @@ you're looking for its fairly complex.
 
 `sysctl` is a tool that allows you to view or modify kernel settings and
 enable/disable different features.
-
-Since it is difficult to see exactly what enabling the hardened_kernel does.
-Before rebuilding, you could do something like this to see exactly what is
-added:
-
-```bash
-sysctl -a > before.txt
-```
-
-And after the rebuild:
-
-```bash
-sysctl -a > after.txt
-```
-
-And finally run a `diff` on them:
-
-```bash
-diff before.txt after.txt
-```
-
-You can also diff against `after.txt` for future changes to avoid duplicates,
-this seems easier to me than trying to parse through the patches.
 
 Check all `sysctl` parameters (long output):
 
@@ -253,14 +217,39 @@ zcat /proc/config.gz | grep CONFIG_HARDENED_USERCOPY
 zcat /proc/config.gz | grep CONFIG_STACKPROTECTOR
 ```
 
+Since it is difficult to see exactly what enabling the hardened_kernel does.
+Before rebuilding, you could do something like this to see exactly what is
+added:
+
+```bash
+sysctl -a > before.txt
+```
+
+And after the rebuild:
+
+```bash
+sysctl -a > after.txt
+```
+
+And finally run a `diff` on them:
+
+```bash
+diff before.txt after.txt
+```
+
+You can also diff against `after.txt` for future changes to avoid duplicates,
+this seems easier to me than trying to parse through the patches.
+
 ## Further Hardening with sysctl
 
-My understanding here has changed, the `sysctl` hardening settings further
-reinforce kernel-level protections. The hardened kernel includes security
-patches and stricter defaults, but it doesn't cover all runtime tunables.
+`sysctl` hardening settings further reinforce kernel-level protections. The
+hardened kernel includes security patches and stricter defaults, but it doesn't
+cover all runtime tunables. Refer to the above commands to get a diff of the
+changes.
 
-You can also harden the kernel you're using `sysctl`, the following parameters
-come from the `madaidans-insecurities` guide with a few optimizations:
+Refer to
+[madadaidans-insecurities#sysctl-kernel](https://madaidans-insecurities.github.io/guides/linux-hardening.html#sysctl-kernel)
+for the following settings and their explainations.
 
 ```nix
   boot.kernel.sysctl = {
@@ -362,18 +351,16 @@ come from the `madaidans-insecurities` guide with a few optimizations:
   };
 ```
 
-Note: The above settings are fairly aggressive and can break common programs, I
-left comment warnings. The following guide explains kernel hardening and many of
-the parameters above:
-[Linux Hardening Guide](https://madaidans-insecurities.github.io/guides/linux-hardening.html)
+> ❗ Note: The above settings are fairly aggressive and can break common
+> programs, read the comment warnings.
 
 ## Hardening Boot Parameters
 
 `boot.kernelParams` can be used to set additional kernel command line arguments
 at boot time. It can only be used for built-in modules.
 
-You can find the following settings in the above guide in the "Kernel
-self-protection" section:
+You can find the following settings in the above guide in the
+[Boot parameters section](https://madaidans-insecurities.github.io/guides/linux-hardening.html#boot-parameters)
 
 ```nix
 # boot.nix
@@ -410,11 +397,11 @@ self-protection" section:
       ];
 ```
 
-There are many more recommendations in the
-[Linux Hardening Guide](https://madaidans-insecurities.github.io/guides/linux-hardening.html)
+This is a thoughtful start to hardening boot parameters, there are more
+recommendations in the guide.
 
-In the above guide, the following are in the Blacklisting kernel modules
-section:
+You can find the following settings in the
+[Blacklisting Kernel Modules Section](https://madaidans-insecurities.github.io/guides/linux-hardening.html#kasr-kernel-modules)
 
 ```nix
       blacklistedKernelModules = [
@@ -509,8 +496,7 @@ default as of yet. To set `dbus-broker` as the default:
 - Enabling `logrotate` prevents your disk from filling with excessive
   **legacy/service** log files. These are the classic plain-text logs.
 
-- Systemd uses `journald` which stores logs in a binary format which we take
-  care of with the `extraConfig` settings.
+- Systemd uses `journald` which stores logs in a binary format
 
 You can check the security status with:
 
@@ -522,11 +508,16 @@ systemd-analyze security NetworkManager
 
 Further reading on systemd:
 
+<details>
+<summary> ✔️ Click to Expand Systemd Resources </summary>
+
 - [systemd.io](https://systemd.io/)
 
 - [Rethinking PID 1](https://0pointer.de/blog/projects/systemd.html)
 
 - [Biggest Myths about Systemd](https://0pointer.de/blog/projects/the-biggest-myths.html)
+
+</details>
 
 The following is a repo containing many of the Systemd hardening settings in
 NixOS format:
@@ -1101,8 +1092,9 @@ algorithms, and best practices:
 }
 ```
 
-- Much of the OpenSSH hardening settings adapted to NixOS came from:
-  [ryanseipp hardening-nixos](https://ryanseipp.com/post/hardening-nixos/)
+Much of the SSH hardening settings came from
+[ryanseipp's secure-ssh Guide](https://ryanseipp.com/post/nixos-secure-ssh/)
+with some additions of my own.
 
 Fail2Ban is an intrusion prevention software framework. It's designed to prevent
 brute-force attacks by scanning log files for suspicious activity, such as
@@ -1142,13 +1134,12 @@ Another option is [agenix](https://github.com/ryantm/agenix)
 
 - [NixOS Wiki Agenix](https://wiki.nixos.org/wiki/Agenix)
 
-## Sops-nix Guide
+### Sops-nix Guide
 
 Protect your secrets, the following guide is on setting up Sops on NixOS:
 [Sops Encrypted Secrets](https://saylesss88.github.io/installation/enc/sops-nix.html)
 
-<details>
-<summary> ✔️ Click to expand `auditd` example </summary>
+## Auditd
 
 To enable the Linux Audit Daemon (`auditd`) and define a very basic rule set,
 you can use the following NixOS configuration. This example demonstrates how to
@@ -1157,6 +1148,7 @@ log every program execution (`execve`) on a 64-bit architecture.
 ```nix
 # modules/security/auditd-minimal.nix (or directly in configuration.nix)
 {
+  # start as early in the boot process as possible
   boot.kernelParams = ["audit=1"];
   security.auditd.enable = true;
   security.audit.enable = true;
@@ -1178,7 +1170,7 @@ log every program execution (`execve`) on a 64-bit architecture.
 
 - `execve` (program executions)
 
-</details>
+- This is just a basic configuration, there is much more that can be tracked.
 
 ## USB Port Protection
 
@@ -1199,6 +1191,8 @@ sudo usbguard list-devices
 ```
 
 - [MyNixOS services.usbguard](https://mynixos.com/options/services.usbguard)
+
+Change `your-user` to your username:
 
 ```nix
 # usbguard.nix
@@ -1253,14 +1247,15 @@ these `reject` rules prevent that.
 
 The `presentDevicePolicy = "allow";` allows any device that is present at daemon
 start up even if they're not explicitly allowed. However, newly plugged in
-devices must match an `allow` rule or get denied implicitly. I have a keyboard,
-and mouse usb device connected and it works without uncommenting the line,
-`allow with-interface equals { 03:*:* }` since they were both plugged in at
-daemon start up.
+devices must match an `allow` rule or get denied implicitly.
 
 The `presentDevicePolicy` should be one of: # one of `"apply-policy"`(default,
 evaluate the rule set for every present device), `"block"`, `"reject"`, `"keep"`
-(keep whatever state the device is currently in), or `"allow"`
+(keep whatever state the device is currently in), or `"allow"`, which is used in
+the example.
+
+There is also the
+[usbguard-notifier](https://github.com/Cropi/usbguard-notifier)
 
 And enable it with the following in your `configuration.nix` or equivalent:
 
