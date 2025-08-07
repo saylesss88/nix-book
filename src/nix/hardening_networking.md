@@ -490,23 +490,29 @@ nftables:
     ruleset = ''
       table inet filter {
         chain output {
+          type filter hook output priority 0; policy accept;
+          # Attach this chain to the OUTPUT hook!
+
           # Allow localhost DNS for dnscrypt-proxy2
           ip daddr 127.0.0.1 udp dport 53 accept
           ip6 daddr ::1 udp dport 53 accept
           ip daddr 127.0.0.1 tcp dport 53 accept
           ip6 daddr ::1 tcp dport 53 accept
-          # Allow dnscrypt-proxy2 to talk to upstream
-          # ps -o uid,user,pid,cmd -C dnscrypt-proxy; Copy UID #
+
+          # Allow dnscrypt-proxy2 to talk to upstream (set correct UID!)
+          # ps -o uid,user,pid,cmd -C dnscrypt-proxy
           meta skuid 62396 udp dport { 443, 853 } accept
           meta skuid 62396 tcp dport { 443, 853 } accept
+
           # Block all other outbound DNS
           udp dport { 53, 853 } drop
           tcp dport { 53, 853 } drop
+
+          # (all other outbound traffic: policy ACCEPT unless further rules)
         }
       }
     '';
   };
-
   networking.firewall = {
     enable = true;
     allowedTCPPorts = [
@@ -522,14 +528,70 @@ nftables:
 }
 ```
 
+`nft` is a cli tool used to set up, maintain and inspect packet filtering and
+classification rules in the Linux kernel, in the nftables framework. The Linux
+kernel subsystem is known as nf_tables, and 'nf' stands for Netfilter.--
+`man nft`
+
+```bash
+sudo nft list ruleset
+```
+
+- Since we declare our firewall, we'll only use `nft` to inspect our ruleset.
+
+## NixOS Firewall vs `nftables` Ruleset
+
+`networking.nftables`: This section provides a raw `nftables` ruleset that gives
+you granular, low-level control. The rules you've defined here are more specific
+and are meant to handle the intricate logic of the DNS proxy setup. They will be
+applied directly to the kernel's `nftables` subsystem.
+
+`networking.firewall`: This is a higher-level, simpler NixOS option that uses
+`iptables` rules to open ports for inbound traffic. The rules defined here
+(allowing ports 53, 22, 80, 443) are for incoming connections to the machine,
+not for outbound traffic, so they do not interfere with the `nftables` rules
+that filter the outgoing traffic.
+
 The firewall ensures only your authorized, local encrypted DNS proxy process can
 speak DNS with the outside world, and that all other DNS requests from any other
 process are blocked unless they're to `127.0.0.1` (our local proxy). This is a
 robust policy against both DNS leaks and local compromise.
 
+## Testing
+
 Review listening ports: After each rebuild, use `ss -tlpn`, `nmap` or `netstat`
 to see which services are accepting connections. Close or firewall anything
 unnecessary.
+
+You can also test firewall DNS restrictions using `dig`:
+
+```bash
+dig @127.0.0.1 example.com  # Should work
+
+dig @8.8.8.8 example.com    # Should fail/time out for normal users
+```
+
+Since we defined an `output` chain inside `table inet filter` with the line:
+
+```bash
+type filter hook output priority 0; policy accept;
+```
+
+This attaches the chain to the kernel’s OUTPUT hook, so all locally generated
+packets, including DNS queries are filtered by this chain.
+
+Within this chain, the rules:
+
+- Explicitly allow DNS queries to localhost addresses (`127.0.0.1` and `::1`).
+
+- Allow the `dnscrypt-proxy` process (running with UID `62396`) to send DNS
+  queries on ports 443 and 853 (for DNS-over-HTTPS and DNS-over-TLS).
+
+- Drop all other outbound DNS traffic on ports `53` and `853`.
+
+Because of this setup, dig queries to your local resolver at `127.0.0.1` pass,
+but queries directly to public DNS servers like `8.8.8.8` are blocked for
+users/processes other than the allowed DNS proxy.
 
 ## OpenSnitch
 
