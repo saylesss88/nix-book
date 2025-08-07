@@ -8,9 +8,9 @@
 </details>
 
 > ⚠️ I am not a security expert, but I have carefully researched and tested the
-> configurations in this chapter personally.Not every setting or method will be
-> appropriate or necessary for all setups; some may cause compatibility or
-> connectivity issues depending on your environment and needs.
+> configurations in this chapter.Not every setting or method will be appropriate
+> or necessary for all setups; some may cause compatibility or connectivity
+> issues depending on your environment and needs.
 >
 > Always carefully research any changes before applying them, especially when
 > they affect critical components like DNS or firewalls. Network hardening can
@@ -23,7 +23,7 @@
 > requirements. Take what’s useful, adapt as needed, and don’t hesitate to seek
 > expert guidance for advanced scenarios.
 
-## Simple Privacy Tips
+## Simple Privacy and Network Security Tips
 
 A few simple things you can do to help protect your privacy and your network,
 again some of this may be unnecessary. The point is to make you aware of
@@ -38,15 +38,15 @@ potential attack areas and provide some safeguards in those areas:
 
 - [Cloudflare What is HTTPS](https://cloudflare.com/learning/ssl/what-is-https)
 
+- [What is Fingerprinting](https://ssd.eff.org/module/what-fingerprinting), more
+  than you realize is being tracked constantly.
+
 - Check sketchy urls first with
   [VirusTotal](https://www.virustotal.com/gui/home/url) where you can plug the
   URL into a scanner to ensure it's safe.
 
 - [Surveillance Self-Defence](https://ssd.eff.org/) has a lot of helpful info to
   protect your privacy.
-
-- [What is Fingerprinting](https://ssd.eff.org/module/what-fingerprinting),more
-  than you realize is being tracked constantly.
 
 - Take potentially dangerous PDFs, office documents, or images and convert them
   to a safe PDF with [dangerzone](https://github.com/freedomofpress/dangerzone)
@@ -63,13 +63,13 @@ potential attack areas and provide some safeguards in those areas:
   [OnionShare](https://github.com/onionshare/onionshare) available in Nixpkgs as
   `pkgs.onionshare`, and `pkgs.onionshare-gui`
 
-- This may be unrelated but don't scan random QR codes either, you can download
-  a QR scan checker to ensure the code isn't malicious. There are different apps
-  for this on Android and IOS.
+- This may be unrelated but don't scan random QR codes, you can download a QR
+  scan checker to ensure the code isn't malicious. There are different apps for
+  this on Android and IOS.
 
 - Don't use your browsers "remember my password" or "Autofill" functions,
   disable and delete the history. Use a password manager instead. (security not
-  usability)
+  usability).
 
 - If you need to enter your credentials for something, don't click use Google or
   FaceBook to create the account. Doing so opens up all of those services if one
@@ -77,15 +77,16 @@ potential attack areas and provide some safeguards in those areas:
   own unique password and user.
 
 - Delete cookies and site data when the browser is closed. (security not
-  usability). I believe this is the default on LibreWolf, I recently started
-  using this and it's not too bad with bitwarden.
+  usability).
 
-- Use passkeys to store complex passwords, use your password manager to generate
-  unique and complex passphrases/passwords for you and save them right away.
-  Make sure to follow the next suggestion for your password manager.
+- Use your password manager to generate unique and complex passphrases/passwords
+  for you and save them right away. Make sure to enable 2 factor authentication
+  for your pw-manager.
 
-A popular password manager for NixOS that has Authenticator capabilities is
-KeePassXC which can be installed along with its CLI with:
+- Use 2 factor authentication **everywhere possible**.
+
+A few popular password managers for NixOS are KeePassXC and BitWarden which both
+have CLI counterparts:
 
 ```nix
 environment.systemPackages = [
@@ -97,12 +98,10 @@ environment.systemPackages = [
 ];
 ```
 
-- Use 2 factor authentication everywhere possible.
-
-I never liked the argument, "I'm not doing anything illegal so I don't care if
-they spy on me and make a profit off of my data". Regardless of what you do
-online, I think it's your business and yours alone. Why make it easy on them if
-you can limit your exposure?
+I’ve never agreed with the argument, "I’m not doing anything illegal, so I don’t
+mind if they spy on me and profit from my data." Whatever your online activities
+may be, your privacy is your right alone. Why make it easier for others to
+access your personal information when you have the power to limit your exposure?
 
 ### Choosing a secure Browser
 
@@ -480,7 +479,7 @@ NixOS includes an integrated firewall based on iptables/nftables.
 [Arch Wiki nftables](https://wiki.archlinux.org/title/Nftables)
 
 The following firewall setup is based on the dnscrypt setup above utilizing
-nftables:
+nftables. (This was edited on 08-07-25):
 
 ```nix
 {...}: {
@@ -500,6 +499,7 @@ nftables:
           ip6 daddr ::1 tcp dport 53 accept
 
           # Allow dnscrypt-proxy2 to talk to upstream (set correct UID!)
+          # the following command gives you the UID:
           # ps -o uid,user,pid,cmd -C dnscrypt-proxy
           meta skuid 62396 udp dport { 443, 853 } accept
           meta skuid 62396 tcp dport { 443, 853 } accept
@@ -570,6 +570,10 @@ dig @127.0.0.1 example.com  # Should work
 
 dig @8.8.8.8 example.com    # Should fail/time out for normal users
 ```
+
+- This test is actually what alerted me of an improper configuration in the
+  above firewall allowing me to fix it. Initially the second `dig` command gave
+  results letting me know that the restrictions weren't being applied correctly.
 
 Since we defined an `output` chain inside `table inet filter` with the line:
 
