@@ -52,9 +52,8 @@ is practical, tested hardening tailored to you.
 **Use Metadata Cleaning Tools**
 
 - Many files like images, PDFs, and office documents contain hidden metadata
-  information such as location data, device details, author names, timestamps,
-  or editing history that can inadvertently reveal your identity or other
-  sensitive information when you share the files publicly.
+  information such as location data, device details, and more that can reveal
+  your identity or other sensitive information when you share files publicly.
 
 - To protect your privacy, always sanitize files by removing this metadata
   before sharing. Tools like [mat2](https://0xacab.org/jvoisin/mat2) are
@@ -491,7 +490,13 @@ NixOS includes an integrated firewall based on iptables/nftables.
 [Arch Wiki nftables](https://wiki.archlinux.org/title/Nftables)
 
 The following firewall setup is based on the dnscrypt setup above utilizing
-nftables. (This was edited on 08-07-25):
+nftables.
+
+This nftables firewall configuration is a strong recommended practice for
+enforcing encrypted DNS on your system by restricting all outbound DNS traffic
+to a local dnscrypt-proxy process. It greatly reduces DNS leak risks and
+enforces privacy by limiting DNS queries to trusted, encrypted upstream
+servers.(This was edited on 08-07-25):
 
 ```nix
 {...}: {
@@ -531,7 +536,7 @@ nftables. (This was edited on 08-07-25):
       53 # DNS
       22 # SSH
       80 # HTTP
-      443 # HTTPS
+      443 # HTTPS (Allow web traffic to reach your machine)
     ];
     allowedUDPPorts = [
       53 # DNS
@@ -542,8 +547,7 @@ nftables. (This was edited on 08-07-25):
 
 `nft` is a cli tool used to set up, maintain and inspect packet filtering and
 classification rules in the Linux kernel, in the nftables framework. The Linux
-kernel subsystem is known as nf_tables, and 'nf' stands for Netfilter.--
-`man nft`
+kernel subsystem is known as nftables, and 'nf' stands for Netfilter.--`man nft`
 
 ```bash
 sudo nft list ruleset
@@ -554,9 +558,9 @@ sudo nft list ruleset
 ## NixOS Firewall vs `nftables` Ruleset
 
 `networking.nftables`: This section provides a raw `nftables` ruleset that gives
-you granular, low-level control. The rules you've defined here are more specific
-and are meant to handle the intricate logic of the DNS proxy setup. They will be
-applied directly to the kernel's `nftables` subsystem.
+you granular, low-level control. The rules here are more specific and are meant
+to handle the intricate logic of the DNS proxy setup. They will be applied
+directly to the kernel's `nftables` subsystem.
 
 `networking.firewall`: This is a higher-level, simpler NixOS option that uses
 `iptables` rules to open ports for inbound traffic. The rules defined here
@@ -564,7 +568,7 @@ applied directly to the kernel's `nftables` subsystem.
 not for outbound traffic, so they do not interfere with the `nftables` rules
 that filter the outgoing traffic.
 
-The firewall ensures only your authorized, local encrypted DNS proxy process can
+The firewall ensures only authorized, local encrypted DNS proxy process can
 speak DNS with the outside world, and that all other DNS requests from any other
 process are blocked unless they're to `127.0.0.1` (our local proxy). This is a
 robust policy against both DNS leaks and local compromise.
