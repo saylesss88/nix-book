@@ -23,9 +23,11 @@
 > requirements. Take what’s useful, adapt as needed, and don’t hesitate to seek
 > expert guidance for advanced scenarios.
 
-## Simple Tips
+## Simple Privacy Tips
 
-A few simple things you can do to help protect your network:
+A few simple things you can do to help protect your privacy and your network,
+again some of this may be unnecessary. The point is to make you aware of
+potential attack areas and provide some safeguards in those areas:
 
 - HTTPS encrypts the data between a web browser and a website. This is
   especially important for services that need logging into such as a bank
@@ -53,6 +55,14 @@ A few simple things you can do to help protect your network:
 - Use a metadata-cleaner before you publish or share images, audio, video, etc.
   Nixpkgs has `pkgs.metadata-cleaner` and `pkgs.mat2`
 
+> ❗ WARNING: The [metadata-cleaner](https://gitlab.com/rmnvgr/metadata-cleaner)
+> that `pkgs.metadata-cleaner` is built off of was archived and is no longer
+> maintained. [mat2](https://0xacab.org/jvoisin/mat2) is still active.
+
+- Securely and anonymously send and receive files with
+  [OnionShare](https://github.com/onionshare/onionshare) available in Nixpkgs as
+  `pkgs.onionshare`, and `pkgs.onionshare-gui`
+
 - This may be unrelated but don't scan random QR codes either, you can download
   a QR scan checker to ensure the code isn't malicious. There are different apps
   for this on Android and IOS.
@@ -74,6 +84,19 @@ A few simple things you can do to help protect your network:
   unique and complex passphrases/passwords for you and save them right away.
   Make sure to follow the next suggestion for your password manager.
 
+A popular password manager for NixOS that has Authenticator capabilities is
+KeePassXC which can be installed along with its CLI with:
+
+```nix
+environment.systemPackages = [
+    pkgs.keepassxc
+    pkgs.kpcli     # KeePass CLI
+    # OR
+    pkgs.bitwarden-desktop
+    pkgs.bitwarden-cli
+];
+```
+
 - Use 2 factor authentication everywhere possible.
 
 I never liked the argument, "I'm not doing anything illegal so I don't care if
@@ -90,6 +113,8 @@ protections.
 
 #### Tor Browser
 
+Tor is a modified version of Firefox specifically designed for use with Tor.
+
 Tor routes your internet traffic through a global volunteer-operated network,
 masking your IP address and activities from local observers, ISPs, websites, and
 surveillance systems. This helps you protect personal information and maintain
@@ -103,6 +128,17 @@ anonymity when browsing, communicating, or using online services.
   - [How to Use Tor](https://ssd.eff.org/module/how-to-use-tor)
 
   - [Cool Graphic Showing Secure Connections with Tor](https://torproject.github.io/manual/secure-connections/)
+
+#### Mullvad-Browser
+
+Mullvad-Browser is free and open-source and was developed by the Tor Project in
+collaboration with Mullvad VPN.(Another Firefox Derivative)
+
+It is the Tor Browser without the Tor Network, allowing you to use the privacy
+features Tor created along with a VPN if you so choose.
+
+- [Mullvad-Browser](https://mullvad.net/en/browser), is in Nixpkgs as:
+  `pkgs.mullvad-browser`
 
 #### SearXNG
 
