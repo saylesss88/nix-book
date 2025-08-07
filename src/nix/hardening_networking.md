@@ -30,30 +30,6 @@ That said, every setup is unique, feel free to adapt or skip sections based on
 your needs. Start with the basics and build up as you gain confidence. The goal
 is practical, tested hardening tailored to you.
 
-## Simple Privacy and Network Security Tips
-
-A few simple things you can do to help protect your privacy and your network,
-again some of this may be unnecessary. The point is to make you aware of
-potential attack areas and provide some safeguards in those areas:
-
-- HTTPS encrypts the data between a web browser and a website. This is
-  especially important for services that need logging into such as a bank
-  account, email, etc.
-
-- [Discourse Declare Firefox extensions and settings](https://discourse.nixos.org/t/declare-firefox-extensions-and-settings/36265)
-
-- [Cloudflare What is HTTPS](https://cloudflare.com/learning/ssl/what-is-https)
-
-- [What is Fingerprinting](https://ssd.eff.org/module/what-fingerprinting), more
-  than you realize is being tracked constantly.
-
-- [Surveillance Self-Defence](https://ssd.eff.org/) has a lot of helpful info to
-  protect your privacy.
-
-- Take potentially dangerous PDFs, office documents, or images and convert them
-  to a safe PDF with [dangerzone](https://github.com/freedomofpress/dangerzone)
-  Be especially careful with torrents.
-
 ### Practice Safe Browsing Hygiene
 
 **Adopt Encrypted DNS and HTTPS Everywhere**
@@ -75,9 +51,22 @@ potential attack areas and provide some safeguards in those areas:
 
 **Use Metadata Cleaning Tools**
 
-- Before sharing images or files, use tools like
-  [mat2](https://0xacab.org/jvoisin/mat2) to strip metadata that might leak
-  personal information. (`pkgs.mat2`)
+- Many files like images, PDFs, and office documents contain hidden metadata
+  information such as location data, device details, author names, timestamps,
+  or editing history that can inadvertently reveal your identity or other
+  sensitive information when you share the files publicly.
+
+- To protect your privacy, always sanitize files by removing this metadata
+  before sharing. Tools like [mat2](https://0xacab.org/jvoisin/mat2) are
+  designed to strip metadata from a wide range of media files efficiently.
+  (`pkgs.mat2`)
+
+- For potentially dangerous file types like PDFs, office documents, or images,
+  especially those downloaded from untrusted sources such as torrents, consider
+  converting them to a safe PDF format with
+  [dangerzone](https://github.com/freedomofpress/dangerzone). Dangerzone not
+  only removes metadata but also applies robust sanitization to neutralize
+  malicious content.
 
 **Use Anonymous File-Sharing Tools**
 
@@ -102,7 +91,7 @@ usability).
 
 - Avoid reused passwords by using reliable password managers like KeePassXC or
   Bitwarden, both available on NixOS. Pair this with enabling two-factor
-  authentication (2FA) wherever possible.
+  authentication **(2FA) wherever possible**.
 
 ```nix
 environment.systemPackages = [
@@ -185,6 +174,8 @@ now. For example, Firefox has a lot of documentation on hardening:
   set of security configuration standards developed by the U.S. Department of
   Defense. They are created by the Defense Information Systems Agency (DISA) to
   secure and harden DoD information systems and software.
+
+- [Discourse Declare Firefox extensions and settings](https://discourse.nixos.org/t/declare-firefox-extensions-and-settings/36265)
 
 **LibreWolf** is an open-source fork of Firefox with a strong focus on privacy,
 security, and user freedom. LibreWolf enables always HTTPS, includes
@@ -485,8 +476,6 @@ sudo journalctl -u dnscrypt-proxy2
 `inputs.oisd` refers to the flake input oisd blocklist, it prevents your device
 from connecting to unwanted or harmful domains.
 
-- [oisd.nl](https://oisd.nl/) the oisd website
-
 `dnscrypt-proxy2` filters ads/trackers (using oisd), enforces DNSSEC, and uses
 encrypted transports (DNS-over-HTTPS/DoH, DNSCrypt, optionally
 DNS-over-TLS/DoT).
@@ -632,3 +621,15 @@ This can be used to block apps from accessing the internet that shouldn't need
 to (i.e., block telemetry and more). Opensnitch will report that the app has
 attempted to make an outbound internet connection and block it or allow it based
 on the rules you set.
+
+### Resources
+
+- [Cloudflare What is HTTPS](https://cloudflare.com/learning/ssl/what-is-https)
+
+- [What is Fingerprinting](https://ssd.eff.org/module/what-fingerprinting), more
+  than you realize is being tracked constantly.
+
+- [Surveillance Self-Defence](https://ssd.eff.org/) has a lot of helpful info to
+  protect your privacy.
+
+- [oisd.nl](https://oisd.nl/) the oisd website
