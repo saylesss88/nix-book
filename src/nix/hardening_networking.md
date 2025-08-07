@@ -341,6 +341,11 @@ inputs = {
 };
 ```
 
+> ❗ NOTE: The `oisd` blocklist is a plain text file that updates frequently.
+> This can cause `nh os switch` to fail with a `NarHash` mismatch error. To fix
+> this, you need to run `nix flake update` to refresh the blocklist and its hash
+> in your `flake.lock` file. After that, you can run your `nh` command again.
+
 And the import the following into your `configuration.nix`:
 
 ```nix
