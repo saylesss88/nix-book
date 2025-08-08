@@ -426,6 +426,8 @@ in {
 }
 ```
 
+- Above, we have a local DNS proxy that encrypts and forwards queries.
+
 ```bash
 # You should see that dnscrypt-proxy chooses the Server with the lowest initial latency
 sudo systemctl status dnscrypt-proxy2
@@ -440,12 +442,14 @@ sudo journalctl -u dnscrypt-proxy2
 `dnscrypt-proxy2` acts as your local DNS resolver listening on your machine
 (`127.0.0.1`) for IPv4 and `::1` for iPv6.
 
+The system's DNS settings (`networking.nameservers`) point to localhost, so
+**all DNS queries from the computer** go to dnscrypt-proxy.
+
 `inputs.oisd` refers to the flake input oisd blocklist, it prevents your device
 from connecting to unwanted or harmful domains.
 
-`dnscrypt-proxy2` filters ads/trackers (using oisd), enforces DNSSEC, and uses
-encrypted transports (DNS-over-HTTPS/DoH, DNSCrypt, optionally
-DNS-over-TLS/DoT).
+`dnscrypt-proxy2` then encrypts and forwards our DNS requests to third-party
+public DNSCrypt or DoH servers.
 
 ## Firewalls
 
@@ -464,7 +468,7 @@ This nftables firewall configuration is a strong recommended practice for
 enforcing encrypted DNS on your system by restricting all outbound DNS traffic
 to a local dnscrypt-proxy process. It greatly reduces DNS leak risks and
 enforces privacy by limiting DNS queries to trusted, encrypted upstream
-servers.(This was edited on 08-07-25):
+servers.(This was edited on 08-08-25):
 
 ```nix
 {...}: {
@@ -484,7 +488,6 @@ servers.(This was edited on 08-07-25):
           ip6 daddr ::1 tcp dport 53 accept
 
           # Allow dnscrypt-proxy2 to talk to upstream (set correct UID!)
-          # the following command gives you the UID:
           # ps -o uid,user,pid,cmd -C dnscrypt-proxy
           meta skuid 62396 udp dport { 443, 853 } accept
           meta skuid 62396 tcp dport { 443, 853 } accept
@@ -498,16 +501,27 @@ servers.(This was edited on 08-07-25):
       }
     '';
   };
+
   networking.firewall = {
     enable = true;
+
     allowedTCPPorts = [
-      53 # DNS
-      22 # SSH
-      80 # HTTP
-      443 # HTTPS (Allow web traffic to reach your machine)
+      # TCP ports to allow *inbound* connections from the internet.
+      # Keep this list as small as possible to reduce attack surface.
+
+      22 # SSH – Only keep open if you need to connect to this machine remotely.
+      # If not used, comment it out or remove it entirely.
+
+      # 53  # DNS – Not needed unless running a public DNS server.
+      # 80  # HTTP – Only for hosting a public website.
+      # 443 # HTTPS – Only for hosting a public HTTPS service.
     ];
+
     allowedUDPPorts = [
-      53 # DNS
+      # UDP ports to allow *inbound* connections.
+      # Most desktop systems don’t need any open here unless hosting a service.
+
+      # 53  # DNS – Not needed unless running a public DNS server.
     ];
   };
 }
@@ -528,13 +542,13 @@ sudo nft list ruleset
 `networking.nftables`: This section provides a raw `nftables` ruleset that gives
 you granular, low-level control. The rules here are more specific and are meant
 to handle the intricate logic of the DNS proxy setup. They will be applied
-directly to the kernel's `nftables` subsystem.
+directly to the kernel's `nftables` subsystem and prevent DNS leaks.
 
 `networking.firewall`: This is a higher-level, simpler NixOS option that uses
 `iptables` rules to open ports for inbound traffic. The rules defined here
-(allowing ports 53, 22, 80, 443) are for incoming connections to the machine,
-not for outbound traffic, so they do not interfere with the `nftables` rules
-that filter the outgoing traffic.
+(allowing port 22) is for incoming SSH connections to the machine, not for
+outbound traffic, so they do not interfere with the `nftables` rules that filter
+the outgoing traffic.
 
 The firewall ensures only authorized, local encrypted DNS proxy process can
 speak DNS with the outside world, and that all other DNS requests from any other
