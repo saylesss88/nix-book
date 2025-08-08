@@ -36,7 +36,27 @@ sudo cryptsetup luksAddKey /dev/disk/by-partlabel/luks /root/usb-luks.key
 **OR**
 
 <details>
-<summary> ✔️ Click to expand Experimental TPM2 auto-unlock </summary>
+<summary> ✔️ Click to expand Experimental TPM2 auto-unlock for LUKS </summary>
+
+It is fairly complex as to how TPM2 auto-unlock can improve security, it has to
+do with how Linux distributions fail to authenticate the boot process past the
+initrd. This means that even if your data is encrypted and Secure Boot is
+enabled, there is nothing preventing a tampered initrd image from being injected
+in place of your trusted one.
+
+TPMs protect secrets by releasing them only if the boot process can be
+authenticated through "measurements." During boot, each component involved
+(firmware, bootloader, kernel, etc.) is hashed, and these hashes are extended
+into special TPM registers called Platform Configuration Registers (PCRs). These
+PCRs hold a cumulative, tamper-evident record of the boot process state.
+
+If any part of the boot sequence changes (even slightly), the PCR values will
+differ from the expected, causing the TPM to refuse to release the bound secret
+(such as a disk decryption key). This ensures that the system only boots or
+unlocks secrets when its software stack is known and trusted, providing strong
+protection against tampering or unauthorized modifications. The values aren't
+only protected by these PCRs but encrypted with a "seed key" that's generated on
+the TPM chip itself, and cannot leave the TPM.
 
 Find your encrypted partition with `lsblk`:
 
@@ -74,6 +94,9 @@ key and lock you out, unless you re-enroll the key with the updated PCR values.
 
 - [PCR Definitions](https://uapi-group.org/specifications/specs/linux_tpm_pcr_registry/)
 
+- [Authenticated Boot and FDE](https://0pointer.net/blog/authenticated-boot-and-disk-encryption-on-linux.html)
+  This article explains the limitations and remidies very well.
+
 That said, I do often see people mention a firmware update breaking their TPM2
 auto-unlock functionality. Keep this in mind and have a backup plan. This is
 also incompatible with the encrypted impermanence setup shared in this book, the
@@ -102,7 +125,8 @@ yours, if you followed this books encrypted disko install it should be:
   environment.systemPackages = [ pkgs.tpm2-tss ];
 ```
 
-If you use this, you can't also use the USB Keyfile.
+If you use this, you can't also use the USB Keyfile and you can't use the
+included impermanence guide.
 
 </details>
 
