@@ -60,13 +60,6 @@ is practical, tested hardening tailored to you.
   designed to strip metadata from a wide range of media files efficiently.
   (`pkgs.mat2`)
 
-- For potentially dangerous file types like PDFs, office documents, or images,
-  especially those downloaded from untrusted sources such as torrents, consider
-  converting them to a safe PDF format with
-  [dangerzone](https://github.com/freedomofpress/dangerzone). Dangerzone not
-  only removes metadata but also applies robust sanitization to neutralize
-  malicious content.
-
 **Use Anonymous File-Sharing Tools**
 
 - For sensitive transfers, consiter tools like
@@ -114,7 +107,11 @@ usability and minimizing system interruptions. They catch common threats like
 network eavesdropping, password reuse, fingerprinting, and data leakage,
 providing a solid foundation to build on.
 
-### Choosing a secure Browser
+A vast majority of secure and privacy-focused browsers available for NixOS are
+based on Firefox. Chromium derivatives like Ungoogled Chromium and Brave do
+exist in Nixpkgs, but are less recommended by privacy advocates.
+
+### Choosing Secure Browsers and Search Engines
 
 On a hardened Linux system, the browser is most often the weakest link exposed
 to the internet, and so security, privacy, and anti-tracking features of
@@ -150,45 +147,16 @@ features Tor created along with a VPN if you so choose.
 - [Mullvad-Browser](https://mullvad.net/en/browser), is in Nixpkgs as:
   `pkgs.mullvad-browser`
 
-#### SearXNG
-
-SearXNG is a privacy-respecting metasearch engine that aggregates results from
-various search services, such as Google, DuckDuckGo, etc without tracking you or
-profiling your searches.
-
-- [SearXNG on NixOS](https://wiki.nixos.org/wiki/SearXNG)
-  - [Welcome to SearXNG](https://docs.searxng.org/)
-
-#### Hardening Other Browsers
-
-If the above browsers aren't for you, you can harden the browser you're using
-now. For example, Firefox has a lot of documentation on hardening:
-
-- [Firefox Hardening Guide](https://brainfucksec.github.io/firefox-hardening-guide)
-
-- [STIG Firefox Hardening](https://simeononsecurity.com/guides/enhance-firefox-security-configuring-guide/)
-
-- [Mozilla Firefox Security Technical Implementation Guide](https://stigviewer.com/stigs/mozilla_firefox)
-  The STIG for Mozilla Firefox (Security Technical Implementation Guide) is a
-  set of security configuration standards developed by the U.S. Department of
-  Defense. They are created by the Defense Information Systems Agency (DISA) to
-  secure and harden DoD information systems and software.
-
-- [Discourse Declare Firefox extensions and settings](https://discourse.nixos.org/t/declare-firefox-extensions-and-settings/36265)
+## LibreWolf
 
 **LibreWolf** is an open-source fork of Firefox with a strong focus on privacy,
 security, and user freedom. LibreWolf enables always HTTPS, includes
-uBlockOrigin, and only includes privacy focused search engines by default among
-other strong defaults. Also, since LibreWolf is a fork of Firefox most of the
-other hardening options work for it as well.
+uBlockOrigin, and only includes privacy focused search engines by default such
+as:
 
-- [NixOS Wiki LibreWolf](https://wiki.nixos.org/wiki/Librewolf), the options in
-  the wiki make it less secure and aren't recommended settings to use. They
-  explicitly disable several of LibreWolf's default privacy-enhancing features,
-  such as fingerprinting resistance and clearing session data on shutdown.
-
-- [LibreWolf Features](https://librewolf.net/docs/features/) You still need to
-  enable DNS over HTTPS through privacy settings.
+**SearXNG** an open-source, privacy-respecting metasearch engine that aggregates
+results from various search services, such as Google, DuckDuckGo, etc without
+tracking you or profiling your searches.
 
 Example LibreWolf config implementing many of the STIG recommendations:
 
@@ -588,8 +556,9 @@ dig @8.8.8.8 example.com    # Should fail/time out for normal users
 ```
 
 - This test is actually what alerted me of an improper configuration in the
-  above firewall allowing me to fix it. Initially the second `dig` command gave
-  results letting me know that the restrictions weren't being applied correctly.
+  above firewalls nftables rules allowing me to fix it. Initially the second
+  `dig` command gave results letting me know that the restrictions weren't being
+  applied correctly.
 
 Since we defined an `output` chain inside `table inet filter` with the line:
 
@@ -637,3 +606,31 @@ on the rules you set.
   protect your privacy.
 
 - [oisd.nl](https://oisd.nl/) the oisd website
+
+- For potentially dangerous file types like PDFs, office documents, or images,
+  especially those downloaded from untrusted sources such as torrents, consider
+  converting them to a safe PDF format with
+  [dangerzone](https://github.com/freedomofpress/dangerzone). Dangerzone not
+  only removes metadata but also applies robust sanitization to neutralize
+  malicious content.
+
+- [NixOS Wiki LibreWolf](https://wiki.nixos.org/wiki/Librewolf), the options in
+  the wiki make it less secure and aren't recommended settings to use. They
+  explicitly disable several of LibreWolf's default privacy-enhancing features,
+  such as fingerprinting resistance and clearing session data on shutdown.
+
+- [LibreWolf Features](https://librewolf.net/docs/features/) You still need to
+  enable DNS over HTTPS through privacy settings.
+
+- [SearXNG on NixOS](https://wiki.nixos.org/wiki/SearXNG)
+  - [Welcome to SearXNG](https://docs.searxng.org/)
+
+- [Firefox Hardening Guide](https://brainfucksec.github.io/firefox-hardening-guide)
+
+- [STIG Firefox Hardening](https://simeononsecurity.com/guides/enhance-firefox-security-configuring-guide/)
+
+- [Mozilla Firefox Security Technical Implementation Guide](https://stigviewer.com/stigs/mozilla_firefox)
+  The STIG for Mozilla Firefox (Security Technical Implementation Guide) is a
+  set of security configuration standards developed by the U.S. Department of
+  Defense. They are created by the Defense Information Systems Agency (DISA) to
+  secure and harden DoD information systems and software.
