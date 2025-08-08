@@ -453,13 +453,18 @@ public DNSCrypt or DoH servers.
 
 ## Firewalls
 
-[Cloudflare What is a Firewall](https://www.cloudflare.com/learning/security/what-is-a-firewall/)
-
 NixOS includes an integrated firewall based on iptables/nftables.
+
+<details>
+<summary> ✔️ Click to Expand Firewall Resources </summary>
+
+[Cloudflare What is a Firewall](https://www.cloudflare.com/learning/security/what-is-a-firewall/)
 
 [Beginners guide to nftables](https://linux-audit.com/networking/nftables/nftables-beginners-guide-to-traffic-filtering/)
 
 [Arch Wiki nftables](https://wiki.archlinux.org/title/Nftables)
+
+</details>
 
 The following firewall setup is based on the dnscrypt setup above utilizing
 nftables.
@@ -468,10 +473,11 @@ This nftables firewall configuration is a strong recommended practice for
 enforcing encrypted DNS on your system by restricting all outbound DNS traffic
 to a local dnscrypt-proxy process. It greatly reduces DNS leak risks and
 enforces privacy by limiting DNS queries to trusted, encrypted upstream
-servers.(This was edited on 08-08-25):
+servers.(This was edited on 08-08-25) replace `<DNSCRYPT-UID>` with the UID
+given from the command `ps -o uid,user,pid,cmd -C dnscrypt-proxy`:
 
 ```nix
-{...}: {
+{ ... }: {
   networking.nftables = {
     enable = true;
 
@@ -479,7 +485,6 @@ servers.(This was edited on 08-08-25):
       table inet filter {
         chain output {
           type filter hook output priority 0; policy accept;
-          # Attach this chain to the OUTPUT hook!
 
           # Allow localhost DNS for dnscrypt-proxy2
           ip daddr 127.0.0.1 udp dport 53 accept
@@ -487,45 +492,69 @@ servers.(This was edited on 08-08-25):
           ip daddr 127.0.0.1 tcp dport 53 accept
           ip6 daddr ::1 tcp dport 53 accept
 
-          # Allow dnscrypt-proxy2 to talk to upstream (set correct UID!)
+          # Allow dnscrypt-proxy2 to talk to upstream servers
+          # Replace <DNSCRYPT-UID> with:
           # ps -o uid,user,pid,cmd -C dnscrypt-proxy
-          meta skuid 62396 udp dport { 443, 853 } accept
-          meta skuid 62396 tcp dport { 443, 853 } accept
+          meta skuid <DNSCRYPT-UID> udp dport { 443, 853 } accept
+          meta skuid <DNSCRYPT-UID> tcp dport { 443, 853 } accept
 
           # Block all other outbound DNS
           udp dport { 53, 853 } drop
           tcp dport { 53, 853 } drop
-
-          # (all other outbound traffic: policy ACCEPT unless further rules)
         }
       }
     '';
   };
-
   networking.firewall = {
     enable = true;
-
     allowedTCPPorts = [
-      # TCP ports to allow *inbound* connections from the internet.
-      # Keep this list as small as possible to reduce attack surface.
+      # Ports open for inbound connections.
+      # Limit these to reduce the attack surface.
 
-      22 # SSH – Only keep open if you need to connect to this machine remotely.
-      # If not used, comment it out or remove it entirely.
+      22 # SSH – Keep open only if you need remote access.
+         # To change the SSH port in NixOS:
+         # services.openssh.ports = [ 2222 ];
+         # Update this list to match the new port.
 
-      # 53  # DNS – Not needed unless running a public DNS server.
-      # 80  # HTTP – Only for hosting a public website.
-      # 443 # HTTPS – Only for hosting a public HTTPS service.
+      # 53  # DNS – Only if running a public DNS server.
+      # 80  # HTTP – Only if hosting a website.
+      # 443 # HTTPS – Only if hosting a secure website.
     ];
-
     allowedUDPPorts = [
-      # UDP ports to allow *inbound* connections.
-      # Most desktop systems don’t need any open here unless hosting a service.
+      # Ports open for inbound UDP traffic.
+      # Most NixOS workstations won't need any here.
 
-      # 53  # DNS – Not needed unless running a public DNS server.
+      # 53 # DNS – Only if running a public DNS server.
     ];
   };
 }
 ```
+
+<details>
+<summary> ✔️ Click to Expand Tip on changing the default SSH Port </summary>
+
+> ❗ TIP: Reduce SSH noise by changing the default port On most systems, SSH
+> listens on TCP port 22 — which means automated bots and scanners will hit it
+> constantly. While this doesn’t replace real security measures, moving SSH to a
+> different port drastically cuts down on drive-by brute-force attempts you’ll
+> see in your logs.
+>
+> In NixOS, change both the SSH daemon port and your firewall rule:
+>
+> ```nix
+>  # Example: Move SSH to port 2222
+>  networking.firewall.allowedTCPPorts = [ 2222 ];
+>  services.openssh.ports = [ 2222 ];
+> ```
+>
+> - After rebuilding, test from another terminal/session before closing your
+>   existing one:
+>
+> ```bash
+> ssh -p 2222 user@host
+> ```
+
+</details>
 
 `nft` is a cli tool used to set up, maintain and inspect packet filtering and
 classification rules in the Linux kernel, in the nftables framework. The Linux
@@ -548,7 +577,8 @@ directly to the kernel's `nftables` subsystem and prevent DNS leaks.
 `iptables` rules to open ports for inbound traffic. The rules defined here
 (allowing port 22) is for incoming SSH connections to the machine, not for
 outbound traffic, so they do not interfere with the `nftables` rules that filter
-the outgoing traffic.
+the outgoing traffic. (Make sure to comment out or remove this if you don't SSH
+into your machine).
 
 The firewall ensures only authorized, local encrypted DNS proxy process can
 speak DNS with the outside world, and that all other DNS requests from any other
