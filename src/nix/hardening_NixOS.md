@@ -962,12 +962,40 @@ gpgconf --list-dirs agent-ssh-socket
 
 ```bash
 ssh-add -L
-# output
+# Copy the entire following line:
 ssh-ed25519 AABBC3NzaC1lZDI1NTE5AAAAIGXwhVokJ6cKgodYT+0+0ZrU0sBqMPPRDPJqFxqRtM+I (none)
 ```
 
 - Mine shows `(none)` because I left the comment field blank when creating the
   key and doesn't affect functionality.
+
+Then, in your server's NixOS configuration (e.g., `configuration.nix`):
+
+```nix
+services.openssh = {
+  enable = true;
+  authorizedKeys.keys = [
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGXwhVokJ6cKgodYT+0+0ZrU0sBqMPPRDPJqFxqRtM+I"
+  ];
+};
+```
+
+> ❗ NOTE: Only the **public** key goes here, it's safe to commit to version
+> control. If you prefer not to hardcode it in the config, you can reference it
+> from a `.pub` file in your repo and read it with
+> `builtins.readFile ./mykey.pub`
+
+Rebuild your system and test an SSH connection into the server:
+
+```bash
+ssh -p <your-port> user@hostname
+```
+
+- `<your-port>` is often `22` so it would be something like:
+
+```bash
+ssh -p 22 bill@xps
+```
 
 ## Encrypt a File with PGP
 
