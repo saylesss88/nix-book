@@ -362,6 +362,8 @@ tailscale status
 
 - [Tailscale Best Practices](https://tailscale.com/kb/1196/security-hardening)
 
+- [Tailscale CLI](https://tailscale.com/kb/1080/cli)
+
 ## Encrypted DNS
 
 DNS (Domain Name System) resolution is the process of translating a website's
