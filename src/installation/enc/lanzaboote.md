@@ -29,6 +29,8 @@ I found
 fairly enlightening as far as the state of Authenticated Boot and Disk
 Encryption on Linux.
 
+- [Brave New Trusted Boot World](https://0pointer.net/blog/brave-new-trusted-boot-world.html)
+
 Disk encryption means that reading the data in clear-text form is only possible
 if you possess a secret of some form, usually a password/passphrase. Data
 authentication means that no one can make changes to the data on disk unless
