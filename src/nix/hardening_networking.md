@@ -303,6 +303,65 @@ privacy.
 
 - [OpenVPN](https://wiki.nixos.org/wiki/OpenVPN)
 
+### Setting up Tailscale
+
+I was surprised at how easy this actually was to set up. Either go to
+<https://www.tailscale.com> and/or download the app for either Android or IOS,
+sign up with your identity provider, and click `Start connecting devices ->`
+
+- [Tailscale quickstart](https://tailscale.com/kb/1017/install)
+
+To add tailscale to NixOS:
+
+```nix
+# tailscale.nix
+{...}: {
+  services.tailscale.enable = true;
+  # Tell the firewall to implicitly trust packets routed over Tailscale:
+  networking.firewall.trustedInterfaces = ["tailscale0"];
+}
+```
+
+Tailscale will automatically use the hostname of your device as the name of the
+network. If you want to change it to something else:
+
+```bash
+sudo tailscale set --hostname=<name>
+# You can also give your account a nickname
+sudo tailscale set --nickname=<name>
+```
+
+This allows you to refer to your network by `name` rather than IP address.
+
+Tailscale uses [MagicDNS](https://tailscale.com/kb/1081/magicdns) which is
+enabled by default, and they recommend you keep it enabled.
+
+If you use dnscrypt or something else for NixOS, the following command disables
+MagicDNS:
+
+```bash
+sudo tailscale set --accept-dns=false
+```
+
+To connect to tailscale after rebuilding you can run:
+
+```bash
+sudo tailscale up
+```
+
+Get the status of your connections to other Tailscale devices:
+
+```bash
+tailscale status
+1           2         3           4         5
+100.1.2.3   device-a  apenwarr@   linux     active; direct <ip-port>, tx 1116 rx 1124
+100.4.5.6   device-b  crawshaw@   macOS     active; relay <relay-server>, tx 1351 rx 4262
+100.7.8.9   device-c  danderson@  windows   idle; tx 1214 rx 50
+100.0.1.2   device-d  ross@       iOS       —
+```
+
+- [Tailscale Best Practices](https://tailscale.com/kb/1196/security-hardening)
+
 ## Encrypted DNS
 
 DNS (Domain Name System) resolution is the process of translating a website's
