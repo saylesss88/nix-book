@@ -336,8 +336,10 @@ This allows you to refer to your network by `name` rather than IP address.
 Tailscale uses [MagicDNS](https://tailscale.com/kb/1081/magicdns) which is
 enabled by default, and they recommend you keep it enabled.
 
-If you use dnscrypt or something else for NixOS, the following command disables
-MagicDNS:
+The docs say that by default, devices in your tailnet prefer their local DNS
+settings and only use the tailnet's DNS servers when needed. I had to completely
+disable my Androids DNS settings for tailscale to access the internet through
+MagicDNS.
 
 ```bash
 sudo tailscale set --accept-dns=false
@@ -348,6 +350,24 @@ To connect to tailscale after rebuilding you can run:
 ```bash
 sudo tailscale up
 ```
+
+Use `nslookup` to review and debug DNS responses:
+
+```bash
+nslookup google.com
+Server:         127.0.0.1
+Address:        127.0.0.1#53
+
+Non-authoritative answer:
+Name:   google.com
+Address: 142.251.40.206
+Name:   google.com
+Address: 2a00:1450:4001:827::200e
+```
+
+- The `127.0.0.1#53` indicate that instead of using the DNS server pushed by
+  your ISP, router, or Tailscale's MagicDNS, the system is sending all DNS
+  requests through the loopback device to `dnscrypt-proxy` in my case.
 
 Get the status of your connections to other Tailscale devices:
 
@@ -363,6 +383,9 @@ tailscale status
 - [Tailscale Best Practices](https://tailscale.com/kb/1196/security-hardening)
 
 - [Tailscale CLI](https://tailscale.com/kb/1080/cli)
+
+- There is much more you can do with Tailscale, including integrating
+  Mullvad-VPN and using Exit Nodes.
 
 ## Encrypted DNS
 
