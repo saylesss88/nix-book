@@ -48,11 +48,33 @@ sudo cryptsetup luksAddKey /dev/disk/by-partlabel/luks /root/usb-luks.key
 > physical security of your machine is a concern. This is still at a stage where
 > you can expect rough edges and workarounds.
 
+You can add an additional layer by encrypting user data, such as individual home
+folders, with a different mechanism, such as `fscrypt-experimental` or
+`systemd-homed`. Or, you can use a TPM pin to benefit from the security
+properties of the TPM, while avoiding completely unattended unlocking.
+--[Arch Wiki](https://wiki.archlinux.org/title/Trusted_Platform_Module)
+
+I am reading that `fscrypt` is no longer experimental.
+
+```nix
+security.pam.enableFscrypt = true;
+```
+
+```bash
+sudo fscrypt setup --all-users
+sudo mv /home/<user> /home/old<user>
+sudo mkdir /home/<user>
+sudo chown <user>:users /home/<user>
+sudo fscrypt encrypt --source pam_passphrase --user <user> --skip-unlock /home/<user>/
+```
+
+--☝️[Discourse](https://discourse.nixos.org/t/experienced-with-systemd-homed-or-other-encrypted-home/63516/2)
+
 It is fairly complex as to how TPM2 auto-unlock can improve security in some
 ways, it has to do with how Linux distributions fail to authenticate the boot
-process past the initrd.This means that even if your data is encrypted and
-Secure Boot is enabled, there is nothing preventing a tampered initrd image from
-being injected in place of your trusted one.
+process past the initrd.Even with encryption and Secure Boot enabled, the initrd
+stage often remains unverified, meaning a tampered initrd could be substituted
+without detection.
 
 TPMs protect secrets by releasing them only if the boot process can be
 authenticated through "measurements." During boot, each component involved
@@ -67,6 +89,19 @@ unlocks secrets when its software stack is known and trusted, providing strong
 protection against tampering or unauthorized modifications. The values aren't
 only protected by these PCRs but encrypted with a "seed key" that's generated on
 the TPM chip itself, and cannot leave the TPM.
+
+Check TPM support:
+
+```bash
+cat /sys/class/tpm/tpm0/device/description
+TPM 2.0 Device
+```
+
+Check for necessary software dependencies:
+
+```bash
+systemd-analyze has-tpm2
+```
 
 Find your encrypted partition with `lsblk`:
 
