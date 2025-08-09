@@ -76,6 +76,8 @@ process past the initrd.Even with encryption and Secure Boot enabled, the initrd
 stage often remains unverified, meaning a tampered initrd could be substituted
 without detection.
 
+- [Brave New Trusted Boot World](https://0pointer.net/blog/brave-new-trusted-boot-world.html)
+
 TPMs protect secrets by releasing them only if the boot process can be
 authenticated through "measurements." During boot, each component involved
 (firmware, bootloader, kernel, etc.) is hashed, and these hashes are extended
