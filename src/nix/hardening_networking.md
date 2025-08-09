@@ -268,10 +268,26 @@ custom.librewolf.enable = true;
 
 The `xdg` settings at the end make LibreWolf the defaults for what is listed.
 
-Thanks to `JosefKatic` for putting the above settings in NixOS format.
+Thanks to `JosefKatic` for putting the above STIG settings in NixOS format.
+
+You can test your browser to see how well you are protected from tracking and
+fingerprinting at [Cover Your Tracks](https://coveryourtracks.eff.org/).
+
+Privacy protection doesn't need to be perfect to make a difference. The best
+protection against tracking and fingerprinting available is to use Tor. For your
+daily driver, tools like Ghostery, UblockOrigin, Privacy Badger, Disconnect, and
+NoScript reduce fingerprinting significantly but not completely. Some privacy
+guides will suggest not to use add-ons at all because they make your browser
+unique, this isn't one of them. Just use Tor when it truly matters.
 
 There are more hardening parameters that can be set but this should be a good
-starting point for a hardened version of LibreWolf.
+starting point for a hardened version of LibreWolf. When testing with Cover your
+tracks, customized LibreWolf tested as having stronger tracking protection than
+default Mullvad-Browser and NoScript significantly cuts down the data available
+for fingerprinting by disabling JavaScript.
+
+- The [Garuda Privacy-Guide](https://wiki.garudalinux.org/en/privacy-guide) has
+  good tips and recommendations for browser add-ons.
 
 </details>
 
