@@ -177,6 +177,28 @@ uname -r
 uname -a
 ```
 
+Show the configuration of your current kernel:
+
+```bash
+zcat /proc/config.gz
+# ...snip...
+#
+# Compression
+#
+CONFIG_CRYPTO_DEFLATE=m
+CONFIG_CRYPTO_LZO=y
+CONFIG_CRYPTO_842=m
+CONFIG_CRYPTO_LZ4=m
+CONFIG_CRYPTO_LZ4HC=m
+CONFIG_CRYPTO_ZSTD=y
+# end of Compression
+# ...snip...
+```
+
+The [NixOS Manual](https://nixos.org/manual/nixos/stable/#sec-kernel-config)
+states that the default Linux kernel configuration should be fine for most
+users.
+
 The Linux kernel is typically released under two forms: stable and long-term
 support (LTS). Choosing either has consequences, do your research.
 [Stable vs. LTS kernels](https://madaidans-insecurities.github.io/guides/linux-hardening.html#stable-vs-lts)
@@ -201,6 +223,9 @@ this:
 ```nix
 boot.kernelPackages = pkgs.linux_6_12_hardened;
 ```
+
+Note that this not only replaces the kernel, but also packages that are specific
+to the kernel version, such as NVIDIA video drivers.
 
 - If you decide to use this, read further before rebuilding.
 
@@ -272,6 +297,11 @@ this seems easier to me than trying to parse through the patches.
 hardened kernel includes security patches and stricter defaults, but it doesn't
 cover all runtime tunables. Refer to the above commands to get a diff of the
 changes.
+
+[boot.kernel.sysctl](https://nixos.org/manual/nixos/stable/options#opt-boot.kernel.sysctl):
+Runtime parameters of the Linux kernel, as set by sysctl(8). Note that the
+sysctl parameters names must be enclosed in quotes. Values may be a string,
+integer, boolean, or null.
 
 Refer to
 [madadaidans-insecurities#sysctl-kernel](https://madaidans-insecurities.github.io/guides/linux-hardening.html#sysctl-kernel)
@@ -390,7 +420,7 @@ You can find the following settings in the above guide in the
 
 ```nix
 # boot.nix
-      kernelParams = [
+      boot.kernelParams = [
         # make it harder to influence slab cache layout
         "slab_nomerge"
         # enables zeroing of memory during allocation and free time
@@ -426,11 +456,18 @@ You can find the following settings in the above guide in the
 This is a thoughtful start to hardening boot parameters, there are more
 recommendations in the guide.
 
+Kernel modules for hardware devices are generally loaded automatically by
+`udev`. You can force a module to be loaded via `boot.kernelModules`.
+
+[boot.blacklistedKernelModules](https://nixos.org/manual/nixos/stable/options#opt-boot.blacklistedKernelModules):
+List of names of kernel modules that should not be loaded automatically by the
+hardware probing code.
+
 You can find the following settings in the
 [Blacklisting Kernel Modules Section](https://madaidans-insecurities.github.io/guides/linux-hardening.html#kasr-kernel-modules)
 
 ```nix
-      blacklistedKernelModules = [
+      boot.blacklistedKernelModules = [
         # Obscure networking protocols
         "dccp"
         "sctp"
@@ -474,7 +511,8 @@ You can find the following settings in the
 ```
 
 As with the `kernelParameters` above, there are more suggestions in the guide, I
-have used the above parameters and had no issues.
+have used the above parameters along with the commented out ones and had no
+issues.
 
 ## Hardening Systemd
 
@@ -1168,6 +1206,9 @@ algorithms, and best practices:
   };
 }
 ```
+
+TCP port 22 (ssh) is opened automatically if the SSH daemon is enabled
+(`services.openssh.enable = true;`)
 
 Much of the SSH hardening settings came from
 [ryanseipp's secure-ssh Guide](https://ryanseipp.com/post/nixos-secure-ssh/)
