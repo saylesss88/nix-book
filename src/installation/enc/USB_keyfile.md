@@ -38,11 +38,21 @@ sudo cryptsetup luksAddKey /dev/disk/by-partlabel/luks /root/usb-luks.key
 <details>
 <summary> ✔️ Click to expand Experimental TPM2 auto-unlock for LUKS </summary>
 
-It is fairly complex as to how TPM2 auto-unlock can improve security, it has to
-do with how Linux distributions fail to authenticate the boot process past the
-initrd. This means that even if your data is encrypted and Secure Boot is
-enabled, there is nothing preventing a tampered initrd image from being injected
-in place of your trusted one.
+> ⚠️ WARNING: Security Implications of TPM2 Auto-Unlock
+
+> Enabling TPM2 auto-unlock fundamentally changes your system's security model.
+> While this feature protects against certain forms of malicious software
+> injection by tying the decryption key to the system's boot state, it
+> eliminates the need for a user password at boot. This creates a significant
+> risk if your machine is stolen or seized, do not use this feature if the
+> physical security of your machine is a concern. This is still at a stage where
+> you can expect rough edges and workarounds.
+
+It is fairly complex as to how TPM2 auto-unlock can improve security in some
+ways, it has to do with how Linux distributions fail to authenticate the boot
+process past the initrd.This means that even if your data is encrypted and
+Secure Boot is enabled, there is nothing preventing a tampered initrd image from
+being injected in place of your trusted one.
 
 TPMs protect secrets by releasing them only if the boot process can be
 authenticated through "measurements." During boot, each component involved
@@ -82,7 +92,8 @@ less pcrs and a wipe feature:
 sudo systemd-cryptenroll --wipe-slot=tpm2 --tpm2-device=auto --tpm2-pcrs=0+7 /dev/disk/by-partlabel/luks
 ```
 
-- Using less pcrs could prevent breakage but reduces security.
+- Using less pcrs could prevent breakage but reduces security. Check out the PCR
+  Definitions below and decide if you require additional PCRs or less.
 
 - `wipe-slot` tells the system to delete any key associated with the TPM2 chip
   from the LUKS volume's keyslot before adding a new one.
@@ -95,7 +106,7 @@ key and lock you out, unless you re-enroll the key with the updated PCR values.
 - [PCR Definitions](https://uapi-group.org/specifications/specs/linux_tpm_pcr_registry/)
 
 - [Authenticated Boot and FDE](https://0pointer.net/blog/authenticated-boot-and-disk-encryption-on-linux.html)
-  This article explains the limitations and remidies very well.
+  This article explains the limitations and remedies very well.
 
 That said, I do often see people mention a firmware update breaking their TPM2
 auto-unlock functionality. Keep this in mind and have a backup plan. This is
@@ -125,8 +136,11 @@ yours, if you followed this books encrypted disko install it should be:
   environment.systemPackages = [ pkgs.tpm2-tss ];
 ```
 
-If you use this, you can't also use the USB Keyfile and you can't use the
-included impermanence guide.
+> ❗ NOTE: `cryptroot` needs to match what your encrypted partition is named, I
+> have seen quite a few different names here.
+
+If you use this, you can't also use the USB Keyfile or the included impermanence
+guide.
 
 </details>
 
