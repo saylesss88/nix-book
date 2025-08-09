@@ -35,8 +35,19 @@ configuration, and proactive control.
 > for [nix-mineral](https://github.com/cynicsketch/nix-mineral) came from this
 > guide as well.
 
-> You can do a lot to secure NixOS but if anonymity is paramount, I recommend
-> booting into a [Tails USB stick](https://tails.net/).
+> ❗ **Note on SELinux and AppArmor**: While NixOS can provide a high degree of
+> security through its immutable and declarative nature, it's important to
+> understand the limitations regarding Mandatory Access Control (MAC)
+> frameworks. Neither SELinux nor AppArmor are fully supported or widely used in
+> the NixOS ecosystem. You can do a lot to secure NixOS but if anonymity and
+> isolation are paramount, I recommend booting into a
+> [Tails USB stick](https://tails.net/).
+
+☝️ The unique file structure of NixOS, particularly the immutable `/nix/store`,
+makes it difficult to implement and manage the file-labeling mechanisms that
+these frameworks rely on. There are ongoing community efforts to improve
+support, but as of now, they are considered experimental and not a standard part
+of a typical NixOS configuration.
 
 Containers and VMs are beyond the scope of this chapter but can also enhance
 security if configured correctly.
