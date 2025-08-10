@@ -248,23 +248,29 @@ environment.systemPackages = [ pkgs.kernel-hardening-checker ];
 `sysctl` is a tool that allows you to view or modify kernel settings and
 enable/disable different features.
 
-Check all `sysctl` parameters (long output) against recommendations:
+Check all `sysctl` parameters against the `kernel-hardening-checker`
+recommendations:
 
 ```bash
 sudo sysctl -a > params.txt
 kernel-hardening-checker -l /proc/cmdline -c /proc/config.gz -s ./params.txt
 ```
 
-Or a specific parameter:
+Check the value of a specific parameter:
 
 ```bash
 sudo sysctl -a | grep "kernel.kptr_restrict"
+# Output:
+kernel.kptr_restrict = 2
 ```
 
 Check Active Linux Security Modules:
 
 ```bash
 cat /sys/kernel/security/lsm
+# Output:
+File: /sys/kernel/security/lsm
+capability,landlock,yama,bpf,apparmor
 ```
 
 Check Kernel Configuration Options:
@@ -297,6 +303,26 @@ diff before.txt after.txt
 
 You can also diff against `after.txt` for future changes to avoid duplicates,
 this seems easier to me than trying to parse through the patches.
+
+## Kernel Security Settings
+
+```nix
+security = {
+      protectKernelImage = true;
+      lockKernelModules = false; # this breaks iptables, wireguard, and virtd
+
+      # force-enable the Page Table Isolation (PTI) Linux kernel feature
+      forcePageTableIsolation = true;
+
+      # User namespaces are required for sandboxing.
+      # this means you cannot set `"user.max_user_namespaces" = 0;` in sysctl
+      allowUserNamespaces = true;
+
+      # Disable unprivileged user namespaces, unless containers are enabled
+      unprivilegedUsernsClone = config.virtualisation.containers.enable;
+      allowSimultaneousMultithreading = true;
+}
+```
 
 ## Further Hardening with sysctl
 
