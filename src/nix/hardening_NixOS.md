@@ -634,16 +634,52 @@ pkgs.chkrootkit
 pkgs.clamav
 pkgs.aide
  ];
-#services = {  # clamd daemon (included for completeness, I was unsuccessful with it)
-#    clamav = {
-#        scanner.enable = true;
-#        scanner.interval = "*-*-* 04:00:00";
-#        daemon.enable = true;
-#        updater.enable = true;
-#        updater.interval = "hourly";
-#    };
-#};
 ```
+
+<details>
+<summary> ✔️ Click to Expand clamav.nix Example </summary>
+
+```nix
+# clamav.nix
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
+  cfg = config.custom.security.clamav;
+in {
+  options.custom.security.clamav = {
+    enable = lib.mkEnableOption "Enable Clamav";
+  };
+
+  config = lib.mkIf cfg.enable {
+    environment.systemPackages = [
+      pkgs.clamav
+    ];
+    services.clamav = {
+      daemon.enable = true;
+      updater.enable = true;
+    };
+    users.groups.clamav = {};
+    users.users.jr.extraGroups = ["clamav"];
+    # networking.firewall.allowedTCPPorts = [3310]; # Allow other machines to send requests
+  };
+}
+```
+
+Enable with:
+
+```nix
+# configuration.nix
+custom = {
+    security = {
+        clamav.enable = true;
+    };
+};
+```
+
+</details>
 
 Lynis Usage:
 
@@ -722,10 +758,10 @@ clamscan -r ~/home
 ```
 
 > ❗ NOTE: You only need either the individual `pkgs.clamav` with the cron job
-> **OR** the `clamd-daemon`. When testing, I was unable to get `clamdscan` to
-> work properly with **Permission denied** errors. You may have better luck so I
-> included both ways, the `clamscan -r ~/home` command was successful although
-> lengthy.
+> **OR** the `clamd-daemon` module. When testing, I was unable to get
+> `clamdscan` to work properly with **Permission denied** errors. You may have
+> better luck so I included both ways, the `clamscan -r ~/home` command was
+> successful although lengthy.
 
 ## Securing SSH
 
