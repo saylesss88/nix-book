@@ -634,15 +634,18 @@ pkgs.chkrootkit
 pkgs.clamav
 pkgs.aide
  ];
-services = {
-    clamav = {
-        daemon.enable = true;
-        updater.enable = true;
-    };
-};
+#services = {  # clamd daemon (included for completeness, I was unsuccessful with it)
+#    clamav = {
+#        scanner.enable = true;
+#        scanner.interval = "*-*-* 04:00:00";
+#        daemon.enable = true;
+#        updater.enable = true;
+#        updater.interval = "hourly";
+#    };
+#};
 ```
 
-Usage:
+Lynis Usage:
 
 ```bash
 sudo lynis show commands
@@ -683,7 +686,13 @@ sudo lynis audit system
 
 - Lynis will give you more recommendations for securing your system as well.
 
-Example cron job for `chkrootkit`:
+If you use `clamscan`, create the following log file:
+
+```bash
+sudo touch /var/log/clamscan.log
+```
+
+Example cron job for `chkrootkit` & `clamav`:
 
 ```nix
 {pkgs, ...}: {
@@ -693,6 +702,8 @@ Example cron job for `chkrootkit`:
     systemCronJobs = [
       # Every Sunday at 2:10 AM, run chkrootkit as root, log output for review
       "10 2 * * 0 root ${pkgs.chkrootkit}/bin/chkrootkit | logger -t chkrootkit"
+      # Every day at 2:00 AM, run clamscan as root and append output to a log file
+      "0 2 * * * root ${pkgs.clamav}/bin/clamscan -r /home >> /var/log/clamscan.log"
     ];
   };
 }
@@ -701,8 +712,20 @@ Example cron job for `chkrootkit`:
 The above cron job will use `chkrootkit` to automatically scan for known rootkit
 signatures. It can detect hidden processes and network connections.
 
-I got the recommendation for `clamav` from the Paranoid NixOS blog post and the
-others help with compliance for `lynis`.
+ClamAV usage:
+
+You can run `clamav` manually with:
+
+```bash
+# Recursive Scan:
+clamscan -r ~/home
+```
+
+> ❗ NOTE: You only need either the individual `pkgs.clamav` with the cron job
+> **OR** the `clamd-daemon`. When testing, I was unable to get `clamdscan` to
+> work properly with **Permission denied** errors. You may have better luck so I
+> included both ways, the `clamscan -r ~/home` command was successful although
+> lengthy.
 
 ## Securing SSH
 
