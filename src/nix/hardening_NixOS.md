@@ -634,6 +634,12 @@ pkgs.chkrootkit
 pkgs.clamav
 pkgs.aide
  ];
+services = {
+    clamav = {
+        daemon.enable = true;
+        updater.enable = true;
+    };
+};
 ```
 
 Usage:
