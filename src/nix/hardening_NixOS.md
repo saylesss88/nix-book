@@ -239,19 +239,26 @@ links in the `.json` file to see the patch diffs.
 
 ### sysctl
 
+A tool for checking the security hardening options of the Linux kernel:
+
+```nix
+environment.systemPackages = [ pkgs.kernel-hardening-checker ];
+```
+
 `sysctl` is a tool that allows you to view or modify kernel settings and
 enable/disable different features.
 
-Check all `sysctl` parameters (long output):
+Check all `sysctl` parameters (long output) against recommendations:
 
 ```bash
-sysctl -a
+sudo sysctl -a > params.txt
+kernel-hardening-checker -l /proc/cmdline -c /proc/config.gz -s ./params.txt
 ```
 
 Or a specific parameter:
 
 ```bash
-sysctl -a | grep "kernel.kptr_restrict"
+sudo sysctl -a | grep "kernel.kptr_restrict"
 ```
 
 Check Active Linux Security Modules:
@@ -273,13 +280,13 @@ Before rebuilding, you could do something like this to see exactly what is
 added:
 
 ```bash
-sysctl -a > before.txt
+sudo sysctl -a > before.txt
 ```
 
 And after the rebuild:
 
 ```bash
-sysctl -a > after.txt
+sudo sysctl -a > after.txt
 ```
 
 And finally run a `diff` on them:
@@ -302,6 +309,8 @@ changes.
 Runtime parameters of the Linux kernel, as set by sysctl(8). Note that the
 sysctl parameters names must be enclosed in quotes. Values may be a string,
 integer, boolean, or null.
+
+Check what each setting does [sysctl-explorer](https://sysctl-explorer.net/)
 
 Refer to
 [madadaidans-insecurities#sysctl-kernel](https://madaidans-insecurities.github.io/guides/linux-hardening.html#sysctl-kernel)
