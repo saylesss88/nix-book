@@ -674,43 +674,29 @@ pkgs.aide
 <summary> ✔️ Click to Expand clamav.nix Example </summary>
 
 ```nix
-# clamav.nix
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}: let
-  cfg = config.custom.security.clamav;
-in {
-  options.custom.security.clamav = {
-    enable = lib.mkEnableOption "Enable Clamav";
-  };
-
-  config = lib.mkIf cfg.enable {
-    environment.systemPackages = [
-      pkgs.clamav
-    ];
-    services.clamav = {
-      daemon.enable = true;
-      updater.enable = true;
+{pkgs, ...}: {
+  environment.systemPackages = with pkgs; [
+    clamav
+  ];
+  services.clamav = {
+    # Enable clamd daemon
+    daemon.enable = true;
+    updater.enable = true;
+    updater.frequency = 12; # Number of database checks per day
+    scanner = {
+      enable = true;
+      # 4:00 AM
+      interval = "*-*-* 04:00:00";
+      scanDirectories = [
+        "/home"
+        "/var/lib"
+        "/tmp"
+        "/etc"
+        "/var/tmp"
+      ];
     };
-    users.groups.clamav = {};
-    users.users.jr.extraGroups = ["clamav"];
-    # networking.firewall.allowedTCPPorts = [3310]; # Allow other machines to send requests
   };
 }
-```
-
-Enable with:
-
-```nix
-# configuration.nix
-custom = {
-    security = {
-        clamav.enable = true;
-    };
-};
 ```
 
 </details>
