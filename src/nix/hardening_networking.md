@@ -336,6 +336,8 @@ ls ~/.cache
 > NixOS. It is meant to be run on every shutdown with a Hook, currently you have
 > to run it manually.
 
+- [Firejail Tor](https://firejail.wordpress.com/all-about-tor/)
+
 </details>
 
 Privacy protection doesn't need to be perfect to make a difference. The best
