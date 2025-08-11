@@ -347,7 +347,8 @@ ls ~/.cache
 
 > ❗ This can be done declaratively as well, I'm currently working on it. The
 > idea for this actually came from the Firejail Tor docs, edited for use with
-> NixOS.
+> NixOS. It is meant to be run on every shutdown with a Hook, currently you have
+> to run it manually.
 
 </details>
 
