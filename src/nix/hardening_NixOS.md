@@ -1567,6 +1567,39 @@ custom.security.doas.enable = true;
 > ❗ WARNING: Running untrusted code is never safe, sandboxing cannot change
 > this. --Arch Wiki
 
+```nix
+# firejail.nix
+{
+  pkgs,
+  lib,
+  ...
+}: {
+  programs.firejail = {
+    enable = true;
+    wrappedBinaries = {
+      mpv = {
+        executable = "${lib.getBin pkgs.mpv}/bin/mpv";
+        profile = "${pkgs.firejail}/etc/firejail/mpv.profile";
+      };
+      zathura = {
+        executable = "${lib.getBin pkgs.zathura}/bin/zathura";
+        profile = "${pkgs.firejail}/etc/firejail/zathura.profile";
+      };
+      qutebrowser = {
+        executable = "${lib.getBin pkgs.qutebrowser}/bin/qutebrowser";
+        profile = "${pkgs.firejail}/etc/firejail/qutebrowser.profile";
+      };
+      thunar = {
+        executable = "${lib.getBin pkgs.xfce.thunar}/bin/thunar";
+        profile = "${pkgs.firejail}/etc/firejail/thunar.profile";
+      };
+    };
+  };
+}
+```
+
+`wrappedBinaries` is a list of applications you want to run inside a sandbox.
+
 Firejail is a SUID program that reduces the risk of security breaches by
 restricting the running environment of untrusted applications using
 [Linux namespaces](https://lwn.net/Articles/531114/) and
