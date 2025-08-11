@@ -1599,6 +1599,9 @@ custom.security.doas.enable = true;
 
 `wrappedBinaries` is a list of applications you want to run inside a sandbox.
 
+There are comments explaining what's going on in:
+[firejail/package.nix](https://github.com/NixOS/nixpkgs/blob/master/pkgs/by-name/fi/firejail/package.nix)
+
 Firejail is a SUID program that reduces the risk of security breaches by
 restricting the running environment of untrusted applications using
 [Linux namespaces](https://lwn.net/Articles/531114/) and

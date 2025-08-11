@@ -270,6 +270,8 @@ The `xdg` settings at the end make LibreWolf the defaults for what is listed.
 
 Thanks to `JosefKatic` for putting the above STIG settings in NixOS format.
 
+</details>
+
 You can test your browser to see how well you are protected from tracking and
 fingerprinting at [Cover Your Tracks](https://coveryourtracks.eff.org/).
 
