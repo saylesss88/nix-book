@@ -281,37 +281,24 @@ identifies Linux computers. Since it is world-readable, it's a good idea to
 generate a new one. While we're at it we'll wipe the `~/.cache` directory, where
 programs store runtime information that can be used to track you:
 
+Change `YourUser` to your username
+
 ```bash
 #!/bin/sh -e
-# /etc/cleanup.sh
-# Clears a user's cache and regenerates the machine-id for NixOS.
-# CAUTION: Must be run as root.
-
-USER="Your-UserName"
+# to be stored in /etc/cleanup.sh
+USER="YourUser"
 HOME_DIR="/home/$USER"
 
-# --- Clear user cache ---
-if id "$USER" >/dev/null 2>&1; then
-    echo "Clearing cache for $USER..."
-    sudo -u "$USER" rm -rf "$HOME_DIR/.cache"
-else
-    echo "User $USER not found!" >&2
-    exit 1
-fi
+# clear user cache
+sudo -u "$USER" rm -fr "$HOME_DIR/.cache"
 
-# --- Regenerate machine-id ---
-echo "Regenerating machine-id..."
-rm -f /etc/machine-id /var/lib/systemd/machine-id
-dbus-uuidgen > /etc/machine-id
+# generate a new machine-id
+# this is running as root, be careful!
+rm -f /var/lib/machine-id
+dbus-uuidgen > /var/lib/machine-id
+cp /var/lib/machine-id /etc/machine-id
+chmod 444 /etc/machine-id
 
-# Ensure both locations match (if /var/lib/systemd exists)
-if [ -d /var/lib/systemd ]; then
-    cp /etc/machine-id /var/lib/systemd/machine-id
-fi
-
-chmod 444 /etc/machine-id /var/lib/systemd/machine-id 2>/dev/null || true
-
-echo "Cleanup complete."
 exit 0
 ```
 
@@ -329,10 +316,7 @@ cat /etc/machine-id
 And run the script:
 
 ```bash
-sudo bash cleanup.sh
-Clearing cache for UserName...
-Regenerating machine-id...
-Cleanup complete.
+sudo ./cleanup.sh
 ```
 
 And finally, check that your `machine-id` is new and the `~/.cache` directory
