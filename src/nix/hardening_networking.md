@@ -273,6 +273,84 @@ Thanks to `JosefKatic` for putting the above STIG settings in NixOS format.
 You can test your browser to see how well you are protected from tracking and
 fingerprinting at [Cover Your Tracks](https://coveryourtracks.eff.org/).
 
+<details>
+<summary> ✔️ Click to Expand Script to wipe cache and generate new `machine-id` </summary>
+
+Your `machine-id` located at `/etc/machine-id` is a unique number that
+identifies Linux computers. Since it is world-readable, it's a good idea to
+generate a new one. While we're at it we'll wipe the `~/.cache` directory, where
+programs store runtime information that can be used to track you:
+
+```bash
+#!/bin/sh -e
+# /etc/cleanup.sh
+# Clears a user's cache and regenerates the machine-id for NixOS.
+# CAUTION: Must be run as root.
+
+USER="Your-UserName"
+HOME_DIR="/home/$USER"
+
+# --- Clear user cache ---
+if id "$USER" >/dev/null 2>&1; then
+    echo "Clearing cache for $USER..."
+    sudo -u "$USER" rm -rf "$HOME_DIR/.cache"
+else
+    echo "User $USER not found!" >&2
+    exit 1
+fi
+
+# --- Regenerate machine-id ---
+echo "Regenerating machine-id..."
+rm -f /etc/machine-id /var/lib/systemd/machine-id
+dbus-uuidgen > /etc/machine-id
+
+# Ensure both locations match (if /var/lib/systemd exists)
+if [ -d /var/lib/systemd ]; then
+    cp /etc/machine-id /var/lib/systemd/machine-id
+fi
+
+chmod 444 /etc/machine-id /var/lib/systemd/machine-id 2>/dev/null || true
+
+echo "Cleanup complete."
+exit 0
+```
+
+Before running the above script, you'll need to make it executable and check
+your `machine-id` to ensure it works correctly:
+
+```bash
+chmod +x cleanup.sh
+ls ~/.cache
+cat /etc/machine-id
+# Output:
+9a8e75fca0ea44aa0457f7e1b689a1560
+```
+
+And run the script:
+
+```bash
+sudo bash cleanup.sh
+Clearing cache for UserName...
+Regenerating machine-id...
+Cleanup complete.
+```
+
+And finally, check that your `machine-id` is new and the `~/.cache` directory
+has minimal files in it:
+
+```bash
+cat /etc/machine-id
+# Output
+30f877f1ded258ad4b334991689a0dec
+ls ~/.cache
+```
+
+> ❗ This can be done declaratively as well, I'm currently working on it. The
+> idea for this actually came from the Firejail Tor docs, edited for use with
+> NixOS.
+
+</details>
+
 Privacy protection doesn't need to be perfect to make a difference. The best
 protection against tracking and fingerprinting available is to use Tor. For your
 daily driver, tools like Ghostery, UblockOrigin, Privacy Badger, Disconnect, and
