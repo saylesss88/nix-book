@@ -285,56 +285,56 @@ programs store runtime information that can be used to track you:
 
 Change `YourUser` to your username
 
-```bash
-#!/bin/sh -e
-# to be stored in /etc/cleanup.sh
-USER="YourUser"
-HOME_DIR="/home/$USER"
-
-# clear user cache
-sudo -u "$USER" rm -fr "$HOME_DIR/.cache"
-
-# generate a new machine-id
-# this is running as root, be careful!
-rm -f /var/lib/machine-id
-dbus-uuidgen > /var/lib/machine-id
-cp /var/lib/machine-id /etc/machine-id
-chmod 444 /etc/machine-id
-
-exit 0
+```nix
+# cleanup.nix
+{pkgs, ...}: let
+  cleanupScript = pkgs.writeShellScriptBin "clean" ''
+    #!/bin/sh
+    set -e
+    # Remove user cache directory
+    rm -rf /home/Your-User/.cache || true
+    # Reset machine-id
+    rm -f /var/lib/machine-id || true
+    dbus-uuidgen --ensure=/var/lib/machine-id
+    cp /var/lib/machine-id /etc/machine-id
+    chmod 444 /etc/machine-id
+  '';
+in {
+  systemd.services.cleanup = {
+    description = "Custom shutdown system cleanup";
+    wantedBy = ["shutdown.target"]; # Simplified to shutdown.target
+    before = ["shutdown.target" "reboot.target" "halt.target"];
+    unitConfig = {
+      DefaultDependencies = false; # Disable default dependencies for shutdown
+    };
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${cleanupScript}/bin/clean";
+      RemainAfterExit = false;
+      # Ensure PATH includes necessary binaries
+      Environment = "PATH=/run/current-system/sw/bin:/usr/bin:/bin";
+      # Run as root to ensure permissions
+      User = "root";
+      # Timeout to prevent hanging
+      TimeoutSec = 30;
+    };
+  };
+}
 ```
 
-Before running the above script, you'll need to make it executable and check
-your `machine-id` to ensure it works correctly:
+Rebuild, and check your `~/.cache` directory and your `machine-id` before
+rebooting:
 
 ```bash
-chmod +x cleanup.sh
 ls ~/.cache
-cat /etc/machine-id
-# Output:
-9a8e75fca0ea44aa0457f7e1b689a1560
-```
-
-And run the script:
-
-```bash
-sudo ./cleanup.sh
-```
-
-And finally, check that your `machine-id` is new and the `~/.cache` directory
-has minimal files in it:
-
-```bash
 cat /etc/machine-id
 # Output
 30f877f1ded258ad4b334991689a0dec
 ls ~/.cache
+# Output should be minimal
 ```
 
-> ❗ This can be done declaratively as well, I'm currently working on it. The
-> idea for this actually came from the Firejail Tor docs, edited for use with
-> NixOS. It is meant to be run on every shutdown with a Hook, currently you have
-> to run it manually.
+Reboot, and recheck.
 
 - [Firejail Tor](https://firejail.wordpress.com/all-about-tor/)
 
