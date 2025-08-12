@@ -100,7 +100,6 @@ $nu | explore --peek
   is what gives it many of its distinctive features and makes it a powerful
   scripting language. I reiterate this here because of the implications of this.
   A few of those features are:
-
   - **Pipelines of structured data**: Unlike traditional shells that primarily
     deal with plain text streams, Nushell pipelines operate on tables of
     structured data. Each command can understand and manipulate this structured
@@ -524,6 +523,8 @@ def nufetch [] {
 - Adding the following to your `configuration.nix` will show you the diff of the
   closures on rebuild:
 
+> ❗ NOTE: This stopped working after recent updates.
+
 <details>
 <summary> ✔️ Click To Expand</summary>
 
@@ -562,6 +563,25 @@ def nix-list-system []: nothing -> list<string> {
   | each { $in | str replace -r '^[^-]*-' '' }
   | sort
 }
+```
+
+**Usage**:
+
+```bash
+nix-list-system
+╭─────┬───────────────────────────────────────╮
+│   0 │ 7zz-25.00                             │
+│   1 │ X11-fonts                             │
+│   2 │ acl-2.3.2-bin                         │
+│   3 │ acl-2.3.2-doc                         │
+│   4 │ age-1.2.1                             │
+│   5 │ aide-0.19.1                           │
+│   6 │ alejandra-4.0.0                       │
+│   7 │ alsa-utils-1.2.14                     │
+│   8 │ apparmor-bin-utils-4.1.1              │
+│   9 │ apparmor-parser-4.1.1                 │
+│  10 │ apparmor-utils-4.1.1                  │
+# ...snip...
 ```
 
 ![nu6](images/nu6.png)
@@ -631,12 +651,11 @@ cleanup:
 - So `just fmt` will run `nix fmt`.
 
 - A lot of the `.nu` files came from this repo by BlindFS:
-
   - [modern-dot-files](https://github.com/blindFS/modern-dot-files/tree/main) he
     uses Nix Darwin so there are a few changes for NixOS. I found this through
     [this_week_in_nu](https://github.com/nushell/this_week_in_nu).
 
-  - [my-nu-config](https://github.com/saylesss88/flake/tree/main/home/shells/nushell)
+  - [my-nu-config](https://github.com/TSawyer87/flakes/tree/main/homeManagerModules/shells/nushell)
 
   - The examples use this starship
     config[Aylur-dotfiles](https://github.com/Aylur/dotfiles/blob/main/home/starship.nix)
