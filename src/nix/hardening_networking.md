@@ -127,6 +127,16 @@ masking your IP address and activities from local observers, ISPs, websites, and
 surveillance systems. This helps you protect personal information and maintain
 anonymity when browsing, communicating, or using online services.
 
+Adding browser plugins to Tor can de-anonymize you, don't do it. Tor is already
+built with the necessary plugins and privacy protecting rules, so adding more is
+unnecessary and actually dangerous for your anonymity.
+
+You can visit both the regular web and `.onion` sites on Tor. Only the hidden
+`.onion` sites are end-to-end encrypted. Bridges are only necessary in countries
+that don't allow people to use Tor. Using Bridges when they aren't needed takes
+resources away from people in oppressive regimes that need, only use them if
+necessary. Read the guides, and use Tails OS when it really matters.
+
 - [Tor on NixOS](https://wiki.nixos.org/wiki/Tor)
   - [Tor Browser User Manual](https://tb-manual.torproject.org/)
 
