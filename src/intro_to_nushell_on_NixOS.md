@@ -162,6 +162,8 @@ mkdir test ; cd test
 
 - Create a `users.json` with the following contents:
 
+👇 users.json
+
 ```json
 [
   { "name": "Alice", "age": 25 },
@@ -178,6 +180,7 @@ mkdir test ; cd test
   happening in a 6 line script.
 
 ```nu
+# filter.nu
 open users.json           # Read JSON file into structured data
 | where age > 21         # Filter users older than 21
 | select name age        # Select only name and age columns
@@ -211,6 +214,7 @@ open users.json
 
 ```nu
 source filter.nu
+# View the contents with bat
 bat filtered_users.json
 ───────┬──────────────────────────────────────────────────────────────────────────────────────
        │ File: filtered_users.json
@@ -237,6 +241,7 @@ bat filtered_users.json
 **In the filter.nu example:**
 
 ```nu
+# filter.nu
 open users.json           # Read JSON file into structured data
 | where age > 21         # Filter users older than 21
 | select name age        # Select only name and age columns
@@ -396,7 +401,9 @@ $p * 6    # 42
 - `Carapace`
   [Carapace-Bin Install](https://carapace-sh.github.io/carapace-bin/install.html):
 
-  ![nu9](images/nu9.png)
+The folling is showing tab completion, I typed `hx fl<TAB>`:
+
+![nu9](images/nu9.png)
 
 - `Carapace` man example:
 
@@ -453,6 +460,14 @@ def nix-upgrade [
 
 </details>
 
+**Usage**:
+
+```nu
+nix-upgrade
+# or for individual packages
+nix-upgrade -i
+```
+
 ![nu5](images/nu5.png)
 
 - The `ns` command is designed to search for Nix packages using `nix search` and
@@ -483,6 +498,12 @@ def ns [
 ```
 
 </details>
+
+**Usage**:
+
+```nu
+ns fzf<ENTER>
+```
 
 ![nu10](images/nu10.png)
 
@@ -519,38 +540,6 @@ def nufetch [] {
 - `ps` command:
 
 ![ps](images/ps.png)
-
-- Adding the following to your `configuration.nix` will show you the diff of the
-  closures on rebuild:
-
-> ❗ NOTE: This stopped working after recent updates.
-
-<details>
-<summary> ✔️ Click To Expand</summary>
-
-```nix
-# configuration.nix
-# During system activation, compare the closure size difference between the
-# current and new system and display a formatted table if significant changes are
-# detected.
-system.activationScripts.diff = ''
-  if [[ -e /run/current-system ]]; then
-    ${pkgs.nushell}/bin/nu -c "let diff_closure = (${pkgs.nix}/bin/nix store
-     diff-closures /run/current-system '$systemConfig'); let table =
-     (\$diff_closure | lines | where \$it =~ KiB | where \$it =~ → | parse -r
-     '^(?<Package>\S+): (?<Old>[^,]+)(?:.*) → (?<New>[^,]+)(?:.*), (?<DiffBin>.*)$'
-     | insert Diff { get DiffBin | ansi strip | into filesize } | sort-by -r Diff
-     | reject DiffBin); if (\$table | get Diff | is-not-empty) { print \"\"; \$table
-    | append [[Package Old New Diff]; [\"\" \"\" \"\" \"\"]] | append [[Package Old
-     New Diff]; [\"\" \"\" \"Total:\" (\$table | get Diff | math sum) ]]
-    | print; print \"\" }"
-  fi
-'';
-```
-
-</details>
-
-![conf1](images/config1.png)
 
 - `nix-list-system` command lists all installed packages:
 
