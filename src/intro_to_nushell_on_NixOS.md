@@ -558,19 +558,6 @@ def nix-list-system []: nothing -> list<string> {
 
 ```bash
 nix-list-system
-╭─────┬───────────────────────────────────────╮
-│   0 │ 7zz-25.00                             │
-│   1 │ X11-fonts                             │
-│   2 │ acl-2.3.2-bin                         │
-│   3 │ acl-2.3.2-doc                         │
-│   4 │ age-1.2.1                             │
-│   5 │ aide-0.19.1                           │
-│   6 │ alejandra-4.0.0                       │
-│   7 │ alsa-utils-1.2.14                     │
-│   8 │ apparmor-bin-utils-4.1.1              │
-│   9 │ apparmor-parser-4.1.1                 │
-│  10 │ apparmor-utils-4.1.1                  │
-# ...snip...
 ```
 
 ![nu6](images/nu6.png)
