@@ -278,74 +278,17 @@ fingerprinting at [Cover Your Tracks](https://coveryourtracks.eff.org/).
 <details>
 <summary> ✔️ Click to Expand Script to wipe cache and generate new `machine-id` </summary>
 
-Your `machine-id` located at `/etc/machine-id` is a unique number that
-identifies Linux computers. Since it is world-readable, it's a good idea to
-generate a new one. While we're at it we'll wipe the `~/.cache` directory, where
-programs store runtime information that can be used to track you:
+- [man page machine-id(5)](https://www.man7.org/linux/man-pages/man5/machine-id.5.html)
 
-Change `YourUser` to your username
+- The following example is adapted from
+  [Firejail All About Tor](https://firejail.wordpress.com/all-about-tor/)
+  section, adapted for NixOS.
 
-> NOTE: This is a WIP, currently it only changes the `machine-id`. Also, this is
-> probably overkill for most setups and something that can be run manually as
-> needed.
-
-```nix
-# cleanup.nix
-{pkgs, ...}: let
-  cleanupScript = pkgs.writeShellScriptBin "clean" ''
-    #!/bin/sh
-    set -e
-    # Remove user cache directory
-    rm -rf /home/Your-User/.cache || true
-    # Reset machine-id
-    rm -f /var/lib/machine-id || true
-    dbus-uuidgen --ensure=/var/lib/machine-id
-    cp /var/lib/machine-id /etc/machine-id
-    chmod 444 /etc/machine-id
-  '';
-in {
-  systemd.services.cleanup = {
-    description = "Custom shutdown system cleanup";
-    wantedBy = ["shutdown.target"]; # Simplified to shutdown.target
-    before = ["shutdown.target" "reboot.target" "halt.target"];
-    unitConfig = {
-      DefaultDependencies = false; # Disable default dependencies for shutdown
-    };
-    serviceConfig = {
-      Type = "oneshot";
-      ExecStart = "${cleanupScript}/bin/clean";
-      RemainAfterExit = false;
-      # Ensure PATH includes necessary binaries
-      Environment = "PATH=/run/current-system/sw/bin:/usr/bin:/bin";
-      # Run as root to ensure permissions
-      User = "root";
-      # Timeout to prevent hanging
-      TimeoutSec = 30;
-    };
-  };
-}
-```
-
-Rebuild, and check your `~/.cache` directory and your `machine-id` before
-rebooting:
-
-```bash
-ls ~/.cache
-cat /etc/machine-id
-# Output
-30f877f1ded258ad4b334991689a0dec
-ls ~/.cache
-# Output should be minimal
-```
-
-The above service is trying to do what this script does on every shutdown. This
-can be run manually as root:
-
-👇 `cleanup.sh`
+Save the following script as `cleanup.sh`, change `Your-User` to your username:
 
 ```bash
 #!/bin/sh -e
-USER="jr"
+USER="Your-User"
 HOME_DIR="/home/$USER"
 # clear user cache directly as root
 sudo -u "$USER" rm -fr "$HOME_DIR/.cache"
@@ -357,13 +300,29 @@ chmod 444 /etc/machine-id
 exit 0
 ```
 
+The `~/.cache` directory is where most programs store runtime information:
+webpages you visited, torrent trackers you connected to, and deleted emails.
+It's a good idea to remove them at shutdown. --Firejail all-about-tor
+
+Check `/etc/machine-id` & `~/.cache` before running the script:
+
 ```bash
+cat /etc/machine-id
+# Output
+0b46feb27a20469da0ee62baaeb51c5c
+ls ~/.cache
+```
+
+```bash
+chmod +x cleanup.sh
 sudo ./cleanup.sh
 ```
 
-Reboot, and recheck.
-
-- [Firejail Tor](https://firejail.wordpress.com/all-about-tor/)
+Recheck your `machine-id` and `~/.cache` directories, you should have a newly
+generated `machine-id` and minimal files in the `~/.cache` directory. The
+Firejail example shows a systemd unit that runs the above script at every
+shutdown but that may be overkill, I suggest running it occasionally to make it
+harder for sites to link your `machine-id` to you.
 
 </details>
 
@@ -373,6 +332,8 @@ daily driver, tools like Ghostery, UblockOrigin, Privacy Badger, Disconnect, and
 NoScript reduce fingerprinting significantly but not completely. Some privacy
 guides will suggest not to use add-ons at all because they make your browser
 unique, this isn't one of them. Just use Tor when it truly matters.
+
+- [Surveillance Self-Defense How to: Use Tor](https://ssd.eff.org/module/how-to-use-tor)
 
 There are more hardening parameters that can be set but this should be a good
 starting point for a hardened version of LibreWolf. When testing with Cover your
