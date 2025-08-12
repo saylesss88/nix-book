@@ -336,6 +336,29 @@ ls ~/.cache
 # Output should be minimal
 ```
 
+The above service is trying to do what this script does on every shutdown. This
+can be run manually as root:
+
+👇 `cleanup.sh`
+
+```bash
+#!/bin/sh -e
+USER="jr"
+HOME_DIR="/home/$USER"
+# clear user cache directly as root
+sudo -u "$USER" rm -fr "$HOME_DIR/.cache"
+# generate a new machine-id
+rm -f /var/lib/machine-id
+dbus-uuidgen > /var/lib/machine-id
+cp /var/lib/machine-id /etc/machine-id
+chmod 444 /etc/machine-id
+exit 0
+```
+
+```bash
+sudo ./cleanup.sh
+```
+
 Reboot, and recheck.
 
 - [Firejail Tor](https://firejail.wordpress.com/all-about-tor/)
