@@ -285,7 +285,9 @@ programs store runtime information that can be used to track you:
 
 Change `YourUser` to your username
 
-> NOTE: This is a WIP, currently it only changes the `machine-id`
+> NOTE: This is a WIP, currently it only changes the `machine-id`. Also, this is
+> probably overkill for most setups and something that can be run manually as
+> needed.
 
 ```nix
 # cleanup.nix
