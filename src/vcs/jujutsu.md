@@ -29,6 +29,8 @@ undo capabilities, and a branchless model that reduces common pitfalls of Git.
   (most up to date). Steve does an excellent job explaining the ins and outs of
   Jujutsu.
 
+- [zerowidth jj-tips-and-tricks](https://zerowidth.com/2025/jj-tips-and-tricks/)
+
 - Official:
 
 ```bash
@@ -182,8 +184,6 @@ Parent commit (@-)      : zuknrzrx bcd3d965 main | My feature
 <details>
 <summary> ✔️ Click To Expand Working Copy Description </summary>
 
-![SourceTree image](../images/sourcetree.png)
-
 The **working copy** in Jujutsu is an actual **commit** that represents the
 current state of the files you're working on. Unlike Git, where the working copy
 is separate from commits and changes must be explicitly staged and committed, in
@@ -222,12 +222,15 @@ editing these markers and then committing the resolution in the working copy
 - For `lazygit` fans, Nixpkgs has `lazyjj`. I've seen that it's recommended to
   use jj with `meld`. I'll share my `jj.nix` here for an example:
 
+- I got a lot of the aliases and such from the
+  [zerowidth](https://zerowidth.com/2025/jj-tips-and-tricks/) post, this has
+  been a game changer:
+
 ```nix
 {
   lib,
   config,
   pkgs,
-  # userVars ? {},
   ...
 }: let
   cfg = config.custom.jj;
@@ -261,23 +264,92 @@ in {
       type = lib.types.attrs;
       default = {
         ui = {
-          default-command = ["status"];
-          diff-editor = ["nvim" "-c" "DiffEditor" "$left" "$right" "$output"];
+          default-command = "log-recent";
+          # default-command = ["status" "--no-pager"];
+          diff-editor = "gitpatch";
+          # diff-editor = ["nvim" "-c" "DiffEditor" "$left" "$right" "$output"];
+          # diff-formatter = ["meld" "$left" "$right"];
           merge-editor = ":builtin";
+          conflict-marker-style = "diff";
         };
         git = {
+          # remove the need for `--allow-new` when pushing new bookmarks
           auto-local-bookmark = true;
+          push-new-bookmarks = true;
+        };
+        revset-aliases = {
+          "closest_bookmark(to)" = "heads(::to & bookmarks())";
+          "immutable_heads()" = "builtin_immutable_heads() | remote_bookmarks()";
+          "default()" = "coalesce(trunk(),root())::present(@) | ancestors(visible_heads() & recent(), 2)";
+          "recent()" = "committer_date(after:'1 month ago')";
+          trunk = "main@origin";
+        };
+        template-aliases = {
+          "format_short_change_id(id)" = "id.shortest()";
+        };
+        merge-tools.gitpatch = {
+          program = "sh";
+          edit-args = [
+            "-c"
+            ''
+              set -eu
+              rm -f "$right/JJ-INSTRUCTIONS"
+              git -C "$left" init -q
+              git -C "$left" add -A
+              git -C "$left" commit -q -m baseline --allow-empty
+              mv "$left/.git" "$right"
+              git -C "$right" add --intent-to-add -A
+              git -C "$right" add -p
+              git -C "$right" diff-index --quiet --cached HEAD && { echo "No changes done, aborting split."; exit 1; }
+              git -C "$right" commit -q -m split
+              git -C "$right" restore . # undo changes in modified files
+              git -C "$right" reset .   # undo --intent-to-add
+              git -C "$right" clean -q -df # remove untracked files
+            ''
+          ];
         };
         aliases = {
-          tug = ["bookmark" "move" "--from" "heads(::@- & bookmarks())" "--to" "@-"];
+          c = ["commit"];
+          ci = ["commit" "--interactive"];
+          e = ["edit"];
+          i = ["git" "init" "--colocate"];
+          tug = ["bookmark" "move" "--from" "closest_bookmark(@-)" "--to" "@-"];
+          log-recent = ["log" "-r" "default() & recent()"];
+          nb = ["bookmark" "create" "-r" "@-"]; # new bookmark
           upmain = ["bookmark" "set" "main"];
           squash-desc = ["squash" "::@" "-d" "@"];
           rebase-main = ["rebase" "-d" "main"];
           amend = ["describe" "-m"];
           pushall = ["git" "push" "--all"];
+          push = ["git" "push" "--allow-new"];
+          pull = ["git" "fetch"];
           dmain = ["diff" "-r" "main"];
           l = ["log" "-T" "builtin_log_compact"];
           lf = ["log" "-r" "all()"];
+          r = ["rebase"];
+          s = ["squash"];
+          si = ["squash" "--interactive"];
+          squash-push = [
+            "squash"
+            "::@"
+            "-d"
+            "@"
+            "&&"
+            "describe"
+            "-m"
+            "\"Update after squash\""
+            "&&"
+            "bookmark"
+            "set"
+            "main"
+            "&&"
+            "git"
+            "push"
+          ];
+        };
+        revsets = {
+          # log = "main@origin";
+          # log = "master@origin";
         };
       };
       description = "Jujutsu configuration settings";
@@ -298,7 +370,6 @@ in {
     };
   };
 }
-
 ```
 
 In my `home.nix` I have this to enable it:
@@ -307,8 +378,8 @@ In my `home.nix` I have this to enable it:
 custom = {
     jj = {
         enable = true;
-        userName = "sayls88";
-        userEmail = "sayls88@proton.me";
+        userName = "sayls8";
+        userEmail = "sayls8@proton.me";
     };
 };
 ```
@@ -316,6 +387,21 @@ custom = {
 The `custom.jj` module allows me to override the username, email, and whether jj
 is enabled from a single, centralized place within my Nix configuration. So only
 if jj is enabled, `lazyjj` and `meld` will be installed.
+
+With the above `gitpatch` setup, say you did more work than you want to commit
+which is common with jj since it automatically tracks everything. I can now run:
+
+```bash
+jj commit -i
+```
+
+And an interactive diff will come up allowing you to choose what to include in
+the current commit. This also works for `jj split -i` and `jj squash -i`.
+
+The `tug` command is to help with branches not auto updating like they do in
+git. When you're done with your commit and ready to push, running `jj tug` moves
+the nearest bookmark up to `@-`. Allowing you to describe the change and run
+`jj git push` successfully.
 
 </details>
 
