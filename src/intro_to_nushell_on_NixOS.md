@@ -632,6 +632,10 @@ cleanup:
     [this_week_in_nu](https://github.com/nushell/this_week_in_nu).
 
   - [my-nu-config](https://github.com/TSawyer87/flakes/tree/main/homeManagerModules/shells/nushell)
+    If you use this, you'll need to change the first line of `fzf.nu` to the
+    location of your config. You'll also need to change the constants at the top
+    of `config.nu`. These are my old dotfiles, I have recently updated and made
+    sure this config is up to date with recent nushell changes.
 
   - The examples use this starship
     config[Aylur-dotfiles](https://github.com/Aylur/dotfiles/blob/main/home/starship.nix)
