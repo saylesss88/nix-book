@@ -248,13 +248,13 @@ in {
 
     userName = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
-      default = "saylesss88";
+      default = "sayls8";
       description = "Jujutsu user name";
     };
 
     userEmail = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
-      default = "saylesss87@proton.me";
+      default = "sayls8@proton.me";
       description = "Jujutsu user email";
     };
 
