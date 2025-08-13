@@ -37,6 +37,9 @@ undo capabilities, and a branchless model that reduces common pitfalls of Git.
 jj help -k tutorial
 ```
 
+- Every time you run a `jj` command, it examines the working copy and takes a
+  snapshot.
+
 - Command help:
 
 ```bash
@@ -67,7 +70,9 @@ jj git push --help
 
 - Bookmarks do not move automatically. Commands like `jj new` and `jj commit`
   move the working copy, but the bookmark stays were it was. Use
-  `jj bookmark move` to move bookmarks. (e.g., `jj bookmark move main`).
+  `jj bookmark move` to move bookmarks. (e.g., `jj bookmark move main`). You can
+  also use `jj bookmark set main -r @` to explicitly set the main bookmark to
+  point at the working copy commit.
 
 - Only commits referenced by bookmarks are pushed to remotes, preventing
   accidental sharing of unfinished work.
@@ -412,6 +417,17 @@ Example, using `jj commit -i`:
 
 ![jj commit -i](../images/jj-gitpatch.png)
 
+You can also use the `jj tug` command to make pushing to a remote more
+straightforward. Since JJ's bookmarks don't automatically move as they do with
+Git, you can use `jj tug` after you've made a few commits to move the bookmark
+that is closest to the parent commit of your current position to your current
+commit:
+
+```bash
+jj tug
+jj git push
+```
+
 </details>
 
 ## Issues I've Noticed
@@ -514,12 +530,12 @@ jj git push
 ```
 
 If you forget to move a bookmark, JJ will warn you and nothing will be pushed.
-This is a safety feature, not a bug. That's what the `upmain` alias does, moves
-the bookmark to `main`.
+This is a safety feature, not a bug. That's what the `mb` alias does, moves the
+bookmark to the working copy.
 
 ```nix
-# home-manager alias
-upmain = ["bookmark" "set" "main"];
+# home-manager alias (move bookmark)
+mb = ["bookmark" "set" "-r" "@"];
 ```
 
 If you really have problems, `jj git push --change @` explicitly pushes the
@@ -557,6 +573,7 @@ updated on future pulls".:
 ```bash
 jj bookmark list
 track main@origin
+
 jj st
 The working copy has no changes.
 Working copy  (@) : qzxomtxq 925eca75 (empty) (no description set)
