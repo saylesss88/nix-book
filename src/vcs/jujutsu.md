@@ -749,8 +749,8 @@ This command does the following:
 - Uploads your bookmark and the associated commit to the remote repository
   (e.g., GitHub).
 
-- If the bookmark is new (not present on the remote), --allow-new tells JJ it’s
-  okay to create it remotely.
+- If the bookmark is new (not present on the remote), `--allow-new` tells JJ
+  it’s okay to create it remotely.
 
 - After pushing, GitHub (or your code host) will usually suggest creating a pull
   request for your new branch/bookmark, allowing you or your collaborators to
@@ -765,6 +765,7 @@ This command does the following:
 > following is a zsh function to squash and push at the same time:
 >
 > ```zsh
+> # zsh.nix
 > # ... snip ...
 >  initContent = ''
 >
