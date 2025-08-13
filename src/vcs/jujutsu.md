@@ -231,6 +231,10 @@ editing these markers and then committing the resolution in the working copy
   lib,
   config,
   pkgs,
+  # userVars ? {},
+  #
+  #
+  #
   ...
 }: let
   cfg = config.custom.jj;
@@ -244,13 +248,13 @@ in {
 
     userName = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
-      default = "sayls8";
+      default = "saylesss88";
       description = "Jujutsu user name";
     };
 
     userEmail = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
-      default = "sayls8@proton.me";
+      default = "saylesss87@proton.me";
       description = "Jujutsu user email";
     };
 
@@ -264,8 +268,8 @@ in {
       type = lib.types.attrs;
       default = {
         ui = {
-          default-command = "log-recent";
-          # default-command = ["status" "--no-pager"];
+          # default-command = "log-recent";
+          default-command = ["status" "--no-pager"];
           diff-editor = "gitpatch";
           # diff-editor = ["nvim" "-c" "DiffEditor" "$left" "$right" "$output"];
           # diff-formatter = ["meld" "$left" "$right"];
@@ -280,7 +284,8 @@ in {
         revset-aliases = {
           "closest_bookmark(to)" = "heads(::to & bookmarks())";
           "immutable_heads()" = "builtin_immutable_heads() | remote_bookmarks()";
-          "default()" = "coalesce(trunk(),root())::present(@) | ancestors(visible_heads() & recent(), 2)";
+          # The following command is incorrect, TODO
+          # "default()" = "coalesce(trunk(),root())::present(@) | ancestors(visible_heads() & recent(), 2)";
           "recent()" = "committer_date(after:'1 month ago')";
           trunk = "main@origin";
         };
@@ -402,6 +407,10 @@ The `tug` command is to help with branches not auto updating like they do in
 git. When you're done with your commit and ready to push, running `jj tug` moves
 the nearest bookmark up to `@-`. Allowing you to describe the change and run
 `jj git push` successfully.
+
+Example, using `jj commit -i`:
+
+![jj commit -i](../images/jj-gitpatch.png)
 
 </details>
 
