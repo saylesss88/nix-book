@@ -440,6 +440,9 @@ command for the first time, it adds all of your flakes inputs.** I believe the
 fix for this is deleting and regenerating your `flake.lock`. The same thing can
 happen when you move your flake from one location to another.
 
+JJ doesn't seem to automatically track completely new files, running
+`git add /file/path.nix` enables JJ to start tracking the new file.
+
 That said, I recommend doing just that after running something like
 `jj git init --colocate`. Delete your `flake.lock` and run `nix flake update`,
 `nix flake lock --recreate-lock-file` still works but is being depreciated.
