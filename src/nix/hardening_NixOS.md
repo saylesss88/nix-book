@@ -239,7 +239,7 @@ links in the `.json` file to see the patch diffs.
 
 ### sysctl
 
-<!-- A tool for checking the security hardening options of the Linux kernel: -->
+A tool for checking the security hardening options of the Linux kernel:
 
 ```nix
 environment.systemPackages = [ pkgs.kernel-hardening-checker ];

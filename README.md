@@ -4,8 +4,9 @@
 
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-%23FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://www.buymeacoffee.com/saylesss88)
 
-A friendly, comprehensive guide to mastering Nix and NixOS. 👋 Welcome! If you
-find this useful, please consider leaving a star!
+🚀 If you find this guide helpful, please consider leaving a ⭐ or supporting
+the project by buying me a coffee. Your support helps keep this content updated
+and freely available.
 
 Welcome to my personal journey and guide through the Nix ecosystem! This "book"
 aims to be a practical and understandable resource for anyone looking to dive
