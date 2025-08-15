@@ -427,7 +427,10 @@ jj git push
 ```
 
 The `tug` alias works for both the squash and edit workflows. After running
-`jj tug`, `jj git push` should work.
+`jj tug`, `jj git push` should work. If you get an error saying no bookmarks to
+move, you can run `jj new` and then run `jj tug`, this happens when the bookmark
+is already at the parent commit. Another option would be to run
+`jj bookmark set -r @` before running `jj git push` in this situation.
 
 ## Issues I've Noticed
 
