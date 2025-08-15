@@ -5,6 +5,11 @@ declaratively through your NixOS configuration. They allow you to run separate,
 minimal NixOS instances on the same machine, each with its own services,
 packages, and (optionally) network stack.
 
+> ❗ NixOS’ containers do not provide full security out of the box (just like
+> docker). They do give you a separate chroot, but a privileged user (root) in a
+> container can escape the container and become root on the host system.
+> --[beardhatcode Declarative-Nixos-Containers](https://blog.beardhatcode.be/2020/12/Declarative-Nixos-Containers.html)
+
 **Common Use Cases**
 
 - **Isolating services**: Run a web server, database, or any service in its own
@@ -32,7 +37,7 @@ runs only the necessary service, isolated from your main system:
 }: {
   containers.mdbook-host = {
     autoStart = true;
-    ephemeral = lib.mkDefault false;
+    ephemeral = true;
     privateNetwork = false;  # Use the hosts network
 
     bindMounts."/var/www/mdbook" = {
@@ -82,7 +87,7 @@ sudo systemctl status container@mdbook-host
 
 **Test HTTP server inside the container**
 
-We configured Apache (`httpd`) to serve `/var/www/mdbook` at `*:80`
+We configured Apache (`httpd`) to serve `/var/www/mdbook` at `localhost`
 
 Let's check if Apache is running:
 
@@ -107,7 +112,7 @@ Test the Web Server:
 curl http://localhost
 ```
 
-- You should see your book in HTTP format.
+- You should see your book in HTTP format as raw HTML.
 
 Test on the web, in your browser visit:
 
