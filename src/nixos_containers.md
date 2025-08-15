@@ -72,6 +72,37 @@ runs only the necessary service, isolated from your main system:
 - `config`: Defines the containers NixOS configuration, just like a regular
   NixOS system.
 
+**Mounts**
+
+```nix
+    bindMounts."/var/www/mdbook" = {
+      hostPath = "/home/jr/nix-book/book";
+      isReadOnly = true;
+    };
+```
+
+The `bindMount` settings above specify that `/var/www/mdbook` in the container
+should be linked to `/home/jr/nix-book/book` on the host.
+
+`hostPath` must exist, and `/var/www/mdbook` must not exist for this to work.
+
+The above container is fairly simple because its `ReadOnly`, things get more
+complicated when you need HTTPD to have write privileges.
+
+When you create and run a NixOS container like `mdbook-host`. NixOS stores the
+container's root filesystem and related container state data under:
+
+```bash
+ls /var/lib/nixos-containers/
+╭────────────╮
+│ empty list │  # It's empty because we set ephemeral to true
+╰────────────╯
+```
+
+This directory holds the container's own filesystem image, including system
+files, installed packages, configuration, and any data internal to the
+container.
+
 ## Check Container Status
 
 ```bash
@@ -151,11 +182,11 @@ sudo nixos-container run mdbook-host -- systemctl status httpd
 
 - You should see `enabled` & `active (running)`
 
-See if your container is active:
+Check the containers status:
 
 ```bash
-systemctl is-active container@mdbook-host.service
-active
+sudo nixos-container status mdbook-host
+up
 ```
 
 ## Why Bother Serving your book to localhost?
@@ -188,3 +219,15 @@ active
 
 - You can carefully set permissions on the host directory, control read/write
   access, and isolate the container runtime from sensitive data.
+
+## Removing the State
+
+To remove `/var/lib/nixos-containers/mdbook-host`, you need to remove the
+container configuration, rebuild, and then run the following commands to remove
+the immutable sticky bits that prevent deletion.
+
+```bash
+# Forcibly remove all attributes
+sudo chattr -R -i mdbook-host/
+sudo rm -rf mdbook-host/
+```
