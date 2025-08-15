@@ -390,13 +390,16 @@ custom = {
         enable = true;
         userName = "sayls8";
         userEmail = "sayls8@proton.me";
+        packages = "";
     };
 };
 ```
 
-The `custom.jj` module allows me to override the username, email, and whether jj
-is enabled from a single, centralized place within my Nix configuration. So only
-if jj is enabled, `lazyjj` and `meld` will be installed.
+</details>
+
+The `custom.jj` module allows me to override the username, email, packages, and
+whether jj is enabled from a single, centralized place within my Nix
+configuration. So only if jj is enabled, `lazyjj` and `meld` will be installed.
 
 With the above `gitpatch` setup, say you did more work than you want to commit
 which is common with jj since it automatically tracks everything. I can now run:
@@ -407,11 +410,6 @@ jj commit -i
 
 And an interactive diff will come up allowing you to choose what to include in
 the current commit. This also works for `jj split -i` and `jj squash -i`.
-
-The `tug` command is to help with branches not auto updating like they do in
-git. When you're done with your commit and ready to push, running `jj tug` moves
-the nearest bookmark up to `@-`. Allowing you to describe the change and run
-`jj git push` successfully.
 
 Example, using `jj commit -i`:
 
@@ -428,7 +426,8 @@ jj tug
 jj git push
 ```
 
-</details>
+The `tug` alias works for both the squash and edit workflows. After running
+`jj tug`, `jj git push` should work.
 
 ## Issues I've Noticed
 
