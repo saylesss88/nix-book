@@ -339,23 +339,6 @@ in {
           r = ["rebase"];
           s = ["squash"];
           si = ["squash" "--interactive"];
-          squash-push = [
-            "squash"
-            "::@"
-            "-d"
-            "@"
-            "&&"
-            "describe"
-            "-m"
-            "\"Update after squash\""
-            "&&"
-            "bookmark"
-            "set"
-            "main"
-            "&&"
-            "git"
-            "push"
-          ];
         };
         revsets = {
           # log = "main@origin";
@@ -764,38 +747,6 @@ This command does the following:
 - After pushing, GitHub (or your code host) will usually suggest creating a pull
   request for your new branch/bookmark, allowing you or your collaborators to
   review and merge the change into main.
-
-### Zsh function to squash and push in 1 command
-
-<details>
-<summary> ✔️ Click to Expand Zsh Function </summary>
-
-> Another option is to use a shell function to do a few steps for you. The
-> following is a zsh function to squash and push at the same time:
->
-> ```zsh
-> # zsh.nix
-> # ... snip ...
->  initContent = ''
->
->             jj-squash-push() {
->                echo "Enter commit message:"
->                read -r msg
->                jj squash -r @
->                jj describe -m "$msg"
->                jj bookmark set main
->                jj git push
->              }
-> '';
-> # ... snip ...
-> ```
->
-> - Once you're edits are comple and you're ready to run `jj squash`, run
->   `jj-squash-push` instead. It will prompt you for a squashed commit message,
->   then push for you. You can easily remove the last `jj git push` step to have
->   a `jj-squash` func also.
-
-</details>
 
 **Merging your Change into `main`**
 
