@@ -70,13 +70,42 @@ only essential tools and no extras that could introduce vulnerabilities.
 
 ## Manual Encrypted Install Following the Manual
 
+Encryption is the process of using an algorithm to scramble plaintext data into
+ciphertext, making it unreadable except to a person who has the key to decrypt
+it.
+
+**Data at rest** is data in storage, such as a computer's or a servers hard
+disk.
+
+**Data at rest encryption** (typically hard disk encryption), secures the
+documents, directories, and files behind an encryption key. Encrypting your data
+at rest prevents data leakage, physical theft, unauthorized access, and more as
+long as the key management scheme isn't compromised.
+
 - [Minimal ISO Download (64-bit Intel/AMD)](https://channels.nixos.org/nixos-25.05/latest-nixos-minimal-x86_64-linux.iso)
 
 - [NixOS Manual Installation](https://nixos.org/manual/nixos/stable/#sec-installation)
 
 - [NixOS Wiki Full Disk Encryption](https://wiki.nixos.org/wiki/Full_Disk_Encryption)
 
-## Guided Encrypted install using disko
+- The
+  [NSA, CISA, and NIST warn](https://www.nsa.gov/Press-Room/Press-Releases-Statements/Press-Release-View/Article/3498776/post-quantum-cryptography-cisa-nist-and-nsa-recommend-how-to-prepare-now/)
+  that nation-state actors are likely stockpiling encrypted data now, preparing
+  for a future when quantum computers could break today’s most widely used
+  encryption algorithms. Sensitive data with long-term secrecy needs is
+  especially at risk.
+
+- This is a wake-up call to use the strongest encryption available today and to
+  plan early for post-quantum security.
+
+- [NIST First 3 Post-Quantum Encryption Standards](https://www.nist.gov/news-events/news/2024/08/nist-releases-first-3-finalized-post-quantum-encryption-standards)
+  Organizations and individuals should prepare to migrate cryptographic systems
+  to these new standards as soon as practical.
+
+- They chose
+  [Four Quantum-Resistant Cryptographic Algorithms](https://www.nist.gov/news-events/news/2022/07/nist-announces-first-four-quantum-resistant-cryptographic-algorithms)
+
+## Guided Encrypted BTRFS Subvol install using disko
 
 Use LUKS encryption to protect your data at rest, the following guide is a
 minimal disko encrypted installation:
