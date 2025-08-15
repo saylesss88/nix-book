@@ -45,8 +45,8 @@ nix develop
 
 - When you run `nix develop`, Nix builds and drops you into a shell environment
   with all the dependencies specified in `devShells.default`. This means you
-  don’t have to manually install or manage tools like Rust, Cargo, or Clang—it’s
-  all handled declaratively through Nix.
+  don’t have to manually install or manage tools like Rust, Cargo, or Clang,
+  it’s all handled declaratively through Nix.
 
 You can now build and run the project using its standard tooling:
 
@@ -88,15 +88,15 @@ You’ll find the compiled binary under `./result/bin`.
 7. Pinning and Reproducing
 
 Because the project uses a flake, you can ensure full reproducibility by pinning
-the inputs. For example, you can clone with --recurse-submodules and copy the
-flake.lock to ensure you're using the same dependency versions as upstream. This
-is great for debugging or sharing exact builds.
+the inputs. For example, you can clone with `--recurse-submodules` and copy the
+`flake.lock` to ensure you're using the same dependency versions as upstream.
+This is great for debugging or sharing exact builds.
 
 ✅ Recap:
 
 With flakes, projects like Helix provide everything you need for development and
 running in a single `flake.nix`. You can nix develop to get started hacking, nix
-run to quickly try it out, and nix build to produce binaries—all without
+run to quickly try it out, and nix build to produce binaries all without
 installing or polluting your system.
 
 ## Understanding the Helix flake.nix
@@ -209,7 +209,7 @@ advanced things a flake can provide:
 }
 ```
 
-## Top-Level Metadata
+**Top-Level Metadata**:
 
 ```nix
 {
@@ -236,7 +236,7 @@ inputs = {
 - `rust-overlay`: follows the same `nixpkgs`, ensuring compatibility between
   inputs.
 
-## Outputs Function
+**Outputs Function**:
 
 ```nix
 outputs = { self, nixpkgs, rust-overlay, ... }:
@@ -244,7 +244,7 @@ outputs = { self, nixpkgs, rust-overlay, ... }:
 
 - This defines what this flake exports, including `packages`, `devShells`, etc.
 
-## Common Setup
+**Common Setup**:
 
 ```nix
 let
@@ -277,7 +277,6 @@ packages = eachSystem (system: {
 ```
 
 - For each platform:
-
   - Includes a `helix` package (defined in `./default.nix`)
 
   - Sets `default` to `helix` (used by `nix build`, `nix run`)
@@ -373,6 +372,9 @@ in
 ```
 
 ### Breaking Down `helix/default.nix`
+
+<details>
+<summary> ✔️ Click to Expand `helix/default.nix` breakdown </summary>
 
 This `default.nix` file is a Nix derivation that defines how to build the Helix
 editor itself. It's designed to be called by the main `flake.nix` as part of its
@@ -471,7 +473,6 @@ build Helix by:
   filter for selecting grammars).
 
 - `runtimeDir`: Creates a runtime directory for Helix by:
-
   - Symlinking the `runtime` directory from the source.
 
   - Replacing the `grammars` subdirectory with a symlink to the `grammars`
@@ -606,6 +607,8 @@ Installs desktop entry files (`Helix.desktop`) and icons (`logo.svg`,
 allowing `nix run` to automatically execute `hx`.
 
 A lot going on in this derivation!
+
+</details>
 
 ### Making Actual Changes
 
