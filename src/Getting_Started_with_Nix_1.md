@@ -11,6 +11,8 @@
 
 ## Intro
 
+INSTANTanious
+
 Welcome to _nix-book_, an introductory book about Nix. This book leans more
 towards using Flakes but will contrast traditional Nix where beneficial.
 Originally, this content started as a blog. I'm refining its flow to make it
@@ -160,7 +162,6 @@ in
   user in their system configuration, the module ensures the `zmap` package is
   installed and its default configuration files are placed in `/etc`, allowing
   ZMap to be managed declaratively as part of the operating system.
-
   - When `nixpkgs` is imported (e.g., in a NixOS configuration), the
     configuration options and settings defined by its modules (like
     `programs.zmap.nix`) become available for use, typically accessed via dot
