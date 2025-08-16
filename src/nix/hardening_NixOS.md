@@ -104,6 +104,8 @@ long as the key management scheme isn't compromised.
 
 - They chose
   [Four Quantum-Resistant Cryptographic Algorithms](https://www.nist.gov/news-events/news/2022/07/nist-announces-first-four-quantum-resistant-cryptographic-algorithms)
+  warning that public-key cryptography is especially vulnerable and widely used
+  to protect digital information.
 
 ## Guided Encrypted BTRFS Subvol install using disko
 
