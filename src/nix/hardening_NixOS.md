@@ -137,7 +137,7 @@ attacker to maintain a presence on your system.
 
 ## Secure Boot
 
-![Virus](../images/virus1.png)
+<!-- ![Virus](../images/virus1.png) -->
 
 Enable a UEFI password or Administrator password where it requires
 authentication in order to access the UEFI/BIOS.
@@ -581,7 +581,7 @@ issues.
 
 ## Hardening Systemd
 
-![Hacker](../images/hacker.png)
+<!-- ![Hacker](../images/hacker.png) -->
 
 `systemd` is the core "init system" and service manager that controls how
 services, daemons, and basic system processes are started, stopped and

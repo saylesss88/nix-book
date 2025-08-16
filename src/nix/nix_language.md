@@ -7,7 +7,7 @@
 
 </details>
 
-![lambda1](../images/lambda1.png)
+<!-- ![lambda1](../images/lambda1.png) -->
 
 ## Nix Expression Language Syntax Overview
 

@@ -462,7 +462,7 @@ Flakes have specific **top-level attributes** that can be accessed directly
 
 ### Deeper Dive into the Structure of `flake.nix`
 
-![Flakes](images/Flakes.png)
+<!-- ![Flakes](images/Flakes.png) -->
 
 `inputs`: **Declaring Dependencies**
 
