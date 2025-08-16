@@ -2,7 +2,7 @@
 
 <!-- toc -->
 
-![Nu](images/nu.png)
+<!-- ![Nu](images/nu.png) -->
 
 ## Intro to Nushell on NixOS
 
@@ -410,6 +410,9 @@ The folling is showing tab completion, I typed `hx fl<TAB>`:
   ![nu7](images/nu7.png)
 
 **Custom Nushell Commands**
+
+Most of the following scripts come from the
+[nu_scripts repo](https://github.com/nushell/nu_scripts#)
 
 - The following command allows you to choose which input to update interactively
   with fzf.
