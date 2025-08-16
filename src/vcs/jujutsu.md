@@ -9,6 +9,10 @@
 
 ![JJ Logo](../images/jujutsu.png)
 
+<div style="font-size: 0.8em; margin-top: 10px;">
+  **Image Source:** This image is from the [Jujutsu VCS repository](https://github.com/jj-vcs/jj) and is licensed under the Apache 2.0 License.
+</div>
+
 ⚠️ **Security Reminder**: Never commit secrets (passwords, API keys, tokens,
 etc.) in plain text to your Git repository. If you plan to publish your NixOS
 configuration, always use a secrets management tool like sops-nix or agenix to
