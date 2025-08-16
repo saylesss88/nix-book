@@ -7,7 +7,7 @@
 
 </details>
 
-![Git Logo](../images/git1.png)
+<!-- ![Git Logo](../images/git1.png) -->
 
 ⚠️ **Important**: Never commit secrets (passwords, API keys, tokens, etc.) in
 plain text to your Git repository. If you plan to publish your NixOS
@@ -95,7 +95,7 @@ they don’t do. What NixOS Rollbacks Cover
 
 ## How Git Helps
 
-![Git Logo 2](../images/git3.png)
+<!-- ![Git Logo 2](../images/git3.png) -->
 
 - The [gh-cli](https://docs.github.com/en/github-cli/github-cli/quickstart),
   simplifies quite a few things for working with GitHub from the command line.
@@ -144,7 +144,7 @@ configuration.nix or via Home Manager:
 
 ## Git Tips
 
-![Octocat](../images/octocat.png)
+<!-- ![Octocat](../images/octocat.png) -->
 
 If you develop good git practices on your own repositories it will make it
 easier to contribute with others as well as get help from others.
@@ -429,7 +429,7 @@ internet or network somewhere.
 - The name `origin` is just a convention, it's not special. It is automatically
   set when you clone a repo.
 
-![git local remote](../images/git_local-remote.png)
+<!-- ![git local remote](../images/git_local-remote.png) -->
 
 **Local** is your local copy of the repository, git tracks the differences
 between **local** and **remote** which is a repo hosted elsewhere (e.g., GitHub
@@ -444,7 +444,7 @@ unless you have write access.
 
 ### A Basic Git Workflow
 
-![Git logo 3](../images/git2.png)
+<!-- ![Git logo 3](../images/git2.png) -->
 
 1. Initialize your Repository:
 
@@ -467,14 +467,13 @@ state of your working configuration before you make any changes.
 
 - The command `git commit -m "message"` then saves a snapshot of these staged
   files, along with your descriptive message, into the repository.
-
   - Think of a commit as a "save point" in your project. You can always go back
     to this point if you need to, making it easy to experiment or recover from
     mistakes. This two-step process, staging with `git add` and saving with
     `git commit` is at the heart of how Git tracks and manages changes over
     time.
 
-![git commit add](../images/git-add-commit.png)
+<!-- ![git commit add](../images/git-add-commit.png) -->
 
 2. Make and Track Changes:
 
@@ -732,7 +731,7 @@ work without risking messing up your main branch. There are a few commits on
 your main branch so to visualize this it would look something like this, image
 is from [Pro Git](https://git-scm.com/book/en/v2):
 
-![Git Branch 1](../images/git-branch3.png)
+<!-- ![Git Branch 1](../images/git-branch3.png) -->
 
 ## Nix flake update example with branches
 
@@ -840,7 +839,7 @@ git checkout update-test
 Now our branches would look something like this, note how both branches
 currently point to the same commit:
 
-![Git Branch 2](../images/git-branch2.png)
+<!-- ![Git Branch 2](../images/git-branch2.png) -->
 
 Now, lets run our update:
 
@@ -862,7 +861,7 @@ git push origin update-test
 
 At this point our graph would look similar to the following:
 
-![Git Branch 3](../images/git-branch1.png)
+<!-- ![Git Branch 3](../images/git-branch1.png) -->
 
 If we are satisfied, we can switch back to our `main` branch and merge
 `update-test` into it:
@@ -887,7 +886,7 @@ them, it then creates a "merge commit" that combines the changes.
 
 `git rebase` is used to move a sequence of commits to a new base commit.
 
-![Git rebase](../images/rebase.png)
+<!-- ![Git rebase](../images/rebase.png) -->
 
 ## Configure Git Declaratively
 
