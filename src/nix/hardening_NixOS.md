@@ -1629,6 +1629,19 @@ custom.security.doas.enable = true;
 ```
 
 `wrappedBinaries` is a list of applications you want to run inside a sandbox.
+Only the apps in the `wrappedBinaries` attribute set will be automatically
+firejailed when launched the usual way.
+
+Other apps may be started manually using `firejail <app>`, or added to
+`wrappedBinaries` if you want automatic sandboxing, just make sure the profile
+exists.
+
+To inspect which profiles are available, after rebuilding go to `/nix/store/`, I
+used Yazi to search for `/firejail` and followed it to `firejail/etc`, where the
+profiles are.
+
+There are many flags and options available with firejail, I suggest checking out
+`man firejail`.
 
 There are comments explaining what's going on in:
 [firejail/package.nix](https://github.com/NixOS/nixpkgs/blob/master/pkgs/by-name/fi/firejail/package.nix)
