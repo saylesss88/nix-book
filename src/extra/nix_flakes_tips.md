@@ -7,12 +7,13 @@
   - [Import your Non-Flake Wallpaper Repo](#import-your-non-flake-wallpaper-repo)
   - [Understanding @-patterns](#understanding-patterns)
   - [Understanding `specialArgs`](#understanding-specialargs)
-  - [Set up Flake Check and Formatter Outputs](#set-up-flake-check-and-formatter-outputs) - [Add a devShell Output](#add-a-devshell-output)
+  - [Set up Flake Check and Formatter Outputs](#set-up-flake-check-and-formatter-outputs) -
+  [Add a devShell Output](#add-a-devshell-output)
   <!--toc:end-->
 
 # Shallow Clone Nixpkgs
 
-![gruv8](../images/gruv8.png)
+<!-- ![gruv8](../images/gruv8.png) -->
 
 1. Shallow clone nixpkgs, the full Git history isn't always necessary and this
    can speed up build times.
@@ -33,8 +34,8 @@ inputs = {
 
 ## Import your Non-Flake Wallpaper Repo
 
-2. Importing your non-flake wallpapers repo, you can use this one there are a ton
-   of wallpapers I've collected over time:
+2. Importing your non-flake wallpapers repo, you can use this one there are a
+   ton of wallpapers I've collected over time:
 
 ```nix
 # flake.nix
@@ -46,14 +47,15 @@ inputs = {
 }
 ```
 
-- After adding the input I can access individual wallpapers by adding the `inputs` argument and
-  something like `path = "${inputs.wallpapers}/Aesthetic Scenery.jpg";`
+- After adding the input I can access individual wallpapers by adding the
+  `inputs` argument and something like
+  `path = "${inputs.wallpapers}/Aesthetic Scenery.jpg";`
 
 ## Understanding @-patterns
 
-3. Understanding `@-patterns`, being able to reference your outputs argument set as a whole. An
-   `@-pattern` is a way for a function can access variadic attributes (i.e. varying number of
-   arguments).
+3. Understanding `@-patterns`, being able to reference your outputs argument set
+   as a whole. An `@-pattern` is a way for a function can access variadic
+   attributes (i.e. varying number of arguments).
 
 ```nix
 # flake.nix
@@ -69,8 +71,8 @@ outputs = {
 } @ inputs:
 ```
 
-With the above example to add the modules to your nixosConfigurations you would add something
-like this:
+With the above example to add the modules to your nixosConfigurations you would
+add something like this:
 
 ```nix
 # flake.nix
@@ -88,17 +90,19 @@ modules = [
 ```
 
 - Notice that since home-manager was explicitly listed in the outputs arguments:
-  `outputs = { self, nixpkgs, home-manager, }; ` the `inputs` prefix is unnecessary.
-  If home-manager was removed from the outputs arguments: `outputs = { self, ... }`
-  then you would need `modules = [ inputs.home-manager.nixosModules.home-manager];` This can be confusing
-  because many docs assume your not using an @-pattern so if you have one in your flake you need to prefix
-  with `inputs`. I use this to reference my personal wallpapers repo mentioned earlier.
+  `outputs = { self, nixpkgs, home-manager, }; ` the `inputs` prefix is
+  unnecessary. If home-manager was removed from the outputs arguments:
+  `outputs = { self, ... }` then you would need
+  `modules = [ inputs.home-manager.nixosModules.home-manager];` This can be
+  confusing because many docs assume your not using an @-pattern so if you have
+  one in your flake you need to prefix with `inputs`. I use this to reference my
+  personal wallpapers repo mentioned earlier.
 
 ## Understanding `specialArgs`
 
-4. Understanding `specialArgs` (nixos) and `extraSpecialArgs` (home-manager). Building on the @-patterns, using
-   `specialArgs` and `extraSpecialArgs` is a way to pass arguments from your flake to your NixOS and home-manager
-   modules.
+4. Understanding `specialArgs` (nixos) and `extraSpecialArgs` (home-manager).
+   Building on the @-patterns, using `specialArgs` and `extraSpecialArgs` is a
+   way to pass arguments from your flake to your NixOS and home-manager modules.
 
 For example, here is a snippet of some variables I set:
 
@@ -181,8 +185,9 @@ nixosConfigurations = {
 
 ## Set up Flake Check and Formatter Outputs
 
-5. Set up `checks` and `formatter` outputs with `treefmt-nix`. Add `treefmt-nix` to your inputs and outputs arguments.
-   Inside the `let` expression from tip 4 I would add:
+5. Set up `checks` and `formatter` outputs with `treefmt-nix`. Add `treefmt-nix`
+   to your inputs and outputs arguments. Inside the `let` expression from tip 4
+   I would add:
 
 ```nix
 # flake.nix
@@ -243,14 +248,17 @@ settings.formatter = {
 }
 ```
 
-- Use `treefmt-nix` to manage code formatters and linters as flake outputs. This ensures consistent styling
-  and catches issues with tools like `deadnix`, `statix`, and `nixfmt`.
+- Use `treefmt-nix` to manage code formatters and linters as flake outputs. This
+  ensures consistent styling and catches issues with tools like `deadnix`,
+  `statix`, and `nixfmt`.
 
 - Use `nix fmt` in the flake directory to format your whole configuration.
 
-- Now you can run `nix flake check` to run your checks. Running `nix flake show` will list your outputs.
+- Now you can run `nix flake check` to run your checks. Running `nix flake show`
+  will list your outputs.
 
-- Tools like `nix-fast-build` rely on flake checks and can be used after setting this up.
+- Tools like `nix-fast-build` rely on flake checks and can be used after setting
+  this up.
 
 ### Add a devShell Output
 

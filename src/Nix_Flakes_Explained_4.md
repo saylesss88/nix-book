@@ -7,7 +7,7 @@
 
 </details>
 
-<img src="images/gruv15.png" width="800" height="600">
+<!-- <img src="images/gruv15.png" width="800" height="600"> -->
 
 ## Nix Flakes Explained
 

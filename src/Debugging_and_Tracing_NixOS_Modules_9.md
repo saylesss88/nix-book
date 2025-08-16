@@ -9,16 +9,15 @@
 
 ## Debugging and Tracing NixOS Modules
 
-![gruv17](images/gruv17.png)
+<!-- ![gruv17](images/gruv17.png) -->
 
 - Other related post if you haven't read my previous post on modules, that may
   be helpful before reading this one:
-
   - [nix-modules-explained](https://saylesss88.github.io/posts/nix_modules_explained/)
 
   - This post is my notes following Nix Hour 40. If it seems a little chaotic,
-    try watching one. They are hard to follow if you're not extremely
-    familiar with the concepts.
+    try watching one. They are hard to follow if you're not extremely familiar
+    with the concepts.
 
   - [Nix Hour 40](https://www.youtube.com/watch?v=aLy8id4wr-M&t=2120s)
 
@@ -56,15 +55,15 @@ lib.evalModules {
 
 - In the above code, adding `lib` to the function arguments isn't required but
   if you were to move the module to another file it would fail without it
-  because `lib` comes from outside of it. So it's good practice to refer to `lib`
-  in the modules themselves.
+  because `lib` comes from outside of it. So it's good practice to refer to
+  `lib` in the modules themselves.
 
-- You should **always** assign a type to your options, if you don't know which type
-  to use you could use `raw`. `raw` is a type that doesn't do any processing.
-  So if you were to assign the entire packages set to the option e.g.
-  `default = pkgs;` it wouldn't recurseinto all the packages and try to evaluate
-  them. There is also `anything`, that is useful if you do want to recurse into
-  the values.
+- You should **always** assign a type to your options, if you don't know which
+  type to use you could use `raw`. `raw` is a type that doesn't do any
+  processing. So if you were to assign the entire packages set to the option
+  e.g. `default = pkgs;` it wouldn't recurseinto all the packages and try to
+  evaluate them. There is also `anything`, that is useful if you do want to
+  recurse into the values.
 
 - The following is an example of how you would run this inside vim/neovim, the
   rest of the examples will be from the command line:
@@ -176,8 +175,8 @@ nix-instantiate '<nixpkgs/nixos>' --arg configuration ./configuration.nix -A sys
 
 - This outputs a much longer trace than the first example. It shows you the file
   the error occured in and you can see that in this case they are a lot of
-  internal functions. (e.g. `at /nix/store/ccfwxygjrarahgfv5865x2f828sjr5h0-
-source/lib/attrsets.nix:1529:14:`)
+  internal functions. (e.g.
+  `at /nix/store/ccfwxygjrarahgfv5865x2f828sjr5h0- source/lib/attrsets.nix:1529:14:`)
 
 To show your own error message you could do something like this:
 
@@ -220,8 +219,8 @@ nix-instantiate '<nixpkgs/nixos>' --arg configuration ./configuration.nix -A sys
    error: expected an integer but found null: null
 ```
 
-- In the latest nix they actually inverted the error messages so the most relevant
-  parts will be at the bottom.
+- In the latest nix they actually inverted the error messages so the most
+  relevant parts will be at the bottom.
 
 </details>
 
@@ -428,8 +427,8 @@ shell returned 1
 
 ## Summary
 
-- So types in the module system aren't just types in the conventional sense
-  but they also specify the emerging behavior of these values.
+- So types in the module system aren't just types in the conventional sense but
+  they also specify the emerging behavior of these values.
 
 - If we switch the type in the above example to `types.lines` you get this
   returned, `{ x = "foo\nbar"; }`
@@ -560,8 +559,7 @@ in
 > let a = 1; in rec { a = a; }
 > ```
 
-> 💡**TIP**: Avoid `rec`. Use `let ... in`
-> Example:
+> 💡**TIP**: Avoid `rec`. Use `let ... in` Example:
 >
 > ```nix
 > let
@@ -614,7 +612,8 @@ And in the `module.nix`:
 }
 ```
 
-- If you evaluate this with the following you will get an infinite recursion error.
+- If you evaluate this with the following you will get an infinite recursion
+  error.
 
 ```bash
 nix-instantiate --eval --strict -A config.etc
@@ -637,10 +636,10 @@ In this example:
 - `hello` refers to the `hello` package definition within Nixpkgs. Packages in
   Nixpkgs are defined as _derivations_.
 
-- `.out` is a common attribute name for the _main output_ of a derivation
-  (e.g., the installed package). Some packages, especially those with complex
-  build processes or multiple outputs, might have nested output attributes.
-  In the case of `hello`, accessing `.out.out.out` ultimately leads us to the
+- `.out` is a common attribute name for the _main output_ of a derivation (e.g.,
+  the installed package). Some packages, especially those with complex build
+  processes or multiple outputs, might have nested output attributes. In the
+  case of `hello`, accessing `.out.out.out` ultimately leads us to the
   _derivation_ itself.
 
 The key takeaway here is that when you evaluate a package in the `nix repl`,
@@ -729,12 +728,11 @@ nix-repl> config.etc.foo
 
 We'll use the same `module.nix` and `default.nix` from the previous example.
 
-Building More Complex Configurations with Modules
-In this next example, we'll focus on a common task in system configuration:
-managing files within the `/etc/` directory. We'll define a module that allows
-us to specify the content of arbitrary files in `/etc/` and then use a special
-Nix function to combine these individual file definitions into a single,
-manageable entity.
+Building More Complex Configurations with Modules In this next example, we'll
+focus on a common task in system configuration: managing files within the
+`/etc/` directory. We'll define a module that allows us to specify the content
+of arbitrary files in `/etc/` and then use a special Nix function to combine
+these individual file definitions into a single, manageable entity.
 
 We'll introduce a new option, `options.etc`, which will allow us to define the
 content of files within `/etc/`. Then, we'll use `pkgs.linkFarm` to create a
@@ -848,18 +846,17 @@ lrwxrwxrwx - root 31 Dec  1969  foo -> /nix/store/wai5dycp0zx1lxg0rhpdxnydhia
 
 - When trying to figure out which `default` to use for `etcCombined` infinisil
   went to the Nixpkgs Reference Manual. Make sure to go to the correct version.
-
   - [24.11pre-git](https://nixos.org/manual/nixpkgs/stable/)
 
   - [25.05pre-git](https://nixos.org/manual/nixpkgs/unstable/) (i.e. unstable)
 
   - Once at the website press `Ctrl+f` and type `symlinkjoin` and hit enter.
 
-Or in your local copy of Nixpkgs you could go to `nixpkgs/pkgs/build-support/
-trivial-builders/default.nix`. Then use your editors search feature, with nvim
-and helix you press `/symlinkjoin` or `/linkFarm` hit enter then press `n` to
-cycle to the next match. It will bring you to comments and up to date
-information.
+Or in your local copy of Nixpkgs you could go to
+`nixpkgs/pkgs/build-support/ trivial-builders/default.nix`. Then use your
+editors search feature, with nvim and helix you press `/symlinkjoin` or
+`/linkFarm` hit enter then press `n` to cycle to the next match. It will bring
+you to comments and up to date information.
 
 ```bash
 # linkFarm "myexample" [ { name = "hello-test"; path = pkgs.hello; }
@@ -873,8 +870,8 @@ information.
 <details>
 <summary> Click to Expand Test Example </summary>
 
-- How to create a Derivation with `passthru.tests` outside of Nixpkgs
-  and then run tests available to your package set?
+- How to create a Derivation with `passthru.tests` outside of Nixpkgs and then
+  run tests available to your package set?
 
 ```bash
 mkdir passthru-tests && cd passthru-tests
@@ -966,7 +963,8 @@ Try to build it:
 nix-build -A passthru.tests
 ```
 
-- `testers.testVersion` checks if an executable outputs a specific version string.
+- `testers.testVersion` checks if an executable outputs a specific version
+  string.
 
 - `nix-build -A passthru.tests` specifically targets the derivations defined
   within the tests attribute of the main derivation.
@@ -1066,8 +1064,8 @@ cp "$scriptPath" "$out"
 
 - It turns out the correct command was `passAsFile` not `passAsFiles` but that
   change wasn't enough to fix it. `passAsFiles` expects a list of files, not a
-  single file path. Running `nix-build -A passthru.tests` failed
-  saying `> foo --version returned a non-zero exit code.`
+  single file path. Running `nix-build -A passthru.tests` failed saying
+  `> foo --version returned a non-zero exit code.`
 
 ```nix
 let
@@ -1133,49 +1131,50 @@ building '/nix/store/c3kw4xbdlrig08jrdm5wis1dmv2gnqsd-foo-test-version.drv'...
   problem. Remember that in newer Nix versions, the most relevant parts of the
   trace are often at the bottom.
 
-- **Understand Option Types:** Nix option types (`raw`, `anything`, `string`/`str`,
-  `lines`, `attrsOf`) are not just about data types; they also dictate how values
-  are merged and processed within the module system.
+- **Understand Option Types:** Nix option types (`raw`, `anything`,
+  `string`/`str`, `lines`, `attrsOf`) are not just about data types; they also
+  dictate how values are merged and processed within the module system.
 
 - **Be Mindful of `mkOptionDefault`:** While useful in specific scenarios,
   `mkOptionDefault` sets a lower priority default. For standard defaults that
-  can be overridden by user configuration, define them directly within the `config`
-  attribute using `lib.mkDefault`.
+  can be overridden by user configuration, define them directly within the
+  `config` attribute using `lib.mkDefault`.
 
 - **Use `builtins.addErrorContext`:** Enhance your custom error messages by
   providing specific context relevant to your module's logic using
   `builtins.addErrorContext`.
 
 - **Derivations vs. Evaluation:** Be aware of the difference between evaluating
-  expressions (`--eval --strict`) and instantiating derivations (`nix-instantiate`).
-  Strict evaluation can trigger infinite recursion if it encounters unevaluated
-  derivations with cyclic dependencies during attribute access.
+  expressions (`--eval --strict`) and instantiating derivations
+  (`nix-instantiate`). Strict evaluation can trigger infinite recursion if it
+  encounters unevaluated derivations with cyclic dependencies during attribute
+  access.
 
-- **Explore with `nix repl`:** The `nix repl` allows you to interactively explore
-  Nix expressions and the outputs of derivations, providing insights into the
-  structure and values within Nixpkgs.
+- **Explore with `nix repl`:** The `nix repl` allows you to interactively
+  explore Nix expressions and the outputs of derivations, providing insights
+  into the structure and values within Nixpkgs.
 
 #### Conclusion
 
-This chapter has equipped you with essential techniques for debugging and tracing
-NixOS modules. We've explored how to use `nix-instantiate` and `--show-trace` to
-pinpoint errors, how to interpret Nix's often-verbose error messages, and how to
-leverage the `nix repl` for interactive exploration. Understanding option types
-and the nuances of `mkOptionDefault` is crucial for writing robust and
-predictable modules. We've also touched upon the distinction between evaluation
-and instantiation, and how that impacts debugging.
+This chapter has equipped you with essential techniques for debugging and
+tracing NixOS modules. We've explored how to use `nix-instantiate` and
+`--show-trace` to pinpoint errors, how to interpret Nix's often-verbose error
+messages, and how to leverage the `nix repl` for interactive exploration.
+Understanding option types and the nuances of `mkOptionDefault` is crucial for
+writing robust and predictable modules. We've also touched upon the distinction
+between evaluation and instantiation, and how that impacts debugging.
 
 While these tools and techniques are invaluable for understanding and
-troubleshooting your own Nix configurations, they also become essential
-when you want to contribute to or modify the vast collection of packages
-and modules within **Nixpkgs** itself. Nixpkgs is where the majority of Nix
-packages and NixOS modules reside, and learning how to navigate and contribute
-to it opens up a whole new level of control and customization within the Nix
-ecosystem.
+troubleshooting your own Nix configurations, they also become essential when you
+want to contribute to or modify the vast collection of packages and modules
+within **Nixpkgs** itself. Nixpkgs is where the majority of Nix packages and
+NixOS modules reside, and learning how to navigate and contribute to it opens up
+a whole new level of control and customization within the Nix ecosystem.
 
-In the next chapter, [Working with Nixpkgs Locally](https://saylesss88.github.io/Working_with_Nixpkgs_Locally_10.html),
-we'll shift our focus to exploring and modifying Nixpkgs. We'll cover how to clone
-Nixpkgs, how to make changes to package definitions, and how to test those changes
-locally before contributing them back upstream. This chapter will empower you to
-not just use existing Nix packages, but also to customize and extend them to fit
-your specific needs.
+In the next chapter,
+[Working with Nixpkgs Locally](https://saylesss88.github.io/Working_with_Nixpkgs_Locally_10.html),
+we'll shift our focus to exploring and modifying Nixpkgs. We'll cover how to
+clone Nixpkgs, how to make changes to package definitions, and how to test those
+changes locally before contributing them back upstream. This chapter will
+empower you to not just use existing Nix packages, but also to customize and
+extend them to fit your specific needs.

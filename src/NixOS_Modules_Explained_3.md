@@ -9,7 +9,7 @@
 
 ## Nix Module System Explained
 
-![gruv3](images/gruv3.png)
+<!-- ![gruv3](images/gruv3.png) -->
 
 **TL;DR**: In this chapter, we will break down the Nix module system used by
 both NixOS and Home-Manager. We will discuss using home-manager as a module and

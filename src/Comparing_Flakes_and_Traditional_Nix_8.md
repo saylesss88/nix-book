@@ -7,23 +7,24 @@
 
 </details>
 
-![nixWinter](images/nixWinter.png)
+<!-- ![nixWinter](images/nixWinter.png) -->
 
 ## Comparing Flakes and Traditional Nix
 
 - This post is based on notes from Nix-Hour #4, comparing Traditional Nix and
   Flakes, focusing on achieving pure build results. See the
   [YouTube video](https://www.youtube.com/watch?v=atmoYyBAhF4) for the original
-  content. This guide adapts the information for clarity and ease of understanding.
+  content. This guide adapts the information for clarity and ease of
+  understanding.
 
 <details>
 <summary> What is Purity in Nix? (click here) </summary>
 
-- A key benefit of Nix Flakes is their _default_ enforcement of **pure evaluation**.
+- A key benefit of Nix Flakes is their _default_ enforcement of **pure
+  evaluation**.
 
 - In Nix, an **impure operation** depends on something _outside_ its explicit
   inputs. Examples include:
-
   - User's system configuration
   - Environment variables
   - Current time
@@ -96,7 +97,8 @@
     }
     ```
 
-    - `flake-utils` simplifies making flakes system-agnostic and provides the `system` attribute.
+    - `flake-utils` simplifies making flakes system-agnostic and provides the
+      `system` attribute.
 
 6.  **Pure Build (Success):**
     ```bash
@@ -137,11 +139,13 @@
     /nix/var/nix/profiles/per-user/root/channels/nixos
     ```
 
-    - `<nixpkgs>` depends on the user's environment (Nixpkgs channel), making it impure. Even with channels disabled, it relies on a specific Nixpkgs version in the store.
+    - `<nixpkgs>` depends on the user's environment (Nixpkgs channel), making it
+      impure. Even with channels disabled, it relies on a specific Nixpkgs
+      version in the store.
 
 5.  **Achieving Purity: Using `fetchTarball`**
-
-    - GitHub allows downloading repository snapshots at specific commits, crucial for reproducibility.
+    - GitHub allows downloading repository snapshots at specific commits,
+      crucial for reproducibility.
 
     - **Get Nixpkgs Revision from `flake.lock` (from the Flake example):**
 
@@ -172,7 +176,8 @@
     }
     ```
 
-    - Replace `<nixpkgs>` with `fetchTarball` and a specific revision. A placeholder `sha256` is used initially.
+    - Replace `<nixpkgs>` with `fetchTarball` and a specific revision. A
+      placeholder `sha256` is used initially.
 
 7.  **Build (Nix provides the correct `sha256`):**
 
@@ -180,10 +185,10 @@
     nix-build -A myHello
     ```
 
-8.  **Verification:** Both Flake and Traditional Nix builds now produce the same output path.
+8.  **Verification:** Both Flake and Traditional Nix builds now produce the same
+    output path.
 
 9.  **Remaining Impurities in Traditional Nix:**
-
     - Default arguments to `import <nixpkgs> {}` can introduce impurity:
       - `overlays`: `~/.config/nixpkgs/overlays` (user-specific)
       - `config`: `~/.config/nixpkgs/config.nix` (user-specific)
@@ -209,7 +214,8 @@
     }
     ```
 
-    - Override impure defaults for `overlays`, `config`, and make `system` an argument.
+    - Override impure defaults for `overlays`, `config`, and make `system` an
+      argument.
 
 11. **Building with a Specific System:**
 
@@ -353,9 +359,9 @@ nix-build -A homeManagerDocs
 #### Conclusion
 
 In this chapter, we've explored the key differences between traditional Nix and
-Nix Flakes, particularly focusing on how each approach handles purity, dependency
-management, and project structure. We've seen that while traditional Nix can
-achieve purity with careful configuration, Flakes enforce it by default,
+Nix Flakes, particularly focusing on how each approach handles purity,
+dependency management, and project structure. We've seen that while traditional
+Nix can achieve purity with careful configuration, Flakes enforce it by default,
 offering a more robust and standardized way to build reproducible environments.
 Flakes also streamline dependency management and provide a more structured
 project layout compared to the often ad-hoc nature of traditional Nix projects.
@@ -366,9 +372,10 @@ When things go wrong, you'll need tools and techniques to inspect the evaluation
 process, identify the source of errors, and understand how your modules and
 derivations are being constructed.
 
-In our next chapter, [Debugging and Tracing Modules](https://saylesss88.github.io/Debugging_and_Tracing_NixOS_Modules_9.html),
-we will delve into the world of Nix debugging. We'll explore various
-techniques and tools that can help you understand the evaluation process,
-inspect the values of expressions, and trace the execution of your Nix code,
-enabling you to effectively troubleshoot and resolve issues in both Flake-based
-and traditional Nix projects.
+In our next chapter,
+[Debugging and Tracing Modules](https://saylesss88.github.io/Debugging_and_Tracing_NixOS_Modules_9.html),
+we will delve into the world of Nix debugging. We'll explore various techniques
+and tools that can help you understand the evaluation process, inspect the
+values of expressions, and trace the execution of your Nix code, enabling you to
+effectively troubleshoot and resolve issues in both Flake-based and traditional
+Nix projects.

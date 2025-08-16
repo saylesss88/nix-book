@@ -7,7 +7,7 @@
 
 </details>
 
-<img src="images/nixLogo.png" width="400" height="300">
+<!-- <img src="images/nixLogo.png" width="400" height="300"> -->
 
 ## Understanding Nix Functions
 

@@ -7,7 +7,7 @@
 
 </details>
 
-![gruv1](images/gruv1.png)
+<!-- ![gruv1](images/gruv1.png) -->
 
 ## Package Definitions Explained
 
@@ -29,7 +29,6 @@ software you intend to "package."
 <summary> ✔️ Click to Expand</summary>
 
 1.  **Package Definition:**
-
     - This is essentially a function written in the Nix language.
 
     - Nix language shares similarities with JSON but includes the crucial
@@ -38,9 +37,8 @@ software you intend to "package."
     - It acts as the blueprint for creating a package.
 
 2.  **Derivation:**
-
-    - When the package definition is evaluated by Nix, it results in
-      a **derivation**.
+    - When the package definition is evaluated by Nix, it results in a
+      **derivation**.
 
     - A derivation is a concrete and detailed build plan.
 
@@ -49,7 +47,6 @@ software you intend to "package."
       desired output (the package).
 
 3.  **Realization (Building the Package):**
-
     - You don't get a pre-built "package" directly from the definition or the
       derivation.
 
@@ -111,7 +108,6 @@ stdenv.mkDerivation {
 
 - It uses `stdenv.mkDerivation` to define the build process for the "hello"
   package.
-
   - `pname`: The package name.
 
   - `version`: The package version.
@@ -147,8 +143,8 @@ in
 - It then uses `pkgs.callPackage` to call the function in `hello.nix`, passing
   the necessary dependencies from Nixpkgs.
 
-- You can now build the "hello" package using: `nix-build -A hello`. The
-  `-A` flag tells Nix to build the attribute named hello from the top-level
+- You can now build the "hello" package using: `nix-build -A hello`. The `-A`
+  flag tells Nix to build the attribute named hello from the top-level
   expression in default.nix.
 
 **Realizing the Derivation and Handling sha256**
@@ -290,8 +286,8 @@ swaytools = python3Packages.callPackage ../tools/wayland/swaytools { };
 ```
 
 - `python3Packages.callPackage` is used here because `swaytools` is a Python
-package, and it ensures the necessary Python-related dependencies are
-correctly passed to the `swaytools` definition.
+package, and it ensures the necessary Python-related dependencies are correctly
+passed to the `swaytools` definition.
 </details>
 
 ## Conclusion
@@ -299,23 +295,24 @@ correctly passed to the `swaytools` definition.
 In this chapter, we've journeyed through the fundamental concept of package
 definitions in Nix. We've seen how these Nix expressions act as blueprints,
 leading to the creation of derivations – the detailed plans for building
-software. Finally, we touched upon the realization process where Nix
-executes these derivations to produce tangible packages in the Nix store.
-Examining the simple "hello" package and the more complex "swaytools" definition
-provided practical insights into the structure and key attributes involved in
-defining software within the Nix ecosystem.
+software. Finally, we touched upon the realization process where Nix executes
+these derivations to produce tangible packages in the Nix store. Examining the
+simple "hello" package and the more complex "swaytools" definition provided
+practical insights into the structure and key attributes involved in defining
+software within the Nix ecosystem.
 
 The crucial step in this process, the transformation from a package definition
 to a concrete build plan, is embodied by the **derivation**. This detailed
 specification outlines every step Nix needs to take to fetch sources, build
 dependencies, compile code, and produce the final package output. Understanding
-the anatomy and lifecycle of a derivation is key to unlocking the full power
-and flexibility of Nix.
+the anatomy and lifecycle of a derivation is key to unlocking the full power and
+flexibility of Nix.
 
-In the **next chapter**, [Introduction to Nix Derivations](https://saylesss88.github.io/Intro_to_Nix_Derivations_7.html),
-we will delve deeper into the structure and components of these derivations.
-We will explore the attributes that define a build process, how dependencies
-are managed within a derivation, and how Nix ensures the reproducibility and
+In the **next chapter**,
+[Introduction to Nix Derivations](https://saylesss88.github.io/Intro_to_Nix_Derivations_7.html),
+we will delve deeper into the structure and components of these derivations. We
+will explore the attributes that define a build process, how dependencies are
+managed within a derivation, and how Nix ensures the reproducibility and
 isolation of your software builds through this fundamental concept.
 
 ## Resources

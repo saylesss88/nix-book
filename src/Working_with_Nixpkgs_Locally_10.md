@@ -7,7 +7,7 @@
 
 </details>
 
-![gruv18](images/gruv18.png)
+<!-- ![gruv18](images/gruv18.png) -->
 
 ## Working with Nixpkgs Locally: Benefits and Best Practices
 
@@ -26,7 +26,6 @@
 - A local Nixpkgs repository offers significant advantages for Nix developers:
 
   ## A. Faster Development Cycle
-
   - Local searches for packages and dependencies are significantly quicker than
     querying remote repositories or channels.
 
@@ -34,34 +33,29 @@
     expressions.
 
   ## B. Enhanced Version Control
-
   - By pinning your local repository to specific commits or branches (e.g.,
     `nixos-unstable`), you ensure build reproducibility.
 
   - This prevents unexpected issues arising from upstream changes in Nixpkgs.
 
   ## C. Flexible Debugging Capabilities
-
   - You can directly test and modify package derivations within your local copy.
 
   - This allows for quick fixes to issues like missing dependencies without
     waiting for upstream updates or releases.
 
   ## D. Streamlined Contribution Workflow
-
   - Developing and testing new packages or patches locally is essential before
     submitting them as pull requests to Nixpkgs.
 
   - A local setup provides an isolated environment for experimentation.
 
   ## E. Up-to-Date Documentation Source
-
   - The source code and comments within the Nixpkgs repository often contain the
     most current information about packages.
   - This can sometimes be more up-to-date than official, external documentation.
 
   ## F. Optimized Storage and Performance
-
   - Employing efficient cloning strategies (e.g., shallow clones) and avoiding
     unnecessary practices (like directly using Nixpkgs as a flake for local
     development) minimizes disk usage and build times.
@@ -72,7 +66,6 @@
   syntax has implications for performance and storage:
 
   ## A. Flake Syntax (`nix build .#<package>`)
-
   - Treats the current directory as a flake, requiring evaluation of
     `flake.nix`.
 
@@ -84,7 +77,6 @@
     This can be slow and storage-intensive for large repositories like Nixpkgs.
 
   ## B. Non-Flake Syntax (`nix-build -f . <package>` or `nix build -f . <package>`)
-
   - `-f .` specifies the Nix expression (e.g., `default.nix` or a specific file)
     in the current directory.
 

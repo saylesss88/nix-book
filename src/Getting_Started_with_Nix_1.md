@@ -7,11 +7,9 @@
 
 </details>
 
-![gruv13](images/gruv13.png)
+<!-- ![gruv13](images/gruv13.png) -->
 
 ## Intro
-
-INSTANTanious
 
 Welcome to _nix-book_, an introductory book about Nix. This book leans more
 towards using Flakes but will contrast traditional Nix where beneficial.

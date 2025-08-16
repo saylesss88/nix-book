@@ -7,7 +7,7 @@
 
 </details>
 
-![Helix Logo](../images/helix.png)
+![Helix Logo](../images/helix.png)--[helix-editor.com](https://helix-editor.com/)
 
 # Understanding the Helix Flake and Modifying its Behavior
 

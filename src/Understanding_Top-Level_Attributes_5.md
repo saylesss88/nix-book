@@ -7,13 +7,13 @@
 
 </details>
 
-<img src="images/gruv9.png" width="800" height="600">
+<!-- <img src="images/gruv9.png" width="800" height="600"> -->
 
 ## Understanding Top-Level Attributes in NixOS Modules
 
 This explanation is based on insights from Infinisil, a prominent figure in the
-Nix community, to help clarify the concept of top-level attributes within
-NixOS modules.
+Nix community, to help clarify the concept of top-level attributes within NixOS
+modules.
 
 ### The Core of a NixOS System: `system.build.toplevel`
 
@@ -23,8 +23,8 @@ NixOS modules.
 In a NixOS system, everything is built from a single "system derivation." The
 command `nix-build '<nixpkgs/nixos>' -A system` initiates this build process.
 
-The `-A system` part tells Nix to focus on the `system` attribute defined in
-the `'<nixpkgs/nixos>'` file (which is essentially `./default.nix` within the
+The `-A system` part tells Nix to focus on the `system` attribute defined in the
+`'<nixpkgs/nixos>'` file (which is essentially `./default.nix` within the
 Nixpkgs repository).
 
 This `system` attribute is specifically the NixOS option `system.build.toplevel`
@@ -33,7 +33,8 @@ hierarchy** for your entire NixOS system. Almost every setting you configure
 eventually influences this top-level derivation, often through a series of
 intermediate steps.
 
-**Key Takeaway:** `system.build.toplevel` is the ultimate output that defines your entire NixOS system.
+**Key Takeaway:** `system.build.toplevel` is the ultimate output that defines
+your entire NixOS system.
 
 </details>
 
@@ -65,8 +66,8 @@ lower-level system configurations that are part of the final system build.
 
 So, how do these options get processed and turned into the final system
 configuration? That's the job of the **NixOS module system**, located in the
-`./lib` directory of Nixpkgs (specifically in `modules.nix`, `options.nix`,
-and `types.nix`).
+`./lib` directory of Nixpkgs (specifically in `modules.nix`, `options.nix`, and
+`types.nix`).
 
 Interestingly, the module system isn't exclusive to NixOS; you can use it to
 manage option sets in your own Nix projects.
@@ -120,8 +121,8 @@ The module system processes a set of "modules" through these general steps:
 
 2. **Declaring Options**: It collects all option declarations defined using
    `options = { ... };` from all the modules and merges them. If the same option
-   is declared in multiple modules, the module system handles this
-   (details omitted for simplicity).
+   is declared in multiple modules, the module system handles this (details
+   omitted for simplicity).
 
 3. **Defining Option Values**: For each declared option, it gathers all the
    value assignments (defined using `config = { ... };` or directly at the top
@@ -134,14 +135,14 @@ The module system processes a set of "modules" through these general steps:
 
 </details>
 
-**Key Takeaway**: The module system imports, declares, and then evaluates
-option values from various modules to build the final configuration.
+**Key Takeaway**: The module system imports, declares, and then evaluates option
+values from various modules to build the final configuration.
 
 **Top-Level Attributes in a Module: `imports`, `options`, and `config`**
 
 Within a NixOS module (the files that define parts of your system configuration)
-, the attributes defined directly at the top level of the module's function
-have specific meanings:
+, the attributes defined directly at the top level of the module's function have
+specific meanings:
 
 - `imports`: This attribute is a list of other module files to include. Their
   options and configurations will also be part of the evaluation.
@@ -159,8 +160,8 @@ are the primary ways to structure a NixOS module.
 **The Rule: Move Non-Option Attributes Under `config`**
 
 If you define either an `options` or a `config` attribute at the top level of
-your module, any other attributes that are not option declarations must be
-moved inside the config attribute.
+your module, any other attributes that are not option declarations must be moved
+inside the config attribute.
 
 <details>
 <summary> ✔️ Examples of Correct and Incorrect Usage (Click to Expand)</summary>
@@ -187,10 +188,8 @@ appstream.enable = true;
 }
 ```
 
-This will result in the error: `error: Module has an unsupported attribute
-'appstream' This is caused by introducing a top-level 'config' or 'options'
-attribute. Add configuration attributes immediately on the top level instead,
-or move all of them into the explicit 'config' attribute`.
+This will result in the error:
+`error: Module has an unsupported attribute 'appstream' This is caused by introducing a top-level 'config' or 'options' attribute. Add configuration attributes immediately on the top level instead, or move all of them into the explicit 'config' attribute`.
 
 **Key Takeaway**: When you have `options` or `config` at the top level, all
 value assignments need to go inside the config block.
@@ -229,8 +228,8 @@ options.
 **Implicit `config`: When `options` is Absent**
 
 If your module does not define either `options` or `config` at the top level,
-then any attributes you define directly at the top level are implicitly
-treated as being part of the config.
+then any attributes you define directly at the top level are implicitly treated
+as being part of the config.
 
 For example, this is valid:
 
@@ -254,22 +253,23 @@ attributes are automatically considered part of the configuration.
 
 Even if you remove the `options` declaration from a module that has a `config`
 section, the `config = { environment.systemPackages = ... };` part will still
-function correctly, assuming the option it's referencing (`appstream.enable`
-in this case) is defined elsewhere (e.g., in an imported module).
+function correctly, assuming the option it's referencing (`appstream.enable` in
+this case) is defined elsewhere (e.g., in an imported module).
 
 </details>
 
-**Key Takeaway**: The `config` section defines values for options, regardless
-of whether those options are declared in the same module.
+**Key Takeaway**: The `config` section defines values for options, regardless of
+whether those options are declared in the same module.
 
 #### Conclusion
 
-Understanding the nuances of top-level attributes within NixOS modules, particularly
-`imports`, `options`, and `config`, is fundamental to structuring and managing
-your system's configuration effectively. As we've seen, the module system
-provides a powerful and declarative way to define and evaluate system settings,
-ultimately contributing to the construction of the `system.build.toplevel`
-derivation that represents your entire NixOS environment.
+Understanding the nuances of top-level attributes within NixOS modules,
+particularly `imports`, `options`, and `config`, is fundamental to structuring
+and managing your system's configuration effectively. As we've seen, the module
+system provides a powerful and declarative way to define and evaluate system
+settings, ultimately contributing to the construction of the
+`system.build.toplevel` derivation that represents your entire NixOS
+environment.
 
 The concepts of option declaration and value assignment, along with the crucial
 rule of organizing non-option attributes under the `config` attribute when
@@ -278,13 +278,14 @@ maintainable configurations.
 
 Now that we have a solid grasp of how NixOS modules are structured and how they
 contribute to the final system derivation, it's a natural next step to explore
-the tangible results of these configurations: the software and system
-components themselves. These are built and managed by a core concept in Nix,
-known as **derivations**.
+the tangible results of these configurations: the software and system components
+themselves. These are built and managed by a core concept in Nix, known as
+**derivations**.
 
-In the next chapter, [Package Definitions Explained](https://saylesss88.github.io/Package_Definitions_Explained_6.html)
+In the next chapter,
+[Package Definitions Explained](https://saylesss88.github.io/Package_Definitions_Explained_6.html)
 we will shift our focus from the abstract configuration to the concrete software
 packages. We will learn how Nix uses _package definitions_ to create
-_derivations_, which are the actual build plans that produce the software
-we use on our NixOS systems. This will bridge the gap between configuring your
-system and understanding how the software within it is managed.
+_derivations_, which are the actual build plans that produce the software we use
+on our NixOS systems. This will bridge the gap between configuring your system
+and understanding how the software within it is managed.

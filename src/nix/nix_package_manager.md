@@ -7,7 +7,7 @@
 
 </details>
 
-![nix99](../images/nix99.png)
+<!-- ![nix99](../images/nix99.png) -->
 
 ## Nix Package Manager
 

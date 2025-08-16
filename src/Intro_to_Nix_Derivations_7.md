@@ -9,7 +9,7 @@
 
 ## Introduction to Nix Derivations
 
-![gruv10](images/gruv10.png)
+<!-- ![gruv10](images/gruv10.png) -->
 
 Nix's build instructions, known as **derivations**, are defined using the Nix
 Language. These derivations can describe anything from individual software
@@ -33,12 +33,13 @@ Then, once the build is complete, it switches to that new system:
 result/bin/switch-to-configuration
 ```
 
-After the build, `nixos-rebuild` updates a crucial symbolic link: `/run/current-system`
-This symlink always points to the active, running version of your system in the
-Nix store. In essence, the `/run/current-system` path is the currently active
-system derivation. This design choice gives NixOS its powerful atomic upgrade
-and rollback capabilities: changing your system involves building a new system
-derivation and updating this symlink to point to the latest version.
+After the build, `nixos-rebuild` updates a crucial symbolic link:
+`/run/current-system` This symlink always points to the active, running version
+of your system in the Nix store. In essence, the `/run/current-system` path is
+the currently active system derivation. This design choice gives NixOS its
+powerful atomic upgrade and rollback capabilities: changing your system involves
+building a new system derivation and updating this symlink to point to the
+latest version.
 
 > ```nix
 >  ls -lsah /run/current-system
@@ -50,41 +51,41 @@ derivation and updating this symlink to point to the latest version.
   the result of a derivation being built (the system closure)
 
 - For beginners, the analogy of a cooking recipe is helpful:
-
   - **Ingredients (Dependencies):** What other software or libraries are needed.
 
-  - **Steps (Build Instructions):** The commands to compile, configure, and install.
+  - **Steps (Build Instructions):** The commands to compile, configure, and
+    install.
 
   - **Final Dish (Output):** The resulting package or resource.
 
-A Nix derivation encapsulates all this information, telling Nix what inputs
-to use, how to build it, and what the final output should be.
+A Nix derivation encapsulates all this information, telling Nix what inputs to
+use, how to build it, and what the final output should be.
 
 Nix derivations run in **pure**, **isolated environments**, meaning they
-**cannot** access the internet during the build phase. This ensures that
-builds are reproducible -- they don't depend on external sources that might
-change over time.
+**cannot** access the internet during the build phase. This ensures that builds
+are reproducible -- they don't depend on external sources that might change over
+time.
 
-There are `Fixed-output-derivations` that allow fetching resources during
-the build process by explicitly specifying the expected hash upfront. Just
-keep this in mind that normal derivations don't have network access.
+There are `Fixed-output-derivations` that allow fetching resources during the
+build process by explicitly specifying the expected hash upfront. Just keep this
+in mind that normal derivations don't have network access.
 
 ## Creating Derivations in Nix
 
-The primary way to define packages in Nix is through the `mkDerivation` function,
-which is part of the standard environment (`stdenv`). While a
-lower-level `derivation` function exists for advanced use cases,
-`mkDerivation` simplifies the process by automatically managing dependencies
-and the build environment.
+The primary way to define packages in Nix is through the `mkDerivation`
+function, which is part of the standard environment (`stdenv`). While a
+lower-level `derivation` function exists for advanced use cases, `mkDerivation`
+simplifies the process by automatically managing dependencies and the build
+environment.
 
-`mkDerivation` (and `derivation`) takes a set of attributes as its argument.
-At a minimum, you'll often encounter these essential attributes:
+`mkDerivation` (and `derivation`) takes a set of attributes as its argument. At
+a minimum, you'll often encounter these essential attributes:
 
-1.  **name:** A human-readable identifier for the derivation
-    (e.g., "foo", "hello.txt"). This helps you and Nix refer to the package.
+1.  **name:** A human-readable identifier for the derivation (e.g., "foo",
+    "hello.txt"). This helps you and Nix refer to the package.
 
-2.  **system:** Specifies the target architecture for the build
-    (e.g., `builtins.currentSystem` for your current machine).
+2.  **system:** Specifies the target architecture for the build (e.g.,
+    `builtins.currentSystem` for your current machine).
 
 3.  **builder:** Defines the program that will execute the build instructions
     (e.g., `bash`).
@@ -96,9 +97,9 @@ Functions in Nix often take a single argument which is an attribute set. For
 `functionName { attribute1 = value1; attribute2 = value2; ... }`, where the `{}`
 encloses the set of attributes being passed as the function's argument.
 
-Remember that `derivation` and `mkDerivation` take a set (i.e. `{}`) of attributes
-as its first argument. So, in order to pass the required attributes you would
-do something like this:
+Remember that `derivation` and `mkDerivation` take a set (i.e. `{}`) of
+attributes as its first argument. So, in order to pass the required attributes
+you would do something like this:
 
 ```nix
 nix-repl> pkgs = import <nixpkgs> {}
@@ -146,21 +147,24 @@ import <nixpkgs> { overlays = []; config = {}; }
 
 - Instead, these empty sets explicitly override any global or implicit
   overlays/configurations that Nix might otherwise pick up from environment
-  variables (like `NIXPKGS_CONFIG`), default locations (like `~/.config/nixpkgs/config.nix`
-  or `~/.config/nixpkgs/overlays`), or other mechanisms.
+  variables (like `NIXPKGS_CONFIG`), default locations (like
+  `~/.config/nixpkgs/config.nix` or `~/.config/nixpkgs/overlays`), or other
+  mechanisms.
 
 - This is to prevent accidental partial application from other parts of your
   configuration and is saying "Do not pass any custom configuration options for
   this particular import"
 
-- `derivation` is a pre-made, built-in function in the Nix language. Here, we are
-  passing it an attribute set as argument with the three required attributes.
-  (`name`, `builder`, `system`, and we added an extra argument `args`.)
+- `derivation` is a pre-made, built-in function in the Nix language. Here, we
+  are passing it an attribute set as argument with the three required
+  attributes. (`name`, `builder`, `system`, and we added an extra argument
+  `args`.)
 
 ## The Hello World Derivation
 
-For this example, first create a `hello` directory and add the [Hello tarball](https://ftp.gnu.org/gnu/hello/hello-2.12.1.tar.gz)
-to said directory.
+For this example, first create a `hello` directory and add the
+[Hello tarball](https://ftp.gnu.org/gnu/hello/hello-2.12.1.tar.gz) to said
+directory.
 
 Now lets create the classic Hello derivation:
 
@@ -190,9 +194,10 @@ derivation {
 ```
 
 - As you can see, this isn't the only required file but is a recipe outlining
-  how to build the `hello` package. The `tar.gz` package can be found [here](https://ftp.gnu.org/gnu/hello/hello-2.12.1.tar.gz)
-  You would just place the tarball in the same directory as the derivation along
-  with the following `hello_builder.sh`:
+  how to build the `hello` package. The `tar.gz` package can be found
+  [here](https://ftp.gnu.org/gnu/hello/hello-2.12.1.tar.gz) You would just place
+  the tarball in the same directory as the derivation along with the following
+  `hello_builder.sh`:
 
 ```bash
 # hello_builder.sh
@@ -286,15 +291,15 @@ warning: you did not specify '--add-root'; the result might be removed by the ga
 
 This simple Rust example, built with a direct derivation call, illustrates:
 
-- How Nix explicitly manages every single tool in your build environment (`bash`,
-  `rustc`, `gcc`, `coreutils`).
+- How Nix explicitly manages every single tool in your build environment
+  (`bash`, `rustc`, `gcc`, `coreutils`).
 
 - The strict isolation of Nix builds, where nothing is implicitly available.
 
 - The deterministic mapping of inputs to unique output paths in the Nix store.
 
-- The above example shows the fundamental structure of a Nix derivation, how it's
-  defined within the `nix-repl`.
+- The above example shows the fundamental structure of a Nix derivation, how
+  it's defined within the `nix-repl`.
 
 - `.drv` files are intermediate files that describe how to build a derivation;
   it's the bare minimum information.
@@ -404,16 +409,16 @@ This Nix expression defines a temporary development shell. Let's break it down:
 
 - `stdenv.mkDerivation { ... };`: This is the core function for creating
   packages.
-
   - `stdenv` provides a set of common build tools and conventions.
 
-- `mkDerivation` takes an attribute set (a collection of key-value pairs) as its argument.
+- `mkDerivation` takes an attribute set (a collection of key-value pairs) as its
+  argument.
 
 - `name = "my-environment";`: This gives your derivation a human-readable name.
 
-- `buildInputs = [ pkgs.cowsay ];`: This is a list of dependencies that will
-  be available in the build environment of this derivation (or in the `PATH` if
-  you enter the shell created by this derivation). `pkgs.cowsay` refers to the
+- `buildInputs = [ pkgs.cowsay ];`: This is a list of dependencies that will be
+  available in the build environment of this derivation (or in the `PATH` if you
+  enter the shell created by this derivation). `pkgs.cowsay` refers to the
   `cowsay` package from the imported `pkgs` collection.
 
 The command `nix-instantiate --eval my-shell.nix` evaluates the Nix expression
@@ -460,19 +465,18 @@ derivation's definition.
   it often modifies the core system environment directly. This can lead to
   dependency conflicts and makes rollbacks difficult.
 
-- **Stateless Systems (Nix):** Nix takes a different approach. When installing
-  a package, it creates a unique, immutable directory in the Nix store. This
+- **Stateless Systems (Nix):** Nix takes a different approach. When installing a
+  package, it creates a unique, immutable directory in the Nix store. This
   means:
-
-  - **No Conflicts:** Different versions of the same package can coexist
-    without interfering with each other.
+  - **No Conflicts:** Different versions of the same package can coexist without
+    interfering with each other.
 
   - **Reliable Rollback:** You can easily switch back to previous versions
     without affecting system-wide files.
 
   - **Reproducibility:** Builds are more likely to produce the same result
-    across different machines if they are "pure" (don't rely on external
-    system state).
+    across different machines if they are "pure" (don't rely on external system
+    state).
 
 ### The Isolated Nix Build Environment: A Quick Overview
 
@@ -488,7 +492,6 @@ happens:
 
 3.  **Controlled Inputs:** Nix then populates the environment with _only_ the
     variables essential for the build, such as:
-
     - `$NIX_BUILD_TOP`: The path to the temporary build directory.
 
     - `$PATH`: Carefully set to include only the explicit `buildInputs` you've
@@ -514,7 +517,8 @@ they run on and always produce the same result, given the same inputs.
 
 ## Our builder Script
 
-- For our first derivation, we'll create a simple `builder.sh` file in the current directory:
+- For our first derivation, we'll create a simple `builder.sh` file in the
+  current directory:
 
 ```bash
 # builder.sh
@@ -526,16 +530,15 @@ echo foo > $out
   function).
 
 - Nix needs to know where the final built product (the "cake" in our earlier
-  analogy) should be placed. So, during the derivation process, Nix calculates
-  a unique output path within the Nix store. This path is then made available
-  to our builder script as an environment variable named `$out`. The `.drv`
-  file, which is the recipe, contains instructions for the builder, including
-  setting up this `$out` variable. Our builder script will then put the result
-  of its work (in this case, the "foo" file) into this specific `$out` directory.
+  analogy) should be placed. So, during the derivation process, Nix calculates a
+  unique output path within the Nix store. This path is then made available to
+  our builder script as an environment variable named `$out`. The `.drv` file,
+  which is the recipe, contains instructions for the builder, including setting
+  up this `$out` variable. Our builder script will then put the result of its
+  work (in this case, the "foo" file) into this specific `$out` directory.
 
 - As mentioned earlier we need to find the nix store path to the bash
-  executable, common way to do this is to load Nixpkgs into the repl
-  and check:
+  executable, common way to do this is to load Nixpkgs into the repl and check:
 
 ```bash
 nix-repl> :l <nixpkgs>
@@ -544,8 +547,8 @@ nix-repl> "${bash}"
 "/nix/store/ihmkc7z2wqk3bbipfnlh0yjrlfkkgnv6-bash-4.2-p45"
 ```
 
-So, with this little trick we are able to refer to `bin/bash` and create
-our derivation:
+So, with this little trick we are able to refer to `bin/bash` and create our
+derivation:
 
 ```bash
 nix-repl> d = derivation { name = "foo"; builder = "${bash}/bin/bash";
@@ -557,11 +560,11 @@ this derivation produced the following outputs:
   out -> /nix/store/gczb4qrag22harvv693wwnflqy7lx5pb-foo
 ```
 
-- The contents of the resulting store path (`/nix/store/...-foo`) now contain the
-  file `foo`, as intended. We have successfully built a derivation!
+- The contents of the resulting store path (`/nix/store/...-foo`) now contain
+  the file `foo`, as intended. We have successfully built a derivation!
 
-- Derivations are the primitive that Nix uses to define packages. “Package”
-  is a loosely defined term, but a derivation is simply the result of calling
+- Derivations are the primitive that Nix uses to define packages. “Package” is a
+  loosely defined term, but a derivation is simply the result of calling
   `builtins.derivation`.
 
 </details>
@@ -627,8 +630,8 @@ in
 }
 ```
 
-This allows you to run `nix-build -A hello` to realize the derivation in `hello.nix`,
-similar to the current convention used in Nixpkgs:
+This allows you to run `nix-build -A hello` to realize the derivation in
+`hello.nix`, similar to the current convention used in Nixpkgs:
 
 - Click to expand Output:
 
@@ -640,7 +643,8 @@ nix-build -A hello
 ~error: 1 dependencies of derivation '/nix/store/b4mjwlv73nmiqgkdabsdjc4zq9gnma1l-hello-2.12.1.drv' failed to build
 ```
 
-- Another way to do this is with [nix-prefetch-url](https://nix.dev/manual/nix/2.24/command-ref/nix-prefetch-url)
+- Another way to do this is with
+  [nix-prefetch-url](https://nix.dev/manual/nix/2.24/command-ref/nix-prefetch-url)
   It is a utility to calculate the sha beforehand.
 
 ```bash
@@ -649,7 +653,8 @@ path is '/nix/store/pa10z4ngm0g83kx9mssrqzz30s84vq7k-hello-2.12.1.tar.gz'
 086vqwk2wl8zfs47sq2xpjc9k066ilmb8z6dn0q6ymwjzlm196cd
 ```
 
-- When you use `nix-prefetch-url`, you get a Base32 hash when nix needs SRI format.
+- When you use `nix-prefetch-url`, you get a Base32 hash when nix needs SRI
+  format.
 
 Run the following command to convert from Base32 to SRI:
 
@@ -659,11 +664,11 @@ sha256-jZkUKv2SV28wsM18tCqNxoCZmLxdYH2Idh9RLibH2yA=
 ```
 
 - This actually fetched a different sha than the Nix compiler returned in the
-  example where we replace the empty sha with the one Nix gives us. The difference
-  was that `fetchzip` automatically extracts archives before computing the hash
-  and slight differences in the metadata cause different results. I had to switch
-  from `fetchzip` to `fetchurl` to get the correct results.
-
+  example where we replace the empty sha with the one Nix gives us. The
+  difference was that `fetchzip` automatically extracts archives before
+  computing the hash and slight differences in the metadata cause different
+  results. I had to switch from `fetchzip` to `fetchurl` to get the correct
+  results.
   - Extracted archives can differ in timestamps, permissions, or compression
     details, causing different hash values.
 
@@ -673,11 +678,12 @@ sha256-jZkUKv2SV28wsM18tCqNxoCZmLxdYH2Idh9RLibH2yA=
   - [fetchurl](https://nixos.org/manual/nixpkgs/stable/#fetchurl)
 
   - `fetchurl` returns a `fixed-output derivation`(FOD): A derivation where a
-    cryptographic hash of the output is determined in advance using the outputHash
-    attribute, and where the builder executable has access to the network.
+    cryptographic hash of the output is determined in advance using the
+    outputHash attribute, and where the builder executable has access to the
+    network.
 
-Lastly replace the empty sha256 placeholder with the returned value from the last
-command:
+Lastly replace the empty sha256 placeholder with the returned value from the
+last command:
 
 ```nix
 # hello.nix
@@ -697,7 +703,8 @@ stdenv.mkDerivation {
 }
 ```
 
-Run `nix-build -A hello` again and you'll see the derivation successfully builds.
+Run `nix-build -A hello` again and you'll see the derivation successfully
+builds.
 
 ## Best Practices
 
@@ -714,8 +721,7 @@ pkgs.stdenv.mkDerivation {
 }
 ```
 
-> ❗ TIP:
-> Use `builtins.path` with the `name` attribute set to something fixed.
+> ❗ TIP: Use `builtins.path` with the `name` attribute set to something fixed.
 > This will derive the symbolic name of the store path from the `name` instead
 > of the working directory:
 >
@@ -748,14 +754,16 @@ managing dependencies is through Nix Flakes. Flakes introduce a standardized
 project structure, explicit input tracking, and a more robust way to ensure
 reproducible builds across different environments.
 
-In our next chapter, [Comparing Flakes and Traditional Nix](https://saylesss88.github.io/Comparing_Flakes_and_Traditional_Nix_8.html),
-we will directly compare and contrast these two approaches. We'll examine the strengths and
-weaknesses of traditional Nix practices in contrast to the benefits and features
-offered by Nix Flakes. This comparison will help you understand the motivations
-behind Flakes and when you might choose one approach over the other for your Nix
-projects.
+In our next chapter,
+[Comparing Flakes and Traditional Nix](https://saylesss88.github.io/Comparing_Flakes_and_Traditional_Nix_8.html),
+we will directly compare and contrast these two approaches. We'll examine the
+strengths and weaknesses of traditional Nix practices in contrast to the
+benefits and features offered by Nix Flakes. This comparison will help you
+understand the motivations behind Flakes and when you might choose one approach
+over the other for your Nix projects.
 
-As you can see below, there is a ton of information on derivations freely available.
+As you can see below, there is a ton of information on derivations freely
+available.
 
 #### Links To Articles about Derivations
 
@@ -774,7 +782,8 @@ As you can see below, there is a ton of information on derivations freely availa
 
 - [howToLearnNix-DerivationsInDetail](https://ianthehenry.com/posts/how-to-learn-nix/derivations-in-detail/)
 
-- [Sparky/blog-creatingASuperSimpleDerivation](https://www.sam.today/blog/creating-a-super-simple-derivation-learning-nix-pt-3) # How to learn Nix
+- [Sparky/blog-creatingASuperSimpleDerivation](https://www.sam.today/blog/creating-a-super-simple-derivation-learning-nix-pt-3) #
+  How to learn Nix
 
 - [Sparky/blog-Derivations102](https://www.sam.today/blog/derivations-102-learning-nix-pt-4)
 
