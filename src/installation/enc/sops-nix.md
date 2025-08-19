@@ -180,7 +180,7 @@ sops -d secrets/github-deploy-key.yaml
 Generate an encrypted password hash with:
 
 ```bash
-mkpasswd -m SHA-512 -s > /tmp/password-hash.txt
+mkpasswd --method=yescrypt > /tmp/password-hash.txt
 # Enter your chosen password and copy the encrypted hash it gives you back
 ```
 
@@ -231,7 +231,7 @@ this location below.
     defaultSopsFile = ../../.sops.yaml; # Or the correct path to your .sops.yaml
     # Don't mix sshKeyPaths and keyFile
     age.sshKeyPaths = [];
-    age.keyFile = "/home/jr/sops/age/keys.txt";
+    age.keyFile = "/persist/sops/age/keys.txt";
 
     secrets = {
       "password_hash" = {
@@ -276,7 +276,7 @@ imports = [
 > are using the btrfs subvolume layout you don't need to worry about this
 > because your home will be on its own partition when only the root partition is
 > wiped on reboot. Adding `neededForUsers = true;` tells `sops-nix` to decrypt
-> and make that secret available earlier in the boot process--specifically,
+> and make that secret available earlier in the boot process specifically,
 > before user and group accounts are created.
 
 You typically use `age.sshKeyPaths` for **system-level secrets** with a
@@ -307,14 +307,8 @@ my user is `jr` so I added this:
   # ...snip...
 ```
 
-8. Rebuild your configuration and you should see something like this:
-
-```bash
-sops-install-secrets: Imported /etc/ssh/ssh_host_ed25519_key as age key with fingerprint age1smamdkzrwpdxw63hrxxcq8kmejsm4olknsrg72vd0qtfpmlzlvnf8uws38mzuj
-```
-
 By integrating SOPS with NixOS through `sops-nix`, you gain a modern, secure,
-and reproducible way to manage sensitive secrets. Unlike traditional
-approaches—where secrets are often scattered in ad hoc locations, referenced by
-absolute paths, or managed outside version control—sops-nix keeps your secrets
+and reproducible way to manage sensitive secrets. Unlike traditional approaches
+where secrets are often scattered in ad hoc locations, referenced by absolute
+paths, or managed outside version control, `sops-nix` keeps your secrets
 encrypted, declarative, and version-control friendly.
