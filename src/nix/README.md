@@ -77,9 +77,39 @@ rebuild the system.
 > NOTE: There is mention of making
 > [userborn](https://github.com/nikstur/userborn) the default for NixOS in the
 > future. It can be more secure by prohibiting UID/GID re-use and giving
-> warnings about insecure password hashing schemes. From the userborn docs all
-> that is clear is how to install it, I see no mention on how to use it or how
-> to convert from declarative NixOS users to userborn.
+> warnings about insecure password hashing schemes.
+
+To enable `userborn`, just add the following to your `configuration.nix` or
+equivalent:
+
+```nix
+# users.nix
+{pkgs,...}:{
+services.userborn = {
+    enable = true;
+    # Only needed if `/etc` is immutable
+    # passwordFilesLocation = "/var/lib/nixos/userborn"
+};
+    users.users = {
+       "newuser" = {
+         homeMode = "755";
+         uid = 1000;
+         isNormalUser = true;
+         description = "New user account";
+         extraGroups = [ "networkmanager" "wheel" "libvirtd" ];
+         shell = pkgs.bash;
+         ignoreShellProgramCheck = true;
+         packages = with pkgs; [];
+       };
+    };
+    }
+```
+
+With `userborn`, you configure your users as you normally would declaratively
+with NixOS with `users.users`, change `"newuser"` to your desired username.
+
+Explicitly setting `uid = 1000;` is a best practice for compatibility and
+predictability.
 
 You can also specify which users or groups are allowed to do anything with the
 Nix daemon and Nix package manager. The following setting will only allow
