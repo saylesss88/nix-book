@@ -1030,6 +1030,26 @@ gpg --list-keys
 
 The warning should be gone.
 
+Copy the `pub` line after the `/`
+
+Also add a subkey with Encrypt capabilities:
+
+```bash
+gpg --edit-key Ox37ACA569C5C44787
+```
+
+```bash
+gpg> addkey
+```
+
+Choose ECC (Encryption)
+
+Save your changes:
+
+```bash
+gpg> save
+```
+
 **List your key and copy the key ID**
 
 ```bash
@@ -1070,9 +1090,11 @@ gpg --list-secret-keys --with-keygrip --with-colons
 
 - Copy the `grp` line - that's your keygrip
 
-Add the keygrip number to your `gpg-agent.sshKeys` and rebuild:
+Add the keygrip number to your `gpg-agent.sshKeys` and rebuild, this adds an SSH
+key to gpg-agent:
 
 ```nix
+# gpg-agent.nix
 gpg-agent.sshKeys = ["6BD11826F3845BC222127FE3D22C92C91BB3FB32"];
 ```
 
@@ -1088,6 +1110,17 @@ of the key:
 - [gnupg-users what-is-a-keygrip](https://gnupg-users.gnupg.narkive.com/q5JtahdV/gpg-agent-what-is-a-keygrip)
 
 - Never version-control your private key files or `.gnupg` contents.
+
+Add the KeyId to your `gpg-agent.nix`, this declares your default-key to persist
+through rebuilds:
+
+```nix
+# gpg-agent.nix
+gpg.settings = {
+    default-key = "Ox37ACA569C5C44787";
+    trusted-key = "Ox37ACA569C5C44787";
+};
+```
 
 Add the following to your shell config:
 
