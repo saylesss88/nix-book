@@ -1215,14 +1215,16 @@ ssh-ed25519 AABBC3NzaC1lZDI1NTE5AAAAIGXwhVokJ6cKgodYT+0+0ZrU0sBqMPPRDPJqFxqRtM+I
 - Mine shows `(none)` because I left the comment field blank when creating the
   key and doesn't affect functionality.
 
-Then, in your server's NixOS configuration (e.g., `configuration.nix`):
+Then, in your server's NixOS configuration (e.g., `configuration.nix`): Change
+`yourUser` to your username
 
 ```nix
-services.openssh = {
-  enable = true;
+users.users.yourUser = {
+openssh = {
   authorizedKeys.keys = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGXwhVokJ6cKgodYT+0+0ZrU0sBqMPPRDPJqFxqRtM+I"
   ];
+};
 };
 ```
 
