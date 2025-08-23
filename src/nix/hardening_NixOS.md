@@ -1078,26 +1078,6 @@ gpg --list-keys
 
 The warning should be gone.
 
-Copy the `pub` line after the `/`
-
-Also add a subkey with Encrypt capabilities:
-
-```bash
-gpg --edit-key Ox37ACA569C5C44787
-```
-
-```bash
-gpg> addkey
-```
-
-Choose ECC (Encryption)
-
-Save your changes:
-
-```bash
-gpg> save
-```
-
 **List your key and copy the key ID**
 
 ```bash
