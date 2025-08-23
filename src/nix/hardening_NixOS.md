@@ -1078,38 +1078,6 @@ gpg --list-keys
 
 The warning should be gone.
 
-**List your key and copy the key ID**
-
-```bash
-gpg --list-secret-keys --keyid-format LONG
-```
-
-Output example:
-
-```bash
-sec   ed25519/ABCDEF1234567890 2025-07-31 [SC]
-      ABC123ABC123ABC123ABC123ABC123ABC123ABC1
-uid           [ultimate] Your Name <you@example.com>
-ssb   ed25519/1234567890ABCDEF 2025-07-31 [S]
-```
-
-- Take the part after `/` on the `sec` line (e.g., `ABCDEF1234567890`)
-
-**Export the public key for GitHub**
-
-```bash
-gpg --armor --export ABCDEF1234567890
-```
-
-- Copy everything from
-  `-----BEGIN PGP PUBLIC KEY BLOCK----- to -----END PGP PUBLIC KEY BLOCK-----`.
-
-**Add to GitHub**
-
-1. Go to Settings, SSH and GPG keys, New GPG key
-
-2. Paste the exported block.
-
 **Add Keygrip to `sshcontrol` for gpg-agent**
 
 ```bash
@@ -1126,6 +1094,45 @@ key to gpg-agent:
 gpg-agent.sshKeys = ["6BD11826F3845BC222127FE3D22C92C91BB3FB32"];
 ```
 
+Add the KeyId to your `gpg-agent.nix`, this declares your default-key to persist
+through rebuilds:
+
+```bash
+gpg --list-keys
+```
+
+Copy your public key:
+
+```nix
+# gpg-agent.nix
+gpg.settings = {
+    default-key = "Ox37ACA569C5C44787";
+    trusted-key = "Ox37ACA569C5C44787";
+};
+```
+
+Rebuild, and check that everything is correct with:
+
+```bash
+ssh-add -L
+# you should see something like:
+ssh-ed25519 AABCC3NzaC1lZDI1NTE5ABBAIHyujgyCjjBTqIuFM3EMUSo6RGklmOXQW3uWRhWdJ1Mm (none)
+```
+
+After adding the keygrip of the key with Authenticate capabilities and
+rebuilding, you can then add a subkey with Encrypt capabilities. For some reason
+doing both at the same time and adding that keys keygrip makes gpg-agent fail.
+
+Copy your public key:
+
+```bash
+gpg --edit-key 0xD35CEB9322AC054E
+gpg> addkey
+```
+
+Choose ECC Encrypt capabilities, and type `save` to save changes and exit the
+`gpg>`.
+
 - By itself, a keygrip cannot be used to reconstruct your private key. It's
   derived from the public key material, not from the secret key itself so it's
   safe to version control. Don't put your keygrip in a public repo if you don't
@@ -1138,17 +1145,6 @@ of the key:
 - [gnupg-users what-is-a-keygrip](https://gnupg-users.gnupg.narkive.com/q5JtahdV/gpg-agent-what-is-a-keygrip)
 
 - Never version-control your private key files or `.gnupg` contents.
-
-Add the KeyId to your `gpg-agent.nix`, this declares your default-key to persist
-through rebuilds:
-
-```nix
-# gpg-agent.nix
-gpg.settings = {
-    default-key = "Ox37ACA569C5C44787";
-    trusted-key = "Ox37ACA569C5C44787";
-};
-```
 
 Add the following to your shell config:
 
