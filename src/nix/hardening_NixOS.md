@@ -953,6 +953,7 @@ Home Manager module with `gpg-agent`, `gnupg`, and `pinentry-gnome3`:
         settings = {
           # Default/trusted key ID (helpful with throw-keyids)
           # Example, you will put your own keyid here
+          # Use `gpg --list-keys`
           default-key = "0x37ACBCDA569C5C44788";
           trusted-key = "0x37ACBCDA569C5C44788";
           # https://github.com/drduh/config/blob/master/gpg.conf
@@ -1073,8 +1074,15 @@ ls -l ~/.gnupg
 After fixing, run:
 
 ```bash
+# Take note of your public key
 gpg --list-keys
+/home/jr/.gnupg/pubring.kbx
+---------------------------
+pub   ed25519/0x095882C1A124CF15 2025-08-23 [SCA] [expires: 2026-08-23]
 ```
+
+My public key, which verifies my commits on github is `0x095882C1A124CF15`. You
+will use this key as your `default-key` and `trusted-key` in `gpg-agent.nix`.
 
 The warning should be gone.
 
@@ -1084,7 +1092,7 @@ The warning should be gone.
 gpg --list-secret-keys --with-keygrip --with-colons
 ```
 
-- Copy the `grp` line - that's your keygrip
+- Copy the `grp` line - that's your keygrip, you don't need to add the last `:`
 
 Add the keygrip number to your `gpg-agent.sshKeys` and rebuild, this adds an SSH
 key to gpg-agent:
@@ -1096,10 +1104,6 @@ gpg-agent.sshKeys = ["6BD11826F3845BC222127FE3D22C92C91BB3FB32"];
 
 Add the KeyId to your `gpg-agent.nix`, this declares your default-key to persist
 through rebuilds:
-
-```bash
-gpg --list-keys
-```
 
 Copy your public key:
 
@@ -1152,18 +1156,14 @@ Add the following to your shell config:
 # zsh.nix
 # ... snip ...
 initContent = ''
-      # GPG Agent
-        export GPG_TTY=$(tty) # which terminal to use for passphrase prompts
-        export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)" # points SSH_AUTH_SOCK to the socket created by gpg-agent
-        gpg-connect-agent updatestartuptty /bye # refresh gpg-agent so it knows which terminal is active
-
-        # Optional: confirm it's set correctly
-        echo "SSH_AUTH_SOCK is set to: $SSH_AUTH_SOCK"
+    export GPG_TTY=$(tty)
+    export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
+    gpgconf --launch gpg-agent
 '';
 # ... snip ...
 ```
 
-Rebuild and then restart gpg-agent:
+Rebuild and then restart `gpg-agent` if necessary:
 
 ```bash
 gpgconf --kill gpg-agent
@@ -1220,6 +1220,38 @@ ssh -p <your-port> user@hostname
 ```bash
 ssh -p 22 bill@xps
 ```
+
+## Add your PGP Key to GitHub
+
+Plug your own public key from `gpg --list-keys` in the following command:
+
+```bash
+gpg --armor --export <Public-Key>
+```
+
+Copy the entire block from `-----BEGIN PGP PUBLIC KEY BLOCK-----` to
+`-----END PGP PUBLIC KEY BLOCK-----`
+
+It's the same process as adding an SSH key, Go to Settings, SSH and GPG keys,
+`New GPG key` and your all set.
+
+```nix
+# git.nix
+{...}: {
+    programs.git = {
+        enable = true;
+      extraConfig = {
+          commit.gpgsign = true;
+          user.signingkey = "0x0666C1A265F156"
+      };
+    };
+}
+```
+
+After this, you will be prompted for your Private Keys password on every commit.
+
+If you look at your commits on GitHub, after adding the GPG key and the above
+settings to your git setup it will show your commits are `Verified`.
 
 ## Encrypt a File with PGP
 
