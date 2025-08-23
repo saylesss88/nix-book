@@ -904,12 +904,30 @@ and digital signatures.
 
 - Your key ID (identifies your key, useful for sharing public keys or configs)
 
+- Your keys fingerprint `gpg --fingerprint`
+
 **What must never be shared?**
 
 - Your private (secret) key, usually in your `~/.gnupg/private-keys-v1.d/`
   directory.
 
 - Your passphrase for your private key.
+
+**Best Practices**
+
+At least use long OpenPGP Key IDs (for example 0xA1E6148633874A3D), they are 64
+bits long and harder to spoof. This is accomplished in the configuration with
+`keyid-format = "0xlong";`. Even better, use the fingerprint.
+
+Don't blindly trust keys from keyservers. You should verify the full key
+fingerprint with the owner over the phone if possible.
+
+Use a strong primary key, 1024-bit DSA keys have been deprecated as well as
+1024-bit RSA, and use of SHA-1 for signing are no longer recommended. We use
+`AES256` (Advanced Encryption Standard 256-bit key), and `SHA512` by default in
+the following configuration.
+
+---
 
 Home Manager module with `gpg-agent`, `gnupg`, and `pinentry-gnome3`:
 
@@ -1235,6 +1253,14 @@ gpg --armor --export <Public-Key>
 
 Copy the entire block from `-----BEGIN PGP PUBLIC KEY BLOCK-----` to
 `-----END PGP PUBLIC KEY BLOCK-----`
+
+> ❗ You can also paste the above block into a public keyserver such as
+> `keys.openpgp.org`. This allows others to find and use your key to encrypt
+> messages or verify your signatures. Many tools and users rely on public key
+> servers to fetch keys automatically. You can also publish your revocation
+> certificates, which help others know if your key is compromised or revoked.
+> This can be a privacy concern as key servers publish (and keep) associated
+> user IDs and metadata linked to your key, such as your email.
 
 It's the same process as adding an SSH key, Go to Settings, SSH and GPG keys,
 `New GPG key` and your all set.
