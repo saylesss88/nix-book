@@ -1221,6 +1221,10 @@ ssh -p <your-port> user@hostname
 ssh -p 22 bill@xps
 ```
 
+Once you successfully sign in to SSH, it will ask you if you're sure you trust
+the remote server's SSH host key. Once you type `yes`, it will automatically be
+used for tasks such as file decryption.
+
 ## Add your PGP Key to GitHub
 
 Plug your own public key from `gpg --list-keys` in the following command:
@@ -1297,6 +1301,16 @@ file by default with `gpg` amended to the filename.
 gpg --decrypt file.txt.gpg
 gpg: encrypted with cv25519 key, ID 0x4AC131B80CEC833E, created 2025-07-31
       "GPG Key <sayls8@proton.me>"
+This file will be encrypted
+```
+
+Or:
+
+```bash
+gpg --output decrypted_file.txt --decrypt file.txt.gpg
+cat decrypted_file.txt
+# Output
+File: decrypted.txt
 This file will be encrypted
 ```
 
@@ -1402,6 +1416,7 @@ algorithms, and best practices:
             "umac-128@openssh.com"
           ];
         };
+        # These keys will be generated for you
         hostKeys = [
           {
             path = "/etc/ssh/ssh_host_ed25519_key";
