@@ -927,6 +927,8 @@ Use a strong primary key, 1024-bit DSA keys have been deprecated as well as
 `AES256` (Advanced Encryption Standard 256-bit key), and `SHA512` by default in
 the following configuration.
 
+Choose an expiration date less than 2 years, you can add time if needed.
+
 ---
 
 Home Manager module with `gpg-agent`, `gnupg`, and `pinentry-gnome3`:
