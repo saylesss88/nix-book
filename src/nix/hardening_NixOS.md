@@ -957,6 +957,8 @@ Home Manager module with `gpg-agent`, `gnupg`, and `pinentry-gnome3`:
         enable = true;
         enableSshSupport = true;
         enableZshIntegration = true;
+        # pinentry is a collection of simple PIN or passphrase dialogs used for
+        # password entry
         pinentryPackage = pkgs.pinentry-gnome3;
       };
 
@@ -974,8 +976,8 @@ Home Manager module with `gpg-agent`, `gnupg`, and `pinentry-gnome3`:
           # Default/trusted key ID (helpful with throw-keyids)
           # Example, you will put your own keyid here
           # Use `gpg --list-keys`
-          default-key = "0x37ACBCDA569C5C44788";
-          trusted-key = "0x37ACBCDA569C5C44788";
+          # default-key = "0x37ACBCDA569C5C44788";
+          # trusted-key = "0x37ACBCDA569C5C44788";
           # https://github.com/drduh/config/blob/master/gpg.conf
           # https://www.gnupg.org/documentation/manuals/gnupg/GPG-Configuration-Options.html
           # https://www.gnupg.org/documentation/manuals/gnupg/GPG-Esoteric-Options.html
@@ -1016,7 +1018,7 @@ Home Manager module with `gpg-agent`, `gnupg`, and `pinentry-gnome3`:
           # Disable caching of passphrase for symmetrical ops
           no-symkey-cache = "";
           # Enable smartcard
-          use-agent = "";
+          # use-agent = "";
         };
       };
     };
@@ -1115,7 +1117,7 @@ gpg --list-secret-keys --with-keygrip --with-colons
 - Copy the `grp` line - that's your keygrip, you don't need to add the last `:`
 
 Add the keygrip number to your `gpg-agent.sshKeys` and rebuild, this adds an SSH
-key to gpg-agent:
+key to `gpg-agent`:
 
 ```nix
 # gpg-agent.nix
@@ -1218,7 +1220,7 @@ Then, in your server's NixOS configuration (e.g., `configuration.nix`): Change
 users.users.yourUser = {
 openssh = {
   authorizedKeys.keys = [
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGXwhVokJ6cKgodYT+0+0ZrU0sBqMPPRDPJqFxqRtM+I"
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGXwhVokJ6cKgodYT+0+0ZrU0sBqMPPRDPJqFxqRtM+I (none)"
   ];
 };
 };
@@ -1285,6 +1287,24 @@ After this, you will be prompted for your Private Keys password on every commit.
 If you look at your commits on GitHub, after adding the GPG key and the above
 settings to your git setup it will show your commits are `Verified`.
 
+### Backing up Your Private Keys
+
+```bash
+gpg --export-secret-keys --armor --output my-private-key-backup.gpg
+```
+
+Your private keys will be encrypted with a passphrase into a .gpg file. Store
+this backup in a secure location line an encrypted USB drive. This can prevent
+you from losing access to your keys in the case of disk failure or accidents.
+
+You can export your public keys and publish them publicly if you choose:
+
+```bash
+gpg --export --armor --output my-public-keys.gpg
+```
+
+Now if your keys ever get lost or corrupted, you can import these backups.
+
 ## Encrypt a File with PGP
 
 ### List your keys and get the key ID
@@ -1293,7 +1313,7 @@ settings to your git setup it will show your commits are `Verified`.
 gpg --list-keys --keyid-format LONG
 ```
 
-Example output:
+Example output, don't use RSA keys:
 
 ```bash
 pub   rsa4096/ABCDEF1234567890 2024-01-01 [SC]
@@ -1316,6 +1336,9 @@ echo "This file will be encrypted" > file.txt
 gpg --encrypt --recipient ABCDEF1234567890 file.txt
 ```
 
+If you have someone's public key, you can just as easily encrypt a file that
+only they can decrypt. This is where public keyservers come in handy.
+
 ```bash
 ls
 │  7 │ file.txt            │ file │     28 B │ now           │
@@ -1332,7 +1355,7 @@ gpg: encrypted with cv25519 key, ID 0x4AC131B80CEC833E, created 2025-07-31
 This file will be encrypted
 ```
 
-Or:
+Or, to save the decrypted text to a file:
 
 ```bash
 gpg --output decrypted_file.txt --decrypt file.txt.gpg
@@ -1346,8 +1369,6 @@ This file will be encrypted
   to decrypt the file.
 
 There is much more you can do with PGP beyond simple file encryption:
-
-- Sign files and commits: Prove that content really came from you.
 
 - Encrypt for multiple recipients: Share encrypted data with teammates using
   their public keys.
