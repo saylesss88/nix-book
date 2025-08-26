@@ -86,6 +86,10 @@ usability).
   Bitwarden, both available on NixOS. Pair this with enabling two-factor
   authentication **(2FA) wherever possible**.
 
+- It's advisable to only use the desktop version and not the browser extension
+  for a number of reasons. One is that you can store your passwords completely
+  offline and have complete ownership of them.
+
 ```nix
 environment.systemPackages = [
     pkgs.keepassxc
@@ -96,10 +100,16 @@ environment.systemPackages = [
 ];
 ```
 
-I’ve never agreed with the argument, "I’m not doing anything illegal, so I don’t
-mind if they spy on me and profit from my data." Whatever your online activities
-may be, your privacy is your right alone. Why make it easier for others to
-access your personal information when you have the power to limit your exposure?
+With KeePassXC, you can require 3 different authentication methods at the same
+time. You can choose a password, a keyfile, and a security key where it won't
+open unless all 3 are present giving you additional security. All 3 might not be
+necessary but it's possible. It's also easy to migrate to KeePassXC, you can
+import your vault from many different managers.
+
+With Bitwarden, to enable 2 factor authentication, you need to log in with your
+master password through the web interface.
+
+- [PrivacyGuides Intro to Passwords](https://www.privacyguides.org/en/basics/passwords-overview/)
 
 ### Why Follow These Basics?
 
@@ -111,6 +121,22 @@ providing a solid foundation to build on.
 A vast majority of secure and privacy-focused browsers available for NixOS are
 based on Firefox. Chromium derivatives like Ungoogled Chromium and Brave do
 exist in Nixpkgs, but are less recommended by privacy advocates.
+
+What is "normal" and allowed today might be suppressed tomorrow, look at the UK
+[Online Safety Act](https://en.wikipedia.org/wiki/Online_Safety_Act_2023)
+purported to protect children, accused of banning privacy. This is because the
+only way to verify age is to make everyone submit KYC with their drivers license
+or ID, completely taking away any anonymity of adults and children alike.
+
+Also see
+[BBC 4chan refuses to pay fine](https://www.bbc.com/news/articles/cq68j5g2nr1o)
+
+The mere existence of a surveillance state breeds fear and conformity and
+stifles free
+expression.--[The Intercept](https://theintercept.com/2016/04/28/new-study-shows-mass-surveillance-breeds-meekness-fear-and-self-censorship/)
+
+There are much more scary examples in
+[Privacy, The new Oil](https://thenewoil.org/en/guides/prologue/why/)
 
 ### Choosing Secure Browsers and Search Engines
 
