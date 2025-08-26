@@ -1056,25 +1056,25 @@ custom.pgp.enable = true;
 `gpg --full-generate-key` can be used to generate a basic keypair, adding
 `--expert` gives more options and capabilities needed for `gpg-agent`.
 
-To generate a pgp key you can do the following:
+> ❗ NOTE: We will first generate our GPG primary key, it is often recommended
+> to store your primary key offline and use your subkeys for encrypting and
+> signing.
+
+To generate your gpg primary key you can do the following:
 
 ```bash
-gpg --expert --full-generate-key
+gpg --full-generate-key
 ```
 
-- Choose the default (11) ECC (set your own capabilities)
-
-- Choose `A` for Authenticate capabilities, which is the only setting required
-  for this. Additional subkeys may be created for encryption, sign, and/or
-  authentication capabilities.
-
-- Choose (1) Default Curve 25519
+- Choose (9) ECC (sign and encrypt)
 
 - Give it a name and description
 
 - Give it an expiration date, 1y is common
 
 - Use a strong passphrase or password
+
+- Give it a comment, I typically add the date
 
 If you see a warning about incorrect permissions, you can run the following:
 
@@ -1093,28 +1093,34 @@ ls -l ~/.gnupg
 # Files should show: -rw-------
 ```
 
-After fixing, run:
+After fixing, run `gpg --list-keys`, which lists your public keys:
 
 ```bash
 # Take note of your public key
 gpg --list-keys
 /home/jr/.gnupg/pubring.kbx
 ---------------------------
-pub   ed25519/0x095882C1A124CF15 2025-08-23 [SCA] [expires: 2026-08-23]
+pub   ed25519/0x095722C1A124CF15 2025-08-23 [SCA] [expires: 2026-08-23]
 ```
 
-My public key, which verifies my commits on github is `0x095882C1A124CF15`. You
-will use this key as your `default-key` and `trusted-key` in `gpg-agent.nix`.
-
 The warning should be gone.
+
+Now we will generate 2 subkeys, 1 for encryption and 1 for authentication.
+
+```bash
+gpg --expert --edit-key 0x095722C1A124CF15
+```
+
+Choose 11 (set your own capabilities) and add A (Authenticate) and type `save`
+to save and exit. Repeat this again and choose ECC (encrypt only).
 
 **Add Keygrip to `sshcontrol` for gpg-agent**
 
 ```bash
-gpg --list-secret-keys --with-keygrip --with-colons
+gpg --list-secret-keys --with-keygrip --keyid-format LONG
 ```
 
-- Copy the `grp` line - that's your keygrip, you don't need to add the last `:`
+Copy the keygrip of the subkey with Authenticate capabilities
 
 Add the keygrip number to your `gpg-agent.sshKeys` and rebuild, this adds an SSH
 key to `gpg-agent`:
@@ -1124,10 +1130,21 @@ key to `gpg-agent`:
 gpg-agent.sshKeys = ["6BD11826F3845BC222127FE3D22C92C91BB3FB32"];
 ```
 
+- By itself, a keygrip cannot be used to reconstruct your private key. It's
+  derived from the public key material, not from the secret key itself so it's
+  safe to version control. Don't put your keygrip in a public repo if you don't
+  want people to know you use that key for signing/authentication. It's not a
+  security risk, but it leaks a tiny bit of metadata.
+
+The following article mentions the keygrip being computed from public elements
+of the key:
+
+- [gnupg-users what-is-a-keygrip](https://gnupg-users.gnupg.narkive.com/q5JtahdV/gpg-agent-what-is-a-keygrip)
+
 Add the KeyId to your `gpg-agent.nix`, this declares your default-key to persist
 through rebuilds:
 
-Copy your public key:
+Copy the public key of the same subkey with Authenticate capabilities:
 
 ```nix
 # gpg-agent.nix
@@ -1144,31 +1161,6 @@ ssh-add -L
 # you should see something like:
 ssh-ed25519 AABCC3NzaC1lZDI1NTE5ABBAIHyujgyCjjBTqIuFM3EMUSo6RGklmOXQW3uWRhWdJ1Mm (none)
 ```
-
-After adding the keygrip of the key with Authenticate capabilities and
-rebuilding, you can then add a subkey with Encrypt capabilities. For some reason
-doing both at the same time and adding that keys keygrip makes gpg-agent fail.
-
-Copy your public key:
-
-```bash
-gpg --edit-key 0xD35CEB9322AC054E
-gpg> addkey
-```
-
-Choose ECC Encrypt capabilities, and type `save` to save changes and exit the
-`gpg>`.
-
-- By itself, a keygrip cannot be used to reconstruct your private key. It's
-  derived from the public key material, not from the secret key itself so it's
-  safe to version control. Don't put your keygrip in a public repo if you don't
-  want people to know you use that key for signing/authentication. It's not a
-  security risk, but it leaks a tiny bit of metadata.
-
-The following article mentions the keygrip being computed from public elements
-of the key:
-
-- [gnupg-users what-is-a-keygrip](https://gnupg-users.gnupg.narkive.com/q5JtahdV/gpg-agent-what-is-a-keygrip)
 
 - Never version-control your private key files or `.gnupg` contents.
 
@@ -1368,7 +1360,39 @@ This file will be encrypted
 - You will be asked for the passphrase you used when creating the key in order
   to decrypt the file.
 
-There is much more you can do with PGP beyond simple file encryption:
+## Make your Public Key Highly Available
+
+There's nothing malicious that can happen if unknown people have your public
+key. That said, it may be beneficial to make your public key publicly available.
+People can find your info to send you messages securely from your first
+interaction. There is much more you can do with PGP beyond simple file
+encryption:
+
+You can send your public key with the command below:
+
+```bash
+gpg --output ~/mygpg.key --armor --export your_email@address.com
+```
+
+You can then send this file to the other party.
+
+You can also use the GPG interface to upload your key to a key server:
+
+```bash
+gpg --list-keys your_email@address.com
+```
+
+Copy the key ID for the following command, remember its on the `pub` line after
+the `/`.
+
+```bash
+gpg --send-keys --keyserver pgp.mit.edu key_id
+```
+
+The key will be uploaded to the server and likely be distributed to other key
+servers around the world. This is why expiration dates are important, if your
+key is lost or stolen, the damage window is limited to the expiration period.
+Also remember, you can add more time even after the key has expired.
 
 - Encrypt for multiple recipients: Share encrypted data with teammates using
   their public keys.

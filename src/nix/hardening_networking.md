@@ -58,7 +58,8 @@ is practical, tested hardening tailored to you.
 - To protect your privacy, always sanitize files by removing this metadata
   before sharing. Tools like [mat2](https://0xacab.org/jvoisin/mat2) are
   designed to strip metadata from a wide range of media files efficiently.
-  (`pkgs.mat2`)
+  (`pkgs.mat2`). You just type `mat2 swappy-2025.png` for example and there will
+  then be a new `mat2 swappy-2025.cleaned.png` that can safely be shared.
 
 **Use Anonymous File-Sharing Tools**
 
@@ -166,7 +167,12 @@ as:
 
 **SearXNG** an open-source, privacy-respecting metasearch engine that aggregates
 results from various search services, such as Google, DuckDuckGo, etc without
-tracking you or profiling your searches.
+tracking you or profiling your searches. You can add SearXNG to firefox by going
+to `about:preferences#search` and at the bottom click `Add`, URL will be
+`searx.be/search?q=%s`.
+
+Searx is a bit different, you can choose which search engine you want for your
+current search with `!ddg search term` to use duckduckgo for example.
 
 Example LibreWolf config implementing many of the STIG recommendations:
 
@@ -843,3 +849,7 @@ on the rules you set.
   set of security configuration standards developed by the U.S. Department of
   Defense. They are created by the Defense Information Systems Agency (DISA) to
   secure and harden DoD information systems and software.
+
+- [Privacy, The New Oil (Why Privacy & Security Matter)](https://thenewoil.org/en/guides/prologue/why/)
+
+- [PrivacyGuides](https://www.privacyguides.org/en/)
