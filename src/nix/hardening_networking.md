@@ -812,13 +812,16 @@ on the rules you set.
 
 ### Resources
 
-- [Cloudflare What is HTTPS](https://cloudflare.com/learning/ssl/what-is-https)
+<details>
+<summary> ✔️ Click to Expand Resources </summary>
 
-- [What is Fingerprinting](https://ssd.eff.org/module/what-fingerprinting), more
-  than you realize is being tracked constantly.
+- [Cloudflare What is HTTPS](https://cloudflare.com/learning/ssl/what-is-https)
 
 - [Surveillance Self-Defence](https://ssd.eff.org/) has a lot of helpful info to
   protect your privacy.
+
+- [What is Fingerprinting](https://ssd.eff.org/module/what-fingerprinting), more
+  than you realize is being tracked constantly.
 
 - [oisd.nl](https://oisd.nl/) the oisd website
 
@@ -853,3 +856,9 @@ on the rules you set.
 - [Privacy, The New Oil (Why Privacy & Security Matter)](https://thenewoil.org/en/guides/prologue/why/)
 
 - [PrivacyGuides](https://www.privacyguides.org/en/)
+
+- [Firefox Relay](https://relay.firefox.com/accounts/profile/) can be used to
+  create email aliases that forward to your real email address. The paid plan
+  also lets you create phone number aliases that forward to your phone number.
+
+</details>
