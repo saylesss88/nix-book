@@ -157,10 +157,10 @@ protections.
 
 #### Tor Browser
 
-> ❗ NOTE: Tor is **not** the most secure browser, anonymity and security often
-> be at odds with each other. Having the exact same browser as many other people
-> isn't the best security practice, but it is great for anonymity. Tor is also
-> based on Firefox Esr, which only receives patches for vulnerabilities
+> ❗ NOTE: Tor is **not** the most secure browser, anonymity and security can
+> often be at odds with each other. Having the exact same browser as many other
+> people isn't the best security practice, but it is great for anonymity. Tor is
+> also based on Firefox Esr, which only receives patches for vulnerabilities
 > considered Critical or High which can be taken advantage of.
 
 Tor is a modified version of Firefox specifically designed for use with Tor.
