@@ -138,7 +138,7 @@ expression.--[The Intercept](https://theintercept.com/2016/04/28/new-study-shows
 There are much more scary examples in
 [Privacy, The new Oil](https://thenewoil.org/en/guides/prologue/why/)
 
-### Choosing Secure Browsers and Search Engines
+### Choosing Secure/Private Browsers and Search Engines
 
 On a hardened Linux system, the browser is most often the weakest link exposed
 to the internet, and so security, privacy, and anti-tracking features of
@@ -146,6 +146,12 @@ browsers are now as important, or even more important than platform-level
 protections.
 
 #### Tor Browser
+
+> ❗ NOTE: Tor is **not** the most secure browser, anonymity and security often
+> be at odds with each other. Having the exact same browser as many other people
+> isn't the best security practice, but it is great for anonymity. Tor is also
+> based on Firefox Esr, which only receives patches for vulnerabilities
+> considered Critical or High which can be taken advantage of.
 
 Tor is a modified version of Firefox specifically designed for use with Tor.
 
@@ -159,10 +165,43 @@ built with the necessary plugins and privacy protecting rules, so adding more is
 unnecessary and actually dangerous for your anonymity.
 
 You can visit both the regular web and `.onion` sites on Tor. Only the hidden
-`.onion` sites are end-to-end encrypted. Bridges are only necessary in countries
-that don't allow people to use Tor. Using Bridges when they aren't needed takes
-resources away from people in oppressive regimes that need, only use them if
-necessary. Read the guides, and use Tails OS when it really matters.
+`.onion` and `HTTPS` sites are end-to-end encrypted making https essential.
+Bridges are only necessary in countries that don't allow people to use Tor.
+Using Bridges when they aren't needed takes resources away from people in
+oppressive regimes that need, only use them if necessary. Read the guides, and
+use Tails OS when it really matters.
+
+**Learn about Tor**
+
+I recommend starting with
+[Privacy Guides In Praise of Tor](https://www.privacyguides.org/articles/2025/04/30/in-praise-of-tor/#onion-sites-you-can-visit-using-the-tor-browser)
+and then reading their
+[Tor Overview](https://www.privacyguides.org/en/advanced/tor-overview/) they
+have been the most informative resources I've come across yet.
+
+The Electronic Frontier Foundation sponsors and helps fund Tor and so does the
+United States Government.
+
+If you are fortunate to live outside of oppressive regimes with extreme
+censorship, using Tor for everyday, mundane activities is likely safe and won’t
+put you on any harmful “list.” Even if it did, you'd be in good company—these
+lists mostly contain great people working tirelessly to defend human rights and
+online privacy worldwide.
+
+By using Tor regularly for ordinary browsing, you help strengthen the network,
+making it more robust and anonymous for everyone. This collective support makes
+staying private easier for activists, journalists, and anyone facing online
+surveillance or censorship. The writer of the PrivacyGuides article mentions
+using Tor when he needs to access Google Maps to protect his privacy
+
+So, consider embracing Tor not only for sensitive browsing but also for daily
+routine tasks. Every user adds valuable noise to the network, helping protect
+privacy and freedom for all.
+
+**Tor is at risk, and needs our help**. Despite its strength and history, Tor
+isn't safe from the same attacks oppressive regimes and misinformed legislators
+direct at encryption and many other privacy-enhancing
+technologies.--[How to Support Tor](https://www.privacyguides.org/articles/2025/04/30/in-praise-of-tor/#how-to-support-tor)
 
 - [Tor on NixOS](https://wiki.nixos.org/wiki/Tor)
   - [Tor Browser User Manual](https://tb-manual.torproject.org/)
