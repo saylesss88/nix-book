@@ -142,6 +142,7 @@ unnecessary software and services to minimize potential vulnerabilities. Take
 advantage of NixOS’s easy package management and minimalism to keep your system
 lean and secure.
 
+
 **Avoid permanently installing temporary tools**: Use tools like `nix-shell`,
 `comma`, `devShells` and `nix-direnv` to test or run software temporarily. This
 prevents clutter and reduces potential risks from unused software lingering on

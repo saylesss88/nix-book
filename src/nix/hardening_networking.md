@@ -361,10 +361,25 @@ The `xdg` settings at the end make LibreWolf the defaults for what is listed.
 
 Thanks to `JosefKatic` for putting the above STIG settings in NixOS format.
 
+Also, go to
+[accounts.firefox](https://accounts.firefox.com/settings#data-collection) and
+turn off "Allow Mozilla accounts to send technichal and interaction data to
+Mozilla". Also set 2-fa in
+[Security Settings](https://accounts.firefox.com/settings#security)
+
+Firefox Relay is a pretty cool privacy tool too, it gives you temporary email
+and phone number aliases so you don't have to give out your real ones. There is
+an autofill option available also, but you can just click on the Relay button
+and generate a new alias and use it like your normal email.
+
 </details>
+
+### Fingerprint Testing
 
 You can test your browser to see how well you are protected from tracking and
 fingerprinting at [Cover Your Tracks](https://coveryourtracks.eff.org/).
+
+Also check out, [Am I Unique](https://amiunique.org/fingerprint)
 
 <details>
 <summary> ✔️ Click to Expand Script to wipe cache and generate new `machine-id` </summary>
