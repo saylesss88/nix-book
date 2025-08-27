@@ -122,6 +122,16 @@ A vast majority of secure and privacy-focused browsers available for NixOS are
 based on Firefox. Chromium derivatives like Ungoogled Chromium and Brave do
 exist in Nixpkgs, but are less recommended by privacy advocates.
 
+[Section 215 USA Patriot Act](https://www.csis.org/analysis/fact-sheet-section-215-usa-patriot-act)
+permits the collection of "Tangible Things" or "Business Records", e.g., your
+phone records, medical records, etc. for an investigation to obtain foreign
+intelligence information. If it does relate to a US person it must be relevant
+to preventing terrorism or espionage, and not be based solely on activities
+protected by the first amendment. "Relevant" is the key word here and it is at
+the governments discretion meaning they sweep everything and sift it later.
+Criticized for violating American citizens Fourth Amendment protections against
+warrantless search and seizure and proven to be ineffective.
+
 What is "normal" and allowed today might be suppressed tomorrow, look at the UK
 [Online Safety Act](https://en.wikipedia.org/wiki/Online_Safety_Act_2023)
 purported to protect children, accused of banning privacy. This is because the
