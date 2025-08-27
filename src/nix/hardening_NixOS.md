@@ -1301,6 +1301,13 @@ Now if your keys ever get lost or corrupted, you can import these backups.
 
 ## Encrypt a File with PGP
 
+The easy way to do this is with an app like Kleopatra, available as
+`pkgs.kdePackages.kleopatra`. Kleopatra will automatically recognize your gpg
+keys and enable you to easily encrypt messages by clicking the Notepad, typing
+your message and clicking `Sign/Encrypt Notepad`. You can also choose to encrypt
+the message with a password, where anyone that has the password can read the
+message.
+
 ### List your keys and get the key ID
 
 ```bash
