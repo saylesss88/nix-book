@@ -248,15 +248,17 @@ supported.
 You can find the latest available hardened kernel packages by searching
 [pkgs/top-level/linux-kernels.nix](https://github.com/NixOS/nixpkgs/blob/master/pkgs/top-level/linux-kernels.nix)
 
-For example, to use the latest available `6.12`, you would configure it like
+For example, to use the latest available `6.15`, you would configure it like
 this:
 
 ```nix
-boot.kernelPackages = pkgs.linux_6_12_hardened;
+boot.kernelPackages = pkgs.linux_6_15_hardened;
 ```
 
 Note that this not only replaces the kernel, but also packages that are specific
-to the kernel version, such as NVIDIA video drivers.
+to the kernel version, such as NVIDIA video drivers. This also removes your
+ability to use the `.extend` kernel attribute, they are only available to
+_kernel package sets_ (e.g., `linuxPackages_hardened`)
 
 - If you decide to use this, read further before rebuilding.
 
