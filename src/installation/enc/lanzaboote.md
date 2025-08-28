@@ -20,7 +20,7 @@ recovery keys and confirm that they are correct. Refer to this
 > encryption, I'd say it could stop the average person. But an experienced
 > hacker could easily bypass this without encryption if they had access to your
 > computer. For more protection look into TPM2 Hardware Requirements, and full
-> disk encryption
+> disk encryption.
 
 ## Important Considerations
 
@@ -30,16 +30,6 @@ fairly enlightening as far as the state of Authenticated Boot and Disk
 Encryption on Linux.
 
 - [Brave New Trusted Boot World](https://0pointer.net/blog/brave-new-trusted-boot-world.html)
-
-Disk encryption means that reading the data in clear-text form is only possible
-if you possess a secret of some form, usually a password/passphrase. Data
-authentication means that no one can make changes to the data on disk unless
-they possess a secret of some form. Most distributions only enable the former
-though — the latter is a more recent addition to LUKS/cryptsetup, and is not
-used by default on most distributions (though it probably should be). Closely
-related to LUKS/dm-crypt is `dm-verity` (which can authenticate immutable
-volumes) and `dm-integrity` (which can authenticate writable volumes, among
-other things).--Pid Eins
 
 Lanzaboote only secures the boot chain. The userspace remains unverified (i.e.,
 the nix store, etc.), to verify userspace you need to implement additional
@@ -71,50 +61,6 @@ Current Boot Loader:
 
 The firmware **must** be `UEFI` and the current bootloader needs to be
 `systemd-boot`. If you check these boxes, you're good to go.
-
-## Why Use Lanzaboote (Secure Boot) on a Non-Encrypted System?
-
-Although full disk encryption would provide the best protection it may be
-unnecessary for your home desktop in your bedroom. Full disk encryption is
-beyond the scope of this chapter.
-
-Even if your disk is not encrypted, enabling Secure Boot with Lanzaboote brings
-real security improvements:
-
-1. Protects the Boot Process from Malware
-
-Secure Boot ensures that only bootloaders and kernels signed with your trusted
-keys can run at startup. This blocks bootkits and rootkits—dangerous types of
-malware that try to infect your system before the operating system even loads .
-Without Secure Boot, malicious software could silently replace your bootloader
-or kernel and gain control every time your computer starts.
-
-2. Prevents Unauthorized Modifications
-
-If someone (or some software) tries to tamper with your boot files—like swapping
-out your kernel or bootloader with a malicious version—Secure Boot will detect
-this and refuse to start the system, alerting you that something is wrong
-
-. This makes it much harder for attackers to hide or persist on your machine.
-
-3. First Line of Defense
-
-Secure Boot acts as a “gatekeeper” for your computer’s startup process. Even if
-your files aren’t encrypted, it stops unauthorized code from running before
-Linux loads, making it harder for malware to take hold and harder for attackers
-to compromise your system at the lowest level.
-
-4. Protects Recovery and Rescue Environments
-
-Secure Boot also covers recovery partitions and rescue tools. Only signed,
-trusted recovery environments can be loaded, preventing attackers from sneaking
-in malicious tools during system repair.
-
-5. Peace of Mind for Updates and Multi-User Systems
-
-If you share your computer or use it in a public setting, Secure Boot ensures
-that only approved system updates and kernels can be booted, reducing the risk
-of accidental or intentional tampering.
 
 ## Security Requirements
 

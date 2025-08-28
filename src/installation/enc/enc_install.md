@@ -23,7 +23,7 @@ Impermanence.
 
 > ❗ NOTE: This is a bit convoluted, there are a few paths you can follow. If
 > you choose to use the starter repo (<https://github.com/saylesss88/my-flake>)
-> just follow the included README.
+> just follow the included README and use this for reference.
 
 ## What does LUKS Encryption Protect?
 
@@ -142,7 +142,7 @@ sudo systemctl restart wpa_supplicant@wlan0.service
 After either method, exit `wpa_cli` with `quit`. Then test your connection:
 
 ```bash
-ping google.com
+ping 1.1.1.1
 ```
 
 3. Get your Disk Name with `lsblk`
