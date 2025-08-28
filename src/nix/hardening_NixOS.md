@@ -1475,6 +1475,7 @@ algorithms, and best practices:
           LogLevel = "VERBOSE";
           PermitRootLogin = "no";
           KexAlgorithms = [
+            # Key Exchange Algorithms in priority order
             "curve25519-sha256@libssh.org"
             "ecdh-sha2-nistp521"
             "ecdh-sha2-nistp384"
@@ -1482,7 +1483,10 @@ algorithms, and best practices:
             "diffie-hellman-group-exchange-sha256"
           ];
           Ciphers = [
+            # stream cipher alternative to aes256, proven to be resilient
+            # Very fast on basically anything
             "chacha20-poly1305@openssh.com"
+            # industry standard, fast if you have AES-NI hardware
             "aes256-gcm@openssh.com"
             "aes128-gcm@openssh.com"
             "aes256-ctr"
@@ -1490,6 +1494,7 @@ algorithms, and best practices:
             "aes128-ctr"
           ];
           Macs = [
+            # Combines the SHA-512 hash func with a secret key to create a MAC
             "hmac-sha2-512-etm@openssh.com"
             "hmac-sha2-256-etm@openssh.com"
             "umac-128-etm@openssh.com"
