@@ -1030,6 +1030,10 @@ Home Manager module with `gpg-agent`, `gnupg`, and `pinentry-gnome3`:
 }
 ```
 
+- Seahorse is a Gui for GnuPG that gives you an app to view your SSH keys, Gpg
+  keys, Certificates, Keyrings, and Logins. There is a lot you can do with
+  seahorse, such as generate keys, passwords, and more.
+
 - The default path is `~/.gnupg`, if you prefer placing it in the `~/.config`
   directory or elsewhere, uncomment the `homedir` line and change `userName` to
   your username.
