@@ -969,6 +969,8 @@ Home Manager module with `gpg-agent`, `gnupg`, and `pinentry-gnome3`:
     };
     home.packages = [pkgs.gnupg];
     programs = {
+      # Gui for OpenPGP
+      seahorse.enable = true;
       gpg = {
         ## Enable GnuPG
         enable = true;
