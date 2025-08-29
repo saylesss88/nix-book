@@ -5,6 +5,7 @@
     - [Nix Paths](nix/nixLang/nix_paths.md)
     - [Hardening README](nix/README.md)
     - [Hardening NixOS](nix/hardening_NixOS.md)
+    - [GnuPG & gpg-agent on NixOS](nix/gpg-agent.md)
     - [Hardening Networking](nix/hardening_networking.md)
   - [Version Control with Git](vcs/git.md)
   - [Version Control with JJ](vcs/jujutsu.md)
