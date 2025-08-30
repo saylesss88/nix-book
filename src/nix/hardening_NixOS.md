@@ -88,6 +88,7 @@ long as the key management scheme isn't compromised.
 
 - [NixOS Wiki Full Disk Encryption](https://wiki.nixos.org/wiki/Full_Disk_Encryption)
 
+
 - The
   [NSA, CISA, and NIST warn](https://www.nsa.gov/Press-Room/Press-Releases-Statements/Press-Release-View/Article/3498776/post-quantum-cryptography-cisa-nist-and-nsa-recommend-how-to-prepare-now/)
   that nation-state actors are likely stockpiling encrypted data now, preparing
@@ -615,6 +616,8 @@ default as of yet. To set `dbus-broker` as the default:
 
 - `dbus-broker` is more resilient to resource exhaustion attacks and integrates
   better with Linux security features.
+
+- [Rethinking-the-dbus-message-bus](https://dvdhrm.github.io/rethinking-the-dbus-message-bus/)
 
 - Setting `storage = "volatile"` tells journald to keep log data only in memory.
   There is a tradeoff though, If you need long-term auditing or troubleshooting

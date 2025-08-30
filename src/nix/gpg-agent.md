@@ -16,7 +16,7 @@
 **GnuPG** is a complete and free implementation of the OpenPGP standard. It
 allows you to encrypt and sign your data and communications, has a versatile key
 management system, and access modules for many kinds of public key directories.
-GnuPG (GPG), is a command line tool
+GnuPG (GPG), is a command line tool for secure communication.
 
 **PGP (Pretty Good Privacy)** and **GPG (GNU Privacy Guard)**. While distinct,
 they are deeply interconnected and, for the rest of this section, I'll use the
@@ -30,6 +30,9 @@ To provide a free and open-source alternative that anyone could use and inspect,
 **GPG** was created. Crucially, **GPG** is a complete implementation of the
 OpenPGP standard. This open standard acts as a universal language for encryption
 and digital signatures.
+
+GnuPG uses a more complex scheme in which a user has a primary keypair and then
+zero or more additional subordinate keypairs.
 
 `gpg-agent` is a daemon to manage secret (private) keys independently from any
 protocol. It is used as a backed for gpg and gpgsm as well as for a couple of
@@ -227,9 +230,10 @@ custom.pgp.enable = true;
 `gpg --full-generate-key` can be used to generate a basic keypair, adding
 `--expert` gives more options and capabilities needed for `gpg-agent`.
 
-> ❗ NOTE: We will first generate our GPG primary key, it is often recommended
-> to store your primary key offline and use your subkeys for encrypting and
-> signing.
+> ❗ NOTE: We will first generate our GPG primary key that is required to
+> atleast have sign capabilities, we will then derive subkeys from said primary
+> key and use them for signing and encrypting. It is recommended to generate a
+> revoke certificate right after creating your primary key.
 
 To generate your gpg primary key you can do the following:
 
@@ -237,7 +241,7 @@ To generate your gpg primary key you can do the following:
 gpg --full-generate-key
 ```
 
-- Choose (9) ECC (sign and encrypt)
+- Choose `(10) (sign only)`
 
 - Give it a name and description
 
@@ -264,17 +268,38 @@ ls -l ~/.gnupg
 # Files should show: -rw-------
 ```
 
-After fixing, run `gpg --list-keys`, which lists your public keys:
+### Generate a Revocation Certificate
+
+`mykey` must be a key specifier, either the keyID of the primary keypair or any
+part of the user ID which identifies the keypair:
+
+```bash
+gpg --output revoke.asc --gen-revoke mykey
+```
+
+The certificate will be output to a file `revoke.asc`. If the `--output` is
+ommitted, the result will be placed on stdout.
+
+Since it's a short certificate, you can print a hardcopy and store it somewhere
+safe. The cert shouldn't be somewhere that others can access it since anyone
+could publish the revoke cert and render the corresponding public key useless.
+
+---
+
+After fixing, run `gpg --list-keys --with-fingerprint`, which lists your public
+keys:
 
 ```bash
 # Take note of your public key
-gpg --list-keys
+gpg --list-keys --with-fingerprint
 /home/jr/.gnupg/pubring.kbx
 ---------------------------
-pub   ed25519/0x095722C1A124CF15 2025-08-23 [SCA] [expires: 2026-08-23]
+pub   ed25519/0x095782A1B124AF15 2025-08-23 [SCA] [expires: 2026-08-23]
+Key fingerprint = 5908 9C5B FEC8 0D75 FCB0  E206 0958 82C1 A124 CF15
+uid                   [ultimate] Jr (08-23-25) <sayls8@proton.me>
 ```
 
-- Copy the KeyID, in this example it would be `0x095722C1A124CF15`. We will use
+- Copy the KeyID, in this example it would be `0x095722B2A123CF15`. We will use
   it for the command below.
 
 The warning should be gone.
@@ -282,7 +307,7 @@ The warning should be gone.
 Now we will generate 2 subkeys, 1 for encryption and 1 for authentication.
 
 ```bash
-gpg --expert --edit-key 0x095722C1A124CF15
+gpg --expert --edit-key 0x095722B2A123CF15
 ```
 
 Choose 11 (set your own capabilities) and add A (Authenticate) and type `save`
@@ -569,23 +594,37 @@ sub   rsa4096/1234567890ABCDEF 2024-01-01 [E]
 
 - You can also use your email or name to refer to the key in most commands.
 
-### Encrypt a file for yourself
+### Encrypt a file
+
+In order to encrypt a document you must have the public keys of the intended
+recipients.
 
 ```bash
 echo "This file will be encrypted" > file.txt
 ```
 
+Encrypting for yourself (using a key ID as recipient):
+
 ```bash
 gpg --encrypt --recipient ABCDEF1234567890 file.txt
 ```
-
-If you have someone's public key, you can just as easily encrypt a file that
-only they can decrypt. This is where public keyservers come in handy.
 
 ```bash
 ls
 │  7 │ file.txt            │ file │     28 B │ now           │
 │  8 │ file.txt.gpg        │ file │    191 B │ now           │
+```
+
+Encrypting for someone else with their email (public key identifier):
+
+```bash
+gpg --output file.gpg --encrypt --recipient jake@proton.me file.txt
+```
+
+```bash
+ls
+file.txt
+file.gpg
 ```
 
 `gpg --encrypt` doesn't modify the original file. It creates a new encrypted
@@ -610,6 +649,39 @@ This file will be encrypted
 
 - You will be asked for the passphrase you used when creating the key in order
   to decrypt the file.
+
+### Sign and Verify Signatures
+
+When you sign a document it is certified and timestamped. If after the doc is
+signed, if the doc is further modified in any way the verification of the
+signature will fail.
+
+A signature is created using the private key of the signer, and verified with
+the corresponding public key. For example, to verify Jakes signature you would
+use Jake's public key to see that the work indeed came from him and hasn't been
+modified since.
+
+To sign the above `file.txt`:
+
+```bash
+gpg output doc.sig --sign file.txt
+# To clearsign use:
+gpg --clearsign file.txt
+# For a detached signature use:
+gpg --output doc.sig --detach-sig file.txt
+```
+
+You will be prompted for your passphrase.
+
+You can either check the signature or check the signature and recover the
+original document.
+
+```bash
+# To only check:
+gpg --output doc --verify doc.sig
+# To verify and extract the document
+gpg --output doc --decrypt doc.sig
+```
 
 ## Email Encryption
 
@@ -675,10 +747,57 @@ If you're sending encrypted emails to someone you'll need their public key,
 there are a few methods of doing this just ensure you verify the Fingerprint
 with the person your talking to.
 
+Exporting your public key means creating a copy of the public part of your
+cryptographic key pair that you can share with others.
+
+For example, say that Jake wants to send you his public key. First he has to
+export his key:
+
+```bash
+gpg --output jake.gpg --export jake@proton.me
+```
+
+The key is exported in binary format, to export in ASCII-armored format use:
+
+```bash
+gpg --armor --export jake@proton.me
+```
+
+Now, once he sends this to you, you'll need to import and validate it:
+
+```bash
+gpg --import jake.gpg
+```
+
+Once the key is imported it should be validated. If you need to validate a key
+manually, it is done by verifying the key's fingerprint and then signing the key
+to certify it as a valid key.
+
+Check that it exists in your keychain:
+
+```bash
+gpg --list-keys
+```
+
+You should see Jakes key in the above list.
+
+To certify the key you need to edit it:
+
+```bash
+gpg --edit-key jake@proton.me
+# List the fingerprint
+Command> fpr
+# once the fingerprint is verified with the owner, sign it
+Command> sign
+# once signed, you can check the key to list signatures on it
+Command> check
+```
+
 > ❗ NOTE: You can use PGP to encrypt any message and paste it into **any**
 > software and send it. As long as only you and your recipient are the only
 > people to have the private keys, you will be the only people able to decrypt
-> the messages.
+> the messages. Implementing this correctly is a good way to stop government
+> mass surveillance.
 
 ## Make your Public Key Highly Available
 

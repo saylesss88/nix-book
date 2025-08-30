@@ -106,6 +106,9 @@ open unless all 3 are present giving you additional security. All 3 might not be
 necessary but it's possible. It's also easy to migrate to KeePassXC, you can
 import your vault from many different managers.
 
+KeepassXC also makes it easy to keep your complete password database offline
+which can significantly reduce the risk of a breach.
+
 With Bitwarden, to enable 2 factor authentication, you need to log in with your
 master password through the web interface.
 
@@ -180,6 +183,16 @@ Bridges are only necessary in countries that don't allow people to use Tor.
 Using Bridges when they aren't needed takes resources away from people in
 oppressive regimes that need, only use them if necessary. Read the guides, and
 use Tails OS when it really matters.
+
+You will see a lot of conflicting information about using Tor with a VPN. If you
+are in an area that blocks access to Tor or it is dangerous to use Tor, by all
+means use a trusted VPN.
+
+### TorPlusVPN
+
+- [Tor Project Wiki TorPlusVPN](https://gitlab.torproject.org/legacy/trac/-/wikis/doc/TorPlusVPN)
+
+- [Safely Connecting to Tor](https://www.privacyguides.org/en/advanced/tor-overview/#safely-connecting-to-tor)
 
 **Learn about Tor**
 
@@ -465,6 +478,15 @@ However, VPNs simply shift your trust: Instead of your ISP seeing your activity,
 your VPN provider can, so you must trust their privacy policies and
 infrastructure. Quality and privacy protections vary widely from one VPN company
 to another.
+
+I see over and over again that Mullvad VPN is the best, I am in no way
+affiliated with them this is just what I hear. They allow you to pay with cash
+completely anonymously and keep very minimal metadata. Metadata is a big deal,
+the US gov has admitted to killing people based solely on their metadata.
+
+Your ISP almost certainly does sketchy stuff with your data, personally I would
+rather trust a company like Mullvad whose whole reputation is based on their
+trustworthiness, transparency, and data protection.
 
 You can use a VPN with Tor, but it's not recommended unless you're an advanced
 user who knows how to configure both in a way that doesn't compromise your
