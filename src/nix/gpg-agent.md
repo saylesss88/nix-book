@@ -848,3 +848,77 @@ There is much more you can do with PGP beyond simple file encryption:
 
 This guide only scratches the surface — once your PGP key and `gpg-agent` are
 set up, these capabilities become easy to add to your workflow.
+
+### Bonus Verifying Arch Linux Download
+
+First, download both the arch `.iso` and `.sig` files.
+
+I tried a few different methods from <https://archlinux.org/download/#checksums>
+and the easiest by far was using Sequoia available in Nixpkgs as
+`pkgs.sequoia-sq`:
+
+Download the archlinux public key:
+
+```bash
+sq network wkd search pierre@archlinux.org --output release-key.pgp
+
+Found 2 certificates related to the query:
+
+ - 3E80CA1A8B89F69CBA57D98A76A5EF9054449A5C
+   - Pierre Schmitz <pierre@archlinux.org> (UNAUTHENTICATED)
+   - created 2022-10-31 09:11:51 UTC
+   - found via: WKD
+
+ - 4AA4767BBC9C4B1D18AE28B77F2D434B9741E8AC
+   - Pierre Schmitz <pierre@archlinux.de> (UNAUTHENTICATED)
+   - created 2011-04-10 09:35:33 UTC
+   - found via: WKD
+
+Hint: To extract a particular certificate from release-key.pgp, use any of:
+
+  $ sq cert export --keyring=release-key.pgp --cert=3E80CA1A8B89F69CBA57D98A76A5EF9054449A5C
+
+  $ sq cert export --keyring=release-key.pgp --cert=4AA4767BBC9C4B1D18AE28B77F2D434B9741E8AC
+```
+
+Export the chosen key to a `.pgp` file:
+
+```bash
+sq cert export --keyring=release-key.pgp --cert=3E80CA1A8B89F69CBA57D98A76A5EF9054449A5C > pierre-archlinux.pgp
+```
+
+Import into your keychain:
+
+```bash
+ gpg --import pierre-archlinux.pgp
+gpg: key 0x76A5EF9054449A5C: 9 signatures not checked due to missing keys
+gpg: key 0x76A5EF9054449A5C: public key "Pierre Schmitz <pierre@archlinux.org>" imported
+gpg: Total number processed: 1
+gpg:               imported: 1
+gpg: marginals needed: 3  completes needed: 1  trust model: pgp
+gpg: depth: 0  valid:   3  signed:   0  trust: 0-, 0q, 0n, 0m, 0f, 3u
+gpg: next trustdb check due at 2026-08-23
+```
+
+Now, you should see `<pierre@archlinux.org>` and his keys when you run
+`gpg --list-keys`
+
+Finally, verify the signature:
+
+```bash
+sq verify --signer-file release-key.pgp --signature-file archlinux-2025.08.01-x86_64.iso.sig archlinux-2025.08.01-x86_64.iso
+Authenticated signature made by 3E80CA1A8B89F69CBA57D98A76A5EF9054449A5C (Pierre Schmitz <pierre@archlinux.org>)
+
+1 authenticated signature.
+```
+
+This shows that the signature was made by the key with the ID
+`3E80CA1A8B89F69CBA57D98A76A5EF9054449A5C` (Pierre Schmitz).
+
+GPG authenticated that the signature is valid and that the key used to sign is
+trusted in our keyring.
+
+1 authenticated signature confirms the files integrity and authenticity.
+
+We have successfully verified that the file was signed by Pierr's official Arch
+Linux key and has not been tampered with.
