@@ -634,7 +634,11 @@ What its Good for:
   and you should tread lightly.
 
 **To securely communicate with someone never use email, use a dedicated service
-such as Signal or Brair.**
+such as Threema, Signal or Brair.** It's hard to recommend any messaging service
+at the moment, always do your own research and stay informed on the companies
+policies. Signal has taken some heat for the way it has implemented it's
+MobileCoin. The biggest issue I've faced is getting other people to care or use
+the same e2ee app.
 
 With Thunderbird you can go to settings, Privacy and Security, and scroll to the
 bottom where it says "End to End Encryption", Click the Settings tab there,

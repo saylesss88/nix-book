@@ -225,7 +225,8 @@ technologies.--[How to Support Tor](https://www.privacyguides.org/articles/2025/
 #### Mullvad-Browser
 
 Mullvad-Browser is free and open-source and was developed by the Tor Project in
-collaboration with Mullvad VPN.(Another Firefox Derivative)
+collaboration with Mullvad VPN.(Another Firefox Derivative). It is also the top
+recommended browser from PrivacyGuides.
 
 It is the Tor Browser without the Tor Network, allowing you to use the privacy
 features Tor created along with a VPN if you so choose.
@@ -936,6 +937,11 @@ on the rules you set.
 - [Firefox Hardening Guide](https://brainfucksec.github.io/firefox-hardening-guide)
 
 - [STIG Firefox Hardening](https://simeononsecurity.com/guides/enhance-firefox-security-configuring-guide/)
+
+> If you should trust the U.S. Governments recommendations is another story but
+> it can be good to compare and contrast with other trusted resources. You'll
+> have to think whether the CISA recommending that everyone uses Signal is solid
+> advice or guiding you towards a honeypot, I can't say for sure.
 
 - [Mozilla Firefox Security Technical Implementation Guide](https://stigviewer.com/stigs/mozilla_firefox)
   The STIG for Mozilla Firefox (Security Technical Implementation Guide) is a
