@@ -11,7 +11,7 @@
 > **Never share your private key or passphrase**. Backup your keys and handle
 > them with extreme care.
 
-## 🛠️ Tools of the trade
+## 🔑 Key Concepts
 
 **GnuPG** is a complete and free implementation of the OpenPGP standard. It
 allows you to encrypt and sign your data and communications, has a versatile key
@@ -38,15 +38,20 @@ Signing public keys with the corresponding private key is called _self-signing_,
 and a public key that has self-signed user IDs bound to it is called a
 _certificate_.
 
+**Web of Trust**: Rather than validate every single key individually, you can
+rely on other factors such as if it has been signed by a key that you fully
+trust or if it has been signed by three marginally trusted keys to validate
+keys.
+
 `gpg-agent` is a daemon to manage secret (private) keys independently from any
-protocol. It is used as a backed for gpg and gpgsm as well as for a couple of
-other utilities. --[man gpg-agent](https://man.cx/gpg-agent)
+protocol. It is used as a backed for `gpg` and `gpgsm` as well as for a couple
+of other utilities. --[man gpg-agent](https://man.cx/gpg-agent)
 
 There are numerous front-ends for gpg as well, i.e., GUI apps that simplify many
-of the commands and processes. Two that I touch on in this overview are seahorse
-and kleopatra.
+of the commands and processes. Two that I touch on in this overview are
+`seahorse` and `kleopatra`.
 
-## Asymmetric Encryption (Public-Key cryptography)
+### Asymmetric Encryption (Public-Key cryptography)
 
 E2ee requires that every sender and recipient does a one time preparation, which
 involves the generation of personal random numbers. Two such random numbers are
@@ -71,9 +76,12 @@ key or the private keys passphrase with anyone else**.
 **What must never be shared?**
 
 - Your private (secret) key, usually in your `~/.gnupg/private-keys-v1.d/`
-  directory. Usually called your _keyring_.
+  directory. Usually called your _private keyring_. **Your main goal should be
+  the protection of your private key**.
 
-- Your passphrase for your private key.
+- **Your passphrase for your private key**. Even if someone is able to somehow
+  get your private key, they need to break the passphrase to access it
+  unencrypted. **Protect this passphrase**!
 
 **Best Practices**
 
@@ -83,18 +91,19 @@ the fingerprint.This is accomplished in the configuration with
 `keyid-format = "0xlong";`, and `with-fingerprint`.
 
 Always sign your public keys before you publish them to prevent man in the
-middle attacks and other modifications. When a subkey or userid is generated it
+middle attacks and other modifications. When a subkey or userID is generated it
 is self-signed automatically, which is why you need to enter your password.
 
 Don't blindly trust keys from keyservers. You should verify the full key
 fingerprint with the owner over the phone if possible.
 
-Use a strong primary key, 1024-bit DSA, 1024-bit RSA, and the use of SHA-1 for
-signing are no longer recommended. We use `AES256` (Advanced Encryption Standard
-256-bit key), and `SHA512` by default in the following configuration.
+Use a strong primary key, don't use 1024-bit DSA, 1024-bit RSA, or SHA-1 for
+signing they are no longer recommended.
 
 Choose an expiration date less than 2 years, you can add time if needed.
 Remember this date.
+
+Rotate your subkeys.
 
 Keep your primary key offline, this ensures that it can't be stolen by an
 attacker allowing him to create new identities. We accomplish this by creating
@@ -711,6 +720,8 @@ with PGP provides valuable security benefits but also has inherent limitations
 that prevent it from being considered truly “secure communication” by modern
 standards.
 
+- [Email Self-Defense](https://emailselfdefense.fsf.org/en/)
+
 What its Good for:
 
 - Confidentiality, it prevents unauthorized third parties (like email providers
@@ -805,11 +816,11 @@ To certify the key you need to edit it:
 ```bash
 gpg --edit-key jake@proton.me
 # List the fingerprint
-Command> fpr
+gpg> fpr
 # once the fingerprint is verified with the owner, sign it
-Command> sign
+gpg> sign
 # once signed, you can check the key to list signatures on it
-Command> check
+gpg> check
 ```
 
 > ❗ NOTE: You can use PGP to encrypt any message and paste it into **any**
@@ -854,26 +865,14 @@ servers around the world. This is why expiration dates are important, if your
 key is lost or stolen, the damage window is limited to the expiration period.
 Also remember, you can add more time even after the key has expired.
 
-There is much more you can do with PGP beyond simple file encryption:
+### Example: Verifying Arch Linux Download
 
-- Encrypt for multiple recipients: Share encrypted data with teammates using
-  their public keys.
+<details>
+<summary>
 
-- Use smartcards or YubiKeys: Store your private key on hardware for extra
-  security.
+✔️ Click to Expand Example of verifying and signing the archlinux public key
 
-- Verify software releases: Check that downloaded files are genuine using the
-  developer’s signature.
-
-- Integrate with Git: Sign tags and commits so others can trust your repository
-  history.
-
-- Encrypt Email
-
-This guide only scratches the surface — once your PGP key and `gpg-agent` are
-set up, these capabilities become easy to add to your workflow.
-
-### Bonus Verifying Arch Linux Download
+</summary>
 
 First, download both the arch `.iso` and `.sig` files.
 
@@ -983,3 +982,29 @@ gpg --send-keys 0x76A5EF9054449A5C
 The more people that verify, sign, and re-export and publish their keys the
 better for the web of trust that gpg uses making the network more secure for
 everyone.
+
+### Edit your trust level of the key
+
+```bash
+gpg --edit-key pierre@archlinux.org
+gpg> trust
+Please decide how far you trust this user to correctly verify other users' keys
+(by looking at passports, checking fingerprints from different sources, etc.)
+
+  1 = I don't know or won't say
+  2 = I do NOT trust
+  3 = I trust marginally
+  4 = I trust fully
+  5 = I trust ultimately
+  m = back to the main menu
+
+Your decision? 3
+# Output:
+pub  ed25519/0x76A5EF9054449A5C
+     created: 2022-10-31  expires: 2037-10-27  usage: SC
+     trust: marginal      validity: full
+```
+
+You can see that the trust is `marginal` and validity is `full`.
+
+</details>
