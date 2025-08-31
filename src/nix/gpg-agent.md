@@ -78,6 +78,9 @@ Don't rely on the short KeyID, at least use long OpenPGP Key IDs (for example
 the fingerprint.This is accomplished in the configuration with
 `keyid-format = "0xlong";`, and `with-fingerprint`.
 
+Always sign your public keys before you publish them to prevent man in the
+middle attacs and other modifications.
+
 Don't blindly trust keys from keyservers. You should verify the full key
 fingerprint with the owner over the phone if possible.
 
@@ -356,6 +359,12 @@ gpg.settings = {
 };
 ```
 
+This key should be signed, ensure that it is:
+
+```bash
+gpg --sign-key Ox37ACA569C5C44787
+```
+
 Rebuild, and check that everything is correct with:
 
 ```bash
@@ -447,7 +456,7 @@ used for tasks such as file decryption.
 ### Remove and Store your Primary Key offline
 
 > ❗ NOTE: After you remove your primary key, you will no longer be able to
-> derive subkeys from it unless you re-import it.
+> derive subkeys from it or sign keys unless you re-import it.
 
 Since we added our Subkeys keygrip to our `gpg-agent.nix` and :
 
@@ -801,10 +810,18 @@ Command> check
 
 ## Make your Public Key Highly Available
 
-There's nothing malicious that can happen if unknown people have your public
-key. That said, it may be beneficial to make your public key publicly available.
-People can find your info to send you messages securely from your first
-interaction. You can send your public key with the command below:
+You should always make sure that you sign your public key before you publish it.
+When you distribute your public key, you're distributing the public components
+of your master and subkeys as well as the user IDs. If unsigned, this is a
+security risk because it's possible for an attacker to tamper with it. The
+public key can be modified by adding or substituting keys, or changing user IDs.
+
+Signing the keys provides a web of trust, only the corresponding public key can
+be used to verify the signature and ensure it hasn't been modified.
+
+```bash
+gpg --sign-key <KEY-ID>
+```
 
 ```bash
 gpg --output ~/mygpg.key --armor --export your_email@address.com
@@ -922,3 +939,36 @@ trusted in our keyring.
 
 We have successfully verified that the file was signed by Pierr's official Arch
 Linux key and has not been tampered with.
+
+Since the key has been verified we can now sign it. We will have to import our
+primary key to do so since we are keeping it offline for safety.
+
+```bash
+gpg --import backup.gpg
+```
+
+List your keys to get the arch keyID:
+
+```bash
+gpg --list-keys
+# ... snip ...
+pub   ed25519/0x76A5EF9054449A5C 2022-10-31 [SC] [expires: 2037-10-27]
+      Key fingerprint = 3E80 CA1A 8B89 F69C BA57  D98A 76A5 EF90 5444 9A5C
+uid                   [  full  ] Pierre Schmitz <pierre@archlinux.org>
+uid                   [  full  ] Pierre Schmitz <pierre@archlinux.de>
+sub   ed25519/0xD6D13C45BFCFBAFD 2022-10-31 [A] [expires: 2037-10-27]
+sub   cv25519/0x7F56ADE50CA3D899 2022-10-31 [E] [expires: 2037-10-27]
+```
+
+Sign the key:
+
+```bash
+gpg --sign-key 0x76A5EF9054449A5C
+```
+
+Now you can Export and publish the new public key and send it to a keyserver:
+
+```bash
+gpg --export --armor 0x76A5EF9054449A5C > archlinux-signed.asc
+gpg --send-keys 0x76A5EF9054449A5C
+```
