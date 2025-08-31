@@ -235,8 +235,10 @@ custom.pgp.enable = true;
 # ... snip ...
 ```
 
-`gpg --full-generate-key` can be used to generate a basic keypair, adding
-`--expert` gives more options and capabilities needed for `gpg-agent`.
+`gpg --full-generate-key` can be used to generate a basic keypair.
+
+`gpg --expert --full-generate-key` can be used for keys that require more
+capabilities.
 
 > ❗ NOTE: We will first generate our GPG primary key that is required to
 > atleast have sign capabilities, we will then derive subkeys from said primary
@@ -279,7 +281,7 @@ ls -l ~/.gnupg
 ### Generate a Revocation Certificate
 
 `mykey` must be a key specifier, either the keyID of the primary keypair or any
-part of the user ID which identifies the keypair:
+part of the user ID that identifies the keypair:
 
 ```bash
 gpg --output revoke.asc --gen-revoke mykey
@@ -320,6 +322,8 @@ gpg --expert --edit-key 0x095722B2A123CF15
 
 Choose 11 (set your own capabilities) and add A (Authenticate) and type `save`
 to save and exit. Repeat this again and choose ECC (encrypt only).
+
+> ❗ `gpg --edit-key` has many more capabilities, after launching type `help`.
 
 **Add Keygrip of Authenticate Subkey to `sshcontrol` for gpg-agent**
 
@@ -364,7 +368,7 @@ gpg.settings = {
 };
 ```
 
-This key should be signed, ensure that it is:
+This key should be signed automatically, ensure that it is:
 
 ```bash
 gpg --sign-key Ox37ACA569C5C44787
@@ -463,8 +467,6 @@ used for tasks such as file decryption.
 > ❗ NOTE: After you remove your primary key, you will no longer be able to
 > derive subkeys from it or sign keys unless you re-import it.
 
-Since we added our Subkeys keygrip to our `gpg-agent.nix` and :
-
 ```bash
 # extract the primary key
 gpg -a --export-secret-key sayls8@proton.me > secret_key
@@ -481,6 +483,9 @@ gpg --list-secret-keys
 # remove the subkeys from disk
 rm secret_subkeys.gpg
 ```
+
+I recommend also keeping a `.gpg` version to make it easy to re-import your
+primary key: `gpg --export-secret-keys --armor --output private-key-bak.gpg`
 
 Then store `secret_key` on an encrypted USB drive or somewhere offline. If you
 want to protect it for now, you can just use the encryption subkey that we
@@ -511,7 +516,7 @@ sec#  ed25519/0x
 The above set of commands are from the
 [RiseUp Keep your primary key offline](https://riseup.net/ru/security/message-security/openpgp/gpg-best-practices#keep-your-primary-key-entirely-offline)
 
-## Add your PGP Key to GitHub
+## Add your GPG Key to GitHub
 
 Plug your own public key from `gpg --list-keys` in the following command:
 
@@ -974,3 +979,7 @@ Now you can Export and publish the new public key and send it to a keyserver:
 gpg --export --armor 0x76A5EF9054449A5C > archlinux-signed.asc
 gpg --send-keys 0x76A5EF9054449A5C
 ```
+
+The more people that verify, sign, and re-export and publish their keys the
+better for the web of trust that gpg uses making the network more secure for
+everyone.

@@ -979,4 +979,10 @@ on the rules you set.
   create email aliases that forward to your real email address. The paid plan
   also lets you create phone number aliases that forward to your phone number.
 
+- [Zebra Crossing digital safety checklist](https://zebracrossing.narwhalacademy.org/)
+
+- [DataDetoxKit](https://datadetoxkit.org/en/privacy/essentials#step-1)
+
+- [DataDetox Degooglise](https://datadetoxkit.org/en/privacy/degooglise/)
+
 </details>
