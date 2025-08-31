@@ -34,6 +34,10 @@ and digital signatures.
 GnuPG uses a more complex scheme in which a user has a primary keypair and then
 zero or more additional subordinate keypairs.
 
+Signing public keys with the corresponding private key is called _self-signing_,
+and a public key that has self-signed user IDs bound to it is called a
+_certificate_.
+
 `gpg-agent` is a daemon to manage secret (private) keys independently from any
 protocol. It is used as a backed for gpg and gpgsm as well as for a couple of
 other utilities. --[man gpg-agent](https://man.cx/gpg-agent)
@@ -79,7 +83,8 @@ the fingerprint.This is accomplished in the configuration with
 `keyid-format = "0xlong";`, and `with-fingerprint`.
 
 Always sign your public keys before you publish them to prevent man in the
-middle attacs and other modifications.
+middle attacks and other modifications. When a subkey or userid is generated it
+is self-signed automatically, which is why you need to enter your password.
 
 Don't blindly trust keys from keyservers. You should verify the full key
 fingerprint with the owner over the phone if possible.
@@ -817,11 +822,8 @@ security risk because it's possible for an attacker to tamper with it. The
 public key can be modified by adding or substituting keys, or changing user IDs.
 
 Signing the keys provides a web of trust, only the corresponding public key can
-be used to verify the signature and ensure it hasn't been modified.
-
-```bash
-gpg --sign-key <KEY-ID>
-```
+be used to verify the signature and ensure it hasn't been modified. Since we are
+already only using subkeys for public keys, they are automatically self-signed.
 
 ```bash
 gpg --output ~/mygpg.key --armor --export your_email@address.com
