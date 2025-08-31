@@ -97,6 +97,8 @@ is self-signed automatically, which is why you need to enter your password.
 Don't blindly trust keys from keyservers. You should verify the full key
 fingerprint with the owner over the phone if possible.
 
+- [Verifying software signatures](https://www.kicksecure.com/wiki/Verifying_Software_Signatures)
+
 Use a strong primary key, don't use 1024-bit DSA, 1024-bit RSA, or SHA-1 for
 signing they are no longer recommended.
 
