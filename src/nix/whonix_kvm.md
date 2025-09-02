@@ -1,5 +1,14 @@
 # Whonix KVM on NixOS
 
+![Whonix Logo](../images/swappy-20250901-101339.cleaned.png)
+
+Whonix can be useful for many things, including not having to shut down your
+main OS to boot into a Tails USB stick and getting mostly the same protection.
+Their docs are honest about the limitations of the software making it easier to
+trust.
+
+- [Whonix Compared to Tails](https://www.whonix.org/wiki/Comparison_with_Others)
+
 Whonix is an operating system based on Debian base (Kicksecure Hardened) and the
 Tor network, which is designed for maximum anonymity and security. Whonix
 consists of two Debian based VMs, the `Whonix-Gateway` and `Whonix-Workstation`.
@@ -208,6 +217,8 @@ virt-manager
 ```
 
 ## Start Whonix-Gateway
+
+![Whonix Logo](../images/swappy-20250901-101351.cleaned.png)
 
 Always start the Whonix-Gateway first.
 
