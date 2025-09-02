@@ -16,6 +16,32 @@ trust.
 
 - [Whonix Compared to Tails](https://www.whonix.org/wiki/Comparison_with_Others)
 
+### A Few Things to Consider when using Whonix
+
+- You can anonymously use Java / Javascript
+
+- No activity conducted inside `Whonix-Workstation` can cause IP/DNS leaks so
+  long as `Whonix-Gateway` is left unchanged or only documented changes are made
+  like configuring bridges, establishing onion services and running updates.
+
+- Whonix does not and does not claim to protect users against advanced
+  adversaries such as nation state actors, if they target you, you will be
+  infected! If used correctly, Whonix can provide partial protection against
+  passive surveillance programs, it all depends on whether Tor can provide
+  adequate protection or not, which is not clear at this time.
+
+- You shouldn't use a VPN with Whonix and it is obvious that you're using Tor
+  because connections are made to known Tor Relays, which are publicly listed
+  and identifiable.
+
+> ⚠️It is impossible to Hide Tor use from the internet service provider (ISP).
+> It has been concluded this goal is difficult beyond practicality.
+> --[Whonix Hide Tor from your ISP](https://www.whonix.org/wiki/Hide_Tor_from_your_Internet_Service_Provider)
+
+- Millions of people use Tor daily for wholly legitimate reasons, particularly
+  to assert their privacy rights when faced with countless corporate /
+  government network observers and censors.
+
 ## 🔑 Key Terms
 
 Whonix is an operating system based on Debian base (Kicksecure Hardened) and the
