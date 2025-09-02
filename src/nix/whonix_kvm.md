@@ -79,6 +79,33 @@ Enable it with `custom.virtualbox.enable = true;`.
 After rebuilding with virtualbox enabled and downloading the virtualbox whonix,
 open VirtualBox and import the Whonix file.
 
+Fix the error:: VirtualBox can't enable the AMD-V extension. Please disable the
+KVM kernel extension:
+
+If both of these are active, they compete with each other:
+
+```bash
+sudo lsmod | grep -E 'kvm|vbox'
+```
+
+Check the currently in use modules:
+
+```bash
+modprobe -r kvm
+```
+
+Disable kvm and kvm_amd:
+
+```bash
+sudo rmmod kvm_amd
+sudo rmmod kvm
+# To re-enable them when necessary
+# sudo modprobe kvm
+# sudo modprobe kvm_amd
+```
+
+- [Quick fix](https://atetux.com/quick-fix-virtualbox-cant-enable-the-amd-v-extension)
+
 There is an opposite viewpoint,
 [Why choose VirtualBox over KVM](https://www.whonix.org/wiki/Dev/VirtualBox#Why_use_VirtualBox_over_KVM?)
 
