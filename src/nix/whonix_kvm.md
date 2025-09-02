@@ -376,6 +376,10 @@ URL.
 
 - [Whonix Docs](https://www.whonix.org/wiki/Documentation)
 
+- [Whonix Overview](https://www.whonix.org/wiki/About)
+
+- [Whonix Technical Intro](https://www.whonix.org/wiki/Dev/Technical_Introduction)
+
 - [Kicksecure Computer Security Intro](https://www.kicksecure.com/wiki/Computer_Security_Introduction)
 
 - [Kicksecure Advanced Security Guide](https://www.kicksecure.com/wiki/Computer_Security_Introduction#Advanced_Security_Guide)
