@@ -16,9 +16,18 @@ trust.
 
 - [Whonix Compared to Tails](https://www.whonix.org/wiki/Comparison_with_Others)
 
+## 🔑 Key Terms
+
 Whonix is an operating system based on Debian base (Kicksecure Hardened) and the
 Tor network, which is designed for maximum anonymity and security. Whonix
 consists of two Debian based VMs, the `Whonix-Gateway` and `Whonix-Workstation`.
+
+In this case NixOS is the **Host Operating System**, NixOS runs the KVM kernel
+module, libvirtd service, and QEMU virtualization service which together enable
+hosting VMs.
+
+**Guests** are the virtualized operating systems running inside the host's
+virtual machines. In this case the Whonix VMs are the **Guest Machines**.
 
 `Whonix-Gateway` the first of 2 VMs runs Tor processes and forces all traffic
 through the Tor network using iptables.
@@ -140,7 +149,26 @@ to the internet.
 
 ## Whonix KVM (Kernel Virtual Machine) on NixOS
 
-Install Qemu-KVM:
+**KVM** (Kernel-based Virtual Machine) is a Linux kernel module that provides
+hardware-assisted virtualization.
+
+It allows the Linux kernel to act as a hypervisor, enabling virtual machines
+(VMs) to run with near-native speeds by using CPU virtualization extensions
+(Intel VT-x or AMD-V).
+
+KVM itself doesn’t handle the entire VM lifecycle; it provides the core
+virtualization infrastructure.
+
+**QEMU** (Quick Emulator) is an open-source user-space program that emulates
+hardware for virtual machines.
+
+When combined with KVM, QEMU uses hardware acceleration to run VMs much faster
+by offloading CPU virtualization to KVM.
+
+So, QEMU provides the device emulation and VM management interface, while KVM
+provides the fast virtualization engine within the kernel.
+
+**Install Qemu-KVM**:
 
 ```nix
 {
@@ -175,6 +203,10 @@ Install Qemu-KVM:
 ```
 
 ---
+
+The **libvirtd** is the primary daemon (service) in the libvirt virtualization
+management system. It runs on your host machine and acts as the core management
+component for virtual machines (VMs).
 
 Add `libvirtd` & `kvm` to your users `extraGroups`:
 
