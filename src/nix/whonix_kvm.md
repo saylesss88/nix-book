@@ -9,10 +9,11 @@
 > defenses and following best practices, we can make attacks costly and
 > time-consuming, deterring all but highly targeted adversaries.
 
-Whonix can be useful for many things, including not having to shut down your
-main OS to boot into a Tails USB stick and getting mostly the same protection.
-Their docs are honest about the limitations of the software making it easier to
-trust.
+Whonix offers many benefits, including the convenience of running within your
+current operating system without needing to reboot or use a separate Tails USB.
+It provides similar strong anonymity protections by routing all traffic through
+Tor in isolated virtual machines. The Whonix documentation is transparent about
+its limitations, which helps build trust and confidence in its security model.
 
 - [Whonix Compared to Tails](https://www.whonix.org/wiki/Comparison_with_Others)
 
@@ -73,7 +74,7 @@ this through security by isolation, no app is trusted.
 Proxy, which can be optionally disabled. --Whonix Docs
 
 Since Whonix is based on Kicksecure which is based on Debian stable, you can
-typically look up solutions in an Ubuntu forum.
+typically look up solutions in a Kicksecure, Debian, or Ubuntu forum.
 
 - The Whonix Team recommends KVM over VirtualBox for a number of
   reasons:[Why choose KVM over VirtualBox](https://www.whonix.org/wiki/KVM#Why_Use_KVM_Over_VirtualBox?)
@@ -271,14 +272,21 @@ sudo virsh -c qemu:///system net-start default
 
 ### Download Whonix (KVM) (stable)
 
-- [Whonix (KVM) (stable) Download](https://www.whonix.org/download/libvirt/17.4.4.6/Whonix-Xfce-17.4.4.6.Intel_AMD64.qcow2.libvirt.xz)
+1. [Whonix (KVM) (stable) Download](https://www.whonix.org/download/libvirt/17.4.4.6/Whonix-Xfce-17.4.4.6.Intel_AMD64.qcow2.libvirt.xz)
 
-- Go to [whoniix.org](https://www.whonix.org/wiki/KVM) to verify the signature.
+2. Go to [whoniix.org](https://www.whonix.org/wiki/KVM) to verify the signature.
 
-- [Decompress the Image](https://www.whonix.org/wiki/KVM#Decompress) and follow
-  the rest of the Whonix KVM install instructions from there.
+3. [Decompress the Image](https://www.whonix.org/wiki/KVM#Decompress) and follow
+   the rest of the Whonix KVM install instructions from there.
 
 Nixpkgs doesn't have the `xz-utils` package but it does have the `xz` package.
+
+Nixpkgs also has `nixpkgs.safe-rm` if you wanted to follow the suggestions from
+Whonix.
+
+```bash
+nix-shell -p xz safe-rm
+```
 
 ```bash
 tar -xvf Whonix*.libvirt.xz
@@ -310,7 +318,7 @@ virt-manager
 
 ## Start Whonix-Gateway
 
-![Whonix Logo](../images/swappy-20250901-101351.cleaned.png)
+![Whonix Old Logo](../images/swappy-20250901-101351.cleaned.png)
 
 Always start the Whonix-Gateway first.
 
@@ -337,9 +345,9 @@ Whonix-Workstation is another VM, designed to provide users with a secure and
 anonymous environment for running applications and performing online tasks.
 
 When you first launch `Whonix-Workstation`, choose the second option down or
-reboot, then choose "Persistent Mode Sysmaint Session".
+reboot, and then choose "Persistent Mode Sysmaint Session".
 
-With the workstation, a security feature disables sudo for the default user.
+With the workstation, a security feature disables `sudo` for the default user.
 Instead of the `user` account, a separate `sysmaint` (system maintenance)
 account is used for administrative tasks that require root privileges, such as
 updates and package installations.
@@ -354,7 +362,7 @@ curl ip.me
 Start Tor and check what you are fingerprinted as by typing `deviceinfo.me` into
 the URL.
 
-#### Launching Tor
+#### Launching Tor Browser
 
 Click the Xfce logo and choose Tor Browser. On the first launch, you will need
 to update Tor by clicking in the top right corner.
