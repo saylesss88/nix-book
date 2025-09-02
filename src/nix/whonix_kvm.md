@@ -2,6 +2,13 @@
 
 ![Whonix Logo](../images/swappy-20250901-101339.cleaned.png)
 
+> ⚠️ WARNING: There is no general software that can guarantee absolute anonymity
+> or security; perfect security is a myth. Security is a continuous process, not
+> a one-time product. It also depends on time and resources: if an adversary has
+> enough of either, eventual compromise is possible. However, by layering
+> defenses and following best practices, we can make attacks costly and
+> time-consuming, deterring all but highly targeted adversaries.
+
 Whonix can be useful for many things, including not having to shut down your
 main OS to boot into a Tails USB stick and getting mostly the same protection.
 Their docs are honest about the limitations of the software making it easier to
@@ -314,3 +321,5 @@ URL.
 - [Kicksecure Computer Security Intro](https://www.kicksecure.com/wiki/Computer_Security_Introduction)
 
 - [Kicksecure Advanced Security Guide](https://www.kicksecure.com/wiki/Computer_Security_Introduction#Advanced_Security_Guide)
+
+- [System Hardening Checklist](https://www.kicksecure.com/wiki/System_Hardening_Checklist)
