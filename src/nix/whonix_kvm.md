@@ -24,6 +24,57 @@ Proxy, which can be optionally disabled. --Whonix Docs
 Since Whonix is based on Kicksecure which is based on Debian stable, you can
 typically look up solutions in an Ubuntu forum.
 
+- The Whonix Team recommends KVM over VirtualBox for a number of
+  reasons:[Why choose KVM over VirtualBox](https://www.whonix.org/wiki/KVM#Why_Use_KVM_Over_VirtualBox?)
+
+If you really want to use VirtualBox, I got it working off of this config:
+
+<details>
+<summary> ✔️ Click to Expand VirtualBox Example </summary>
+
+Change `your-user` to your username
+
+```nix
+# vbox.nix
+{
+  config,
+  lib,
+  ...
+}: let
+  cfg = config.custom.virtualbox;
+in {
+  options.custom.virtualbox = {
+    enable = lib.mkEnableOption "Enable VirtualBox";
+  };
+
+  config = lib.mkIf cfg.enable {
+    virtualisation.virtualbox.host = {
+      enable = false;
+      # enableExtensionPack = true;
+    };
+
+    user.user.your-user.extraGroups = ["vboxusers"];
+
+    boot.kernelModules =
+      if config.hardware.cpu.amd.updateMicrocode
+      then ["kvm-amd"]
+      else ["kvm-intel"];
+  };
+}
+```
+
+Enable it with `custom.virtualbox.enable = true;`.
+
+- [Whonix VBox Download](https://www.whonix.org/wiki/VirtualBox)
+
+After rebuilding with virtualbox enabled and downloading the virtualbox whonix,
+open VirtualBox and import the Whonix file.
+
+There is an opposite viewpoint,
+[Why choose VirtualBox over KVM](https://www.whonix.org/wiki/Dev/VirtualBox#Why_use_VirtualBox_over_KVM?)
+
+</details>
+
 ## Whonix-Gateway
 
 The whonix-gateway is software designed to run Tor.
