@@ -7,14 +7,9 @@
 
 </details>
 
-> ⚠️ While I am not a security expert, I have carefully researched and tested
-> the configurations in this chapter. The advice presented here is grounded in
-> widely accepted best practices and is generally safe and effective.
-
-> However, since networks and systems vary, some adjustments may cause
-> unexpected issues, especially around critical components like DNS or
-> firewalls. Always review and test changes in a controlled environment before
-> applying them broadly.
+> Since networks and systems vary, some adjustments may cause unexpected issues,
+> especially around critical components like DNS or firewalls. Always review and
+> test changes in a controlled environment before applying them broadly.
 
 > Understand the trade-offs and tailor the settings to your threat model and
 > workflow. Take what’s useful, adapt as needed, and seek expert guidance for
@@ -22,15 +17,11 @@
 
 ## Introduction
 
-This chapter offers a comprehensive set of network and privacy hardening
-practices suitable for Linux, especially NixOS. You can confidently implement
-the entire guide to strengthen your security and privacy.
+Every setup is unique, feel free to adapt or skip sections based on your needs.
+Start with the basics and build up as you gain confidence. The goal is
+practical, tested hardening tailored to you.
 
-That said, every setup is unique, feel free to adapt or skip sections based on
-your needs. Start with the basics and build up as you gain confidence. The goal
-is practical, tested hardening tailored to you.
-
-### Practice Safe Browsing Hygiene
+### Safe Browsing / Privacy Enhancing Habits
 
 **Adopt Encrypted DNS and HTTPS Everywhere**
 
@@ -125,6 +116,9 @@ A vast majority of secure and privacy-focused browsers available for NixOS are
 based on Firefox. Chromium derivatives like Ungoogled Chromium and Brave do
 exist in Nixpkgs, but are less recommended by privacy advocates.
 
+<details>
+<summary> ✔️ Click To Expand United States Patriot Act Overview </summary>
+
 [Section 215 USA Patriot Act](https://www.csis.org/analysis/fact-sheet-section-215-usa-patriot-act)
 permits the collection of "Tangible Things" or "Business Records", e.g., your
 phone records, medical records, etc. for an investigation to obtain foreign
@@ -134,6 +128,8 @@ protected by the first amendment. "Relevant" is the key word here and it is at
 the governments discretion meaning they sweep everything and sift it later.
 Criticized for violating American citizens Fourth Amendment protections against
 warrantless search and seizure and proven to be ineffective.
+
+</details>
 
 What is "normal" and allowed today might be suppressed tomorrow, look at the UK
 [Online Safety Act](https://en.wikipedia.org/wiki/Online_Safety_Act_2023)
@@ -596,6 +592,10 @@ hackers, can see the websites you're trying to visit. **Encrypted DNS** uses
 protocols to scramble this information, protecting your queries and responses
 from being intercepted and viewed by others.
 
+> ❗ NOTE: There are many other ways for someone monitoring your traffic to see
+> what domain you looked up via DNS that it's effectiveness is questionable
+> without also using Tor or a VPN.
+
 There are 3 main types of DNS protection:
 
 - **DNS over HTTPS (DoH)**: Uses the HTTPS protocol to encrypt data between the
@@ -623,6 +623,10 @@ Useful resources:
 - [Cloudflare Dns Encryption Explained](https://blog.cloudflare.com/dns-encryption-explained/)
 
 - [NordVPN Encrypted Dns Traffic](https://nordvpn.com/blog/encrypted-dns-traffic/)
+
+**Hot Take**:
+
+- [Encrypted DNS is ineffective without a VPN or Tor by madaidan](https://madaidans-insecurities.github.io/encrypted-dns.html)
 
 </details>
 
