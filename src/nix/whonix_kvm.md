@@ -9,6 +9,8 @@
 > defenses and following best practices, we can make attacks costly and
 > time-consuming, deterring all but highly targeted adversaries.
 
+It is highly recommended to harden your Host Machine to strengthen your opsec.
+
 Whonix offers many benefits, including the convenience of running within your
 current operating system without needing to reboot or use a separate Tails USB.
 It provides similar strong anonymity protections by routing all traffic through
@@ -51,7 +53,7 @@ consists of two Debian based VMs, the `Whonix-Gateway` and `Whonix-Workstation`.
 
 In this case NixOS is the **Host Operating System**, NixOS runs the KVM kernel
 module, libvirtd service, and QEMU virtualization service which together enable
-hosting VMs.
+hosting VMs. It is recommended to harden the host before moving on.
 
 **Guests** are the virtualized operating systems running inside the host's
 virtual machines. In this case the Whonix VMs are the **Guest Machines**.
@@ -497,6 +499,14 @@ the dark web.
 
 If you need a place to start, check out `tor.taxi` by plugging that into the
 URL.
+
+## Live Mode
+
+To get Whonix to perform more similarly to Tails you could run Whonix in Live
+Mode. There are more steps in order to do this correctly such as disabling swap
+is recommended.
+
+Same process, reboot the Workstation and Choose User Live Mode.
 
 ### Resources
 
