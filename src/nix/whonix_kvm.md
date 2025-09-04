@@ -503,10 +503,15 @@ URL.
 ## Live Mode
 
 To get Whonix to perform more similarly to Tails you could run Whonix in Live
-Mode. There are more steps in order to do this correctly such as disabling swap
-is recommended.
+Mode. Live Mode is a privacy-focused mode where nothing is saved at shutdown,
+making it great for handling sensitive data.
 
-Same process, reboot the Workstation and Choose User Live Mode.
+- [Live Mode](https://www.kicksecure.com/wiki/Live_Mode)
+
+Same process, reboot the Workstation and Choose
+`LIVE Mode | USER Session | disposable use`
+
+- [Anti Forensics Precautions](https://www.kicksecure.com/wiki/Anti-Forensics_Precautions)
 
 ### Resources
 
