@@ -459,6 +459,10 @@ Instead of the `user` account, a separate `sysmaint` (system maintenance)
 account is used for administrative tasks that require root privileges, such as
 updates and package installations.
 
+After you get your system updated and upgraded, you'll want to reboot the
+Workstation and start it in the first Persistent mode available rather than the
+`sysmaint` mode.
+
 Once Workstation is running and both VMs are updated and upgraded, check that
 your IP address is a Tor IP:
 
@@ -506,4 +510,5 @@ URL.
 
 - [Kicksecure Advanced Security Guide](https://www.kicksecure.com/wiki/Computer_Security_Introduction#Advanced_Security_Guide)
 
-- [System Hardening Checklist](https://www.kicksecure.com/wiki/System_Hardening_Checklist)
+k
+[System Hardening Checklist](https://www.kicksecure.com/wiki/System_Hardening_Checklist)
