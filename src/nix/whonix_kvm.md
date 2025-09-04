@@ -464,7 +464,14 @@ your IP address is a Tor IP:
 
 ```bash
 curl ip.me
+#
+curl ip.me
 ```
+
+Each consecutive time that you run `curl ip.me`, Tor establishes a new circuit
+and you will get a different IP returned each time for as many Tor nodes are
+available. Not that you would want to but it's cool functionality giving us a
+visual of the new circuit.
 
 Start Tor and check what you are fingerprinted as by typing `deviceinfo.me` into
 the URL.
