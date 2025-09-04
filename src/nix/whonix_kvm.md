@@ -381,6 +381,9 @@ sudo virsh -c qemu:///system define Whonix-Workstation*.xml
 After the above steps, either copy or move the `qcow2` images to
 `/var/lib/libvirt/images`:
 
+> ❗ It's recommended to move the files into place, if you want to copy them you
+> need to use a special command FYI.
+
 ```bash
 sudo mkdir -p /var/lib/libvirt/images
 ```
@@ -409,6 +412,13 @@ safe-rm -r WHONIX*
 virt-manager
 ```
 
+From here it will take a bit to load both VMs, you can click on one and go to
+`Edit`, `Virtual Machine Details` and from there you have some options to give
+the VM more CPUs.
+
+Considering that the Whonix-Workstation is where all of the user applications
+will be opened, it makes sense to give it more CPUs and memory.
+
 ## Start Whonix-Gateway
 
 ![Whonix Old Logo](../images/swappy-20250901-101351.cleaned.png)
@@ -430,6 +440,9 @@ sudo passwd
 changeme
 ```
 
+Run a systemcheck if it wasn't run automatically. Click the Xfce Logo and go to
+`System`, `System Check`.
+
 - [Whonix Common CLI Commands](https://www.whonix.org/wiki/Common_CLI_Commands)
 
 ## Whonix-Workstation
@@ -438,7 +451,8 @@ Whonix-Workstation is another VM, designed to provide users with a secure and
 anonymous environment for running applications and performing online tasks.
 
 When you first launch `Whonix-Workstation`, choose the second option down or
-reboot, and then choose "Persistent Mode Sysmaint Session".
+reboot, and then choose "Persistent Mode Sysmaint Session". From there, you can
+go through the same steps as you did for the Gateway.
 
 With the workstation, a security feature disables `sudo` for the default user.
 Instead of the `user` account, a separate `sysmaint` (system maintenance)
