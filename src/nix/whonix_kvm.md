@@ -275,6 +275,46 @@ sudo virsh -c qemu:///system net-start default
 1. [Whonix (KVM) (stable) Download](https://www.whonix.org/download/libvirt/17.4.4.6/Whonix-Xfce-17.4.4.6.Intel_AMD64.qcow2.libvirt.xz)
 
 2. Go to [whoniix.org](https://www.whonix.org/wiki/KVM) to verify the signature.
+   Download the `OpenPGP Signature`, and the `Download Whonix OpenPGP Key`. Your
+   Downloads directory will look like this:
+
+```bash
+~/Downloads󰏫 ls
+╭───┬───────────────────────────────────────────────────────┬──────┬─────────┬───────────────╮
+│ # │                         name                          │ type │  size   │   modified    │
+├───┼───────────────────────────────────────────────────────┼──────┼─────────┼───────────────┤
+│ 0 │ Whonix-Xfce-17.4.4.6.Intel_AMD64.qcow2.libvirt.xz     │ file │  3.3 GB │ 2 minutes ago │
+│ 1 │ Whonix-Xfce-17.4.4.6.Intel_AMD64.qcow2.libvirt.xz.asc │ file │  1.0 kB │ a minute ago  │
+│ 2 │ derivative.asc                                        │ file │ 77.3 kB │ 3 minutes ago │
+╰───┴───────────────────────────────────────────────────────┴──────┴─────────┴───────────────╯
+```
+
+Import `derivative.asc`:
+
+```bash
+gpg --import derivative.asc
+```
+
+Verify the Public Key:
+
+```bash
+gpg --verify Whonix-Xfce-17.4.4.6.Intel_AMD64.qcow2.libvirt.xz.asc Whonix-Xfce-17.4.4.6.Intel_AMD64.qcow2.libvirt.xz
+gpg: Signature made Sun 10 Aug 2025 09:04:13 AM EDT
+gpg:                using RSA key 6E979B28A6F37C43BE30AFA1CB8D50BB77BB3C48
+gpg: Good signature from "Patrick Schleizer <adrelanos@kicksecure.com>" [unknown]
+gpg:                 aka "Patrick Schleizer <adrelanos@riseup.net>" [unknown]
+gpg:                 aka "Patrick Schleizer <adrelanos@whonix.org>" [unknown]
+gpg: WARNING: This key is not certified with a trusted signature!
+gpg:          There is no indication that the signature belongs to the owner.
+Primary key fingerprint: 916B 8D99 C38E AF5E 8ADC  7A2A 8D66 066A 2EEA CCDA
+     Subkey fingerprint: 6E97 9B28 A6F3 7C43 BE30  AFA1 CB8D 50BB 77BB 3C48
+~/Downloads󰏫                                                                                                 09/04/2025 11:53:10 AM
+```
+
+Now `gpg --list-keys` will show Patrick Schleizer's Key.
+
+It is good practice to sign your verified key and then push it to the public
+keyserver to contribute to the web of trust but optional.
 
 3. [Decompress the Image](https://www.whonix.org/wiki/KVM#Decompress) and follow
    the rest of the Whonix KVM install instructions from there.
