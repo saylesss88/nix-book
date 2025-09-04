@@ -336,11 +336,54 @@ tar -xvf Whonix*.libvirt.xz
 
 ### Import the Whonix VM Templates
 
-- Follow steps 1 thru 3 in
-  [Importing Whonix VM Templates](https://www.whonix.org/wiki/KVM#Importing_Whonix_VM_Templates)
+The following commands come directly from the
+[Whonix KVM Docs Importing Whonix VM Templates](https://www.whonix.org/wiki/KVM#Importing_Whonix_VM_Templates)
+
+1. Add the virtual networks. This step only needs to be done once and not with
+   every upgrade.
+
+```bash
+sudo virsh -c qemu:///system net-define Whonix_external*.xml
+```
+
+```bash
+sudo virsh -c qemu:///system net-define Whonix_internal*.xml
+```
+
+2. Activate the virtual networks:
+
+```bash
+sudo virsh -c qemu:///system net-autostart Whonix-External
+```
+
+```bash
+sudo virsh -c qemu:///system net-start Whonix-External
+```
+
+```bash
+sudo virsh -c qemu:///system net-autostart Whonix-Internal
+```
+
+```bash
+sudo virsh -c qemu:///system net-start Whonix-Internal
+```
+
+3. Import the Whonix Gateway and Workstation images:
+
+```bash
+sudo virsh -c qemu:///system define Whonix-Gateway*.xml
+```
+
+```bash
+sudo virsh -c qemu:///system define Whonix-Workstation*.xml
+```
 
 After the above steps, either copy or move the `qcow2` images to
 `/var/lib/libvirt/images`:
+
+```bash
+sudo mkdir -p /var/lib/libvirt/images
+```
 
 ```bash
 sudo mv Whonix-Gateway*.qcow2 /var/lib/libvirt/images/Whonix-Gateway.qcow2
@@ -348,6 +391,16 @@ sudo mv Whonix-Gateway*.qcow2 /var/lib/libvirt/images/Whonix-Gateway.qcow2
 
 ```bash
 sudo mv Whonix-Workstation*.qcow2 /var/lib/libvirt/images/Whonix-Workstation.qcow2
+```
+
+### Cleanup
+
+```bash
+safe-rm Whonix*
+```
+
+```bash
+safe-rm -r WHONIX*
 ```
 
 ### Launch virt-manager and start the VMs
