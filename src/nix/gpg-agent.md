@@ -294,8 +294,20 @@ ls -l ~/.gnupg
 `mykey` must be a key specifier, either the keyID of the primary keypair or any
 part of the user ID that identifies the keypair:
 
+Replace `mykeyID` with the keyID of your primary key and store the cert in a
+safe place:
+
 ```bash
-gpg --output revoke.asc --gen-revoke mykey
+gpg --output revoke.asc --gen-revoke mykeyID
+Create a revocation certificate for this key? (y/N)
+Please select the reason for the revocation:
+  0 = No reason specified
+  1 = Key has been compromised
+  2 = Key is superseded
+  3 = Key is no longer used
+  Q = Cancel
+(Probably you want to select 1 here)
+Your decision?
 ```
 
 The certificate will be output to a file `revoke.asc`. If the `--output` is
@@ -304,6 +316,14 @@ ommitted, the result will be placed on stdout.
 Since it's a short certificate, you can print a hardcopy and store it somewhere
 safe. The cert shouldn't be somewhere that others can access it since anyone
 could publish the revoke cert and render the corresponding public key useless.
+
+To apply the revoke cert, import it:
+
+```bash
+gpg --import revoke.asc
+# And optionally push the revoked key to public keyservers to notify others:
+gpg --keyserver keyserver.ubuntu.com --send-keys YOUR_KEYID
+```
 
 ---
 

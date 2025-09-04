@@ -173,8 +173,12 @@ Adding browser plugins to Tor can de-anonymize you, don't do it. Tor is already
 built with the necessary plugins and privacy protecting rules, so adding more is
 unnecessary and actually dangerous for your anonymity.
 
-You can visit both the regular web and `.onion` sites on Tor. Only the hidden
-`.onion` and `HTTPS` sites are end-to-end encrypted making https essential.
+You can visit both the clear web and `.onion` sites on Tor. Whenever possible
+you should utilize Onion Services (`.onion` addresses) so communications and web
+browsing stay within the Tor network. `.onion` URLS form a tunnel that is
+end-to-end encrypted using a random rendezvous point and incorporate
+[perfect forward secrecy (PFS)](https://en.wikipedia.org/wiki/Forward_secrecy).
+
 Bridges are only necessary in countries that don't allow people to use Tor.
 Using Bridges when they aren't needed takes resources away from people in
 oppressive regimes that need, only use them if necessary. Read the guides, and
@@ -484,9 +488,9 @@ Your ISP almost certainly does sketchy stuff with your data, personally I would
 rather trust a company like Mullvad whose whole reputation is based on their
 trustworthiness, transparency, and data protection.
 
-You can use a VPN with Tor, but it's not recommended unless you're an advanced
-user who knows how to configure both in a way that doesn't compromise your
-privacy.
+You can use a VPN with Tor, but it's not recommended by the Tor Project unless
+you're an advanced user who knows how to configure both in a way that doesn't
+compromise your privacy.
 
 **Popular VPNs on NixOS**
 
