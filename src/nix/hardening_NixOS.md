@@ -849,7 +849,7 @@ AIDE found NO differences between database and filesystem. Looks okay!!
    their checksums in the AIDE database:
 
 ```bash
-sudo aide --update --config /etc/aide/aide.conf
+sudo aide --update --config /var/lib/aide/aide.conf
 ```
 
 </details>
