@@ -852,6 +852,19 @@ AIDE found NO differences between database and filesystem. Looks okay!!
 sudo aide --update --config /var/lib/aide/aide.conf
 ```
 
+Unfortunately, AIDE doesn't automatically replace the old database so you have
+to rename the new one again:
+
+```bash
+sudo mv /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz
+```
+
+And finally check again:
+
+```bash
+sudo aide --check --config /var/lib/aide/aide.conf
+```
+
 </details>
 
 <details>
