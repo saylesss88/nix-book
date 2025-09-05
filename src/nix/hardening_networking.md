@@ -993,4 +993,8 @@ on the rules you set.
 
 - [DataDetox Degooglise](https://datadetoxkit.org/en/privacy/degooglise/)
 
+- [Tor Browser User Manual](https://tb-manual.torproject.org/)
+
+- [Tor Wiki](https://gitlab.torproject.org/tpo/team/-/wikis/home)
+
 </details>

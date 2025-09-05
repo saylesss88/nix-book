@@ -88,7 +88,6 @@ long as the key management scheme isn't compromised.
 
 - [NixOS Wiki Full Disk Encryption](https://wiki.nixos.org/wiki/Full_Disk_Encryption)
 
-
 - The
   [NSA, CISA, and NIST warn](https://www.nsa.gov/Press-Room/Press-Releases-Statements/Press-Release-View/Article/3498776/post-quantum-cryptography-cisa-nist-and-nsa-recommend-how-to-prepare-now/)
   that nation-state actors are likely stockpiling encrypted data now, preparing
@@ -707,6 +706,155 @@ pkgs.aide
 ```
 
 <details>
+<summary> ✔️ Click to Expand AIDE Example </summary>
+
+AIDE is an intrusion detection system (IDS) that will notify us whenever it
+detects that a potential intrusion has occurred. When a system is compromised,
+attackers typically will try to change file permissions and escalate to the root
+user account and start to modify system files, AIDE can detect this.
+
+To set up AIDE on your system follow these steps:
+
+1. Create the `aide.conf`:
+
+```bash
+sudo mkdir -p /var/lib/aide && cd /var/lib/aide/
+sudo hx aide.conf
+```
+
+Add the following content to `/var/lib/aide/aide.conf`:
+
+```conf
+# aide.conf
+# Example configuration file for AIDE.
+
+@@define DBDIR /var/lib/aide
+
+# The location of the database to be read.
+database_in=file:@@{DBDIR}/aide.db.gz
+
+# The location of the database to be written.
+#database_out=sql:host:port:database:login_name:passwd:table
+#database_out=file:aide.db.new
+database_out=file:@@{DBDIR}/aide.db.new.gz
+
+# Whether to gzip the output to database
+gzip_dbout=yes
+
+log_level=info
+
+report_url=file:/var/log/aide/aide.log
+report_url=stdout
+#report_url=stderr
+#NOT IMPLEMENTED report_url=mailto:root@foo.com
+#NOT IMPLEMENTED report_url=syslog:LOG_AUTH
+
+# These are the default rules.
+#
+#p:      permissions
+#i:      inode:
+#n:      number of links
+#u:      user
+#g:      group
+#s:      size
+#b:      block count
+#m:      mtime
+#a:      atime
+#c:      ctime
+#S:      check for growing size
+#md5:    md5 checksum
+#sha1:   sha1 checksum
+#rmd160: rmd160 checksum
+#tiger:  tiger checksum
+#haval:  haval checksum
+#gost:   gost checksum
+#crc32:  crc32 checksum
+#R:      p+i+n+u+g+s+m+c+md5
+#L:      p+i+n+u+g
+#E:      Empty group
+#>:      Growing logfile p+u+g+i+n+S
+
+# You can create custom rules like this.
+
+NORMAL = R+b+sha512
+
+DIR = p+i+n+u+g
+
+# Next decide what directories/files you want in the database.
+
+/boot   NORMAL
+/bin    NORMAL
+/sbin   NORMAL
+/lib    NORMAL
+/opt    NORMAL
+/usr    NORMAL
+/root   NORMAL
+
+# Check only permissions, inode, user and group for /etc, but
+# cover some important files closely.
+/etc    p+i+u+g
+!/etc/mtab
+/etc/exports  NORMAL
+/etc/fstab    NORMAL
+/etc/passwd   NORMAL
+/etc/group    NORMAL
+/etc/gshadow  NORMAL
+/etc/shadow   NORMAL
+
+/var/log   p+n+u+g
+
+# With AIDE's default verbosity level of 5, these would give lots of
+# warnings upon tree traversal. It might change with future version.
+#
+#=/lost\+found    DIR
+#=/home           DIR
+```
+
+Create the logfile:
+
+```bash
+sudo mkdir -p /var/log/aide
+sudo touch /var/log/aide/aide.log
+```
+
+2. Generate the initial database, this will store the checksums of all files
+   that it's configured to monitor. Take note of the location of the new
+   database, mine was `/etc/aide.db.new`
+
+```bash
+sudo aide --config /var/lib/aide/aide.conf --init
+```
+
+3. Move the new database and remove the `.new`:
+
+```bash
+sudo mv /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz
+```
+
+```bash
+ls /var/lib/aide/
+aide.conf   aide.db.gz
+```
+
+4. Check with AIDE:
+
+```bash
+sudo aide --check --config /var/lib/aide/aide.conf
+Start timestamp: 2025-09-05 09:50:07 -0400 (AIDE 0.19.2)
+AIDE found NO differences between database and filesystem. Looks okay!!
+```
+
+5. Whenever you make changes to system files, or especially after running a
+   system update or installing new tools, you have to rescan all files to update
+   their checksums in the AIDE database:
+
+```bash
+sudo aide --update --config /etc/aide/aide.conf
+```
+
+</details>
+
+<details>
 <summary> ✔️ Click to Expand clamav.nix Example </summary>
 
 ```nix
@@ -796,13 +944,19 @@ Example cron job for `chkrootkit` & `clamav`:
       "10 2 * * 0 root ${pkgs.chkrootkit}/bin/chkrootkit | logger -t chkrootkit"
       # Every day at 2:00 AM, run clamscan as root and append output to a log file
       "0 2 * * * root ${pkgs.clamav}/bin/clamscan -r /home >> /var/log/clamscan.log"
+      "0 11 * * * aide --check --config /etc/aide/aide.conf"
     ];
   };
 }
 ```
 
 The above cron job will use `chkrootkit` to automatically scan for known rootkit
-signatures. It can detect hidden processes and network connections.
+signatures. It can detect hidden processes and network connections. To run
+manually:
+
+```bash
+sudo chkrootkit
+```
 
 ClamAV usage:
 
