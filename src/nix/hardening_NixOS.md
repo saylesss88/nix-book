@@ -979,14 +979,14 @@ You can run `clamav` manually with:
 
 ```bash
 # Recursive Scan:
-clamscan -r ~/home
+sudo clamscan -r ~/home
 ```
 
 > ❗ NOTE: You only need either the individual `pkgs.clamav` with the cron job
-> **OR** the `clamd-daemon` module. When testing, I was unable to get
-> `clamdscan` to work properly with **Permission denied** errors. You may have
-> better luck so I included both ways, the `clamscan -r ~/home` command was
-> successful although lengthy.
+> **OR** the `clamd-daemon` module. `clamdscan` is for software integration and
+> uses a different user that doesn't have permission to scan your files. You can
+> use `clamdscan --fdpass /path/to/scan` to pass the necessary file permissions.
+> NOTE: `clamdscan` runs in the background, you can watch it with `top`.
 
 ## Securing SSH
 
