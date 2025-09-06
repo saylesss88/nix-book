@@ -19,6 +19,9 @@ its limitations, which helps build trust and confidence in its security model.
 
 - [Whonix Compared to Tails](https://www.whonix.org/wiki/Comparison_with_Others)
 
+- Tails is great but they add an add blocker to Tor that makes every Tails user
+  unique from the rest of Tor Browser users reducing anonymity.
+
 ### A Few Things to Consider when using Whonix
 
 - You can anonymously use Java / Javascript
@@ -416,7 +419,7 @@ virt-manager
 
 From here it will take a bit to load both VMs, you can click on one and go to
 `Edit`, `Virtual Machine Details` and from there you have some options to give
-the VM more CPUs.
+the VM more CPUs and memory.
 
 Considering that the Whonix-Workstation is where all of the user applications
 will be opened, it makes sense to give it more CPUs and memory.
@@ -499,6 +502,17 @@ the dark web.
 
 If you need a place to start, check out `https://tor.taxi` by plugging that into
 the URL. Always include the `https` yourself!
+
+> ❗ NOTE: Use HTTPS and TLS wherever possible, since Tor only encrypts traffic
+> as it travels through the network of three nodes. Traffic at Exit nodes is
+> vulnerable if unencrypted, because when it reaches the Exit node it is plain
+> text. Prefer the use of `.onion` services because they form a tunnel that is
+> encrypted end-to-end, using a random rendezvous point within the Tor network;
+> HTTPS isn't required within Onion services. Prefer the use of `.onion`
+> services because they form a tunnel that is encrypted end-to-end, using a
+> random rendezvous point within the Tor network; HTTPS isn't required within
+> Onion services.
+> --[All my traffic is encrypted by default?](https://www.whonix.org/wiki/Tor_Myths_and_Misconceptions#All_my_traffic_is_encrypted_by_default)
 
 ## Live Mode
 
