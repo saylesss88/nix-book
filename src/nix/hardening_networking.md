@@ -116,6 +116,16 @@ A vast majority of secure and privacy-focused browsers available for NixOS are
 based on Firefox. Chromium derivatives like Ungoogled Chromium and Brave do
 exist in Nixpkgs, but are less recommended by privacy advocates.
 
+> ❗ NOTE: Firefox does lack some security features available in Chrome and
+> sandbox escapes in Linux are relatively easy. People such as madaidan say to
+> never use Linux or Firefox period when you're worried about security and
+> privacy. I personally don't care how good Chrome's security features are when
+> Google itself is an adds company. It's also scary how much you actually have
+> to turn off to make it somewhat secure and private. Chrome also just paid a
+> huge settlement for selling peoples information that had already opted out.
+
+- [EU Hits Google with 3.5 Billion Antitrust](https://techstory.in/eu-hits-google-with-3-5-billion-antitrust-fine-over-adtech-practices/)
+
 <details>
 <summary> ✔️ Click To Expand United States Patriot Act Overview </summary>
 
@@ -154,6 +164,8 @@ to the internet, and so security, privacy, and anti-tracking features of
 browsers are now as important, or even more important than platform-level
 protections.
 
+> ❗
+
 #### Tor Browser
 
 > ❗ NOTE: Tor is **not** the most secure browser, anonymity and security can
@@ -173,16 +185,23 @@ Adding browser plugins to Tor can de-anonymize you, don't do it. Tor is already
 built with the necessary plugins and privacy protecting rules, so adding more is
 unnecessary and actually dangerous for your anonymity.
 
+A Tor exit node can easily see your traffic, and if you're not using HTTPS then
+it may be able to modify that traffic. Only use HTTPS when browsing the clear
+net with Tor, this doesn't apply to onion services (`.onion`) as the traffic
+stays inside the Tor network all the way to the destination.
+
 You can visit both the clear web and `.onion` sites on Tor. Whenever possible
 you should utilize Onion Services (`.onion` addresses) so communications and web
 browsing stay within the Tor network. `.onion` URLS form a tunnel that is
-end-to-end encrypted using a random rendezvous point and incorporate
+end-to-end encrypted using a random rendezvous point and incorporating
 [perfect forward secrecy (PFS)](https://en.wikipedia.org/wiki/Forward_secrecy).
 
 Bridges are only necessary in countries that don't allow people to use Tor.
 Using Bridges when they aren't needed takes resources away from people in
 oppressive regimes that need, only use them if necessary. Read the guides, and
-use Tails OS when it really matters.
+use Tails OS, or Whonix when it really matters.
+
+- [Whonix KVM on NixOS](https://saylesss88.github.io/nix/whonix_kvm.html)
 
 You will see a lot of conflicting information about using Tor with a VPN. If you
 are in an area that blocks access to Tor or it is dangerous to use Tor, by all
@@ -206,7 +225,7 @@ The Electronic Frontier Foundation sponsors and helps fund Tor and so does the
 United States Government.
 
 If you are fortunate to live outside of oppressive regimes with extreme
-censorship, using Tor for everyday, mundane activities is likely safe and won’t
+censorship, using Tor for every day, mundane activities is likely safe and won’t
 put you on any harmful “list.” Even if it did, you'd be in good company—these
 lists mostly contain great people working tirelessly to defend human rights and
 online privacy worldwide.

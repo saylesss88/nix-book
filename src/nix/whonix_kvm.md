@@ -5,7 +5,7 @@
 > ⚠️ WARNING: There is no general software that can guarantee absolute anonymity
 > or security; perfect security is a myth. Security is a continuous process, not
 > a one-time product. It also depends on time and resources: if an adversary has
-> enough of either, eventual compromise is possible. However, by layering
+> enough of either, eventual compromise is probable. However, by layering
 > defenses and following best practices, we can make attacks costly and
 > time-consuming, deterring all but highly targeted adversaries.
 
@@ -497,8 +497,8 @@ Make sure you don't forget to go to the Settings, Privacy and Security, and set
 the `Security Level` to `Safest` to disable JavaScript and more before exploring
 the dark web.
 
-If you need a place to start, check out `tor.taxi` by plugging that into the
-URL.
+If you need a place to start, check out `https://tor.taxi` by plugging that into
+the URL. Always include the `https` yourself!
 
 ## Live Mode
 
