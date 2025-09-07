@@ -30,6 +30,8 @@ practical, tested hardening tailored to you.
   encrypt all web traffic. Prefer browsers with strong privacy defaults or add
   recommended extensions.
 
+- [Privacy Guides dnscrypt-proxy recommendation](https://www.privacyguides.org/en/dns/#dnscrypt-proxy)
+
 - Disable browser "remember password" and autofill features, clear cookies and
   site data upon exit, and carefully vet suspicious URLs with tools like
   [VirusTotal](https://www.virustotal.com/gui/home/url).
@@ -396,9 +398,14 @@ Thanks to `JosefKatic` for putting the above STIG settings in NixOS format.
 
 Also, go to
 [accounts.firefox](https://accounts.firefox.com/settings#data-collection) and
-turn off "Allow Mozilla accounts to send technichal and interaction data to
+turn off "Allow Mozilla accounts to send technical and interaction data to
 Mozilla". Also set 2-fa in
 [Security Settings](https://accounts.firefox.com/settings#security)
+
+I always set `Max Protection` for DNS over HTTPS and personally choose
+`Mullvad (No Filtering)`
+
+- [Mullvad no-logging-data-policy](https://mullvad.net/en/help/no-logging-data-policy)
 
 Firefox Relay is a pretty cool privacy tool too, it gives you temporary email
 and phone number aliases so you don't have to give out your real ones. There is
@@ -617,7 +624,8 @@ from being intercepted and viewed by others.
 
 > ❗ NOTE: There are many other ways for someone monitoring your traffic to see
 > what domain you looked up via DNS that it's effectiveness is questionable
-> without also using Tor or a VPN.
+> without also using Tor or a VPN. Encrypted DNS will not help you hide any of
+> your browsing activity.
 
 There are 3 main types of DNS protection:
 
