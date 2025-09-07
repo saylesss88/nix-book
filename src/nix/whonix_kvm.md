@@ -22,6 +22,17 @@ its limitations, which helps build trust and confidence in its security model.
 - Tails is great but they add an add blocker to Tor that makes every Tails user
   unique from the rest of Tor Browser users reducing anonymity.
 
+> ⚠️ Never rely solely on the Virtual Machine to protect you, if your host OS
+> isn't secure a Virtual Machine won't protect you.
+
+### Harden NixOS and set up GnuPG
+
+- [Hardening NixOS](https://saylesss88.github.io/nix/hardening_NixOS.html)
+
+- [Hardening Networking](https://saylesss88.github.io/nix/hardening_networking.html)
+
+- [GnuPG and gpg-agent on NixOS](https://saylesss88.github.io/nix/gpg-agent.html)
+
 ### A Few Things to Consider when using Whonix
 
 - You can anonymously use Java / Javascript
@@ -496,9 +507,17 @@ Or you can open the terminal and type:
 update-torbrowser
 ```
 
+- Every time you run the above command, the old browser will be killed, along
+  with your old browser profile, including bookmarks and passwords. If the
+  update suggests a downgrade from your current version don't do it, it is
+  likely a downgrade attack.
+
 Make sure you don't forget to go to the Settings, Privacy and Security, and set
 the `Security Level` to `Safest` to disable JavaScript and more before exploring
 the dark web.
+
+Visit `https://check.torproject.org`, you should see "Congratulations. This
+browser is configured to use Tor."
 
 If you need a place to start, check out `https://tor.taxi` by plugging that into
 the URL. Always include the `https` yourself!
