@@ -4,14 +4,17 @@
 
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-%23FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://www.buymeacoffee.com/saylesss88)
 
-🚀 If you find this guide helpful, please consider leaving a ⭐ or supporting
-the project by buying me a coffee. Your support helps keep this content updated
-and freely available.
+🚀 If you find this guide helpful, please consider leaving a star ⭐ or
+supporting the project by buying me a coffee ☕. Your support helps keep this
+content updated and freely available.
 
 Welcome to my personal journey and guide through the Nix ecosystem! This "book"
 aims to be a practical and understandable resource for anyone looking to dive
 into Nix, NixOS, and Home Manager. Whether you're just getting started or
 looking to deepen your understanding, I hope you find this resource helpful!
+
+I am a technologist with a wide range of interests that I'm passionate about,
+NixOS being one of them. I am also a privacy advocate trying to spread the word.
 
 ✨ What You'll Find Here
 
@@ -24,6 +27,14 @@ This book covers a range of topics to help you harness the power of Nix:
 - Hardening NixOS: A deep dive into security and hardening practices with NixOS
 
 - Hardening Networking: Configure dnscrypt-proxy, firewalls, and more.
+
+- Gnupg and gpg-agent on NixOS
+
+- Whonix KVM on NixOS
+
+- Version Control with Git
+
+- Version Control with JJ
 
 - Understanding Nix Functions: Explores practical Nix functions and their role
   with NixOS Modules.
@@ -45,6 +56,8 @@ This book covers a range of topics to help you harness the power of Nix:
 - Debugging and Tracing NixOS Modules
 
 - Working with Nixpkgs Locally
+
+- Fork, Clone, Contribute to Nixpkgs
 
 - Nix Pull Requests
 

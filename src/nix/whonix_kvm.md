@@ -1,5 +1,12 @@
 # Whonix KVM on NixOS
 
+<details>
+<summary> Click to Expand Table of Contents</summary>
+
+<!-- toc -->
+
+</details>
+
 ![Whonix Logo](../images/swappy-20250901-101339.cleaned.png)
 
 > ⚠️ WARNING: There is no general software that can guarantee absolute anonymity
