@@ -15,8 +15,8 @@
 
 ⚠️ **Security Reminder**: Never commit secrets (passwords, API keys, tokens,
 etc.) in plain text to your Git repository. If you plan to publish your NixOS
-configuration, always use a secrets management tool like sops-nix or agenix to
-keep sensitive data safe. See the
+configuration, always use a secrets management tool like `sops-nix` or `agenix`
+to keep sensitive data safe. See the
 [Sops-Nix Guide](https://saylesss88.github.io/installation/enc/sops-nix.html)
 for details.
 

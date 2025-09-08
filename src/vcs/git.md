@@ -22,7 +22,7 @@ managing sensitive data on a NixOS system.
 
 What Does "World-Readable" Mean?
 
-- All files in /nix/store are readable by any user on the sytem.
+- All files in /nix/store are readable by any user on the system.
 
 - This is by design, the nix store is intended to be shared, immutable store of
   all packages and configuration files.
@@ -55,7 +55,7 @@ What Does "World-Readable" Mean?
   This gives you time to learn about secrets management and review your
   configuration before making anything public.
 
-First, I'll breefly explain some of the limitations of NixOS Rollbacks and then
+First, I'll briefly explain some of the limitations of NixOS Rollbacks and then
 I'll go into how Git compliments them.
 
 ## Limitations of NixOS Rollbacks
@@ -152,7 +152,7 @@ easier to contribute with others as well as get help from others.
 ## Atomic Commits
 
 **Atomic commits** are a best practice in Git where each commit represents a
-single, focused, and complete change to the codebase. The main chacacteristics
+single, focused, and complete change to the codebase. The main characteristics
 of atomic commits are:
 
 - **One purpose**: Each commit should address only one logical change or task.
@@ -365,10 +365,10 @@ Some repositories have guidelines, such as Nixpkgs:
 
 - Create a commit for each logical unit.
 
-- Check for unnecessary whitespace with git diff --check before committing.
+- Check for unnecessary whitespace with `git diff --check` before committing.
 
 - If you have commits pkg-name: oh, forgot to insert whitespace: squash commits
-  in this case. Use git rebase -i. See Squashing Commits for additional
+  in this case. Use `git rebase -i`. See Squashing Commits for additional
   information.
 
 - For consistency, there should not be a period at the end of the commit
@@ -379,9 +379,9 @@ Some repositories have guidelines, such as Nixpkgs:
   making changes to the package or module. See Nixpkgs Maintainers for details.
 
   Make sure you read about any commit conventions specific to the area you're
-  touching. See: Commit conventions for changes to pkgs. Commit conventions for
-  changes to lib. Commit conventions for changes to nixos. Commit conventions
-  for changes to doc, the Nixpkgs manual.
+  touching. See: Commit conventions for changes to `pkgs`. Commit conventions
+  for changes to `lib`. Commit conventions for changes to `nixos`. Commit
+  conventions for changes to `doc`, the Nixpkgs manual.
 
 **Writing good commit messages**
 
@@ -480,7 +480,7 @@ state of your working configuration before you make any changes.
 Now that you've saved a snapshot of your working configuration, you're free to
 experiment and try new things, even if they might break your setup.
 
-Suppose you you want to try a new desktop environment, like Xfce. You edit your
+Suppose you want to try a new desktop environment, like Xfce. You edit your
 `configuration.nix` to add:
 
 ```nix
@@ -493,7 +493,7 @@ You run:
 sudo nixos-rebuild switch # if configuration.nix is in /etc/nixos/
 ```
 
-but something goes wrong: the system boots, but your desktop is broken or won't
+But something goes wrong: the system boots, but your desktop is broken or won't
 start. You decide to roll back using the boot menu or:
 
 ```bash
@@ -576,7 +576,7 @@ git commit -m "Describe the new feature or fix"
 ### Basic Branching
 
 With Git you're always on a branch and the default branch is `master`. Many
-change it to `main` because of the suggestion Git gives you I think people are
+change it to `main` because of the suggestion Git gives you. I think people are
 too easily offended these days, just keep this in mind that `main` and `master`
 refer to the main development branch.
 
@@ -836,8 +836,9 @@ git branch update-test
 git checkout update-test
 ```
 
-Now our branches would look something like this, note how both branches
-currently point to the same commit:
+~~Now our branches would look something like this, note how both branches
+currently point to the same commit:~~ I discovered that Git Book has pretty
+restrictive licensing and will eventually find a replacement.
 
 <!-- ![Git Branch 2](../images/git-branch2.png) -->
 
@@ -859,7 +860,7 @@ git push origin update-test
 > push to that branch on your fork. This allows you to create a PR comparing
 > your changes to their existing configuration.
 
-At this point our graph would look similar to the following:
+~~At this point our graph would look similar to the following~~:
 
 <!-- ![Git Branch 3](../images/git-branch1.png) -->
 
