@@ -30,7 +30,11 @@ its limitations, which helps build trust and confidence in its security model.
   unique from the rest of Tor Browser users reducing anonymity.
 
 > ⚠️ Never rely solely on the Virtual Machine to protect you, if your host OS
-> isn't secure a Virtual Machine won't protect you.
+> isn't secure a Virtual Machine won't protect you. If you have high threat
+> model, you may want to choose a Host with better support for AppArmor and
+> Selinux as they are highly limited on NixOS.
+
+That being said, there is a lot you can do to harden NixOS...
 
 ### Harden NixOS and set up GnuPG
 
@@ -41,8 +45,6 @@ its limitations, which helps build trust and confidence in its security model.
 - [GnuPG and gpg-agent on NixOS](https://saylesss88.github.io/nix/gpg-agent.html)
 
 ### A Few Things to Consider when using Whonix
-
-- You can anonymously use Java / Javascript
 
 - No activity conducted inside `Whonix-Workstation` can cause IP/DNS leaks so
   long as `Whonix-Gateway` is left unchanged or only documented changes are made
@@ -442,6 +444,15 @@ the VM more CPUs and memory.
 Considering that the Whonix-Workstation is where all of the user applications
 will be opened, it makes sense to give it more CPUs and memory.
 
+I've seen recommendations for a minimum of 4G of RAM for the Workstation and 2GB
+for the Gateway.
+
+- Increase vCPU count for better performance
+
+- Enable XML editing in settings
+
+- Enable copy pasting by adding `<clipboard copypaste="yes"/>`
+
 ## Start Whonix-Gateway
 
 ![Whonix Old Logo](../images/swappy-20250901-101351.cleaned.png)
@@ -463,6 +474,8 @@ sudo passwd
 changeme
 ```
 
+Change the passwords and disable auto-login.
+
 Run a systemcheck if it wasn't run automatically. Click the Xfce Logo and go to
 `System`, `System Check`.
 
@@ -481,6 +494,8 @@ With the workstation, a security feature disables `sudo` for the default user.
 Instead of the `user` account, a separate `sysmaint` (system maintenance)
 account is used for administrative tasks that require root privileges, such as
 updates and package installations.
+
+- Change all user passwords and disable auto-login
 
 After you get your system updated and upgraded, you'll want to reboot the
 Workstation and start it in the first Persistent mode available rather than the
