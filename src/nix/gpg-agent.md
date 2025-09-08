@@ -219,6 +219,10 @@ Home Manager module with `gpg-agent`, `gnupg`, and `pinentry-gnome3`:
 }
 ```
 
+> 🤔 Fun Fact: Elliot Alderson mentions encrypting Evil Corps files with 256 bit
+> AES encryption ensuring that it's impossible to break in `eps1.9_zer0.daY.avi`
+> of Mr. Robot.
+
 - The default path is `~/.gnupg`, if you prefer placing it in the `~/.config`
   directory or elsewhere, uncomment the `homedir` line and change `userName` to
   your username.
