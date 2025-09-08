@@ -770,6 +770,36 @@ from connecting to unwanted or harmful domains.
 `dnscrypt-proxy2` then encrypts and forwards our DNS requests to third-party
 public DNSCrypt or DoH servers.
 
+## MAC Randomization
+
+Android and iPhone already implement MAC Randomization by default.
+
+MAC Randomization enhances privacy by making it harder for third parties to
+track users across different networks.
+
+Randomizing MAC adresses obscures a device's unique hardware identity when
+scanning for or connecting to Wi-Fi, blocking passive tracking as well as
+location tracking across networks.
+
+If you use NetworkManager you can set MAC randomization with:
+
+```nix
+    networking = {
+      networkmanager = {
+        enable = true;
+        wifi.scanRandMacAddress = true;
+        wifi.macAddress = "random";
+        plugins = [];
+      };
+```
+
+Right when I rebuilt, I got an alert from my router saying that a new device
+just connected to the network.
+
+There is also a utility for viewing/manipulating the MAC adress of network
+interfaces, `pkgs.macchanger`. This is less reliable than the NetworkManager
+setting.
+
 ## Firewalls
 
 NixOS includes an integrated firewall based on iptables/nftables.
