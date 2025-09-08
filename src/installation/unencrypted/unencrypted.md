@@ -427,17 +427,25 @@ sudo mv disk-config.nix hardware-configuration.nix configuration.nix ~/flake
 
 - `hardware-configuration.nix` & `disk-config.nix` for this setup
 
-- `initialHashedPassword`: Run `mkpasswd -m SHA-512 -s`, then enter your desired
-  password. Example output,
+- `initialHashedPassword`: Run `mkpasswd --method=yescrypt`, then enter your
+  desired password. Example output,
 
 ```bash
-Password: your_secret_password
-Retype password: your_secret_password
-$6$random_salt$your_hashed_password_string_here_this_is_very_long_and_complex
+mkpasswd --method=yescrypt > /tmp/pass.txt
 ```
 
-copy the hashed password and use it for the value of your
-`initialHashedPassword`
+- You can check the quality with `pwscore`:
+
+```bash
+nix-shell -p libpwquality
+
+pwscore
+very-secure-password
+100
+```
+
+read the hashed password into the file with `:r /tmp/pass.txt` and move it into
+place.
 
 ```nix
 # configuration.nix
@@ -482,6 +490,13 @@ copy the hashed password and use it for the value of your
 
   system.stateVersion = "25.05";
 }
+```
+
+Shred `pass.txt`:
+
+```bash
+shred /tmp/pass.txt
+rm /tmp/pass.txt
 ```
 
 10. Move the flake to `/mnt/etc/nixos` and run `nixos-install`:

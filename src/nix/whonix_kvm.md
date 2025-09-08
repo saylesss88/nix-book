@@ -553,6 +553,46 @@ Same process, reboot the Workstation and Choose
 
 - [Anti Forensics Precautions](https://www.kicksecure.com/wiki/Anti-Forensics_Precautions)
 
+## Download and Verify Kicksecure KVM
+
+- [Kicksecure KVM wiki](https://www.kicksecure.com/wiki/KVM)
+
+1. [Download Kicksecure Xfce (KVM) (stable) (FREE!)](https://www.kicksecure.com/download/libvirt/17.4.4.6/Kicksecure-Xfce-17.4.4.6.Intel_AMD64.qcow2.libvirt.xz)
+
+2. [Download OpenPGP Signature](https://www.kicksecure.com/download/libvirt/17.4.4.6/Kicksecure-Xfce-17.4.4.6.Intel_AMD64.qcow2.libvirt.xz.asc)
+
+3. [Download Kicksecure OpenPGP Key](https://www.kicksecure.com/keys/derivative.asc)
+
+4. Import the `derivative.asc` file:
+
+```bash
+gpg --import derivative.asc
+```
+
+5. Make sure both files are done downloading and run the following to verify,
+   your file names might be slightly different:
+
+```bash
+gpg --verify Kicksecure-Xfce-17.4.4.6.Intel_AMD64.qcow2.libvirt.xz.asc Kicksecure-Xfce-17.4.4.6.Intel_AMD64.qcow2.libvirt.xz
+gpg: Signature made Sun 10 Aug 2025 07:32:52 AM EDT
+gpg:                using RSA key 6E979B28A6F37C43BE30AFA1CB8D50BB77BB3C48
+gpg: Good signature from "Patrick Schleizer <adrelanos@kicksecure.com>" [unknown]
+gpg:                 aka "Patrick Schleizer <adrelanos@riseup.net>" [unknown]
+gpg:                 aka "Patrick Schleizer <adrelanos@whonix.org>" [unknown]
+gpg: WARNING: This key is not certified with a trusted signature!
+gpg:          There is no indication that the signature belongs to the owner.
+Primary key fingerprint: 916B 8D99 C38E AF5E 8ADC  7A2A 8D66 066A 2EEA CCDA
+     Subkey fingerprint: 6E97 9B28 A6F3 7C43 BE30  AFA1 CB8D 50BB 77BB 3C48
+```
+
+6. **Decompress**
+
+```bash
+tar -xvf Kicksecure*.libvirt.xz
+```
+
+Don't use `unxz`!
+
 ### Resources
 
 - [Whonix Docs](https://www.whonix.org/wiki/Documentation)
