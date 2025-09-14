@@ -694,12 +694,13 @@ systemd-analyze security bluetooth
 Lynis is a security auditing tool for systems based on UNIX like Linux, macOS,
 BSD, and others.--[lynis repo](https://github.com/CISOfy/lynis)
 
+`chkrootkit` was removed as it is unmaintained and archived upstream.
+
 Installation:
 
 ```nix
 environment.systemPackages = [
 pkgs.lynis
-pkgs.chkrootkit
 pkgs.clamav
 pkgs.aide
  ];
@@ -947,7 +948,7 @@ If you use `clamscan`, create the following log file:
 sudo touch /var/log/clamscan.log
 ```
 
-Example cron job for `chkrootkit` & `clamav`:
+Example cron job for `clamav` & `aide`:
 
 ```nix
 {pkgs, ...}: {
@@ -955,22 +956,12 @@ Example cron job for `chkrootkit` & `clamav`:
     enable = true;
     # messages.enable = true;
     systemCronJobs = [
-      # Every Sunday at 2:10 AM, run chkrootkit as root, log output for review
-      "10 2 * * 0 root ${pkgs.chkrootkit}/bin/chkrootkit | logger -t chkrootkit"
       # Every day at 2:00 AM, run clamscan as root and append output to a log file
       "0 2 * * * root ${pkgs.clamav}/bin/clamscan -r /home >> /var/log/clamscan.log"
       "0 11 * * * ${pkgs.aide}/bin/aide --check --config /var/lib/aide/aide.conf"
     ];
   };
 }
-```
-
-The above cron job will use `chkrootkit` to automatically scan for known rootkit
-signatures. It can detect hidden processes and network connections. To run
-manually:
-
-```bash
-sudo chkrootkit
 ```
 
 ClamAV usage:
