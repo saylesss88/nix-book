@@ -185,8 +185,8 @@ Verifying file database and EFI images in /boot...
 
 ### Enabling Secure Boot and Entering Setup Mode
 
-This is where things can get tricky because BIOS are widely different and use
-different conventions.
+This is where things can get tricky because UEFI/BIOS are widely different and
+use different conventions.
 
 You can see your BIOS from the output of `bootctl status`:
 
@@ -194,11 +194,11 @@ You can see your BIOS from the output of `bootctl status`:
 sudo bootctl status
 doas (jr@magic) password:
 System:
-      Firmware: UEFI 2.70 (American Megatrends 5.19)
+      Firmware: UEFI 2.70 (American Megatrends)
 ```
 
-My BIOS is an American Megatrends 5.19, find yours and look up which key you
-have to hit to enter the BIOS on reboot, mine is the delete key. So I reboot and
+My UEFI is an American Megatrends, find yours and look up which key you have to
+hit to enter the BIOS on reboot, mine is the delete key. So I reboot and
 repeatedly hit delete until it brings up the BIOS settings.
 
 The lanzaboote guide shows a few systems and how to enter setup mode for them.
@@ -266,7 +266,7 @@ And finally check the output of `sbctl status`:
 ```bash
 sudo sbctl status
 System:
-      Firmware: UEFI 2.70 (American Megatrends 5.19)
+      Firmware: UEFI 2.70 (American Megatrends)
  Firmware Arch: x64
    Secure Boot: enabled (user)
   TPM2 Support: yes
