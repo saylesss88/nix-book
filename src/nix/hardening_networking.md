@@ -166,8 +166,6 @@ to the internet, and so security, privacy, and anti-tracking features of
 browsers are now as important, or even more important than platform-level
 protections.
 
-> ❗
-
 #### Tor Browser
 
 > ❗ NOTE: Tor is **not** the most secure browser, anonymity and security can
