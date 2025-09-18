@@ -400,78 +400,71 @@ turn off "Allow Mozilla accounts to send technical and interaction data to
 Mozilla". Also set 2-fa in
 [Security Settings](https://accounts.firefox.com/settings#security)
 
-I always set `Max Protection` for DNS over HTTPS and personally choose
-`Mullvad (No Filtering)`
+I always set `Max Protection` for DNS over HTTPS and personally set a custom
+resolver to `https://dns.quad9.net/dns-query`
 
-- [Mullvad no-logging-data-policy](https://mullvad.net/en/help/no-logging-data-policy)
+- Mullvad is also a good option:
+  [Mullvad no-logging-data-policy](https://mullvad.net/en/help/no-logging-data-policy)
 
 Firefox Relay is a pretty cool privacy tool too, it gives you temporary email
 and phone number aliases so you don't have to give out your real ones. There is
 an autofill option available also, but you can just click on the Relay button
 and generate a new alias and use it like your normal email.
 
-</details>
-
-### Firefox
-
-Firefox's defaults are not as privacy respecting as LibreWolf's but can be
-manually configured to be fairly private and secure.
-
-- Switch to a privacy respecting search engine such as duckduckgo.
-
-- Add some privacy respecting search engines in `about:preferences#search` at
-  the bottom of the screen click `Add`. A few good ones are `searx` and
-  `startpage`:
-  - Search engine name: `SearXNG`, URL: `https://searx.be/search?q=%s`
-
-  - Search engine name: `StartPage`, URL:
-    `https://www.startpage.com/do/search?q=%s`
-
-- Disable search suggestions
-
-- In `about:preferences#search`, disable Address Bar suggestions. Disabls Search
-  Suggestions.
-
-- Disable all Firefox Data Collection. Disabls Search Suggestions.
-
-- Disable all Firefox Data Collection
-
-- Ensure that HTTPS-Only Mode is set in all windows
-
-- Avoid untrusted extensions!
-
-- `about:config` set `fission.autostart` to true.
-
-### Arkenfox
-
-If you want to use this, it requires adding `firefox-addons` to your `flake.nix`
+<details>
+<summary> ✔️ Alternative LibreWolf Configuration utilizing Arkenfox </summary>
 
 ```nix
-# firefox.nix
 {
-  config,
-  inputs,
   pkgs,
+  lib,
+  config,
   ...
 }: let
-  # Extract the firefoxAddons package set from the flake input for your system
-  firefoxAddons = inputs.firefox-addons.packages."x86_64-linux";
+  cfg = config.custom.librewolf;
 in {
-  programs.firefox = {
-    enable = true;
+  options.custom.librewolf = {
+    enable = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Enable the LibreWolf Module";
+    };
+  };
 
-    profiles.default = {
-      isDefault = true;
-      name = "Default Profile";
-      extraConfig = ''
-        ${builtins.readFile ./user.js}
-      '';
-      # Example, override Arkenfox Settings
-      settings = {
-        # Example, this is already set
-        "privacy.resistFingerprinting" = true;
+  config = lib.mkIf cfg.enable {
+    programs.librewolf = {
+      enable = true;
+      policies = {
+        DontCheckDefaultBrowser = true;
+        DisablePocket = true;
+        DisableAppUpdate = true;
       };
-      extensions.packages = with firefoxAddons; [ublock-origin];
+      profiles.my-default = {
+        isDefault = true;
+        name = "Default Profile";
+        extraConfig = ''
+          ${builtins.readFile ./user.js}
+          "general.autoScroll" = true;
+          "sidebar.verticalTabs" = true;
+        '';
+
+        settings = {
+        };
+      };
+    };
+    xdg.desktopEntries.librewolf = {
+      name = "LibreWolf";
+      exec = "${pkgs.librewolf}/bin/librewolf";
+    };
+    xdg.mimeApps = {
+      enable = true;
+      defaultApplications = {
+        "text/html" = "librewolf.desktop";
+        "x-scheme-handler/http" = "librewolf.desktop";
+        "x-scheme-handler/https" = "librewolf.desktop";
+        "x-scheme-handler/about" = "librewolf.desktop";
+        "x-scheme-handler/unknown" = "librewolf.desktop";
+      };
     };
   };
 }
@@ -480,18 +473,50 @@ in {
 Download the
 [Arkenfox user.js](https://github.com/arkenfox/user.js/blob/master/user.js) and
 review it making sure that you agree with the settings. If you do, place it in
-the same directory as your `firefox.nix`.
+the same directory as your `librewolf.nix`.
 
-Rebuild, launch Firefox, and check your `~/.mozilla/firefox/default/user.js`. It
-should match the Arkenfox settings. The `prefs.js` should also match.
+Read the [Arkenfox Wiki](https://github.com/arkenfox/user.js/wiki)
 
-In Firefox type `Ctrl + Shift + J` and look for any errors. I had to create a
-`mkdir -p ~/.mozilla/firefox/default/thumbnails` to remove a warning.
+The `user.js` is full of comments and information, read it and adjust it for
+your needs. The following enables RFP fingerprint protection:
+
+```js
+***/ user.js ***/
+user_pref("privacy.resistFingerprinting", true); // [FF41+]
+user_pref("privacy.resistFingerprinting.pbmode", true); // [FF114+]
+```
+
+As you learn more, you can get more strict if you so choose.
+
+Rebuild, launch LibreWolf, and check your `~/.librewolf/my-default/user.js`. It
+should match the Arkenfox settings. Initially, only the `user.js` will be
+listed, as you run LibreWolf other profile files and folders are created
+dynamically.
+
+In LibreWolf type `Ctrl + Shift + J` and look for any errors.
 
 Type `about:config` into the address bar and search a few of the settings that
 Arkenfox changes, do they match?
 
-Read the [Arkenfox Wiki](https://github.com/arkenfox/user.js/wiki)
+The `user.js` is read **in order**, if there are 2 of the same setting, the last
+one will be applied. Adding overrides to the settings attribute above places the
+changes at the **beginning** of the `user.js` which isn't what we want. Placing
+them after the `${builtins.readFile ./user.js}` in `extraConfig` amends them to
+the **end** of the `user.js` allowing us to override the defaults.
+
+The process is the same with Firefox but since Arkenfox strongly recommends
+Ublock Origin and it is built into LibreWolf it makes sense to use the browser
+with the stronger defaults.
+
+> ❗ NOTE: There is a home-manager module called `arkenfox-nixos` that is
+> supposed to make updates easier but IMO the documentation leaves you guessing
+> how to use it. As updates come in to Firefox/LibreWolf some of the settings
+> become unnecessary so it's important to keep an eye on both Firefox and
+> Arkenfox updates.
+
+</details>
+
+</details>
 
 ### Fingerprint Testing
 
