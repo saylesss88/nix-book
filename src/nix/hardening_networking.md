@@ -825,6 +825,14 @@ in {
         minisign_key = "RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3";
         cache_file = "/var/lib/${StateDirectory}/public-resolvers.md";
       };
+     # sources.quad9-resolvers = {
+     #   urls = [
+     #     "https://quad9.net/dnscrypt/quad9-resolvers.md"
+     #     "https://raw.githubusercontent.com/Quad9DNS/dnscrypt-settings/main/dnscrypt/quad9-resolvers.md"
+     #   ];
+     #   minisign_key = "RWTp2E4t64BrL651lEiDLNon+DqzPG4jhZ97pfdNkcq1VDdocLKvl5FW";
+     #   cache_file = "/var/cache/dnscrypt-proxy/quad9-resolvers.md";
+     # };
 
       # Use servers reachable over IPv6 -- Do not enable if you don't have IPv6 connectivity
       ipv6_servers = hasIPv6Internet;
@@ -833,13 +841,17 @@ in {
       require_dnssec = true;
       # Logs can get large very quickly...
       require_nolog = false;
-      require_nofilter = true;
+      # This stops dns malware filtering, etc. if true
+      require_nofilter = false;
+      dnscrypt_servers = true;
 
       # If you want, choose a specific set of servers that come from your sources.
       # Here it's from https://github.com/DNSCrypt/dnscrypt-resolvers/blob/master/v3/public-resolvers.md
       # If you don't specify any, dnscrypt-proxy will automatically rank servers
       # that match your criteria and choose the best one.
       # server_names = [ ... ];
+      # server_names = ['quad9-dnscrypt-ip6-filter-pri', 'quad9-dnscrypt-ip4-filter-pri', 'mullvad-adblock-d'];
+
     };
   };
 
