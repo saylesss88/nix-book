@@ -577,11 +577,9 @@ harder for sites to link your `machine-id` to you.
 </details>
 
 Privacy protection doesn't need to be perfect to make a difference. The best
-protection against tracking and fingerprinting available is to use Tor. For your
-daily driver, tools like Ghostery, UblockOrigin, Privacy Badger, Disconnect, and
-NoScript reduce fingerprinting significantly but not completely. Some privacy
-guides will suggest not to use add-ons at all because they make your browser
-unique, this isn't one of them. Just use Tor when it truly matters.
+protection against tracking and fingerprinting available is to use Tor. Many
+add-ons are redundant, do some research and avoid using an add-on for something
+that can be accomplished with built-in settings.
 
 - [Surveillance Self-Defense How to: Use Tor](https://ssd.eff.org/module/how-to-use-tor)
 
