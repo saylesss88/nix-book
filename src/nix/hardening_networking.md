@@ -166,6 +166,41 @@ to the internet, and so security, privacy, and anti-tracking features of
 browsers are now as important, or even more important than platform-level
 protections.
 
+#### Firefox
+
+Firefox's defaults are not privacy respecting or secure but allows a high level
+of customization to make it so. Firefox will be patched with security fixes
+sooner than any fork, and some forks are slow to apply the updates leaving a
+vulnerability open longer to exploit.
+
+The Tor Uplift Project was a collaboration between the Tor Project and Mozilla
+to integrate key privacy and anti-fingerprinting features from the Tor Browser
+into Firefox. This enables us to enable/disable a few settings and remove the
+need for most add-ons.
+
+If you use Firefox's ETP, RFP, and other protections provided by the ghacks or
+Arkenfox scripts alongside uBlock configured to use dynamic filtering you can
+accomplish what it used to take 10 extensions to do.
+
+With uBlock you can `Disable JavaScript` which functions similar to NoScript,
+enable numerous blocklists and more.
+
+- [uBlock Wiki](https://github.com/gorhill/uBlock/wiki)
+
+To enable Enhanced Tracking Protection and FPP, go to
+`Settings -> Privacy & Security` -> `Enhanced Tracking Protection -> Custom`. If
+it causes breakage, while on the broken site, click the sheild next to the
+search bar. From there you can turn off ETP for **just that site**.
+
+Once you select `Custom`, you'll see that among the options is to block
+`Known fingerprinters` as well as `Suspected fingerprinters`. The "Known
+Fingerprinters" protection works by blocking scripts listed in
+[Disconnect's fingerprinting list](https://disconnect.me/trackerprotection#categories_of_trackers)
+For most users they suggest using the above FPP to avoid breakage. To enable
+RFP, go to `about:config` and set `privacy.resistFingerprinting` to `true`.
+
+- [Mozilla Resist Fingerprinting](https://support.mozilla.org/en-US/kb/resist-fingerprinting)
+
 #### Tor Browser
 
 > ❗ NOTE: Tor is **not** the most secure browser, anonymity and security can
@@ -1150,6 +1185,8 @@ on the rules you set.
 - [Firefox ghacks](https://www.ghacks.net/2015/08/18/a-comprehensive-list-of-firefox-privacy-and-security-settings/)
 
 - [Arkenfox](https://github.com/arkenfox/user.js)
+
+- [brianfucksec firefox-hardening-Guide 2023](https://brainfucksec.github.io/firefox-hardening-guide)
 
 - [STIG Firefox Hardening](https://simeononsecurity.com/guides/enhance-firefox-security-configuring-guide/)
 
