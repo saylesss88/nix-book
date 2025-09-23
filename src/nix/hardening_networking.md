@@ -279,6 +279,13 @@ tracking you or profiling your searches. You can add SearXNG to firefox by going
 to `about:preferences#search` and at the bottom click `Add`, URL will be
 `https://searx.be/search?q=%s`.
 
+> ❗️ NOTE: The above searx is the default and doesn't give many relevant
+> results. To get relevant results find a
+> [public instance](https://searx.space/) with a good rating from your area and
+> add the `search?q=%s` to the end of it. For example, I'm using
+> `https://priv.au/search?q=%s`. This gives better results than DDG in my
+> opinion.
+
 Searx is a bit different, you can choose which search engine you want for your
 current search with `!ddg search term` to use duckduckgo for example.
 
@@ -1139,6 +1146,10 @@ on the rules you set.
   - [Welcome to SearXNG](https://docs.searxng.org/)
 
 - [Firefox Hardening Guide](https://brainfucksec.github.io/firefox-hardening-guide)
+
+- [Firefox ghacks](https://www.ghacks.net/2015/08/18/a-comprehensive-list-of-firefox-privacy-and-security-settings/)
+
+- [Arkenfox](https://github.com/arkenfox/user.js)
 
 - [STIG Firefox Hardening](https://simeononsecurity.com/guides/enhance-firefox-security-configuring-guide/)
 
