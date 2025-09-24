@@ -1186,6 +1186,10 @@ on the rules you set.
 
 - [Arkenfox](https://github.com/arkenfox/user.js)
 
+- [PrivacyTools.io](https://www.privacytools.io/private-browser)
+
+- [simeononsecurity Firefox-Privacy-Script](https://github.com/simeononsecurity/FireFox-Privacy-Script)
+
 - [brianfucksec firefox-hardening-Guide 2023](https://brainfucksec.github.io/firefox-hardening-guide)
 
 - [STIG Firefox Hardening](https://simeononsecurity.com/guides/enhance-firefox-security-configuring-guide/)
