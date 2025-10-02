@@ -1408,6 +1408,13 @@ custom.security.doas.enable = true;
 
 ## Firejail
 
+> ❗️ Critics such as madaidan say that Firejail worsens security by acting as a
+> privilege escalation hole. Firejail requires the executable to be setuid,
+> meaning it runs with root privileges.This is risky because any vulnerability
+> in Firejail can lead to privilege escalation. This combined with many
+> convenience features and complicated command line flags leads to a large
+> attack surface.
+
 - [NixOS Wiki Firejail](https://wiki.nixos.org/wiki/Firejail)
 
 - [Arch Wiki Firejail](https://wiki.archlinux.org/title/Firejail)
