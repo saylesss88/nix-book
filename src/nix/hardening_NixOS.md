@@ -1415,6 +1415,13 @@ custom.security.doas.enable = true;
 > convenience features and complicated command line flags leads to a large
 > attack surface.
 
+- I haven't personally tried
+  [nix-bwrapper](https://github.com/Naxdy/nix-bwrapper) myself yet, but it's
+  another sandboxing option that looks interesting. Bubblewrap is known for
+  having a more minimal design and smaller attack surface.
+
+- [nix-bubblewrap](https://sr.ht/~fgaz/nix-bubblewrap/) is another option.
+
 - [NixOS Wiki Firejail](https://wiki.nixos.org/wiki/Firejail)
 
 - [Arch Wiki Firejail](https://wiki.archlinux.org/title/Firejail)
