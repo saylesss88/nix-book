@@ -1223,4 +1223,6 @@ on the rules you set.
 
 - [Tor Wiki](https://gitlab.torproject.org/tpo/team/-/wikis/home)
 
+- [Linux Network Administrators Guide](https://tldp.org/LDP/nag2/x-087-2-intro.html)
+
 </details>

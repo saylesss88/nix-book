@@ -625,9 +625,9 @@ still refers to the **outer** `let` binding, not the one from `pkgs`.
 2. Default values aren't bound in `@-patterns`
 
 In the following example, calling a function that binds a default value `"baz"`
-to the argument's attribute `b` with an empty attribute set as argument will
-produce an empty attribute set `inputs` rather than the desired
-`{ b = "baz"; }`:
+to the attribute `b` of an argument using an alias (`@`) pattern, with an empty
+attribute set as argument, results in the alias variable inputs being bound to
+the original empty attribute set instead of including the default value:
 
 ```nix
 (inputs@(b ? "baz"): inputs) {}
@@ -638,6 +638,20 @@ Output:
 ```nix
 {}
 ```
+
+This happens because the alias `inputs@` binds to the argument as passed, before
+the default value for `b` is applied.
+
+The syntax requires curly brackets around the attribute set pattern for
+correctness, so the fixed syntax would be:
+
+```nix
+(inputs@{b ? "baz"}: inputs) {}
+```
+
+However, even with this fix, the inputs alias still refers to the original
+argument without defaults applied. So the quirk persists, showing how default
+values in `@-patterns` do not propagate into the aliased variable.
 
 3. Destructuring function arguments:
 
