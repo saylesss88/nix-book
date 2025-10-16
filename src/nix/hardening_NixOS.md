@@ -1419,6 +1419,7 @@ custom.security.doas.enable = true;
   [nix-bwrapper](https://github.com/Naxdy/nix-bwrapper) myself yet, but it's
   another sandboxing option that looks interesting. Bubblewrap is known for
   having a more minimal design and smaller attack surface.
+  - Also see: [Flatpak section](#flatpak) for another option for sandboxing.
 
 - [nix-bubblewrap](https://sr.ht/~fgaz/nix-bubblewrap/) is another option.
 
@@ -1486,6 +1487,59 @@ It provides sandboxing and access restriction per application, much like what
 AppArmor/SELinux does at a kernel level. However, it's not as secure or
 comprehensive as kernel-enforced MAC systems (AppArmor/SELinux), since it's a
 userspace tool and can potentially be bypassed by privilege escalation exploits.
+
+---
+
+## Flatpak
+
+> ❗️NOTE: You cannot effectively use Firejail with Flatpak apps because of how
+> their sandboxing technologies operate.
+
+Because of this limited native MAC (Mandatory Access Control) support on NixOS,
+using Flatpak is often a good approach to get sandboxing and isolation for many
+GUI apps.
+
+- Flatpak bundles runtimes and sandbox mechanisms that provide app isolation
+  independently of the host system's AppArmor or SELinux infrastructure. This
+  can improve security and containment for GUI applications running on NixOS
+  despite the system lacking full native MAC coverage.
+
+- Flatpak apps benefit from sandboxing through bubblewrap, which isolate apps
+  and restrict access to user/home and system resources.
+
+Add Flatpak with the FlatHub repository for all users:
+
+```nix
+services.flatpak.enable = true;
+  systemd.services.flatpak-repo = {
+    wantedBy = [ "multi-user.target" ];
+    path = [ pkgs.flatpak ];
+    script = ''
+      flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+    '';
+  };
+```
+
+Then you can either find apps through [FlatHub](https://flathub.org/en) or on
+the cmdline with `flatpak search <app>`. Flatpak is best used for GUI apps, some
+cli apps can be installed through it but not all.
+
+- There is also [nix-flatpak](https://github.com/gmodena/nix-flatpak), which
+  enables you to manage your flatpaks declaratively.
+
+- [Flatseal](https://flathub.org/en/apps/com.github.tchx84.Flatseal) is GUI
+  utility that enables you to review and modify permissions from your Flatpak
+  apps.
+
+- [Warehouse](https://flathub.org/en/apps/io.github.flattool.Warehouse) provides
+  a simple UI to control complex Flatpak options, no cmdline required.
+
+Considering that your browser is likely the most vulnerable piece of your whole
+setup, it can be beneficial to install it with Flatpak, effectively sandboxing
+it. You may have to adjust some of the "portals", flatpaks way of accessing
+system resources.
+
+---
 
 ## SeLinux/AppArmor MAC (Mandatory Access Control)
 

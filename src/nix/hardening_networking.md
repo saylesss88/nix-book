@@ -128,6 +128,11 @@ exist in Nixpkgs, but are less recommended by privacy advocates.
 
 - [EU Hits Google with 3.5 Billion Antitrust](https://techstory.in/eu-hits-google-with-3-5-billion-antitrust-fine-over-adtech-practices/)
 
+This [GrapheneOS article](https://grapheneos.org/usage#web-browsing), breaks
+down why they use Chromium-based browsers and specifically mentions that it's
+not recommended to use Firefox, especially on Linux because of the weak
+sandboxing.
+
 <details>
 <summary> ✔️ Click To Expand United States Patriot Act Overview </summary>
 
@@ -167,6 +172,9 @@ browsers are now as important, or even more important than platform-level
 protections.
 
 #### Firefox
+
+My understanding here is evolving, Firefox on Linux may be very privacy friendly
+but is not necessarily a secure browser.
 
 Firefox's defaults are not privacy respecting or secure but allows a high level
 of customization to make it so. Firefox will be patched with security fixes
@@ -290,6 +298,11 @@ technologies.--[How to Support Tor](https://www.privacyguides.org/articles/2025/
   - [Cool Graphic Showing Secure Connections with Tor](https://torproject.github.io/manual/secure-connections/)
 
 #### Mullvad-Browser
+
+Rather than try to tweak a browser into fingerprinting submission, I recommend
+using either Tor or Mullvad-Browser when fingerprintability is the highest
+issue. Both Tor and Mullvad-Browser were designed specifically for this purpose
+and you likely won't get as much out of tweaking another browser.
 
 Mullvad-Browser is free and open-source and was developed by the Tor Project in
 collaboration with Mullvad VPN.(Another Firefox Derivative). It is also the top
@@ -901,6 +914,11 @@ in {
 }
 ```
 
+> ❗️ NOTE: Upon testing dnscrypt-proxy on Arch, it was able to route the browser
+> through the proxy, removing the need for Max Protection. I'm still currently
+> on Arch and plan to test this further ASAP. We test the above settings further
+> down, but I'm curious why the browser isn't routed correctly...
+
 - Above, we have a local DNS proxy that encrypts and forwards queries.
 
 ```bash
@@ -955,7 +973,7 @@ If you use NetworkManager you can set MAC randomization with:
 Right when I rebuilt, I got an alert from my router saying that a new device
 just connected to the network.
 
-There is also a utility for viewing/manipulating the MAC adress of network
+There is also a utility for viewing/manipulating the MAC address of network
 interfaces, `pkgs.macchanger`. This is less reliable than the NetworkManager
 setting.
 
