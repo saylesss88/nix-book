@@ -133,6 +133,10 @@ down why they use Chromium-based browsers and specifically mentions that it's
 not recommended to use Firefox, especially on Linux because of the weak
 sandboxing.
 
+As a Chromium-based browser, Brave has been growing on me. Brave uses
+randomization rather than standardization for fingerprinting protection. If you
+run Cover Your Tracks with Brave, it will show a randomized fingerprint.
+
 <details>
 <summary> ✔️ Click To Expand United States Patriot Act Overview </summary>
 
@@ -170,6 +174,21 @@ On a hardened Linux system, the browser is most often the weakest link exposed
 to the internet, and so security, privacy, and anti-tracking features of
 browsers are now as important, or even more important than platform-level
 protections.
+
+### Fingerprinting
+
+There are two main approaches to obfuscating your fingerprint:
+
+- **Standardization**: Make browsers standardized and therefore have the same
+  fingerprint to blend into a crowd. This is what Tor and Mullvad Browser do.
+  Best for anonymity; increases the crowd you blend into, but may decrease
+  usability (site breakage, CAPTCHAs); adversaries may still find subtle
+  differences.
+
+- **Randomization**: Randomize fingerprint metrics so it's not directly linkable
+  to you. Brave has this feature, if you run coveryourtracks with Brave you will
+  get a result of "your browser has a randomized fingerprint". This is good for
+  privacy but may be detectable by advanced scripts.
 
 #### Firefox
 
@@ -567,7 +586,17 @@ with the stronger defaults.
 > supposed to make updates easier but IMO the documentation leaves you guessing
 > how to use it. As updates come in to Firefox/LibreWolf some of the settings
 > become unnecessary so it's important to keep an eye on both Firefox and
-> Arkenfox updates.
+> Arkenfox updates. Which both have RSS feeds that will alert you upon changes.
+
+I personally use [Feeder](https://feeder.co/) as my open-source RSS feed reader,
+available in most app stores including F-Droid. It is listed on
+[PrivacyTools](https://www.privacytools.io/privacy-rss-feed-readers).
+
+- [Arkenfox Recent Commits RSS feed](https://github.com/arkenfox/user.js/commits/master.atom)
+
+- [Arkenfox Release Notes RSS](https://github.com/arkenfox/user.js/releases.atom)
+
+- [Firefox Nightly release notes](https://www.mozilla.org/en-US/firefox/nightly/notes/feed/)
 
 </details>
 
@@ -579,6 +608,15 @@ You can test your browser to see how well you are protected from tracking and
 fingerprinting at [Cover Your Tracks](https://coveryourtracks.eff.org/).
 
 Also check out, [Am I Unique](https://amiunique.org/fingerprint)
+
+> ⚠️ WARNING: Don't put too much weight into the results as people often check
+> their fingerprint, change one metric and check it again over and over skewing
+> the results. It is helpful for knowing the fingerprint values that trackers
+> track.
+
+- [Browser Fingerprinting Tor Forum](https://forum.torproject.org/t/browser-fingerprinting/1228/25)
+
+- [Madaidans Hot Take on Browser Tracking](https://madaidans-insecurities.github.io/browser-tracking.html)
 
 <details>
 <summary> ✔️ Click to Expand Script to wipe cache and generate new `machine-id` </summary>
