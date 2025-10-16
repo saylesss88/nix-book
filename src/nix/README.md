@@ -24,6 +24,14 @@ Before diving into advanced or specialized hardening, apply these baseline
 security measures suitable for all NixOS users. These settings help protect your
 system with minimal risk of breaking workflows or causing admin headaches.
 
+There is something to be said about the window manager you use. GNOME, KDE
+Plasma, and Sway secure privileged Wayland protocols like screencopy. This means
+that on environments outside of GNOME, KDE, and Sway, applications can access
+screen content of the entire desktop. This implicitly includes the content of
+other applications. It's primarily for this reason that Silverblue, Kinoite, and
+Sericea images are recommended. COSMIC has plans to fix this.
+--[secureblue Images](https://secureblue.dev/images)
+
 - Use Disk Encryption (LUKS) to protect your data at rest.
 
 - Keep your system up to date (update regularly).
@@ -141,7 +149,6 @@ restrictive.
 unnecessary software and services to minimize potential vulnerabilities. Take
 advantage of NixOS’s easy package management and minimalism to keep your system
 lean and secure.
-
 
 **Avoid permanently installing temporary tools**: Use tools like `nix-shell`,
 `comma`, `devShells` and `nix-direnv` to test or run software temporarily. This

@@ -63,6 +63,14 @@ Check out the
 [Hardening NixOS Baseline Hardening README](https://saylesss88.github.io/nix/index.html)
 for baseline hardening recommendations and best practices.
 
+There is something to be said about the window manager you use. GNOME, KDE
+Plasma, and Sway secure privileged Wayland protocols like screencopy. This means
+that on environments outside of GNOME, KDE, and Sway, applications can access
+screen content of the entire desktop. This implicitly includes the content of
+other applications. It's primarily for this reason that Silverblue, Kinoite, and
+Sericea images are recommended. COSMIC has plans to fix this.
+--[secureblue Images](https://secureblue.dev/images)
+
 ## Minimal Installation with LUKS
 
 Begin with NixOS’s minimal installation image. This gives you a base system with
@@ -1495,6 +1503,9 @@ userspace tool and can potentially be bypassed by privilege escalation exploits.
 > ❗️NOTE: You cannot effectively use Firejail with Flatpak apps because of how
 > their sandboxing technologies operate.
 
+Apps that don't have a flatpak equivalent can be further hardened with
+bubblewrap independently but bubblewrap is not needed on Flatpak apps.
+
 Because of this limited native MAC (Mandatory Access Control) support on NixOS,
 using Flatpak is often a good approach to get sandboxing and isolation for many
 GUI apps.
@@ -1516,9 +1527,15 @@ services.flatpak.enable = true;
     path = [ pkgs.flatpak ];
     script = ''
       flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+      # Only apps that are verified
+      # flatpak remote-add --if-not-exists --subset=verified flathub-verified https://flathub.org/repo/flathub.flatpakrepo
     '';
   };
 ```
+
+- [Flathub Verified Apps](https://docs.flathub.org/docs/for-users/verification)
+
+- [Flatpak the good the bad the ugly](https://secureblue.dev/articles/flatpak)
 
 Then you can either find apps through [FlatHub](https://flathub.org/en) or on
 the cmdline with `flatpak search <app>`. Flatpak is best used for GUI apps, some
