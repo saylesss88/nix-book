@@ -33,7 +33,13 @@ configuration, and proactive control.
 > researched sources on practical Linux security, frequently cited for its depth
 > and actionable advice. For example, much of the original basis for hardening
 > for [nix-mineral](https://github.com/cynicsketch/nix-mineral) came from this
-> guide as well.
+> guide as well. This can be a starting point but shouldn't be blindly followed
+> either, always do your own research, things change frequently.
+
+For an article with apposing perspectives, see
+[debunking-madaidans-insecurities](https://chyrp.cgps.ch/en/debunking-madaidans-insecurities/).
+We can learn from both and hopefully find something in between that is closer to
+the truth.
 
 > ❗ **Note on SELinux and AppArmor**: While NixOS can provide a high degree of
 > security through its immutable and declarative nature, it's important to
@@ -41,16 +47,19 @@ configuration, and proactive control.
 > frameworks. Neither SELinux nor AppArmor are fully supported or widely used in
 > the NixOS ecosystem. You can do a lot to secure NixOS but if anonymity and
 > isolation are paramount, I recommend booting into a
-> [Tails USB stick](https://tails.net/).
+> [Tails USB stick](https://tails.net/). Or using
+> [Whonix](https://www.whonix.org/).
 
 ☝️ The unique file structure of NixOS, particularly the immutable `/nix/store`,
 makes it difficult to implement and manage the file-labeling mechanisms that
 these frameworks rely on. There are ongoing community efforts to improve
 support, but as of now, they are considered experimental and not a standard part
-of a typical NixOS configuration.
+of a typical NixOS configuration. For an immutable distro that implements
+SELinux by default at a system level as well as many other hardening techniques,
+see [Fedora secureblue](https://secureblue.dev/).
 
 Containers and VMs are beyond the scope of this chapter but can also enhance
-security if configured correctly.
+security and sandboxing if configured correctly.
 
 It's crucial to **document every change** you make. By creating smaller,
 feature-complete commits, each with a descriptive message, you're building a
