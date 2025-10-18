@@ -259,18 +259,19 @@ security over everything else.
 ### The Hardened Kernel
 
 The `linuxPackages_latest_hardened` attribute has been deprecated. If you want
-to use a hardened kernel, you must specify a versioned package that is currently
-supported.
+to use a hardened kernel, it is now recommended to use `linux_hardened`, which
+is aliased to `linux_default.kernel`.
 
-You can find the latest available hardened kernel packages by searching
-[pkgs/top-level/linux-kernels.nix](https://github.com/NixOS/nixpkgs/blob/master/pkgs/top-level/linux-kernels.nix)
-
-For example, to use the latest available `6.15`, you would configure it like
-this:
+(Edited: 10-18-25 from versioned hardened to `linux_hardened`) You can find the
+latest available hardened kernel packages by searching
+[pkgs/top-level/linux-kernels.nix](https://github.com/NixOS/nixpkgs/blob/master/pkgs/top-level/linux-kernels.nix).
+It is recommended to use `linux_hardened` without specifying a version, such as:
 
 ```nix
-boot.kernelPackages = pkgs.linux_6_15_hardened;
+boot.kernelPackages = pkgs.linuxPackages_hardened;
 ```
+
+`linux_hardened` is aliased to the `linux_default.kernel`.
 
 Note that this not only replaces the kernel, but also packages that are specific
 to the kernel version, such as NVIDIA video drivers. This also removes your
@@ -283,9 +284,6 @@ You can inspect
 [nixpkgs/pkgs/os-specific/linux/kernel/hardened/patches.json](https://github.com/NixOS/nixpkgs/blob/master/pkgs/os-specific/linux/kernel/hardened/patches.json)
 to see the metadata of the patches that are applied. You can then follow the
 links in the `.json` file to see the patch diffs.
-
-> ❗ NOTE: Always check the `linux-kernels.nix` file for the latest available
-> versions, as older kernels are regularly removed from Nixpkgs.
 
 ### sysctl
 
@@ -544,6 +542,12 @@ recommendations in the guide.
 Kernel modules for hardware devices are generally loaded automatically by
 `udev`. You can force a module to be loaded via `boot.kernelModules`.
 
+---
+
+**Blacklisting Kernel Parameters**
+
+Blacklisting unused kernel modules reduces the attack surface.
+
 [boot.blacklistedKernelModules](https://nixos.org/manual/nixos/stable/options#opt-boot.blacklistedKernelModules):
 List of names of kernel modules that should not be loaded automatically by the
 hardware probing code.
@@ -597,6 +601,12 @@ You can find the following settings in the
 As with the `kernelParameters` above, there are more suggestions in the guide, I
 have used the above parameters along with the commented out ones and had no
 issues.
+
+Also see
+[SecureBlue's blacklist.conf](https://github.com/secureblue/secureblue/blob/live/files/system/etc/modprobe.d/blacklist.conf)
+for more ideas.
+
+---
 
 ## Hardening Systemd
 
@@ -654,6 +664,16 @@ You can check the security status with:
 systemd-analyze security
 # or for a detailed view of individual services security posture
 systemd-analyze security NetworkManager
+```
+
+It is also recommended to disable and mask unused or vulnerable services such as
+cups, geoclue, etc.
+
+```bash
+sudo systemctl disable cups
+sudo systemctl mask cups
+# To unmask use unmask:
+# sudo systemctl unmask cups
 ```
 
 Further reading on systemd:
