@@ -390,6 +390,9 @@ Refer to
 [madadaidans-insecurities#sysctl-kernel](https://madaidans-insecurities.github.io/guides/linux-hardening.html#sysctl-kernel)
 for the following settings and their explainations.
 
+Also see the
+[Kernel Self Protection Projects sysctls](https://kspp.github.io/Recommended_Settings#sysctls)
+
 ```nix
   boot.kernel.sysctl = {
     "fs.suid_dumpable" = 0;
