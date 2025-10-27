@@ -82,6 +82,37 @@ your system configuration for maximum reproducibility and security. If you need
 to add, remove, or modify users, you must do so in your `configuration.nix` and
 rebuild the system.
 
+Create an admin user for administrative tasks and remove your daily user from
+the `wheel` group:
+
+```users.nix
+{ config, pkgs, lib }:
+{
+users.users.admin = {
+    isNormalUser = true;
+    description  = "System administrator";
+    extraGroups  = [ "wheel" "libvirtd" ];   # wheel = sudo, libvirtd for VMs
+    initialPassword = "changeme";           # change with `passwd admin` later
+    openssh.authorizedKeys.keys = [
+      # (optional) paste your SSH public key here
+      # "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI..."
+    ];
+  };
+
+  # --------------------------------------------------------------------
+  # 2. Existing daily user – remove from wheel, keep everything else
+  # --------------------------------------------------------------------
+  users.users.daily = {
+    isNormalUser = true;
+    description  = "Daily driver account";
+    extraGroups  = lib.mkForce [ "networkmanager" "audio" "video" ]; # keep useful groups
+    # Remove `wheel` by *not* listing it (mkForce overrides any default)
+  };
+}
+```
+
+---
+
 > NOTE: There is mention of making
 > [userborn](https://github.com/nikstur/userborn) the default for NixOS in the
 > future. It can be more secure by prohibiting UID/GID re-use and giving
