@@ -611,6 +611,36 @@ for more ideas.
 
 ---
 
+## Hardened Memory Allocator
+
+> NOTE: There is a performance cost to enabling a hardened memory allocator, and
+> some apps will not work without a workaround such as Firefox, Thunderbird,
+> Torbrowser, LibreWolf, and ZenBrowser to name a few.
+
+The grapheneOS `hardened_malloc` is available for NixOS in two variants, add
+either to your `configuration.nix` or equivalent to apply them:
+
+1. `environment.memoryAllocator.provider = "graphene-hardened";`: This is the
+   default configuration template that has all normal optional security features
+   enabled. It's aggressive, you can expect app breakage and a performance cost.
+
+2. `environment.memoryAllocator.provider = "graphene-hardened-light";`: The
+   light template disables the slap quarantines, write after free check, slot
+   randomization and raises the guard slab interval from 1 to 8 but leaves
+   zero-on-free and slab canaries enabled. This version has solid performance
+   and is still far more secure than the standard allocator.
+
+`libhardened_malloc.so` is typically installed to
+`/usr/local/lib/libhardened_malloc.so` and referenced from `/etc/ld.so.preload`.
+
+- [NixOS Manual memoryAllocator](https://nixos.org/manual/nixos/stable/options#opt-environment.memoryAllocator.provider)
+
+- [GrapheneOS hardened_malloc](https://github.com/GrapheneOS/hardened_malloc?tab=readme-ov-file#traditional-linux-based-operating-systems)
+
+- [GrapheneOS/secureblue discussion on hardened_malloc issues](https://github.com/secureblue/secureblue/issues/193#issuecomment-1953323680)
+
+- [ld.so man page](https://man7.org/linux/man-pages/man8/ld.so.8.html)
+
 ## Hardening Systemd
 
 <!-- ![Hacker](../images/hacker.png) -->
