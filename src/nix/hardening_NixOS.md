@@ -258,12 +258,16 @@ security over everything else.
 
 ### The Hardened Kernel
 
+> NOTE: Expect breakage when using the hardened kernel. `linux-hardened`
+> completely disables
+> [unprivileged user namespaces](https://secureblue.dev/articles/userns), which
+> are required for Flatpak, chromium-based browsers, and more.
+
 The `linuxPackages_latest_hardened` attribute has been deprecated. If you want
 to use a hardened kernel, it is now recommended to use `linux_hardened`, which
 is aliased to `linux_default.kernel`.
 
-(Edited: 10-18-25 from versioned hardened to `linux_hardened`) You can find the
-latest available hardened kernel packages by searching
+You can find the latest available hardened kernel packages by searching
 [pkgs/top-level/linux-kernels.nix](https://github.com/NixOS/nixpkgs/blob/master/pkgs/top-level/linux-kernels.nix).
 It is recommended to use `linux_hardened` without specifying a version, such as:
 

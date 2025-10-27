@@ -8,6 +8,7 @@
     - [GnuPG & gpg-agent on NixOS](nix/gpg-agent.md)
     - [Hardening Networking](nix/hardening_networking.md)
     - [Whonix KVM on NixOS](nix/whonix_kvm.md)
+    - [Running NixOS as a VM](nix/kvm.md)
   - [Version Control with Git](vcs/git.md)
   - [Version Control with JJ](vcs/jujutsu.md)
 - [Installation](installation/README.md)
