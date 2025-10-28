@@ -154,6 +154,108 @@ attacker to maintain a presence on your system.
   impermanence is designed to be destructive and needs to match your config
   exactly.
 
+## Replace timesyncd with a chron job that enables Network Time Security (NTS)
+
+This is implementing the GrapheneOS/secureblue NTS chrony settings to NixOS:
+
+```nix
+# configuration.nix  (or any module you import)
+{ config, pkgs, ... }:
+
+let
+  # ----------------------------------------------------------------------
+  # How often the timer should run (change to "hourly", "*:0/30", etc.)
+  # ----------------------------------------------------------------------
+  chronyNtsTimer = "daily";
+
+  # ----------------------------------------------------------------------
+  # The hardened Chrony configuration (the secureblue one)
+  # ----------------------------------------------------------------------
+  chronyConf = pkgs.writeText "chrony.conf" ''
+    # Copyright © 2014-2025 GrapheneOS
+    # (full license text omitted for brevity – it will be preserved)
+
+    server time.cloudflare.com iburst nts
+    server ntppool1.time.nl iburst nts
+    server nts.netnod.se iburst nts
+    server ptbtime1.ptb.de iburst nts
+    server time.dfm.dk iburst nts
+    server time.cifelli.xyz iburst nts
+    minsources 3
+    authselectmode require
+    # EF
+    dscp 46
+    driftfile /var/lib/chrony/drift
+    dumpdir /var/lib/chrony
+    ntsdumpdir /var/lib/chrony
+    leapsectz /usr/share/zoneinfo/leap-seconds.list
+    makestep 1.0 3
+    rtconutc
+    rtcsync
+    cmdport 0
+    noclientlog
+  '';
+
+  # ----------------------------------------------------------------------
+  # Service that writes the config and reloads Chrony
+  # ----------------------------------------------------------------------
+  chronyNtsService = {
+    description = "Write hardened Chrony config with NTS and reload";
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStartPre = pkgs.writeShellScript "write-chrony-nts.sh" ''
+        set -euo pipefail
+
+        # Ensure directories exist
+        mkdir -p /var/lib/chrony /etc
+
+        # Atomically write the config
+        ${pkgs.coreutils}/bin/install -m 0644 ${chronyConf} /etc/chrony.conf
+
+        # Reload (or restart if reload fails)
+        ${pkgs.systemd}/bin/systemctl try-reload-or-restart chronyd
+      '';
+    };
+    wantedBy = [ "multi-user.target" ];
+  };
+
+  # ----------------------------------------------------------------------
+  # Timer that triggers the service
+  # ----------------------------------------------------------------------
+  chronyNtsTimerConfig = {
+    description = "Timer to keep hardened Chrony+NTS config applied";
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnCalendar = chronyNtsTimer;
+      Persistent = true;          # run missed jobs after reboot
+      RandomizedDelaySec = "5m";  # jitter
+    };
+  };
+in
+{
+  # ----------------------------------------------------------------------
+  # 1. Enable Chrony (disable systemd-timesyncd)
+  # ----------------------------------------------------------------------
+  services.chrony.enable = true;
+  services.timesyncd.enable = false;   # we’re using Chrony
+
+  # ----------------------------------------------------------------------
+  # 2. Install timer + service
+  # ----------------------------------------------------------------------
+  systemd.timers."chrony-nts" = chronyNtsTimerConfig;
+  systemd.services."chrony-nts" = chronyNtsService;
+
+  # ----------------------------------------------------------------------
+  # 3. Run once at boot (before the timer)
+  # ----------------------------------------------------------------------
+  systemd.services."chrony-nts-at-boot" = chronyNtsService // {
+    description = "Apply hardened Chrony+NTS config at boot";
+    after = [ "chronyd.service" ];
+    wantedBy = [ "multi-user.target" ];
+  };
+}
+```
+
 ## Secure Boot
 
 <!-- ![Virus](../images/virus1.png) -->
