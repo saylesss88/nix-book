@@ -113,6 +113,14 @@ users.users.admin = {
 
 security.polkit.enable = true;
 security.sudo.enable = false;
+security.pam.services.swaylock = {
+  text = ''
+    auth include login
+    account include login
+    password include login
+    session include login
+  '';
+ };
 }
 ```
 
@@ -127,6 +135,9 @@ You can safely completely disable `sudo` now with:
 ```nix
 security.sudo.enable = false;
 ```
+
+Without the `pam` settings for swaylock, it won't accept your password to log
+back in.
 
 ---
 
