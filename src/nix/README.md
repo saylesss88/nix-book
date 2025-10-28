@@ -82,6 +82,8 @@ your system configuration for maximum reproducibility and security. If you need
 to add, remove, or modify users, you must do so in your `configuration.nix` and
 rebuild the system.
 
+---
+
 Create an admin user for administrative tasks and remove your daily user from
 the `wheel` group:
 
@@ -108,7 +110,22 @@ users.users.admin = {
     extraGroups  = lib.mkForce [ "networkmanager" "audio" "video" ]; # keep useful groups
     # Remove `wheel` by *not* listing it (mkForce overrides any default)
   };
+
+security.polkit.enable = true;
+security.sudo.enable = false;
 }
+```
+
+You will have to use `run0` to authenticate your daily user, for example:
+
+```bash
+run0 nixos-rebuild switch --flake .
+```
+
+You can safely completely disable `sudo` now with:
+
+```nix
+security.sudo.enable = false;
 ```
 
 ---
