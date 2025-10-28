@@ -32,6 +32,10 @@ other applications. It's primarily for this reason that Silverblue, Kinoite, and
 Sericea images are recommended. COSMIC has plans to fix this.
 --[secureblue Images](https://secureblue.dev/images)
 
+Secureblue recommends disabling Xwayland and finding alternatives for those apps
+as well as disabling `xdg-desktop-portal-wlr`, this is because the wlroots
+desktop portal reintroduces the screencopy vulnerability.
+
 - Use Disk Encryption (LUKS) to protect your data at rest.
 
 - Keep your system up to date (update regularly).
@@ -94,7 +98,8 @@ users.users.admin = {
     isNormalUser = true;
     description  = "System administrator";
     extraGroups  = [ "wheel" "libvirtd" ];   # wheel = sudo, libvirtd for VMs
-    initialPassword = "changeme";           # change with `passwd admin` later
+    # run `mkpasswd --method=yescrypt` and replace "changeme" w/ the result
+    initialHashedPassword = "changeme";           # change with `passwd admin` later
     openssh.authorizedKeys.keys = [
       # (optional) paste your SSH public key here
       # "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI..."
@@ -113,6 +118,7 @@ users.users.admin = {
 
 security.polkit.enable = true;
 security.sudo.enable = false;
+# Required for swaylock re-login
 security.pam.services.swaylock = {
   text = ''
     auth include login
@@ -130,6 +136,13 @@ You will have to use `run0` to authenticate your daily user, for example:
 run0 nixos-rebuild switch --flake .
 ```
 
+You can still use `nh` and will be prompted for your admin password to
+authenticate. I have noticed when installing multiple packages, you will be
+prompted for your password multiple times. This is a security feature, and
+happens because `run0` does not inherit or cache the authentication credentials
+of the previous invocation, it prompts you for the password every time a new
+isolated privileged process is required.
+
 You can safely completely disable `sudo` now with:
 
 ```nix
@@ -145,6 +158,10 @@ back in.
 > [userborn](https://github.com/nikstur/userborn) the default for NixOS in the
 > future. It can be more secure by prohibiting UID/GID re-use and giving
 > warnings about insecure password hashing schemes.
+
+I have personally had nothing but problems with `userborn` and find the docs
+extremely lacking, you need to read the source code to figure anything out which
+is ridiculous. Needless to say, I don't personally use this.
 
 To enable `userborn`, just add the following to your `configuration.nix` or
 equivalent:

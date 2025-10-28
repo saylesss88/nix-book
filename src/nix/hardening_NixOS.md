@@ -59,7 +59,9 @@ SELinux by default at a system level as well as many other hardening techniques,
 see [Fedora secureblue](https://secureblue.dev/).
 
 Containers and VMs are beyond the scope of this chapter but can also enhance
-security and sandboxing if configured correctly.
+security and sandboxing if configured correctly. See
+[Running NixOS in a VM](https://saylesss88.github.io/nix/kvm.html) for more
+details on running NixOS in a Secureblue VM for additional security.
 
 It's crucial to **document every change** you make. By creating smaller,
 feature-complete commits, each with a descriptive message, you're building a
@@ -1618,22 +1620,23 @@ services.flatpak.enable = true;
 
 Then you can either find apps through [FlatHub](https://flathub.org/en) or on
 the cmdline with `flatpak search <app>`. Flatpak is best used for GUI apps, some
-cli apps can be installed through it but not all.
+CLI apps can be installed through it but not all.
 
 - There is also [nix-flatpak](https://github.com/gmodena/nix-flatpak), which
   enables you to manage your flatpaks declaratively.
 
 - [Flatseal](https://flathub.org/en/apps/com.github.tchx84.Flatseal) is GUI
   utility that enables you to review and modify permissions from your Flatpak
-  apps.
+  apps. Many apps by default come with smart-card support, X11 & Wayland
+  support, and more, disabling unnecessary permissions is recommended.
 
 - [Warehouse](https://flathub.org/en/apps/io.github.flattool.Warehouse) provides
   a simple UI to control complex Flatpak options, no cmdline required.
 
-Considering that your browser is likely the most vulnerable piece of your whole
-setup, it can be beneficial to install it with Flatpak, effectively sandboxing
-it. You may have to adjust some of the "portals", flatpaks way of accessing
-system resources.
+I have heard that it is not recommended to use Flatpak browsers because in order
+for flatpak to work it has to disable some of the built-in browser sandboxing
+which can reduce security. I haven't found any examples of Flatpak browsers
+being exposed but it's something to keep in mind.
 
 ---
 
@@ -1723,3 +1726,11 @@ refer directly to its
 - [CIS Benchmarks](https://www.cisecurity.org/cis-benchmarks)
 
 - [NSA Cybersecurity Directorate](https://github.com/nsacyber)
+
+- [secureblue FAQ](https://secureblue.dev/faq)
+
+- [Excellent Kicksecure Docs](https://www.kicksecure.com/wiki/Documentation)
+
+- [factorable.net (study of RSA and DSA crypto keys) FAQ](https://factorable.net/faq.html)
+
+- [The cr.yp.to blog Entropy](https://blog.cr.yp.to/20140205-entropy.html)
