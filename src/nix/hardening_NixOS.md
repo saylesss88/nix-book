@@ -1417,6 +1417,19 @@ Further Reading:
 
 ## Doas over sudo
 
+> NOTE: I have moved to `run0` for authentication which is included by default
+> with systemd. It's actually a symlink to the existing `systemd-run` tool. It
+> behaves like a secure `sudo` alternative: it spawns a transient service under
+> PID 1 for privilege escalation, without relying on SUID (set user ID)
+> binaries.
+
+- SUID = "Set User ID": When a binary has the SUID bit set, it runs with the
+  privileges of the file's owner (often root). There is a long history of
+  vulnerabilities with SUID binaries.
+
+- `run0` configuration is explained in the
+  [Hardening README](https://saylesss88.github.io/nix/index.html)
+
 For a more minimalist version of `sudo` with a smaller codebase and attack
 surface, consider `doas`. Replace `userName` with your username:
 
