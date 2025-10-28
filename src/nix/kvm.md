@@ -13,6 +13,11 @@
 
 ## Step 1: Install secureblue (Hardened Host)
 
+> NOTE: Secureblue enables the hardened_malloc by default which causes problems
+> for many browsers and will cause screen flashing with Firefox and others
+> within the VM. See:
+> [secureblue standard_malloc](https://secureblue.dev/faq#standard-malloc)
+
 1. Download a secureblue image:  
    <https://secureblue.dev/install>
 
