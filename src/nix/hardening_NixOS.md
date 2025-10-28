@@ -82,6 +82,30 @@ other applications. It's primarily for this reason that Silverblue, Kinoite, and
 Sericea images are recommended. COSMIC has plans to fix this.
 --[secureblue Images](https://secureblue.dev/images)
 
+For example, to disable Xwayland for sway on home-manager you would add:
+
+```nix
+wayland.windowManager.sway = {
+  enable = true;
+  extraConfig = ''
+    xwayland disable
+  '';
+}
+```
+
+- You may get an error saying you're only able to disable xwayland at boot,
+  restart your system and you'll be all set.
+
+You can explicitly disable `xdg-desktop-portal-wlr` with systemd in your
+`configuration.nix` like this:
+
+```nix
+# configuration.nix
+systemd.user.services."xdg-desktop-portal-wlr" = {
+  enable = false;  # Masks/stops the wlr service
+};
+```
+
 ## Minimal Installation with LUKS
 
 Begin with NixOS’s minimal installation image. This gives you a base system with

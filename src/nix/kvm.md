@@ -149,3 +149,13 @@ Hardening the NixOS guest creates an additional, independent layer of defense.
 
 - Containment within the VM: Hardening prevents an attacker from gaining full
   control or moving laterally within the VM.
+
+- It's still recommended to enable the `graphene-hardened` memory allocator on
+  the NixOS guest machine as well.
+
+```nix
+# configuration.nix
+environment.memoryAllocator.provider = "graphene-hardened";
+# OR for a more permissive and better performing allocator:
+# environment.memoryAllocator.provider = "graphene-hardened-light";
+```
