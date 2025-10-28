@@ -22,7 +22,7 @@
 flatpak install flathub org.fedoraproject.MediaWriter
 ```
 
-3. Flash the secureblue image & enable Secure Boot in UEFI before install.
+3. Flash the secureblue image & enable Secure Boot in UEFI **before** install.
 
 4. On first boot:
 
@@ -50,6 +50,8 @@ Secureblue recommends installing GUI apps with Flatpak, CLI apps with homebrew,
 and apps that require more system access to be layered with rpm-ostree. It takes
 some getting used to but is very stable.
 
+- [secureblue how to install software](https://secureblue.dev/faq#software)
+
 ---
 
 ## Create NixOS VM (via virt-manager)
@@ -66,7 +68,7 @@ some getting used to but is very stable.
 
 3. Ensure SELinux is enabled (the default for secureblue) with: `getenforce`
 
-4. Ensure sVirt is enabled with `run0 ps -eZ | grep qemu`.
+4. Ensure sVirt is enabled (the default) with `run0 ps -eZ | grep qemu`.
 
 ```bash
 run0 ps -eZ | grep qemu
