@@ -149,8 +149,8 @@ username:
      polkit.addRule(function(action, subject) {
        if (subject.user == "user-name") {
          if (action.id.indexOf("org.nixos") == 0) {
-           polkit.log("Auto reapprove for user-name");
-           return polkit.Result.YES;
+           polkit.log("Caching admin authentication for single NixOS operation");
+           return polkit.Result.AUTH_ADMIN_KEEP;
          }
        }
      });
@@ -162,6 +162,18 @@ nix.settings = {
   allowed-users = [ "@wheel" ];
   trusted-users = [ "root" "user-name" ];
 };
+```
+
+Create a zsh function for easy access:
+
+```nix
+# zsh.nix
+#...snip...
+initContent = ''
+  fr() {
+    run0 nixos-rebuild switch --flake "/home/$USER/flake#"$(hostname)
+  }
+'';
 ```
 
 Needless to say, this is less secure but much more convenient than entering your
