@@ -156,6 +156,91 @@ Use LUKS encryption to protect your data at rest, the following guide is a
 minimal disko encrypted installation:
 [Encrypted Install](https://saylesss88.github.io/installation/enc/enc_install.html)
 
+## Installing Software
+
+Most users don't fully understand that running any software without sandboxing
+gives it unrestricted access to their user data and system resources. There is a
+widespread lack of awareness that Linux apps generally run with the full
+permissions of the user. It's easy to overlook the fact that "trusted source"
+doesn't mean "safe to run uncontained".
+
+I suggest that you try using an editor from Flatpak so you can see and
+experience running an editor in a sandbox. It felt weird to me because I had
+gotten used to being able to see all my files with Yazi or do insecure
+customizations to my editor unfettered. With Flatseal, you can see which
+permissions the app ships with and adjust them accordingly.
+
+**nixpkgs-unstable Security Overview**
+
+- `nixpkgs-unstable` tracks the master branch of the Nixpkgs repo and is
+  constantly updated.
+
+- This branch gets security updates faster, patching vulnerabilities faster.
+
+- Since it's a rolling-release, packages are less thoroughly tested. This
+  increases the risk of new, undiscovered bugs or regressions. Some of which
+  could have security implications.
+
+- The packages are generally the most recent upstream versions, which is
+  important for security-sensitive software like browsers and kernels, as old
+  versions may have publicly known, unpatched vulnerabilities.
+
+- As the name states, `nixpkgs-unstable` is less stable and an update is more
+  likely to cause your system to fail to build due to breaking changes in Nix
+  expressions.
+
+---
+
+**Stable (e.g., `nixos-24.05`) Security Overview**
+
+Stable Nixpkgs channels correspond to point release (e.g., released every 6
+months) and are supported for a limited period (typically one month past the
+next release).
+
+- Stable channels generally only receive conservative bug and security fixes.
+  Major version bumps for features are typically avoided to maintain "stability
+  against deliberate changes", which means you won't get the latest upstream
+  features or general bug fixes.
+
+- While critical security updates are backported quickly, updates for less
+  critical packages may be slower or not happen at all if they require a
+  significant refactoring or version bump.
+
+- Stable channels are generally more stable, meaning updates are less likely to
+  introduce breaking changes to your configuration or system environment.
+
+- Many packages will be older versions. If a critical security vulnerability
+  requires a major upstream version update (which is often avoided in a stable
+  channel), the maintainers must backport the patch, a process which can
+  introduce its own set of risks and delays.
+
+**What should you use?**
+
+The primary security trade-off is between **patching speed for known
+vulnerabilities** and **stability/exposure to new bugs**:
+
+- Choose `unstable` if you prioritize getting the latest security fixes
+  (especially for end-user apps like browsers) as soon as they are available
+  upstream, accepting a higher risk of non-security-related system breakage or
+  new, undiscovered bugs.
+
+- Choose `stable` if you prioritize system predictability and stability, relying
+  on dedicated backports for critical vulnerabilities, while accepting that
+  non-critical security and bug fixes will be delayed or absent until the next
+  major release.
+
+A common hybrid approach is to use the `stable` channel as the base for the OS
+and selectively pin specific packages from `unstable` to ensure they receive
+rapid security updates.
+
+With flakes it's easy to add both `stable` and `unstable` as flake inputs and
+access each with some simple logic.
+
+For example:
+
+<details>
+<summary> Click to expand
+
 ## Impermanence
 
 Impermanence, especially when using a `tmpfs` as the root filesystem, provides
@@ -1860,3 +1945,5 @@ refer directly to its
 - [factorable.net (study of RSA and DSA crypto keys) FAQ](https://factorable.net/faq.html)
 
 - [The cr.yp.to blog Entropy](https://blog.cr.yp.to/20140205-entropy.html)
+
+- [NixOS Security wishlist](https://delroth.net/posts/nixos-security-wishlist/)

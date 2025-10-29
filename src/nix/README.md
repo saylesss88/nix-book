@@ -136,18 +136,36 @@ You will have to use `run0` to authenticate your daily user, for example:
 run0 nixos-rebuild switch --flake .
 ```
 
-You can still use `nh` and will be prompted for your admin password to
-authenticate. I have noticed when installing multiple packages, you will be
-prompted for your password multiple times. This is a security feature, and
-happens because `run0` does not inherit or cache the authentication credentials
-of the previous invocation, it prompts you for the password every time a new
-isolated privileged process is required.
+Since `run0` doesn't cache results and `nixos-rebuild` calls on Polkit 3 times
+so on every rebuild, you will be asked for your password 3 times which isn't
+ideal. I found the following workaround that will only ask for your password
+once.
 
-You can safely completely disable `sudo` now with:
+I added the following to my `configuration.nix`, replacing `user-name` with your
+username:
 
 ```nix
-security.sudo.enable = false;
+ security.polkit.extraConfig = ''
+     polkit.addRule(function(action, subject) {
+       if (subject.user == "user-name") {
+         if (action.id.indexOf("org.nixos") == 0) {
+           polkit.log("Auto reapprove for user-name");
+           return polkit.Result.YES;
+         }
+       }
+     });
+   '';
+
+# This will cause `nix.settings.allowed-users = [ "@wheel" ]; to fail`
+# Since the main user isn't in the wheel group you need to add `trusted-users`
+nix.settings = {
+  allowed-users = [ "@wheel" ];
+  trusted-users = [ "root" "user-name" ];
+};
 ```
+
+Needless to say, this is less secure but much more convenient than entering your
+password 3 times on every single rebuild.
 
 Without the `pam` settings for swaylock, it won't accept your password to log
 back in.
@@ -161,7 +179,8 @@ back in.
 
 I have personally had nothing but problems with `userborn` and find the docs
 extremely lacking, you need to read the source code to figure anything out which
-is ridiculous. Needless to say, I don't personally use this.
+is ridiculous. I don't personally use this but if you figure it out, more power
+to ya.
 
 To enable `userborn`, just add the following to your `configuration.nix` or
 equivalent:
@@ -194,6 +213,8 @@ with NixOS with `users.users`, change `"newuser"` to your desired username.
 
 Explicitly setting `uid = 1000;` is a best practice for compatibility and
 predictability.
+
+---
 
 You can also specify which users or groups are allowed to do anything with the
 Nix daemon and Nix package manager. The following setting will only allow
