@@ -224,31 +224,7 @@ predictability.
 
 ---
 
-You can also specify which users or groups are allowed to do anything with the
-Nix daemon and Nix package manager. The following setting will only allow
-members of the `wheel` group access to commands that require elevated
-privileges, such as installing or modifying system-wide packages:
-
-```nix
-# configuration.nix
-{ ... }:
-{
-  nix.settings.allowed-users = [ "@wheel" ];
-}
-```
-
-**OR** Only allow the `root` user:
-
-```nix
-# configuration.nix
-{ ... }:
-{
-  nix.settings.allowed-users = [ "root" ];
-}
-```
-
-This is more restrictive and much less convenient, think twice before going this
-restrictive.
+EDITED: 10-29-25 Removed `trusted-users` section
 
 **Only install, enable, and run what is needed**: Disable or uninstall
 unnecessary software and services to minimize potential vulnerabilities. Take
