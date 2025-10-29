@@ -88,6 +88,8 @@ rebuild the system.
 
 ---
 
+> NOTE: This reduces the attack surface but
+
 Create an admin user for administrative tasks and remove your daily user from
 the `wheel` group:
 
@@ -156,12 +158,6 @@ username:
      });
    '';
 
-# This will cause `nix.settings.allowed-users = [ "@wheel" ]; to fail`
-# Since the main user isn't in the wheel group you need to add `trusted-users`
-nix.settings = {
-  allowed-users = [ "@wheel" ];
-  trusted-users = [ "root" "user-name" ];
-};
 ```
 
 Create a zsh function for easy access:
