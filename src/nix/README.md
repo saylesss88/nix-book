@@ -88,7 +88,16 @@ rebuild the system.
 
 ---
 
-> NOTE: This reduces the attack surface but
+> NOTE: The point here is to avoid using a setuid binary (`sudo`), `run0` is a
+> wrapper over `systemd-run` which speaks over IPC to PID1 which is considered
+> safer than a setuid binary as they have a long history of vulnerabilities. We
+> separate our daily user from administration tasks and authenticate through our
+> admin account. This reduces the attack surface by removing sudo but is still
+> bigger than `doas`. The problem with `doas` is that it's unmaintained within
+> nixpkgs.
+
+I rebuild way too often to completely separate the accounts and allow no admin
+tasks for my daily user. That may be a better option for servers, etc.
 
 Create an admin user for administrative tasks and remove your daily user from
 the `wheel` group:

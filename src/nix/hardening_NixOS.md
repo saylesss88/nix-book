@@ -1823,6 +1823,17 @@ services.flatpak.enable = true;
       # flatpak remote-add --if-not-exists --subset=verified flathub-verified https://flathub.org/repo/flathub.flatpakrepo
     '';
   };
+xdg = {
+  portal = {
+    enable = true;
+    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+    config.common.default = [ "gtk" ];
+  };
+};
+# Disables screencopy
+systemd.user.services."xdg-desktop-portal-wlr" = {
+  enable = false;
+};
 ```
 
 - [Flathub Verified Apps](https://docs.flathub.org/docs/for-users/verification)
