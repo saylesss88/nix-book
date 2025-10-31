@@ -854,6 +854,39 @@ manager that runs as `PID 1` and starts the rest of the system.
 Because it launches and supervises almost all system services, hardening systemd
 means raising the baseline security of your entire system.
 
+Disable coredumps:
+
+```nix
+systemd.coredump.enable = false;
+# ➡️ Sets the kernel's resource limit (ulimit -c 0)
+  security.pam.loginLimits = [
+    {
+      domain = "*"; # Applies to all users/sessions
+      type = "-"; # Set both soft and hard limits
+      item = "core"; # The soft/hard limit item
+      value = "0";   # Core dumps size is limited to 0 (effectively disabled)
+    }
+  ];
+```
+
+Disabling coredumps helps save space and improves security/privacy because when
+a program fails, a coredump contains an exact copy of a programs running memory
+at the time of the crash. This can inadvertently expose sensitive data.
+
+If a program is handling private information when it crashes, the core dump file
+could contain:
+
+- Passwords: Stored in memory before being sent or hashed.
+
+- Encryption Keys: Used for securing network connections.
+
+- Personal Info: Chat messages, website forms, etc.
+
+It can give a minor performance upgrade and does reduce the attack surface. If a
+malicious program were to gain access to your system, one of the first things it
+might look for are core dump files to extract sensitive data. By disabling them,
+you eliminate this potential source of information leakage.
+
 `dbus-broker` is generally considered more secure and robust but isn't the
 default as of yet. To set `dbus-broker` as the default:
 
@@ -1619,6 +1652,8 @@ Further Reading:
 > PID 1 for privilege escalation, without relying on SUID (set user ID)
 > binaries. Also note that the Nixpkgs version of `doas` is unmaintained and
 > hasn't been updated in 4 years.
+
+- [Why run0](https://mastodon.social/@pid_eins/112353324518585654)
 
 - SUID = "Set User ID": When a binary has the SUID bit set, it runs with the
   privileges of the file's owner (often root). There is a long history of
