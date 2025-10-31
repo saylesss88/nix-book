@@ -715,6 +715,38 @@ Kernel modules for hardware devices are generally loaded automatically by
 
 ---
 
+**Hardening Modprobe**
+
+You can use both `extraModprobeConfig` & `blacklistedKernelModules` to disable
+different features. If you prefer, you can place these in the next section as
+well.
+
+```nix
+boot.extraModprobeConfig = ''
+     # firewire and thunderbolt
+    install firewire-core /bin/false
+    install firewire_core /bin/false
+    install firewire-ohci /bin/false
+    install firewire_ohci /bin/false
+    install firewire_sbp2 /bin/false
+    install firewire-sbp2 /bin/false
+    install firewire-net /bin/false
+    install thunderbolt /bin/false
+    install ohci1394 /bin/false
+    install sbp2 /bin/false
+    install dv1394 /bin/false
+    install raw1394 /bin/false
+    install video1394 /bin/false
+'';
+# OR
+#boot.blacklistedKernelModules = [
+#  "firewire-core"
+#  # ... snip ...
+#];
+```
+
+---
+
 **Blacklisting Kernel Parameters**
 
 Blacklisting unused kernel modules reduces the attack surface.
@@ -1585,7 +1617,8 @@ Further Reading:
 > with systemd. It's actually a symlink to the existing `systemd-run` tool. It
 > behaves like a secure `sudo` alternative: it spawns a transient service under
 > PID 1 for privilege escalation, without relying on SUID (set user ID)
-> binaries.
+> binaries. Also note that the Nixpkgs version of `doas` is unmaintained and
+> hasn't been updated in 4 years.
 
 - SUID = "Set User ID": When a binary has the SUID bit set, it runs with the
   privileges of the file's owner (often root). There is a long history of
