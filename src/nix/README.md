@@ -94,13 +94,27 @@ rebuild the system.
 > separate our daily user from administration tasks and authenticate through our
 > admin account. This reduces the attack surface by removing sudo but is still
 > bigger than `doas`. The problem with `doas` is that it's unmaintained within
-> nixpkgs.
+> nixpkgs and it's still a SUID binary.
+
+- [run0 explained by Lennart](https://mastodon.social/@pid_eins/112353324518585654)
+
+- [setuid Wikipedia](https://en.wikipedia.org/wiki/Setuid)
+
+- Using `run0` takes care of these classes of
+  [attacks](https://ruderich.org/simon/notes/su-sudo-from-root-tty-hijacking)
+
+- The following lists some of the downsides
+  [kicksecure vs secureblue](https://www.kicksecure.com/wiki/Dev/secureblue)
+
+`run0` is not a SUID, it asks the service manager to invoke a command or shell
+under the target user's UID. The target command is invoked in an isolated exec
+context, freshly forked off PID1 without inheriting any context from the client
 
 I rebuild way too often to completely separate the accounts and allow no admin
 tasks for my daily user. That may be a better option for servers, etc.
 
 Create an admin user for administrative tasks and remove your daily user from
-the `wheel` group:
+the `wheel` group, and disable `sudo`, `su`, and `pkexec` SUIDs:
 
 ```users.nix
 { config, pkgs, lib }:
@@ -108,7 +122,7 @@ the `wheel` group:
 users.users.admin = {
     isNormalUser = true;
     description  = "System administrator";
-    extraGroups  = [ "wheel" "libvirtd" ];   # wheel = sudo, libvirtd for VMs
+    extraGroups  = [ "wheel" ];   # wheel = sudo, libvirtd for VMs
     # run `mkpasswd --method=yescrypt` and replace "changeme" w/ the result
     initialHashedPassword = "changeme";           # change with `passwd admin` later
     openssh.authorizedKeys.keys = [
@@ -124,21 +138,33 @@ users.users.admin = {
     isNormalUser = true;
     description  = "Daily driver account";
     extraGroups  = lib.mkForce [ "networkmanager" "audio" "video" ]; # keep useful groups
+    initialHashedPassword = "changeme";
     # Remove `wheel` by *not* listing it (mkForce overrides any default)
   };
 
-security.polkit.enable = true;
-security.sudo.enable = false;
-# Required for swaylock re-login
-security.pam.services.swaylock = {
+security = {
+polkit.enable = true;
+# Disable sudo
+sudo.enable = false;
+# Disable pkexec
+polkit.package = pkgs.polkit.override {
+  withPkexec = false;
+};
+pam.services.swaylock = {
   text = ''
     auth include login
     account include login
     password include login
     session include login
   '';
- };
-}
+  };
+};
+# Disable su
+  environment.systemPackages = [
+    (pkgs.util-linux.override {
+      enableSu = false;
+    })
+  ];
 ```
 
 You will have to use `run0` to authenticate your daily user, for example:
