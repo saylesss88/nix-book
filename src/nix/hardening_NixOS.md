@@ -360,7 +360,55 @@ Never Disable:
 - `unix_chkpwd`: This is a core PAM helper to securely check user passwords
   against the root-readable `/etc/shadow`.
 
+---
+
 ### Capabilities
+
+One way to help get rid of setuid binaries is to replace them with capabilities.
+
+Capabilities provide a subset of what is available to root to a process. This
+breaks up root privileges into smaller units that can independently grant access
+to processes. This reduces the full set of privileges, decreasing the risk of
+exploitation.
+
+List the highest capability number for your kernel with:
+
+```bash
+cat /proc/sys/kernel/cap_last_cap
+# Output:
+40
+```
+
+List available Linux capabilities:
+
+```bash
+capsh --print
+```
+
+List processes:
+
+```bash
+ps
+# Example Output
+PID    TTY     TIME   CMD
+8063   pts/1    02     zsh
+```
+
+```bash
+cat /proc/8063/status | grep Cap
+# Output
+CapInh: 0000000800000000
+CapPrm: 0000000000000000
+CapEff: 0000000000000000
+CapBnd: 000001ffffffffff
+CapAmb: 0000000000000000
+```
+
+```bash
+capsh --decode=000001ffffffffff
+# Output
+0x000001ffffffffff=cap_chown,cap_dac_override,cap_dac_read_search,cap_fowner,cap_fsetid,cap_kill,cap_setgid,cap_setuid,cap_setpcap,cap_linux_immutable,cap_net_bind_service,cap_net_broadcast,cap_net_admin,cap_net_raw,cap_ipc_lock,cap_ipc_owner,cap_sys_module,cap_sys_rawio,cap_sys_chroot,cap_sys_ptrace,cap_sys_pacct,cap_sys_admin,cap_sys_boot,cap_sys_nice,cap_sys_resource,cap_sys_time,cap_sys_tty_config,cap_mknod,cap_lease,cap_audit_write,cap_audit_control,cap_setfcap,cap_mac_override,cap_mac_admin,cap_syslog,cap_wake_alarm,cap_block_suspend,cap_audit_read,cap_perfmon,cap_bpf,cap_checkpoint_restore
+```
 
 ```nix
 { lib, pkgs, config, ...}: let
