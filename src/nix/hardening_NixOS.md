@@ -400,7 +400,13 @@ security.wrappers = {
     #    capabilities = "cap_sys_admin+ep";
     #    source = findBin pkgs.fuse3 "fusermount3";
     #  };
-    };
+    # ssh-keysign = {
+    #   owner = "root";
+    #   group = "root";
+    #   capabilities = "cap_dac_read_search=ep";
+    #   source = findBin pkgs.openssh "ssh-keysign";
+    # };
+    # };
   };
   }
 ```
