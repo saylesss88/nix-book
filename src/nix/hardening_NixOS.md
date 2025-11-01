@@ -306,17 +306,14 @@ security = {
 polkit.enable = true;
 # Disable sudo
 sudo.enable = false;
-# Disable pkexec
+# Disable pkexec at the package level
 polkit.package = pkgs.polkit.override {
   withPkexec = false;
 };
 wrappers = {
-  pkexec = {
-    setuid = lib.mkForce false;
-  };
-  su = {
-    setuid = lib.mkForce false;
-  };
+# Completely disable SUID for su and pkexec
+  pkexec.setuid = lib.mkForce false;
+  su.setuid = lib.mkForce false;
 };
 pam.services.swaylock = {
   text = ''
@@ -327,7 +324,7 @@ pam.services.swaylock = {
   '';
   };
 };
-# Disable su
+# Disable SUID for su binary provided by util-linux
   environment.systemPackages = [
     (pkgs.util-linux.override {
       enableSu = false;
@@ -362,6 +359,78 @@ Never Disable:
 
 - `unix_chkpwd`: This is a core PAM helper to securely check user passwords
   against the root-readable `/etc/shadow`.
+
+### Capabilities
+
+```nix
+{ lib, pkgs, config, ...}: let
+  findBin = pkg: bin: "${pkg.out or pkg}/bin/${bin}";
+  in {
+security.wrappers = {
+      # 2. Convert Networking Tools from SUID to Capabilities
+
+      # ping needs CAP_NET_RAW to create raw network sockets
+      ping = {
+        owner = "root";
+        group = "root";
+        capabilities = "cap_net_raw+ep"; # e=Effective, p=Permitted
+        source = findBin pkgs.iputils "ping";
+      };
+
+      # mtr-packet needs CAP_NET_RAW as well
+      mtr = {
+        owner = "root";
+        group = "root";
+        capabilities = "cap_net_raw+ep";
+        source = findBin pkgs.mtr "mtr-packet";
+      };
+
+      # Commented out because I haven't tested these yet
+      # 3. Convert FUSE Mount Tools from SUID to Capabilities
+      # Allows non-root users to mount FUSE filesystems like AppImages
+    #  fusermount = {
+    #    owner = "root";
+    #    group = "root";
+    #    capabilities = "cap_sys_admin+ep"; # Required for FUSE mounts
+    #    source = findBin pkgs.fuse "fusermount";
+    #  };
+    #  fusermount3 = {
+    #    owner = "root";
+    #    group = "root";
+    #    capabilities = "cap_sys_admin+ep";
+    #    source = findBin pkgs.fuse3 "fusermount3";
+    #  };
+    };
+  };
+  }
+```
+
+`cap_net_raw`: Allows the program to use raw and unbuffered network sockets,
+which is what `ping` and `mtr-packet` need to send ICMP packets.
+
+`cap_sys_admin`: Grants a variety of system administration operations, including
+the ability to perform FUSE mounts. This is a powerful capability, but it's
+still more restrictive than full root SUID.
+
+- `+ep`: This is crucial. It stands for:
+  - `e` (Effective): The set of capabilities actually used by the process when
+    running.
+
+  - `p` (Permitted): The set of capabilities that can be enabled by the process.
+
+By using this approach, you are following the security principle of least
+privilege, significantly reducing the attack surface compared to traditional
+SUID binaries.
+
+> NOTE: When making changes to setuid, setgid or adding capabilities for
+> critical network tools like `mtr` and `ping` requires a full system rebuild
+> and relinking or numerous packages so it takes a while.
+
+- [security.wrappers](https://search.nixos.org/options?channel=unstable&show=security.wrappers&query=security.wrappers)
+
+- [Linux Audit capabilities 101](https://linux-audit.com/kernel/capabilities/linux-capabilities-101/)
+
+- [Kicksecure's take on capabilities](https://www.kicksecure.com/wiki/Dev/secureblue#capabilities)
 
 ---
 
