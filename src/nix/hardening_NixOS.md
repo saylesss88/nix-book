@@ -255,7 +255,7 @@ For example:
 
 - [setuid Wikipedia](https://en.wikipedia.org/wiki/Setuid)
 
-- Using `run0` takes care of these classes of
+- Using `run0` removes of these classes of
   [attacks](https://ruderich.org/simon/notes/su-sudo-from-root-tty-hijacking)
 
 - The following lists some of the downsides
@@ -269,7 +269,7 @@ I rebuild way too often to completely separate the accounts and allow no admin
 tasks for my daily user. That may be a better option for servers, etc.
 
 Create an admin user for administrative tasks and remove your daily user from
-the `wheel` group, and disable `sudo`, `su`, and `pkexec` SUIDs:
+the `wheel` group, and disable the `sudo`, `su`, and `pkexec` SUIDs:
 
 ```users.nix
 { config, pkgs, lib }:
@@ -332,8 +332,33 @@ pam.services.swaylock = {
 
 The `security.wrappers...` removes the setuid bit making the commands unusable
 removing the SUID vulnerabilities for `su` and `pkexec`. You can find the other
-SUID wrappers in `/run/wrappers/bin/`, such as `fusermount` and more. Do your
-research before disabling anything.
+SUID wrappers in `/run/wrappers/bin/`, such as `fusermount` and more.
+
+SUID's that can be disabled:
+
+- `umount`: Allows unprivileged users to unmount devices listed in your fstab.
+
+- `mount`: Same as above but for mounting.
+
+- `sg`: Executes a command as a different group.
+
+- `mtr-packet`: Used by mtr to create network sockets.
+
+- `fusermount`, `fusermount3`: Allows unprivileged users to mount FUSE
+  filesystems. Can be disabled if you don't use FUSE (e.g., Appimages, etc.)
+
+- `newuidmap`, `newgidmap`: Used for user namespace creation (Often used for
+  unprivileged containers). (Disable if you don't use unprivileged
+  containers/namespaces)
+
+---
+
+Never Disable:
+
+- `unix_chkpwd`: This is a core PAM helper to securely check user passwords
+  against the root-readable `/etc/shadow`.
+
+---
 
 You will have to use `run0` to authenticate your daily user, for example:
 
