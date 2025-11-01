@@ -2,7 +2,7 @@
 
 ## Why This Setup?
 
-- **Host**: `secureblue` = Fedora Atomic with **SELinux enforcing**, **sVirt**,
+- **Host** `secureblue` = Fedora Atomic with **SELinux enforcing**, **sVirt**,
   **Secure Boot**, and hardened defaults.
 
 - **Guest**: NixOS in a VM → full declarative power, zero risk to host.
@@ -16,10 +16,10 @@
 > NOTE: Secureblue enables the hardened_malloc by default which causes problems
 > for many browsers and will cause screen flashing with Firefox and others
 > within the VM. See:
-> [secureblue standard_malloc](https://secureblue.dev/faq#standard-malloc)
 
-1. Download a secureblue image:  
-   <https://secureblue.dev/install>
+- [secureblue standard_malloc](https://secureblue.dev/faq#standard-malloc)
+
+1. Download a [secureblue image](https://secureblue.dev/install)
 
 2. Use **Fedora Media Writer** (Flatpak):
 
@@ -28,6 +28,9 @@ flatpak install flathub org.fedoraproject.MediaWriter
 ```
 
 3. Flash the secureblue image & enable Secure Boot in UEFI **before** install.
+   This is now possible with Fedora, when you boot into Fedora Media Writer (not
+   Ventoy or Rufus), you will be allowed to enroll the secure boot key with
+   secure boot pre-enabled.
 
 4. On first boot:
 
@@ -37,7 +40,8 @@ ujust enroll-secureblue-secure-boot-key
 
 - Reboot -> Enroll key in MOK manager with password: `secureblue`
 
-5. Post-install hardening: <https://secureblue.dev/post-install>
+5. Post-install hardening See:
+   [post-install](https://secureblue.dev/post-install)
 
 6. Install virtualization stack:
 
@@ -61,7 +65,7 @@ some getting used to but is very stable.
 
 ## Create NixOS VM (via virt-manager)
 
-1. Download: NixOS Graphical ISO (GNOME): <https://nixos.org/download/>
+1. Download: [NixOS Graphical ISO](https://nixos.org/download/)
 
 2. Open `virt-manager` -> File -> New Virtual Machine
 
@@ -88,6 +92,26 @@ system_u:system_r:svirt_t:s0:c383,c416 14793 ?   00:01:37 qemu-system-x86
 - Create an admin user
 
 - Optionally skip desktop -> install your own after first boot.
+
+The attack surface is reduced significantly when running NixOS within a hardened
+hosts VM. The VM operates on virtualized hardware, which is a powerful form of
+attack surface reduction.
+
+Devices like your host's Bluetooth adapter, Wi-Fi card, microphone, webcam, and
+USB ports are not directly exposed to the guest operating system. The VM only
+sees virtual versions of these devices. If an exploit targets a vulnerability in
+the Bluetooth stack within the VM, it compromises the VM environment, but it
+cannot typically reach and exploit the physical Bluetooth hardware on the host.
+
+You can also choose not to pass through certain devices, like Bluetooth or
+webcam to the VM at all, effectively disabling that attack vector. Since your
+host likely already has these hardened features you may not need the additional
+functionality within the VM.
+
+If something breaks, you have an option to rollback to the previous generation
+with `rpm-ostree rollback`. The previous generation will be applied on next
+reboot. You can also just reboot and choose the previous generation through the
+grub menu, this way it is temporary and will revert back on next reboot.
 
 ---
 
@@ -159,3 +183,13 @@ environment.memoryAllocator.provider = "graphene-hardened";
 # OR for a more permissive and better performing allocator:
 # environment.memoryAllocator.provider = "graphene-hardened-light";
 ```
+
+I have been able to recover from quite a few missteps with Secureblue. I run a
+mini PC and attempted running `ujust update-firmware`, some systems allow you to
+update the firmware of a booted system. On reboot I got a message "Something
+went seriously wrong MOK is full", it then forced a shutdown. I was familiar
+with resetting the NVRAM by disassembling the PC and moving the red jumper from
+prongs 1 & 2 to prongs 2 & 3 with the power off for 10 seconds. I then moved the
+jumper back to the default position and rebooted. The PC sounds like it's
+revving up a few times and does a few reboots and allowed me to sign right back
+in and re-enroll the secure boot key.
