@@ -236,12 +236,12 @@ rapid security updates.
 With flakes it's easy to add both `stable` and `unstable` as flake inputs and
 access each with some simple logic.
 
-For example:
-
-<details>
-<summary> Click to expand
-
 ## Users and SUID Binaries
+
+This is more advanced hardening that can cause breakage and may not be for
+everyone. Always do your own research and weigh the pros and cons in relation to
+your workflow and threat model. I used secureblue as a model for implementing
+these capabilities.
 
 > NOTE: The point here is to avoid using a setuid binary (`sudo`), `run0` is a
 > wrapper over `systemd-run` which speaks over IPC to PID1 which is considered
@@ -282,7 +282,7 @@ the `wheel` group, and disable the `sudo`, `su`, and `pkexec` SUIDs:
 users.users.admin = {
     isNormalUser = true;
     description  = "System administrator";
-    extraGroups  = [ "wheel" ];   # wheel = sudo, libvirtd for VMs
+    extraGroups  = [ "wheel" ];   # wheel = sudo
     # run `mkpasswd --method=yescrypt` and replace "changeme" w/ the result
     initialHashedPassword = "changeme";           # change with `passwd admin` later
     openssh.authorizedKeys.keys = [
@@ -306,15 +306,12 @@ security = {
 polkit.enable = true;
 # Disable sudo
 sudo.enable = false;
-# Disable pkexec at the package level
-polkit.package = pkgs.polkit.override {
-  withPkexec = false;
-};
 wrappers = {
 # Completely disable SUID for su and pkexec
   pkexec.setuid = lib.mkForce false;
   su.setuid = lib.mkForce false;
 };
+# Or hyprlock, required for swaylock to accept your password
 pam.services.swaylock = {
   text = ''
     auth include login
@@ -324,12 +321,6 @@ pam.services.swaylock = {
   '';
   };
 };
-# Disable SUID for su binary provided by util-linux
-  environment.systemPackages = [
-    (pkgs.util-linux.override {
-      enableSu = false;
-    })
-  ];
 ```
 
 The `security.wrappers...` removes the setuid bit making the commands unusable
@@ -363,6 +354,10 @@ Never Disable:
 ---
 
 ### Capabilities
+
+<details>
+
+<summary> ✔️ Click to expand capabilities examples </summary>
 
 One way to help get rid of setuid binaries is to replace them with capabilities.
 
@@ -485,6 +480,8 @@ SUID binaries.
 - [Linux Audit capabilities 101](https://linux-audit.com/kernel/capabilities/linux-capabilities-101/)
 
 - [Kicksecure's take on capabilities](https://www.kicksecure.com/wiki/Dev/secureblue#capabilities)
+
+</details>
 
 ---
 
