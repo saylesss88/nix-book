@@ -238,11 +238,6 @@ access each with some simple logic.
 
 ## Users and SUID Binaries
 
-This is more advanced hardening that can cause breakage and may not be for
-everyone. Always do your own research and weigh the pros and cons in relation to
-your workflow and threat model. I used secureblue as a model for implementing
-these capabilities.
-
 > NOTE: The point here is to avoid using a setuid binary (`sudo`), `run0` is a
 > wrapper over `systemd-run` which speaks over IPC to PID1 which is considered
 > safer than a setuid binary as they have a long history of vulnerabilities. We
@@ -307,9 +302,17 @@ polkit.enable = true;
 # Disable sudo
 sudo.enable = false;
 wrappers = {
-# Completely disable SUID for su and pkexec
-  pkexec.setuid = lib.mkForce false;
-  su.setuid = lib.mkForce false;
+    su = {};
+    sudo = {};
+    sudoedit = {};
+    sg = {};
+    fusermount = {};
+    fusermount3 = {};
+    mount = {};
+    pkexec = {};
+    newgrp = {};
+    newgidmap = {};
+    newuidmap = {};
 };
 # Or hyprlock, required for swaylock to accept your password
 pam.services.swaylock = {
@@ -360,11 +363,44 @@ Never Disable:
 <summary> ✔️ Click to expand capabilities examples </summary>
 
 One way to help get rid of setuid binaries is to replace them with capabilities.
+I personally only remove the SUID bit and don't try to replace with capabilities
+as of now. You can still use the commands from `security.wrappers` such as
+`run0 su -`.
 
 Capabilities provide a subset of what is available to root to a process. This
 breaks up root privileges into smaller units that can independently grant access
 to processes. This reduces the full set of privileges, decreasing the risk of
 exploitation.
+
+(This is just an example):
+
+```nix
+{
+  # a setuid root program
+  doas =
+    { setuid = true;
+      owner = "root";
+      group = "root";
+      source = "${pkgs.doas}/bin/doas";
+    };
+
+  # a setgid program
+  locate =
+    { setgid = true;
+      owner = "root";
+      group = "mlocate";
+      source = "${pkgs.locate}/bin/locate";
+    };
+
+  # a program with the CAP_NET_RAW capability
+  ping =
+    { owner = "root";
+      group = "root";
+      capabilities = "cap_net_raw+ep";
+      source = "${pkgs.iputils.out}/bin/ping";
+    };
+}
+```
 
 List the highest capability number for your kernel with:
 
@@ -405,55 +441,6 @@ capsh --decode=000001ffffffffff
 0x000001ffffffffff=cap_chown,cap_dac_override,cap_dac_read_search,cap_fowner,cap_fsetid,cap_kill,cap_setgid,cap_setuid,cap_setpcap,cap_linux_immutable,cap_net_bind_service,cap_net_broadcast,cap_net_admin,cap_net_raw,cap_ipc_lock,cap_ipc_owner,cap_sys_module,cap_sys_rawio,cap_sys_chroot,cap_sys_ptrace,cap_sys_pacct,cap_sys_admin,cap_sys_boot,cap_sys_nice,cap_sys_resource,cap_sys_time,cap_sys_tty_config,cap_mknod,cap_lease,cap_audit_write,cap_audit_control,cap_setfcap,cap_mac_override,cap_mac_admin,cap_syslog,cap_wake_alarm,cap_block_suspend,cap_audit_read,cap_perfmon,cap_bpf,cap_checkpoint_restore
 ```
 
-```nix
-{ lib, pkgs, config, ...}: let
-  findBin = pkg: bin: "${pkg.out or pkg}/bin/${bin}";
-  in {
-security.wrappers = {
-      # 2. Convert Networking Tools from SUID to Capabilities
-
-      # ping needs CAP_NET_RAW to create raw network sockets
-      ping = {
-        owner = "root";
-        group = "root";
-        capabilities = "cap_net_raw+ep"; # e=Effective, p=Permitted
-        source = findBin pkgs.iputils "ping";
-      };
-
-      # mtr-packet needs CAP_NET_RAW as well
-      mtr = {
-        owner = "root";
-        group = "root";
-        capabilities = "cap_net_raw+ep";
-        source = findBin pkgs.mtr "mtr-packet";
-      };
-
-      # Commented out because I haven't tested these yet
-      # 3. Convert FUSE Mount Tools from SUID to Capabilities
-      # Allows non-root users to mount FUSE filesystems like AppImages
-    #  fusermount = {
-    #    owner = "root";
-    #    group = "root";
-    #    capabilities = "cap_sys_admin+ep"; # Required for FUSE mounts
-    #    source = findBin pkgs.fuse "fusermount";
-    #  };
-    #  fusermount3 = {
-    #    owner = "root";
-    #    group = "root";
-    #    capabilities = "cap_sys_admin+ep";
-    #    source = findBin pkgs.fuse3 "fusermount3";
-    #  };
-    # ssh-keysign = {
-    #   owner = "root";
-    #   group = "root";
-    #   capabilities = "cap_dac_read_search=ep";
-    #   source = findBin pkgs.openssh "ssh-keysign";
-    # };
-    # };
-  };
-  }
-```
-
 `cap_net_raw`: Allows the program to use raw and unbuffered network sockets,
 which is what `ping` and `mtr-packet` need to send ICMP packets.
 
@@ -470,10 +457,6 @@ still more restrictive than full root SUID.
 By using this approach, you are following the security principle of least
 privilege, significantly reducing the attack surface compared to traditional
 SUID binaries.
-
-> NOTE: When making changes to setuid, setgid or adding capabilities for
-> critical network tools like `mtr` and `ping` requires a full system rebuild
-> and relinking or numerous packages so it takes a while.
 
 - [security.wrappers](https://search.nixos.org/options?channel=unstable&show=security.wrappers&query=security.wrappers)
 
@@ -553,7 +536,7 @@ Example creating a user:
 This is just an example, since we manage our users declaratively the user
 created would be discarded on the next rebuild because of the
 `users.mutableUsers = false;` setting. You could of course change this to `true`
-to manage your users imperetively but I don't recommend it.
+to manage your users imperatively but I don't recommend it.
 
 ---
 
@@ -900,7 +883,9 @@ Also see the
     # 4 makes it so a user can only use the secure attention key. A value of 0 would disable completely
     "kernel.sysrq" = 4;
     # disable unprivileged user namespaces, Note: Docker, NH, and other apps may need this
-    # "kernel.unprivileged_userns_clone" = 0; # commented out because it makes NH and other programs fail
+    # "kernel.unprivileged_userns_clone" = 0; # Set to 1 because it makes NH and other programs fail
+    # This should be set to 0 if you don't rely on flatpak, NH, Docker, etc.
+    "kernel.unprivileged_userns_clone" = 1;
     # restrict all usage of performance events to the CAP_PERFMON capability
     "kernel.perf_event_paranoid" = 3;
 
@@ -940,11 +925,6 @@ Also see the
     ## TCP hardening
     # Prevent bogus ICMP errors from filling up logs.
     "net.ipv4.icmp_ignore_bogus_error_responses" = 1;
-
-    # Disable TCP SACK
-    "net.ipv4.tcp_sack" = 0;
-    "net.ipv4.tcp_dsack" = 0;
-    "net.ipv4.tcp_fack" = 0;
 
     # Userspace
     # restrict usage of ptrace
