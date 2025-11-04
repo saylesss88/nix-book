@@ -162,13 +162,7 @@ Most users don't fully understand that running any software without sandboxing
 gives it unrestricted access to their user data and system resources. There is a
 widespread lack of awareness that Linux apps generally run with the full
 permissions of the user. It's easy to overlook the fact that "trusted source"
-doesn't mean "safe to run uncontained".
-
-I suggest that you try using an editor from Flatpak so you can see and
-experience running an editor in a sandbox. It felt weird to me because I had
-gotten used to being able to see all my files with Yazi or do insecure
-customizations to my editor unfettered. With Flatseal, you can see which
-permissions the app ships with and adjust them accordingly.
+doesn't mean "safe to run uncontained". --summarized from kicksecure docs
 
 **nixpkgs-unstable Security Overview**
 
@@ -188,6 +182,9 @@ permissions the app ships with and adjust them accordingly.
 - As the name states, `nixpkgs-unstable` is less stable and an update is more
   likely to cause your system to fail to build due to breaking changes in Nix
   expressions.
+
+- I personally use unstable for everything, but I don't mind having to fix
+  issues that arise.
 
 ---
 
@@ -236,6 +233,8 @@ rapid security updates.
 With flakes it's easy to add both `stable` and `unstable` as flake inputs and
 access each with some simple logic.
 
+---
+
 ## Users and SUID Binaries
 
 > NOTE: The point here is to avoid using a setuid binary (`sudo`), `run0` is a
@@ -265,8 +264,38 @@ access each with some simple logic.
 under the target user's UID. The target command is invoked in an isolated exec
 context, freshly forked off PID1 without inheriting any context from the client
 
-I rebuild way too often to completely separate the accounts and allow no admin
-tasks for my daily user. That may be a better option for servers, etc.
+The core danger of **setuid** (Set User ID) lies in its ability to allow a
+low-privilege user to execute a program with the **permissions of the file's
+owner**, which is most often the powerful **root user**.
+
+### 💥 The Danger of setuid
+
+For granting limited, controlled privilege escalation to apps, the primary
+choices are broadly between traditional **setuid/setgid permissions** and more
+modern **Linux capabilities**. [Jump to Capabilities](#capabilities)
+
+- [Understanding setuid/setgid](https://www.cbtnuggets.com/blog/technology/system-admin/linux-file-permissions-understanding-setuid-setgid-and-the-sticky-bit)
+
+The `setuid` permission is dangerous because it creates a privilege escalation
+pathway that can be exploited for malicious purposes.
+
+- Temporary Root Access: When a file has the setuid bit set and is owned by
+  `root`, any user who executes that program instantly and temporarily gains the
+  full power of the root user while the program runs.
+
+- If a setuid program (such as `passwd`, or `sudo`) contain a security flaw,
+  such as a buffer overflow (Common in C) or improper input validation, an
+  attacker can exploit the flaw.
+
+- Since the program is running with root privileges, the attacker can execute
+  shell code or commands with root access, completely compromising the entire
+  system.
+
+Normally the root user (UID 0) gets unrestricted access to almost everything on
+the entire system.
+
+I rebuild/update way too often to completely separate the accounts and allow no
+admin tasks for my daily user. That may be a better option for servers, etc.
 
 Create an admin user for administrative tasks and remove your daily user from
 the `wheel` group, and disable the `sudo`, `su`, and `pkexec` SUIDs:
@@ -374,6 +403,9 @@ exploitation.
 
 (This is just an example):
 
+<details>
+<summary> ✔️ Click to Expand Capability example </summary>
+
 ```nix
 {
   # a setuid root program
@@ -463,6 +495,8 @@ SUID binaries.
 - [Linux Audit capabilities 101](https://linux-audit.com/kernel/capabilities/linux-capabilities-101/)
 
 - [Kicksecure's take on capabilities](https://www.kicksecure.com/wiki/Dev/secureblue#capabilities)
+
+</details>
 
 </details>
 
