@@ -7,6 +7,8 @@
 
 </details>
 
+![trees3](images/trees3.cleaned.png)
+
 <!-- <img src="images/gruv15.png" width="800" height="600"> -->
 
 ## Nix Flakes Explained

@@ -9,6 +9,8 @@
 
 <!-- <img src="images/nixLogo.png" width="400" height="300"> -->
 
+![trees2](images/trees2.cleaned.png)
+
 ## Understanding Nix Functions
 
 **Functions** are the building blocks of Nix, appearing everywhere in Nix

@@ -11,6 +11,8 @@
 
 <!-- ![gruv3](images/gruv3.png) -->
 
+![gruv4](images/gruv4.png)
+
 **TL;DR**: In this chapter, we will break down the Nix module system used by
 both NixOS and Home-Manager. We will discuss using home-manager as a module and
 the flexibility that modules give us. We will touch on options and break down
