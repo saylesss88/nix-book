@@ -9,6 +9,8 @@
 
 <!-- ![gruv13](images/gruv13.png) -->
 
+![trees](images/trees1.cleaned.png)
+
 ## Intro
 
 Welcome to _nix-book_, an introductory book about Nix. This book leans more
