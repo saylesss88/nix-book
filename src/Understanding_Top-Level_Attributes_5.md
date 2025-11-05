@@ -7,6 +7,8 @@
 
 </details>
 
+![coding1](images/coding1.png)
+
 <!-- <img src="images/gruv9.png" width="800" height="600"> -->
 
 ## Understanding Top-Level Attributes in NixOS Modules

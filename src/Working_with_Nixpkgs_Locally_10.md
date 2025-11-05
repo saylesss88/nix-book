@@ -7,6 +7,8 @@
 
 </details>
 
+![server_rack](images/server_rack.cleaned.png)
+
 <!-- ![gruv18](images/gruv18.png) -->
 
 ## Working with Nixpkgs Locally: Benefits and Best Practices

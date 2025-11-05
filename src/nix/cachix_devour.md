@@ -1,5 +1,12 @@
 # Cachix and the devour-flake
 
+<details>
+<summary> Click to Expand Table of Contents</summary>
+
+<!-- toc -->
+
+</details>
+
 Using devour-flake to Cache All Your Flake Outputs to Cachix
 
 When working with Nix flakes, it’s common to have many outputs—packages, apps,

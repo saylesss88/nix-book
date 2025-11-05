@@ -7,6 +7,8 @@
 
 </details>
 
+![coding2](images/coding2.png)
+
 <!-- ![gruv1](images/gruv1.png) -->
 
 ## Package Definitions Explained

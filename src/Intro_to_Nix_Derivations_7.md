@@ -9,7 +9,7 @@
 
 ## Introduction to Nix Derivations
 
-<!-- ![gruv10](images/gruv10.png) -->
+![gruv10](images/gruv10.png)
 
 Nix's build instructions, known as **derivations**, are defined using the Nix
 Language. These derivations can describe anything from individual software

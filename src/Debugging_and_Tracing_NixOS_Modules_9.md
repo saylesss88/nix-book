@@ -9,6 +9,8 @@
 
 ## Debugging and Tracing NixOS Modules
 
+![404](images/coding4.png)
+
 <!-- ![gruv17](images/gruv17.png) -->
 
 - Other related post if you haven't read my previous post on modules, that may

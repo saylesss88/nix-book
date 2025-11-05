@@ -7,7 +7,7 @@
 
 </details>
 
-<!-- ![guy fawks hacker](../images/guy_fawks.png) -->
+![guy fawks hacker](../images/guy_fawks.png)
 
 Securing your NixOS system begins with a philosophy of minimalism, explicit
 configuration, and proactive control.

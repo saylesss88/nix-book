@@ -1,5 +1,14 @@
 # Running NixOS in a VM with Maximum Isolation (Beginner Guide)
 
+<details>
+<summary> Click to Expand Table of Contents</summary>
+
+<!-- toc -->
+
+</details>
+
+![sp5](images/steampunk5.cleaned.png)
+
 ## Why This Setup?
 
 - **Host** `secureblue` = Fedora Atomic with **SELinux enforcing**, **sVirt**,

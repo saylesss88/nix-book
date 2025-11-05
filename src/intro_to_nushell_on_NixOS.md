@@ -1,8 +1,13 @@
 # Chapter 12
 
+<details>
+<summary> ✔️ Click to Expand Table of Contents</summary>
+
 <!-- toc -->
 
-<!-- ![Nu](images/nu.png) -->
+</details>
+
+![Nu](images/nu.png)
 
 ## Intro to Nushell on NixOS
 

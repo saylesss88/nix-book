@@ -11,7 +11,7 @@
 
 <!-- ![gruv3](images/gruv3.png) -->
 
-<!-- <img src="images/gruv15.png" width="800" height="600"> -->
+![buildings](images/buildings1.png)
 
 **TL;DR**: In this chapter, we will break down the Nix module system used by
 both NixOS and Home-Manager. We will discuss using home-manager as a module and

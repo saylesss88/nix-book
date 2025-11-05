@@ -1,5 +1,14 @@
 # NixOS Containers
 
+<details>
+<summary> ✔️ Click to Expand Table of Contents</summary>
+
+<!-- toc -->
+
+</details>
+
+![boxes](images/boxes.cleaned.png)
+
 NixOS containers are lightweight `systemd-nspawn` containers managed
 declaratively through your NixOS configuration. They allow you to run separate,
 minimal NixOS instances on the same machine, each with its own services,

@@ -1,5 +1,12 @@
 # Hardening README
 
+<details>
+<summary> ✔️ Click to Expand Table of Contents</summary>
+
+<!-- toc -->
+
+</details>
+
 📌 **How to Use This Guide**
 
 **Read warnings**: Advanced hardening can break compatibility or cause data

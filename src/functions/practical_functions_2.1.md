@@ -8,6 +8,8 @@ in your project directory. Section is collapsed to focus on functions:
 
 </summary>
 
+![coding6](images/coding6.png)
+
 1. [graphviz](https://gitlab.com/api/v4/projects/4207231/packages/generic/graphviz-releases/2.49.3/graphviz-2.49.3.tar.gz)
 
 2. [hello](https://ftp.gnu.org/gnu/hello/hello-2.12.1.tar.gz)
@@ -140,12 +142,12 @@ nix-build -A hello
 nix-build -A graphviz
 ```
 
-As you can see both derivations are dependendent on `nixpkgs` which they **both**
-import directly. To centralize our dependencies and avoid redundant imports,
-we'll refactor our individual package definitions (`hello.nix`, `graphviz.nix`)
-into functions. Our `default.nix` will then be responsible for setting up the
-common inputs (like `pkgs` and `mkDerivation`) and passing them as arguments when
-it imports and calls these package functions.
+As you can see both derivations are dependendent on `nixpkgs` which they
+**both** import directly. To centralize our dependencies and avoid redundant
+imports, we'll refactor our individual package definitions (`hello.nix`,
+`graphviz.nix`) into functions. Our `default.nix` will then be responsible for
+setting up the common inputs (like `pkgs` and `mkDerivation`) and passing them
+as arguments when it imports and calls these package functions.
 
 Here is what our `default.nix` will look like:
 
@@ -198,8 +200,8 @@ mkDerivation {
 ```
 
 Now our `graphviz` attribute expects `graphviz.nix` to be a function that takes
-the arguments listed in the above `default.nix`, here's what `graphviz.nix`
-will look like as a function:
+the arguments listed in the above `default.nix`, here's what `graphviz.nix` will
+look like as a function:
 
 ```nix
 # graphviz.nix
@@ -224,10 +226,10 @@ mkDerivation {
 }
 ```
 
-We factorized the import of `nixpkgs` and `mkDerivation`, and also added a variant
-of `graphviz` with gd support disabled. The result is that both `hello.nix` and
-`graphviz.nix` are independent of the repository and customizable by passing
-specific inputs.
+We factorized the import of `nixpkgs` and `mkDerivation`, and also added a
+variant of `graphviz` with gd support disabled. The result is that both
+`hello.nix` and `graphviz.nix` are independent of the repository and
+customizable by passing specific inputs.
 
 Now, we can build the package with `gd` support disabled with the `graphvizCore`
 attribute:
