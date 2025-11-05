@@ -2709,3 +2709,5 @@ refer directly to its
 - [The cr.yp.to blog Entropy](https://blog.cr.yp.to/20140205-entropy.html)
 
 - [NixOS Security wishlist](https://delroth.net/posts/nixos-security-wishlist/)
+
+- [NixOS STIG](https://stigviewer.com/stigs/anduril_nixos)
