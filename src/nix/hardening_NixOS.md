@@ -2711,3 +2711,14 @@ refer directly to its
 - [NixOS Security wishlist](https://delroth.net/posts/nixos-security-wishlist/)
 
 - [NixOS STIG](https://stigviewer.com/stigs/anduril_nixos)
+
+neal.codes vulnerability scan script:
+
+```bash
+nix-shell -p grype sbomnix --run '
+  sbomnix /run/current-system --csv /dev/null --spdx /dev/null --cdx sbom.cdx.json;
+  grype sbom.cdx.json
+'
+```
+
+- [neal.codes nixos-stig-anduril](https://github.com/nealfennimore/nixos-stig-anduril)
