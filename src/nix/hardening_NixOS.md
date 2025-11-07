@@ -2134,7 +2134,9 @@ algorithms, and best practices:
           LogLevel = "VERBOSE";
           PermitRootLogin = "no";
           KexAlgorithms = [
-            # Key Exchange Algorithms in priority order
+            # Post-Quantum: https://www.openssh.org/pq.html
+            "mlkem768x25519-sha256"
+            "sntrup761x25519-sha512"
             "curve25519-sha256@libssh.org"
             "ecdh-sha2-nistp521"
             "ecdh-sha2-nistp384"
@@ -2142,12 +2144,12 @@ algorithms, and best practices:
             "diffie-hellman-group-exchange-sha256"
           ];
           Ciphers = [
+            "aes256-gcm@openssh.com"
+            "aes128-gcm@openssh.com"
             # stream cipher alternative to aes256, proven to be resilient
             # Very fast on basically anything
             "chacha20-poly1305@openssh.com"
             # industry standard, fast if you have AES-NI hardware
-            "aes256-gcm@openssh.com"
-            "aes128-gcm@openssh.com"
             "aes256-ctr"
             "aes192-ctr"
             "aes128-ctr"
