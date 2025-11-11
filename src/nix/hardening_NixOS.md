@@ -677,6 +677,10 @@ Practical Lanzaboote Secure Boot setup for NixOS:
 
 ### The Kernel
 
+The Kernel Self Protection Project:
+
+- [KSPP Recommended_Settings](https://kspp.github.io/Recommended_Settings)
+
 Given the kernel's central role, it's a frequent target for malicious actors,
 making robust hardening essential.
 
@@ -766,6 +770,7 @@ is aliased to `linux_default.kernel`.
 
 You can find the latest available hardened kernel packages by searching
 [pkgs/top-level/linux-kernels.nix](https://github.com/NixOS/nixpkgs/blob/master/pkgs/top-level/linux-kernels.nix).
+
 It is recommended to use `linux_hardened` without specifying a version, such as:
 
 ```nix
@@ -2089,7 +2094,7 @@ The following are some recommendations from Mozilla on OpenSSH:
 - [Mozilla OpenSSH guidelines](https://infosec.mozilla.org/guidelines/openssh.html)
 
 The following OpenSSH setup is based on the above guidelines with strong
-algorithms, and best practices:
+algorithms, and best practices: (EDITED: 10-07-25 to follow best-practices)
 
 ```nix
 {config, ...}: {
