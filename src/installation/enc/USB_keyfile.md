@@ -48,6 +48,15 @@ sudo cryptsetup luksAddKey /dev/disk/by-partlabel/luks /root/usb-luks.key
 > physical security of your machine is a concern. This is still at a stage where
 > you can expect rough edges and workarounds.
 
+> ⚠️ WARNING: Do NOT use TPM auto-unlock if your CPU is vulnerable to faulTPM!
+> All AMD Zen2 and Zen3 Processors are known to be affected with AMD Zen1 likely
+> also affected and Zen4 unknown! Misconfigurations are also common, do your own
+> research!
+
+- [faulTPM:Exposing AMD fTPMs' Deepest Secrets](https://ieeexplore.ieee.org/document/10190531)
+
+- [AMD faulTPM Exploit Targets Zen 2 and Zen 3 Processors](https://www.techpowerup.com/308124/amd-faultpm-exploit-targets-zen-2-and-zen-3-processors)
+
 You can add an additional layer by encrypting user data, such as individual home
 folders, with a different mechanism, such as `fscrypt-experimental` or
 `systemd-homed`. Or, you can use a TPM pin to benefit from the security
