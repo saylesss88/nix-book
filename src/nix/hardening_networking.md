@@ -337,21 +337,36 @@ features Tor created along with a VPN if you so choose.
 
 **LibreWolf** is an open-source fork of Firefox with a strong focus on privacy,
 security, and user freedom. LibreWolf enables always HTTPS, includes
-uBlockOrigin, and only includes privacy focused search engines by default such
-as:
+uBlockOrigin, and only includes privacy focused search engines by default.
+
+### Metasearch Engines
+
+**Startpage**: Advertised as the world's most private search engine. "Startpage
+delivers Google search results via their proprietary personal data protection
+technology."
+
+- [Startpage](https://www.startpage.com/)
+
+- To add Startpage as a search engine, add
+  `https://www.startpage.com/sp/search?query=%s`.
 
 **SearXNG** an open-source, privacy-respecting metasearch engine that aggregates
-results from various search services, such as Google, DuckDuckGo, etc without
+results from various search services, such as Google, DuckDuckGo, etc. without
 tracking you or profiling your searches. You can add SearXNG to firefox by going
 to `about:preferences#search` and at the bottom click `Add`, URL will be
 `https://searx.be/search?q=%s`.
+
+> ❗️ NOTE: SearXNGs google results are not working as of 11-17-25 and haven't
+> for a while now leading to bad results being returned for most instances. It's
+> my understanding this is because Google is actively blocking automated
+> requests from SearXNG. Devs sometimes publish patches or workarounds, but
+> these are quickly blocked when Google changes their back-end.
 
 > ❗️ NOTE: The above searx is the default and doesn't give many relevant
 > results. To get relevant results find a
 > [public instance](https://searx.space/) with a good rating from your area and
 > add the `search?q=%s` to the end of it. For example, I'm using
-> `https://priv.au/search?q=%s`. This gives better results than DDG in my
-> opinion.
+> `https://priv.au/search?q=%s`.
 
 Searx is a bit different, you can choose which search engine you want for your
 current search with `!ddg search term` to use duckduckgo for example.
@@ -718,11 +733,13 @@ compromise your privacy.
 - [Mullvad VPN](https://wiki.nixos.org/wiki/Mullvad_VPN) Mullvad VPN uses
   WireGuard under the hood and only works if `systemd-resolvd` is enabled.
 
-- [WireGuard VPN](https://wiki.nixos.org/wiki/WireGuard)
+- [WireGuard VPN](https://wiki.nixos.org/wiki/WireGuard), WireGuard is a
+  protocol, but also a VPN provider on NixOS.
 
 - [Tailscale](https://wiki.nixos.org/wiki/Tailscale)
 
-- [OpenVPN](https://wiki.nixos.org/wiki/OpenVPN)
+- [OpenVPN](https://wiki.nixos.org/wiki/OpenVPN), OpenVPN is both a protocol and
+  full-featured VPN provider on NixOS.
 
 ### Setting up Tailscale
 
@@ -986,6 +1003,17 @@ from connecting to unwanted or harmful domains.
 public DNSCrypt or DoH servers.
 
 ## MAC Randomization
+
+All network cards have a unique identifier called a MAC address. They're stored
+in hardware and are used to assign an address to computers on the local network.
+
+The MAC address is typically only traceable on the local network, it's not
+passively sent out beyond the local router making it more critical on untrusted,
+public networks.
+
+Leak-proof MAC randomization is very difficult to implement:
+
+- [Leak-proof MAC Randomization Implementation Challenges](https://www.kicksecure.com/wiki/Dev/MAC#Leak-proof_MAC_Randomization_-_Technical_Implementation_Challenges)
 
 Android and iPhone already implement MAC Randomization by default.
 
