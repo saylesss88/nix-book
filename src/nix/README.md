@@ -54,14 +54,39 @@ desktop portal reintroduces the screencopy vulnerability.
 
 - Avoid reusing passwords, use a password manager.
 
+- Avoid storing files directly in the root home folder (i.e., `/home/user`),
+  create sub-folders instead.(i.e., Instead of creating `~/notes.txt`, create
+  `~/my-notes/notes.txt` or `~/Documents/notes.txt`).
+  - If you are able to implement a Mandatory Access Control framework, there are
+    more sub-folders that should be avoided such as `~/Downloads`. Another
+    reason to use non-default sub-dirs is to avoid typos deleting important
+    files.
+
+  - Home-Manager has an option `xdg.userDirs.enable`
+
+```nix
+# home.nix or equivalent
+{
+  xdg.userDirs.enable = true;
+  xdg.userDirs.createDirectories = true;
+  # Optionally create non-default sub-dirs
+  # xdg.userDirs.documents = "/home/jr/my-documents";
+  # xdg.userDirs.download = "/home/jr/my-downloads";
+}
+```
+
+- The XDG Base Directory Specification defines a consistent way for apps and
+  desktops to store and find files. It helps prevent "dotfile clutter" by
+  directing application files into clear, organized locations.
+
 - Only enable what you use, and actively disable what's no longer in use.
 
 - Enable at least a basic firewall, a more complex firewall example that
   utilizes nftables is shared in the
   [Hardening Networking Chapter](https://saylesss88.github.io/nix/hardening_networking.html)
 
-The firewall is enabled by default on NixOS. To explicitly ensure it's enabled,
-add the following to your `configuration.nix` or equivalent:
+Although the firewall is enabled by default on NixOS, let's be explicit about
+it, add the following to your `configuration.nix` or equivalent:
 
 ```nix
 # configuration.nix

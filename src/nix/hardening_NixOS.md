@@ -10,7 +10,11 @@
 ![guy fawks hacker](../images/guy_fawks.png)
 
 Securing your NixOS system begins with a philosophy of minimalism, explicit
-configuration, and proactive control.
+configuration, and proactive control. As desktop Linux attracts more novice
+users, it has become an increasingly valuable target for attackers. This makes
+it crucial to adopt security best practices early to protect your desktop from
+common attack vectors and to avoid configuration mistakes that could expose
+vulnerabilities.
 
 > ⚠️ Warning: I am not a security expert. This guide presents various options
 > for hardening NixOS, but it is your responsibility to evaluate whether each
@@ -70,6 +74,15 @@ and quickly identify what went wrong. Over time, this discipline allows you to
 create security-focused checklists and ensure all angles are covered, building a
 more robust and secure system.
 
+Don't rely on single solutions or products, develop processes and defense in
+depth. Think ahead and fail securely so that a single failure doesn't mean total
+insecurity.
+
+Attackers often monitor the latest Linux CVEs (Common Vulnerabilities and
+Exposures) and check if and when specific distributions like NixOS have
+implemented fixes. The unstable branch will receive the security patches and
+fixes faster than stable which is another thing to keep in mind.
+
 Check out the
 [Hardening NixOS Baseline Hardening README](https://saylesss88.github.io/nix/index.html)
 for baseline hardening recommendations and best practices.
@@ -104,12 +117,16 @@ You can explicitly disable `xdg-desktop-portal-wlr` with systemd in your
 systemd.user.services."xdg-desktop-portal-wlr" = {
   enable = false;  # Masks/stops the wlr service
 };
+xdg.portal.wlr.enable = false;
 ```
 
 ## Minimal Installation with LUKS
 
 Begin with NixOS’s minimal installation image. This gives you a base system with
 only essential tools and no extras that could introduce vulnerabilities.
+
+NixOS's declarative model makes auditing the installed packages and services
+easy, do so regularly.
 
 ## Manual Encrypted Install Following the Manual
 
