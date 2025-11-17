@@ -209,6 +209,12 @@ If you use Firefox's ETP, RFP, and other protections provided by the ghacks or
 Arkenfox scripts alongside uBlock configured to use dynamic filtering you can
 accomplish what it used to take 10 extensions to do.
 
+Firefox does implement Site Isolation with its Project Fission. This is much
+less mature than Chromes site isolation and often disabled by default on
+different versions of Firefox. To ensure it's enabled, go to `about:config` and
+check that both `fission.autostart`, and `gfx.webrender.all` prefs are set to
+`true`.
+
 With uBlock you can `Disable JavaScript` which functions similar to NoScript,
 enable numerous blocklists and more.
 
@@ -223,10 +229,13 @@ Once you select `Custom`, you'll see that among the options is to block
 `Known fingerprinters` as well as `Suspected fingerprinters`. The "Known
 Fingerprinters" protection works by blocking scripts listed in
 [Disconnect's fingerprinting list](https://disconnect.me/trackerprotection#categories_of_trackers)
-For most users they suggest using the above FPP to avoid breakage. To enable
-RFP, go to `about:config` and set `privacy.resistFingerprinting` to `true`.
+For most users they suggest using the above FPP to avoid breakage. To go further
+and enable RFP, go to `about:config` and set `privacy.resistFingerprinting` to
+`true`.
 
 - [Mozilla Resist Fingerprinting](https://support.mozilla.org/en-US/kb/resist-fingerprinting)
+
+- [Mozilla Project_Fission](https://wiki.mozilla.org/Project_Fission)
 
 #### Tor Browser
 
