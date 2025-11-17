@@ -47,7 +47,10 @@ desktop portal reintroduces the screencopy vulnerability.
 
 - Keep your system up to date (update regularly).
 
-- Use strong, unique passwords.
+- Use strong, unique passwords. To generate one from the command-line, there is
+  `pkgs.diceware`. Generate a password with: `diceware -n 12 -w en_eff`, add
+  spaces between the words for higher entropy.
+  - [Kicksecure Password_Generation](https://www.kicksecure.com/wiki/Passwords#Password_Generation)
 
 - Avoid reusing passwords, use a password manager.
 
@@ -92,6 +95,14 @@ or be reset on rebuild. User and group definitions become entirely controlled by
 your system configuration for maximum reproducibility and security. If you need
 to add, remove, or modify users, you must do so in your `configuration.nix` and
 rebuild the system.
+
+Don't log in as `root`, it's unnecessary.
+
+Commands that require `root` permissions should be run individually using `sudo`
+in all cases. Avoid logging in as `root` & using `sudo su`.
+
+Never run GUI applications as `root`. If there is a legitimate reason for doing
+this, use `lxsudo` instead.
 
 ---
 
@@ -138,8 +149,6 @@ Explicitly setting `uid = 1000;` is a best practice for compatibility and
 predictability.
 
 ---
-
-EDITED: 10-29-25 Removed `trusted-users` section
 
 **Only install, enable, and run what is needed**: Disable or uninstall
 unnecessary software and services to minimize potential vulnerabilities. Take

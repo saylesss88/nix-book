@@ -314,6 +314,8 @@ users.users.admin = {
       # "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI..."
     ];
   };
+    users.groups.admin = {};
+    users.mutableUsers = false;
 
   # --------------------------------------------------------------------
   # 2. Existing daily user – remove from wheel, keep everything else
@@ -325,6 +327,7 @@ users.users.admin = {
     initialHashedPassword = "changeme";
     # Remove `wheel` by *not* listing it (mkForce overrides any default)
   };
+  users.groups.daily = {};
 
 security = {
 polkit.enable = true;

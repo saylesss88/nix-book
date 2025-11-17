@@ -536,6 +536,8 @@ file.
     initialHashedPassword = "READ_MKPASSWD_OUTPUT_HERE"; # <-- This is where it goes!
     # home = "/home/nixos"; # Optional: Disko typically handles home subvolumes
   };
+  # Change me to match your chosen username
+  users.group.nixosUser = {};
 
   console.keyMap = "us";
 
@@ -651,8 +653,9 @@ sudo umount /mnt
 - The flake will be placed at `/etc/nixos/flake` after the install and reboot, I
   choose to move it to my home directory. Since the file was first in `/etc`
   you'll need to adjust the permissions with something like
-  `sudo chown -R $USER:users ~/flake` and then you can work on it without
-  privilege escalation.
+  `sudo chown -R $USER:$USER ~/flake` and then you can work on it without
+  privilege escalation. This requires that you create a group for your user as
+  done in the `configuration.nix` above.
 
 - You can check the layout of your btrfs system with:
 

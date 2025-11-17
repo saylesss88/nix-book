@@ -394,7 +394,8 @@ hx flake.nix
 
   outputs = inputs@{ nixpkgs, ... }: {
     nixosConfigurations = {
-      hostname = nixpkgs.lib.nixosSystem {
+      # Change `my-hostname` to match `networking.hostName`
+      my-hostname = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
           ./configuration.nix
@@ -462,7 +463,7 @@ place.
     ./disk-config.nix
   ];
 
-  networking.hostName = "magic"; # This will match the `hostname` of your flake
+  networking.hostName = "my-hostname"; # This will match the `hostname` of your flake
 
   networking.networkmanager.enable = true;
 
@@ -477,12 +478,15 @@ place.
 
   time.timeZone = "America/New_York";
 
+# Change `nixos` to your chosen username, change the group to match
   users.users.nixos = {
     isNormalUser = true;
     extraGroups = [ "wheel" "networkmanager" ]; # Add "wheel" for sudo access
     initialHashedPassword = "COPY_YOUR_MKPASSWD_OUTPUT_HERE"; # <-- This is where it goes!
     # home = "/home/nixos"; # Optional: Disko typically handles home subvolumes
   };
+  # Create a matching group
+  users.groups.nixos = {};
 
   console.keyMap = "us";
 
@@ -515,9 +519,8 @@ sudo nixos-install --flake /mnt/etc/nixos/flake#hostname
 
 - The flake will be placed at `/etc/nixos/flake`, I choose to move it to my home
   directory. Since the file was first in `/etc` you'll need to adjust the
-  permissions with something like `sudo chown username:users ~/flake`(`username`
-  will be your username) and then you can work on it without privilege
-  escalation.
+  permissions with something like `sudo chown nixos:nixos ~/flake`. This is
+  based off of the example above where we created both a `nixos` user and group.
 
 - You can check the layout of your btrfs system with:
 
