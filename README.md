@@ -32,6 +32,8 @@ This book covers a range of topics to help you harness the power of Nix:
 
 - Whonix KVM on NixOS
 
+- NixOS as a Guest VM with Secureblue as the Host
+
 - Version Control with Git
 
 - Version Control with JJ
