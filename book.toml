@@ -5,6 +5,6 @@ src = "src"
 title = "nix-book"
 [output.html.code.hidelines]
 nix = "~"
-[preprocessor.toc]
-command = "mdbook-toc"
-renderer = ["html"]
+# [preprocessor.toc]
+# command = "mdbook-toc"
+# renderer = ["html"]
