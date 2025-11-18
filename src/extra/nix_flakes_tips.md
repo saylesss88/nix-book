@@ -54,7 +54,7 @@ inputs = {
 ## Understanding @-patterns
 
 3. Understanding `@-patterns`, being able to reference your outputs argument set
-   as a whole. An `@-pattern` is a way for a function can access variadic
+   as a whole. An `@-pattern` is a way for a function to access variadic
    attributes (i.e. varying number of arguments).
 
 ```nix
@@ -77,9 +77,9 @@ add something like this:
 ```nix
 # flake.nix
 nixosConfigurations.${host} = nixpkgs.lib.nixosSystem {
-  inherit system;
+  system = "x86_64-linux";
   specialArgs = {
-    inherit inputs username host email systemSettings;
+    inherit inputs username host;
 };
 modules = [
   ./hosts/${host}/config.nix
@@ -120,7 +120,7 @@ outputs = {
   userVars = {
     timezone = "America/New_York";
     locale = "en_US.UTF-8";
-    gitUsername = "TSawyer87";
+    gitUsername = "saylesss88";
     dotfilesDir = "~/.dotfiles";
     wm = "hyprland";
     browser = "firefox";
@@ -142,7 +142,6 @@ nixosConfigurations = {
           inherit
             inputs
             username
-            system
             host
             userVars
             ;
@@ -160,7 +159,6 @@ nixosConfigurations = {
             inherit
               inputs
               username
-              system
               host
               userVars
               ;
@@ -285,7 +283,7 @@ and in the `dev-shell.nix` you could put something like this:
 let
   # Instantiate nixpkgs with the given system and allow unfree packages
   pkgs = import inputs.nixpkgs {
-    inherit system;
+    localSystem = system;
     config.allowUnfree = true;
     overlays = [
       # Add overlays if needed, e.g., inputs.neovim-nightly-overlay.overlays.default
@@ -317,7 +315,7 @@ pkgs.mkShell {
   shellHook = ''
     echo "Welcome to the NixOS development shell!"
     echo "System: ${system}"
-    echo "Tools available: nixfmt, deadnix, nixd, nil, nh, nix-diff, nix-tree, helix, git, ripgrep, jq, tree"
+    echo "🛠️ Tools available: nixfmt, deadnix, nixd, nil, nh, nix-diff, nix-tree, helix, git, ripgrep, jq, tree"
   '';
 }
 ```
