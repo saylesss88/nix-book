@@ -149,7 +149,7 @@ be able to arbitrarily read host files or compromise the host kernel.
 virt_image_t, preventing other processes on the host from accessing or tampering
 with them.
 
-2. KVM and Host Hardening KVM: KVM provides the low-level, hardware-assisted
+2. **KVM and Host Hardening KVM**: KVM provides the low-level, hardware-assisted
    virtualization. It is an extremely secure and audited hypervisor that creates
    a strong barrier between the guest and the host kernel.
 
@@ -173,18 +173,45 @@ the VM
 
 ## It's still recommended to harden the Guest VM (NixOS)
 
-Hardening the NixOS guest creates an additional, independent layer of defense.
+Hardening the NixOS guest VM adds an extra, independent layer of defense,
+helping to protect the system beyond what the host provides.
 
-- Helps mitigate VM Breakout: If a zero-day allows an attacker to acheive a VM
-  breakout, the security of your system depends entirely on the host's controls.
-  Hardening the guest makes it much harder to compromise the initial VM,
-  reducing the chance of even attempting to breakout.
+**Best Practices for Minimizing VM Device Exposure**
 
-- Containment within the VM: Hardening prevents an attacker from gaining full
-  control or moving laterally within the VM.
+> Much of the Host hardening is taken care of by secureblue with the ujust
+> command.
 
-- It's still recommended to enable the `graphene-hardened` memory allocator on
-  the NixOS guest machine as well.
+Take a VM snapshot right after a fresh install. This snapshot acts as a clean
+restore point. Many people safely test malware or potentially dangerous software
+by running it within the VM, then reverting to the snapshot afterward to wipe
+out any changes or infections caused by the malware.
+
+Avoid unnecessary device passthrough: Only pass through hardware devices (like
+USB, GPU, or network interfaces) that are essential for your VM's operation. For
+example, if a device isn't needed within the VM, do not passthrough the device
+to reduce attack surface.​
+
+Use virtual network segmentation: Instead of bridging physical network devices,
+opt for virtual network configurations like isolated networks, VLANs, or
+internal networks that prevent VM-to-VM or VM-to-host communication unless
+explicitly allowed.​
+
+Implement network filtering and firewall rules: Use libvirt nwfilter, iptables,
+or firewalld rules to restrict communications between VMs and external networks,
+or between guest VMs on the same host.​
+
+- [libvirt Firewall and network filtering](https://libvirt.org/firewall.html)
+
+Use virtual device models with minimal capabilities: Prefer virtio or similar
+paravirtualized devices that have a smaller attack surface. Avoid emulated
+devices when not necessary.​
+
+Disable features like USB debugging, audio, or PnP devices: These can
+potentially be exploited or leak information if enabled unnecessarily.
+
+- It's still recommended to enable either the `graphene-hardened` or
+  `graphene-hardened-light` memory allocators on the NixOS guest machine as
+  well.
 
 ```nix
 # configuration.nix
@@ -192,6 +219,23 @@ environment.memoryAllocator.provider = "graphene-hardened";
 # OR for a more permissive and better performing allocator:
 # environment.memoryAllocator.provider = "graphene-hardened-light";
 ```
+
+Continue
+[hardening NixOS](https://saylesss88.github.io/nix/hardening_NixOS.html)
+
+> ❗️ NOTE: It’s generally recommended not to enable GPU drivers inside the VM
+> unless you are specifically doing GPU passthrough, as this often causes
+> stability and compatibility issues. GPU passthrough itself requires careful
+> configuration and dedicated hardware, and introduces additional attack
+> surfaces.
+
+> Regarding IPv6 networking, enabling it typically requires using a bridged
+> network setup rather than NAT, which connects the VM more directly to the
+> host's network. While bridged networking enables full IPv6 functionality, it
+> also reduces the network isolation between the VM and host, potentially
+> increasing security risks. For maximum isolation, consider carefully whether
+> you need IPv6 connectivity inside the VM and weigh that against your security
+> goals.
 
 I have been able to recover from quite a few missteps with Secureblue. I run a
 mini PC and attempted running `ujust update-firmware`, some systems allow you to
@@ -202,3 +246,11 @@ prongs 1 & 2 to prongs 2 & 3 with the power off for 10 seconds. I then moved the
 jumper back to the default position and rebooted. The PC sounds like it's
 revving up a few times and does a few reboots and allowed me to sign right back
 in and re-enroll the secure boot key.
+
+### Resources
+
+- [RedHat What is virtualization?](https://www.redhat.com/en/topics/virtualization/what-is-virtualization)
+
+- [virtualization & hypervisors](https://sumit-ghosh.com/posts/virtualization-hypervisors-explaining-qemu-kvm-libvirt/)
+
+- [Virtualization on Linux using the KVM/QEMU/Libvirt stack](https://bitgrounds.tech/posts/kvm-qemu-libvirt-virtualization/)
