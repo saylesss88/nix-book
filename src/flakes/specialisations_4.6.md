@@ -190,7 +190,7 @@ Or, you can activate a specialisation directly with:
 sudo /run/current-system/specialisation/<name>/bin/switch-to-configuration switch
 ```
 
-Replace <name> with your specialisation’s name.
+Replace `<name>` with your specialisation’s name.
 
 Reboot if needed: Most changes apply immediately, but some (like kernel or
 `initrd` changes) require a reboot for the specialisation to fully take effect

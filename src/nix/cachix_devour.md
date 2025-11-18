@@ -221,7 +221,7 @@ nix build github:srid/devour-flake \
  | cachix push <your-cache-name>
 ```
 
-- Replace <your-cache-name> with your actual Cachix cache name.
+- Replace `your-cache-name` with your actual Cachix cache name.
 
   This command will:
 

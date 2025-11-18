@@ -230,7 +230,7 @@ nix-build -A icat
   ```
 - The key result is `xorg.libX11`, which is likely the missing dependency.
 
-  </details>
+ </details>
 
 # V. Local Derivation Search with `nix-locate`
 
