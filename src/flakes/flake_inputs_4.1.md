@@ -63,8 +63,9 @@ Understanding `.default` vs. Named Outputs (e.g., `.helix`) from the Source
 
 The difference between `inputs.yazi.packages.${pkgs.system}.default` and
 `inputs.helix.packages.${pkgs.system}.helix` comes down to how the respective
-upstream flakes define their outputs. You can always inspect a flake's `flake.nix`
-or use nix flake show <flake-reference> to understand its structure.
+upstream flakes define their outputs. You can always inspect a flake's
+`flake.nix` or use `nix flake show <flake-reference>` to understand its
+structure.
 
 ## Helix `flake.nix`
 
@@ -178,15 +179,16 @@ the full flake:
 
 Dissecting `inherit (pkgsFor.${system}) helix;`
 
-Imagine the Nix evaluation process for Helix `flake.nix` in the `outputs` section:
+Imagine the Nix evaluation process for Helix `flake.nix` in the `outputs`
+section:
 
-1. `packages = eachSystem (system: { ... });` Part iterates through each `system`
-   (like `x86_64-linux`). For each `system`, it's creating an attribute set that
-   will become `self.packages.${system}`.
+1. `packages = eachSystem (system: { ... });` Part iterates through each
+   `system` (like `x86_64-linux`). For each `system`, it's creating an attribute
+   set that will become `self.packages.${system}`.
 
-2. Inside the `eachSystem` function, for a specific system (e.g. `x86_64-linux`):
-   The code is building an attribute set that will ultimately be assigned to
-   `self.packages.x86_64-linux`.
+2. Inside the `eachSystem` function, for a specific system (e.g.
+   `x86_64-linux`): The code is building an attribute set that will ultimately
+   be assigned to `self.packages.x86_64-linux`.
 
 3. When you write `inherit (sourceAttrset) attributeName;`, it's equivalent to
    writing `attributeName = sourceAttrset.attributeName;`.
@@ -198,8 +200,8 @@ helix = pkgsFor.${system}.helix;
 ```
 
 Therefore, because of `inherit (pkgsFor.${system}) helix;`, the helix attribute
-is explicitly defined under `packages.${system}``. This is why you access it
-as `inputs.helix.packages.${pkgs.system}.helix;`.
+is explicitly defined under
+`packages.${system}``. This is why you access it as `inputs.helix.packages.${pkgs.system}.helix;`.
 
 ## Yazi `flake.nix`
 
@@ -283,10 +285,10 @@ In this case using `inputs.yazi.packages.${pkgs.system}.yazi` would also work
   yazi-unwrapped as an argument. This yazi attribute represents the actual,
   runnable Yazi package.
 
-- `default = self.packages.${system}.yazi;`
-  This line then aliases the yazi package. It creates another attribute named
-  `default` within the same `packages.${system}` set and points it directly
-  to the yazi attribute that was just defined.
+- `default = self.packages.${system}.yazi;` This line then aliases the yazi
+  package. It creates another attribute named `default` within the same
+  `packages.${system}` set and points it directly to the yazi attribute that was
+  just defined.
 
 - So, when you access `inputs.yazi.packages.${pkgs.system}.default`, you're
   effectively following the alias to the yazi package.

@@ -6,7 +6,6 @@
 
 - Uncheck the box "Only fork the `master` branch", for development we will need
   more branches.
-
   - If you only fork master, you won't have the `nixos-XX.YY` release branches
     available on your fork when you later try to create a PR against them, or
     when you want to create a feature branch from them on your fork.
@@ -152,8 +151,8 @@ Commit with a clear message, make sure to follow
   message's summary line (the first line of the commit message).
 
 - When adding yourself as maintainer in the same pull request, make a separate
-  commit with the message maintainers: add <handle>. Add the commit before those
-  making changes to the package or module. See
+  commit with the message maintainers: `add <handle>`. Add the commit before
+  those making changes to the package or module. See
   [Nixpkgs Maintainers](https://github.com/NixOS/nixpkgs/blob/master/maintainers/README.md)
   for details.
 

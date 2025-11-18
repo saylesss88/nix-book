@@ -181,7 +181,7 @@ If you want to build and activate a different specialisation from your current
 session, use:
 
 ```bash
-sudo nixos-rebuild switch --specialisation <name>
+sudo nixos-rebuild switch --specialisation name
 ```
 
 Or, you can activate a specialisation directly with:

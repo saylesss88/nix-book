@@ -709,8 +709,6 @@ for fingerprinting by disabling JavaScript.
 - The [Garuda Privacy-Guide](https://wiki.garudalinux.org/en/privacy-guide) has
   good tips and recommendations for browser add-ons.
 
-</details>
-
 ### Virtual Private Networks (VPNs)
 
 A **VPN** (Virtual Private Network) encrypts your Internet connection and routes

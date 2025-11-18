@@ -289,6 +289,8 @@ niv update nixpkgs --branch=nixos-unstable
 nix-build -A myHello
 ```
 
+</details>
+
 <details>
 <summary> Adding Home-Manager with Flakes (click here) </summary>
 

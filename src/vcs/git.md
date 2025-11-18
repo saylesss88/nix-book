@@ -375,8 +375,9 @@ Some repositories have guidelines, such as Nixpkgs:
   message's summary line (the first line of the commit message).
 
 - When adding yourself as maintainer in the same pull request, make a separate
-  commit with the message maintainers: add <handle>. Add the commit before those
-  making changes to the package or module. See Nixpkgs Maintainers for details.
+  commit with the message maintainers: `add <handle>`. Add the commit before
+  those making changes to the package or module. See Nixpkgs Maintainers for
+  details.
 
   Make sure you read about any commit conventions specific to the area you're
   touching. See: Commit conventions for changes to `pkgs`. Commit conventions

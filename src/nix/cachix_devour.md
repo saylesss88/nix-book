@@ -58,7 +58,7 @@ command:
 ```bash
 cachix authtoken <YOUR_TOKEN>
 # Use cachix cli for the following
-cachix use <your-cache-name>
+cachix use your-cache-name
 ```
 
 - `cachix use` adds your substitutors and trusted-public-keys to your

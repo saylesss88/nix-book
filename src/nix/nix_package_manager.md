@@ -243,8 +243,6 @@ software package or any other kind of file or directory.
 Here's a simple Nix derivation that creates a file named hello in the Nix store
 containing the text "Hello, World!":
 
-</details>
-
 <details>
 <summary> ✔️ Hello World Derivation Example (Click to expand):</summary>
 
@@ -335,3 +333,5 @@ Run the "installed" program:
 
 - This will execute the `hello` file from the Nix store and print
   `"Hello, World!"`.
+
+</details>
