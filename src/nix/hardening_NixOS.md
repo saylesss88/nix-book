@@ -250,6 +250,63 @@ rapid security updates.
 With flakes it's easy to add both `stable` and `unstable` as flake inputs and
 access each with some simple logic.
 
+<details>
+<summary> ✔️ Click to Expand Flake example using both stable & unstable </summary>
+
+```nix
+{
+  description = "NixOS configuration with two or more channels";
+
+ inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+  };
+
+  outputs =
+    { nixpkgs, nixpkgs-unstable, ... }:
+    {
+      nixosConfigurations."your-host" = nixpkgs.lib.nixosSystem {
+        modules = [
+          {
+            nixpkgs.overlays = [
+              (final: prev: {
+                unstable = nixpkgs-unstable.legacyPackages.${prev.system};
+                # use this variant if unfree packages are needed:
+                # unstable = import nixpkgs-unstable {
+                #   inherit prev;
+                #   system = prev.system;
+                #   config.allowUnfree = true;
+                # };
+              })
+            ];
+          }
+          ./configuration.nix
+        ];
+      };
+    };
+}
+```
+
+- This is also how you enable unfree packages for flakes rather than in your
+  `configuration.nix`.
+
+Now you can specify which packages are to be installed with which channel like
+so:
+
+```nix
+# configuration.nix
+{ pkgs, ... }:
+{
+  environment.systemPackages = [
+    pkgs.firefox
+    pkgs.unstable.helix
+  ];
+  # ...
+}
+```
+
+</details>
+
 ---
 
 ## Users and SUID Binaries
@@ -2571,7 +2628,9 @@ userspace tool and can potentially be bypassed by privilege escalation exploits.
 ## Flatpak
 
 > ❗️NOTE: You cannot effectively use Firejail with Flatpak apps because of how
-> their sandboxing technologies operate.
+> their sandboxing technologies operate. Flatpak also won't work with the
+> hardened kernel because they require unprivileged user namespaces which the
+> hardened kernel completely disables.
 
 Apps that don't have a flatpak equivalent can be further hardened with
 bubblewrap independently but bubblewrap is not needed on Flatpak apps.

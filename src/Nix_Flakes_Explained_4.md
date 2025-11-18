@@ -528,10 +528,10 @@ function.
 The outputs function in `flake.nix` always takes a single argument, which is an
 attribute set. The syntax `{ self, nixpkgs, ... }` is Nix's way of destructuring
 this single input attribute set to extract the values associated with the keys
-self and nixpkgs.
+`self` and `nixpkgs`.
 
-Flakes output your whole system configuration, packages, and also Nix functions
-for use elsewhere.
+Flakes output your whole system configuration, packages, as well as Nix
+functions for use elsewhere.
 
 - For example, the `nixpkgs` repository has its own `flake.nix` file that
   outputs many helper functions via the `lib` attribute.
