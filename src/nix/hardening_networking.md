@@ -115,16 +115,13 @@ network eavesdropping, password reuse, fingerprinting, and data leakage,
 providing a solid foundation to build on.
 
 A vast majority of secure and privacy-focused browsers available for NixOS are
-based on Firefox. Chromium derivatives like Ungoogled Chromium and Brave do
-exist in Nixpkgs, but are less recommended by privacy advocates.
+based on Firefox.
 
 > ❗ NOTE: Firefox does lack some security features available in Chrome and
 > sandbox escapes in Linux are relatively easy. People such as madaidan say to
 > never use Linux or Firefox period when you're worried about security and
-> privacy. I personally don't care how good Chrome's security features are when
-> Google itself is an adds company. It's also scary how much you actually have
-> to turn off to make it somewhat secure and private. Chrome also just paid a
-> huge settlement for selling peoples information that had already opted out.
+> privacy. I'm not personally going to jump to proprietary software with known
+> backdoors in a misguided attempt at increasing security/privacy.
 
 - [EU Hits Google with 3.5 Billion Antitrust](https://techstory.in/eu-hits-google-with-3-5-billion-antitrust-fine-over-adtech-practices/)
 
