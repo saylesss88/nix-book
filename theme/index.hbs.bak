@@ -211,22 +211,22 @@
                         {{{ content }}}
                     </main>
 
-                  <nav class="nav-wrapper" aria-label="Page navigation">
-                                                {{#nav}}
-                            {{#nav_prev}}
-                                <a rel="prev" href="{{ path_to_root }}{{link}}" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
-                                    <i class="fa fa-angle-left"></i>
-                                </a>
-                            {{/nav_prev}}
-                            {{#nav_next}}
-                                <a rel="next prefetch" href="{{ path_to_root }}{{link}}" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                    <i class="fa fa-angle-right"></i>
-                                </a>
-                            {{/nav_next}}
-                        {{/nav}}
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        {{#previous}}
+                            <a rel="prev" href="{{ path_to_root }}{{link}}" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        {{/previous}}
 
-                        <div style="clear: both"></div>
-                    </nav>
+                        {{#next}}
+                            <a rel="next prefetch" href="{{ path_to_root }}{{link}}" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        {{/next}}
+
+                        <div style="clear: both"></div>
+                    </nav>
                 </div>
             </div>
 
