@@ -25,6 +25,12 @@ There is a lot covered in this guide which can get overwhelming when trying to
 decide what is worth implementing. Here, I will list some common recommendations
 that most users should follow to harden their stance.
 
+> "The major problem with current systems is their inability to provide
+> effective isolation between various programs running on one machine. E.g. if
+> the user's Web browser gets compromised (due to a bug exploited by a malicious
+> web site), the OS is usually unable to protect other user's applications and
+> data from also being compromised."--Qubes arch-spec
+
 ### Baseline Hardening
 
 Before diving into advanced or specialized hardening, apply these baseline

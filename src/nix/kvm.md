@@ -14,11 +14,14 @@
 - **Host** `secureblue` = Fedora Atomic with **SELinux enforcing**, **sVirt**,
   **Secure Boot**, and hardened defaults.
 
-- **Guest**: NixOS in a VM → full declarative power, zero risk to host.
+- **Guest**: NixOS in a VM → full declarative power, near zero risk to host.
 
-- **Isolation**: MAC via SELinux + KVM + no direct hardware access.
+- **Isolation**: Mandatory Access Control (MAC) via SELinux + KVM + no direct
+  hardware access.
 
 ---
+
+### 🔑 Key Terms
 
 ## Step 1: Install secureblue (Hardened Host)
 

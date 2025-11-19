@@ -175,6 +175,36 @@ minimal disko encrypted installation:
 
 ## Installing Software
 
+> ⚠️ For system security it is strongly advised to not install
+> [proprietary](https://en.wikipedia.org/wiki/Proprietary_software),
+> [non-freedom](https://www.gnu.org/proprietary/proprietary.html) software.
+> Instead, use of
+> [Free Software](https://www.fsf.org/about/what-is-free-software) is
+> [recommended](https://www.gnu.org/philosophy/shouldbefree.html) --Kicksecure
+
+- [Proprietary Software is Often Malware](https://www.gnu.org/proprietary/proprietary.html)
+  NOTE: While I respect the importance of software freedom, I choose to focus on
+  practical, technical solutions rather than engage with the ideological tone
+  often present in related advocacy.
+
+```nix
+# configuration.nix
+nixpkgs.config.allowUnfree = false;
+```
+
+To explicitly disable it for flakes:
+
+```nix
+# ...snip...
+pkgs = import nixpkgs {
+  system = "x86_64-linux";
+  config = {
+    allowUnfree = false;
+  };
+};
+# ...snip...
+```
+
 Most users don't fully understand that running any software without sandboxing
 gives it unrestricted access to their user data and system resources. There is a
 widespread lack of awareness that Linux apps generally run with the full
