@@ -107,6 +107,8 @@ master password through the web interface.
 
 - [PrivacyGuides Intro to Passwords](https://www.privacyguides.org/en/basics/passwords-overview/)
 
+---
+
 ### Why Follow These Basics?
 
 These recommended steps help protect your privacy and security while maintaining
@@ -165,12 +167,22 @@ expression.--[The Intercept](https://theintercept.com/2016/04/28/new-study-shows
 There are much more scary examples in
 [Privacy, The new Oil](https://thenewoil.org/en/guides/prologue/why/)
 
+---
+
 ### Choosing Secure/Private Browsers and Search Engines
+
+> "The major problem with current systems is their inability to provide
+> effective isolation between various programs running on one machine. E.g. if
+> the user's Web browser gets compromised (due to a bug exploited by a malicious
+> web site), the OS is usually unable to protect other user's applications and
+> data from also being compromised." --Qubes arch-spec
 
 On a hardened Linux system, the browser is most often the weakest link exposed
 to the internet, and so security, privacy, and anti-tracking features of
 browsers are now as important, or even more important than platform-level
 protections.
+
+---
 
 ### Fingerprinting
 
@@ -186,6 +198,8 @@ There are two main approaches to obfuscating your fingerprint:
   to you. Brave has this feature, if you run coveryourtracks with Brave you will
   get a result of "your browser has a randomized fingerprint". This is good for
   privacy but may be detectable by advanced scripts.
+
+---
 
 #### Firefox
 
@@ -233,6 +247,8 @@ and enable RFP, go to `about:config` and set `privacy.resistFingerprinting` to
 - [Mozilla Resist Fingerprinting](https://support.mozilla.org/en-US/kb/resist-fingerprinting)
 
 - [Mozilla Project_Fission](https://wiki.mozilla.org/Project_Fission)
+
+---
 
 #### Tor Browser
 
