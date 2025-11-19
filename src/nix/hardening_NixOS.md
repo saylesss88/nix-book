@@ -186,6 +186,11 @@ minimal disko encrypted installation:
   NOTE: While I respect the importance of software freedom, I choose to focus on
   practical, technical solutions rather than engage with the ideological tone
   often present in related advocacy.
+  - [User Freedom Threats](https://www.kicksecure.com/wiki/Miscellaneous_Threats_to_User_Freedom)
+
+  - [Proprietary Back Doors](https://www.gnu.org/proprietary/proprietary-back-doors.html)
+
+  - [EFF Back Doors](https://www.eff.org/deeplinks/2015/02/who-really-owns-your-drones)
 
 ```nix
 # configuration.nix
@@ -510,9 +515,6 @@ exploitation.
 
 (This is just an example):
 
-<details>
-<summary> ✔️ Click to Expand Capability example </summary>
-
 ```nix
 {
   # a setuid root program
@@ -603,7 +605,9 @@ SUID binaries.
 
 - [Kicksecure's take on capabilities](https://www.kicksecure.com/wiki/Dev/secureblue#capabilities)
 
-</details>
+- [capabilities(7)](https://man7.org/linux/man-pages/man7/capabilities.7.html)
+
+- [capabilities and seccomp](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux_atomic_host/7/html/container_security_guide/linux_capabilities_and_seccomp)
 
 </details>
 
@@ -615,7 +619,7 @@ You will have to use `run0` to authenticate your daily user, for example:
 run0 nixos-rebuild switch --flake .
 ```
 
-Since `run0` doesn't cache results and `nixos-rebuild` calls on Polkit 3 times
+Since `run0` doesn't cache results and `nixos-rebuild` calls on Polkit 3 times,
 so on every rebuild, you will be asked for your password 3 times which isn't
 ideal. I found the following workaround that will only ask for your password
 once.
@@ -634,7 +638,6 @@ username:
        }
      });
    '';
-
 ```
 
 Create a zsh function for easy access:

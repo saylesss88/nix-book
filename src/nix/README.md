@@ -31,6 +31,27 @@ that most users should follow to harden their stance.
 > web site), the OS is usually unable to protect other user's applications and
 > data from also being compromised."--Qubes arch-spec
 
+## Threat Modeling
+
+You should always start by conducting a personal threat assesment to identify
+potential threats and vulnerabilities that you need to develop strategies to
+defend against.
+
+Threat modeling in computing involves evaluating the security risks to your
+computer or network. It helps uncover possible threats and weaknesses so you can
+create plans to safeguard your systems and data effectively. By examining
+various attack scenarios, you can anticipate potential cyber threats and better
+protect your digital resources.
+
+It's not possible to protect yourself against every attack(er), focus on the
+most probable threats to your specific situation.
+
+- [EFF Security Starter Pack](https://ssd.eff.org/playlist/want-security-starter-pack)
+
+- [EFF Your Security Plan](https://ssd.eff.org/module/your-security-plan)
+
+- [Kicksecure Computer Security Threat Modeling](https://www.kicksecure.com/wiki/Threat_Modeling)
+
 ### Baseline Hardening
 
 Before diving into advanced or specialized hardening, apply these baseline
