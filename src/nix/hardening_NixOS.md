@@ -185,6 +185,11 @@ data, execute malicious code, and cause damage.
 
 - Watch your Logs, and deploy intrusion detection systems such as AIDE.
 
+- [SQL Injection CWE](https://cwe.mitre.org/data/definitions/89.html), SQL
+  injection is the most common critical web application vulnerability.
+
+- [Cross Site Scripting (XSS)](https://owasp.org/www-community/attacks/xss/)
+
 ---
 
 **Misconfiguration**
