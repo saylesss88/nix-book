@@ -174,7 +174,10 @@ data, execute malicious code, and cause damage.
 
 **Protections against Unauthorized Access**
 
-- Strong Passwords, MFA, and robust Secrets management
+- Strong Passwords, MFA, and robust Secrets management. In 2025, 22% of breaches
+  involved stolen credentials overall; in basic web app attacks, 88% used stolen
+  credentials.
+  --[StrongDM data-breach-statistics](https://www.strongdm.com/blog/data-breach-statistics)
 
 - Close unused ports with a Firewall
 
@@ -265,6 +268,13 @@ minimal disko encrypted installation:
   - [Proprietary Back Doors](https://www.gnu.org/proprietary/proprietary-back-doors.html)
 
   - [EFF Back Doors](https://www.eff.org/deeplinks/2015/02/who-really-owns-your-drones)
+
+> The 2025 Edgescan study examined full-stack applications and found that
+> one-third contained critical or severe vulnerabilities, putting them at risk.
+> Over 45% of large enterprises leave unresolved vulnerabilities for more than a
+> year. This shows the necessity of containing your apps in sandboxes when
+> possible.
+> --[edgescan Vulnerability Report](https://www.edgescan.com/stats-report/)
 
 ```nix
 # configuration.nix
