@@ -502,13 +502,21 @@ so:
 
 **Replacing sudo with run0**
 
-> NOTE: The point here is to avoid using a setuid binary (`sudo`), `run0` is a
-> wrapper over `systemd-run` which speaks over IPC to PID1 which is considered
-> safer than a setuid binary as they have a long history of vulnerabilities. We
-> separate our daily user from administration tasks and authenticate through our
-> admin account. This reduces the attack surface by removing sudo but is still
-> bigger than `doas`. The problem with `doas` is that it's unmaintained within
-> nixpkgs and it's still a SUID binary.
+> NOTE: The point here is to avoid using the setuid binary (`sudo`), `run0` is a
+> wrapper over `systemd-run` which speaks over Inter-process Communication
+> Mechanisms (IPC) to PID1 which is considered safer than running a setuid
+> binary. We separate our daily user from administration tasks and authenticate
+> through our admin account. This reduces the attack surface by removing sudo as
+> well as reduces the risk of local privilege escalation.
+
+- **IPC** is the mechanism that allows processes to communicate. There are two
+  methods of IPC, shared memory and message passing. An OS can implement both.
+
+- **PID 1** is the first userspace process the kernel starts (the init system),
+  which becomes the ancestor and reaper of all other processes; because it runs
+  as root, is always present, and controls the system lifecycle, any bugs or
+  design issues in PID 1 have outsized security impact and can translate into
+  system-wide compromise or denial of service.
 
 <details>
 <summary> Click to Expand SUID and run0 resources </summary>
@@ -527,7 +535,7 @@ so:
 
 `run0` is not a SUID, it asks the service manager to invoke a command or shell
 under the target user's UID. The target command is invoked in an isolated exec
-context, freshly forked off PID1 without inheriting any context from the client
+context, freshly forked off PID1 without inheriting any context from the client.
 
 The core danger of **setuid** (Set User ID) lies in its ability to allow a
 low-privilege user to execute a program with the **permissions of the file's
@@ -2992,6 +3000,9 @@ refer directly to its
 
 </details>
 
+<details>
+<summary> ✔️ Click to Expand Resources </summary>
+
 - [AppArmor and apparmor.d on NixOS](https://hedgedoc.grimmauld.de/s/hWcvJEniW#)
 
 - [SELinux on NixOS](https://tristanxr.com/post/selinux-on-nixos/)
@@ -3020,16 +3031,6 @@ refer directly to its
 
 - [Gentoo Security_Handbook Concepts](https://wiki.gentoo.org/wiki/Security_Handbook/Concepts)
 
-- STIGs are configuration standards developed by the Defense Information Systems
-  Agency (DISA) to secure systems and software for the U.S. Department of
-  Defense (DoD). They are considered a highly authoritative source for system
-  hardening.There are recommendations for hardening all kinds of software in the
-  [Stig Viewer](https://stigviewer.com/stigs)
-
-- [CIS Benchmarks](https://www.cisecurity.org/cis-benchmarks)
-
-- [NSA Cybersecurity Directorate](https://github.com/nsacyber)
-
 - [secureblue FAQ](https://secureblue.dev/faq)
 
 - [Excellent Kicksecure Docs](https://www.kicksecure.com/wiki/Documentation)
@@ -3040,7 +3041,9 @@ refer directly to its
 
 - [NixOS Security wishlist](https://delroth.net/posts/nixos-security-wishlist/)
 
-- [NixOS STIG](https://stigviewer.com/stigs/anduril_nixos)
+- [Beejus IPC guide](https://beej.us/guide/bgipc/html/)
+
+- [GeeksforGeeks IPC](https://www.geeksforgeeks.org/operating-systems/inter-process-communication-ipc/)
 
 neal.codes vulnerability scan script:
 
@@ -3054,3 +3057,30 @@ nix-shell -p grype sbomnix --run '
 - [neal.codes nixos-stig-anduril](https://github.com/nealfennimore/nixos-stig-anduril)
 
 - [Suse Linux Hardening Guide](https://www.suse.com/c/linux-hardeningthe-complete-guide-to-securing-your-systems/)
+
+**Government Resources 1st 6 come from gentoo's Security_Handbook)**
+
+- [The Austrailian Cyber Security Centre's Informational Security Manual (ISM)](https://www.cyber.gov.au/sites/default/files/2023-03/Information%20Security%20Manual%20-%20%28March%202023%29.pdf)
+
+- [The Australian Government's Protective Security Policy Framework (PSPF)](https://www.protectivesecurity.gov.au/policies)
+
+- [The Australian Cyber Security Centre's Protect Yourself page](https://www.cyber.gov.au/protect-yourself)
+
+- [The UK Government's Security Policy Framework (SPF)](https://www.gov.uk/government/publications/security-policy-framework/hmg-security-policy-framework)
+
+- [The UK Government's Information Security Policy Framework (ISF)](https://www.gov.uk/government/publications/information-security-policy-framework)
+
+- [The US National Institute of Standards and Technology's Cybersecurity page](https://www.nist.gov/cybersecurity)
+- [NixOS STIG](https://stigviewer.com/stigs/anduril_nixos)
+
+- STIGs are configuration standards developed by the Defense Information Systems
+  Agency (DISA) to secure systems and software for the U.S. Department of
+  Defense (DoD). They are considered a highly authoritative source for system
+  hardening.There are recommendations for hardening all kinds of software in the
+  [Stig Viewer](https://stigviewer.com/stigs)
+
+- [CIS Benchmarks](https://www.cisecurity.org/cis-benchmarks)
+
+- [NSA Cybersecurity Directorate](https://github.com/nsacyber)
+
+</details>
