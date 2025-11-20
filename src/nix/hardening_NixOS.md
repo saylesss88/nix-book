@@ -257,6 +257,13 @@ minimal disko encrypted installation:
 
 ## Installing Software
 
+> The 2025 Edgescan study examined full-stack applications and found that
+> one-third contained critical or severe vulnerabilities, putting them at risk.
+> Over 45% of large enterprises leave unresolved vulnerabilities for more than a
+> year. This shows the necessity of containing your apps in sandboxes when
+> possible.
+> --[edgescan Vulnerability Report](https://www.edgescan.com/stats-report/)
+
 > ⚠️ For system security it is strongly advised to not install
 > [proprietary](https://en.wikipedia.org/wiki/Proprietary_software),
 > [non-freedom](https://www.gnu.org/proprietary/proprietary.html) software.
@@ -273,13 +280,6 @@ minimal disko encrypted installation:
   - [Proprietary Back Doors](https://www.gnu.org/proprietary/proprietary-back-doors.html)
 
   - [EFF Back Doors](https://www.eff.org/deeplinks/2015/02/who-really-owns-your-drones)
-
-> The 2025 Edgescan study examined full-stack applications and found that
-> one-third contained critical or severe vulnerabilities, putting them at risk.
-> Over 45% of large enterprises leave unresolved vulnerabilities for more than a
-> year. This shows the necessity of containing your apps in sandboxes when
-> possible.
-> --[edgescan Vulnerability Report](https://www.edgescan.com/stats-report/)
 
 ```nix
 # configuration.nix
@@ -304,6 +304,29 @@ gives it unrestricted access to their user data and system resources. There is a
 widespread lack of awareness that Linux apps generally run with the full
 permissions of the user. It's easy to overlook the fact that "trusted source"
 doesn't mean "safe to run uncontained". --summarized from kicksecure docs
+
+**Pre-Install Recommendations**
+
+When installing software, first check
+[search.nixos](https://search.nixos.org/packages), and follow the `Homepage`
+link to ensure that said package is maintained.
+
+For example, when I search for `doas`, and go to the
+[Homepage](https://github.com/Duncaen/OpenDoas) link, I can see that the most
+recent commit was made 3 years ago. For certain software this might not be an
+issue but `doas` isn't one of them.
+
+Looking at the `sudo-rs`
+[Homepage](https://github.com/trifectatechfoundation/sudo-rs) I can see that it
+was updated yesterday (11-19-25) and might be a better alternative. It's
+maintained and written in a memory safe language.
+
+For critical apps like `sudo`, you should also check for vulnerabilities in said
+software. If you did so for `sudo-rs`, you'd see
+[CVE-2025-64170](https://nvd.nist.gov/vuln/detail/CVE-2025-64170) and see that
+it's been patched. You can then look at the
+[sudo-rs package.nix](https://github.com/NixOS/nixpkgs/blob/master/pkgs/by-name/su/sudo-rs/package.nix)
+to ensure that the versions match. (As of 11-20-25 they match).
 
 **nixpkgs-unstable Security Overview**
 
@@ -1387,6 +1410,8 @@ either to your `configuration.nix` or equivalent to apply them:
 
 - [ld.so man page](https://man7.org/linux/man-pages/man8/ld.so.8.html)
 
+- [Exploring hardened_malloc](https://www.synacktiv.com/en/publications/exploring-grapheneos-secure-allocator-hardened-malloc)
+
 ## Hardening Systemd
 
 <!-- ![Hacker](../images/hacker.png) -->
@@ -1422,11 +1447,11 @@ at the time of the crash. This can inadvertently expose sensitive data.
 If a program is handling private information when it crashes, the core dump file
 could contain:
 
-- Passwords: Stored in memory before being sent or hashed.
+- **Passwords**: Stored in memory before being sent or hashed.
 
-- Encryption Keys: Used for securing network connections.
+- **Encryption Keys**: Used for securing network connections.
 
-- Personal Info: Chat messages, website forms, etc.
+- **Personal Info**: Chat messages, website forms, etc.
 
 It can give a minor performance upgrade and does reduce the attack surface. If a
 malicious program were to gain access to your system, one of the first things it
