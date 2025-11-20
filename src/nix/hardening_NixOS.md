@@ -120,6 +120,80 @@ systemd.user.services."xdg-desktop-portal-wlr" = {
 xdg.portal.wlr.enable = false;
 ```
 
+## Common Attack Vectors for Linux
+
+**Privilege escalation**: The unauthorized act of gaining elevated permissions
+rather than legitimate, controlled privilege use. It's a very common tactic that
+threat actors use to take over a system, steal data, delete files, and more.
+
+**Processes to protect against Privilege escalation**
+
+- Adopt the principle of least privilege, only giving users the permissions that
+  they require to perform their duties.
+
+- Harden your system: Minimize the attack surface, use strong passwords, and
+  follow best practices.
+
+- Monitor relevant sources such as the
+  [NIST National Vulnerability Database](https://www.strongdm.com/nist-compliance),
+  [NixOS Security Advisories](https://github.com/NixOS/nix/security/advisories),
+  and
+  [NixOS Discourse Security](https://discourse.nixos.org/c/announcements/security/56)
+  So you'll know the latest CVEs and vulnerabilities in Linux and NixOS.
+
+- While not made for NixOS the
+  [linPEAS Privilege Escalation Awesome Script](https://github.com/peass-ng/PEASS-ng/tree/master/linPEAS)
+  gives you some useful info such as active capabilities and potential risks.
+
+- Remove unnecessary SUID binaries to reduce the attack surface.
+
+---
+
+**Use after Free/Double free**:
+
+**Use-After-Free (UAF)** is a type of software vulnerability that occurs in
+memory unsafe languages (C C++) when a program continues to use a memory
+location after it has been freed or deallocated.
+
+**Double free**: is a flaw where a program frees the same memory block twice
+using `free()` or `delete`, leading to undefined behavior and potential
+exploitation.
+
+Mitigation techniques include the use of hardened allocators such as
+`hardened_malloc`, which improve memory management to detect and prevent UAF and
+double-free bugs. Recent versions of `glibc` also incorporate built-in checks to
+catch double frees.
+
+---
+
+**Unauthorized Access**:
+
+Unauthorized access is the entry or use of your system, networks, or data by
+individuals without permission. It's a common way for adversaries to exfiltrate
+data, execute malicious code, and cause damage.
+
+**Protections against Unauthorized Access**
+
+- Strong Passwords, MFA, and robust Secrets management
+
+- Close unused ports with a Firewall
+
+- Encrypt data in transit and at rest
+
+- Watch your Logs, and deploy intrusion detection systems such as AIDE.
+
+---
+
+**Misconfiguration**
+
+- With many new users trying NixOS, misconfiguration is common and an easy way
+  for an attacker to gain control over your system.
+
+- It is recommended to start slowly and try to ensure that you understand your
+  configuration. Avoid copy-pasting config files that you don't understand yet.
+
+---
+
 ## Minimal Installation with LUKS
 
 Begin with NixOS’s minimal installation image. This gives you a base system with
@@ -346,6 +420,8 @@ so:
 
 ## Users and SUID Binaries
 
+**Replacing sudo with run0**
+
 > NOTE: The point here is to avoid using a setuid binary (`sudo`), `run0` is a
 > wrapper over `systemd-run` which speaks over IPC to PID1 which is considered
 > safer than a setuid binary as they have a long history of vulnerabilities. We
@@ -384,6 +460,12 @@ choices are broadly between traditional **setuid/setgid permissions** and more
 modern **Linux capabilities**. [Jump to Capabilities](#capabilities)
 
 - [Understanding setuid/setgid](https://www.cbtnuggets.com/blog/technology/system-admin/linux-file-permissions-understanding-setuid-setgid-and-the-sticky-bit)
+
+Use the following command to find all SUID binaries:
+
+```bash
+sudo find / -perm -4000 -type f -ls 2>/dev/null
+```
 
 The `setuid` permission is dangerous because it creates a privilege escalation
 pathway that can be exploited for malicious purposes.
@@ -494,6 +576,10 @@ Never Disable:
 
 - `unix_chkpwd`: This is a core PAM helper to securely check user passwords
   against the root-readable `/etc/shadow`.
+
+```bash
+sudo find / -perm -4000 -type f -ls 2>/dev/null
+```
 
 ---
 

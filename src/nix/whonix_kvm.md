@@ -16,7 +16,11 @@
 > defenses and following best practices, we can make attacks costly and
 > time-consuming, deterring all but highly targeted adversaries.
 
-It is highly recommended to harden your Host Machine to strengthen your opsec.
+It is highly recommended to harden your Host Machine as Type 2 hypervisors are
+only as secure as their host. KVM is actually a type 1 hypervisor but relies on
+QEMU for emulation which is a Type 2 hypervisor. This actually makes it a sort
+of hybrid in between Type 1 and Type 2 but is in theory less secure than running
+a Xen hypervisor (Type 1) on bare-metal.
 
 Whonix offers many benefits, including the convenience of running within your
 current operating system without needing to reboot or use a separate Tails USB.
@@ -105,6 +109,8 @@ typically look up solutions in a Kicksecure, Debian, or Ubuntu forum.
   reasons:[Why choose KVM over VirtualBox](https://www.whonix.org/wiki/KVM#Why_Use_KVM_Over_VirtualBox?)
 
 If you really want to use VirtualBox, I got it working off of this config:
+
+VirtualBox = Type 2 hypervisor
 
 <details>
 <summary> ✔️ Click to Expand VirtualBox Example </summary>
