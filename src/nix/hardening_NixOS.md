@@ -242,6 +242,8 @@ only essential tools and no extras that could introduce vulnerabilities.
 NixOS's declarative model makes auditing the installed packages and services
 easy, do so regularly.
 
+---
+
 ## Manual Encrypted Install Following the Manual
 
 Encryption is the process of using an algorithm to scramble plaintext data into
@@ -281,11 +283,15 @@ long as the key management scheme isn't compromised.
   warning that public-key cryptography is especially vulnerable and widely used
   to protect digital information.
 
+---
+
 ## Guided Encrypted BTRFS Subvol install using disko
 
 Use LUKS encryption to protect your data at rest, the following guide is a
 minimal disko encrypted installation:
 [Encrypted Install](https://saylesss88.github.io/installation/enc/enc_install.html)
+
+---
 
 ## Installing Software
 
@@ -360,6 +366,8 @@ it's been patched. You can then look at the
 [sudo-rs package.nix](https://github.com/NixOS/nixpkgs/blob/master/pkgs/by-name/su/sudo-rs/package.nix)
 to ensure that the versions match. (As of 11-20-25 they match).
 
+---
+
 **nixpkgs-unstable Security Overview**
 
 - `nixpkgs-unstable` tracks the master branch of the Nixpkgs repo and is
@@ -406,6 +414,8 @@ next release).
   requires a major upstream version update (which is often avoided in a stable
   channel), the maintainers must backport the patch, a process which can
   introduce its own set of risks and delays.
+
+---
 
 **What should you use?**
 
@@ -647,9 +657,82 @@ Never Disable:
 - `unix_chkpwd`: This is a core PAM helper to securely check user passwords
   against the root-readable `/etc/shadow`.
 
+Check again which SUID binaries are active:
+
 ```bash
 sudo find / -perm -4000 -type f -ls 2>/dev/null
 ```
+
+---
+
+You will have to use `run0` to authenticate your daily user, for example:
+
+```bash
+run0 nixos-rebuild switch --flake .
+```
+
+Since `run0` doesn't cache results and `nixos-rebuild` calls on Polkit 3 times,
+so on every rebuild, you will be asked for your password 3 times which isn't
+ideal. I found the following workaround that will only ask for your password
+once.
+
+Add the following to your `configuration.nix`, replacing `user-name` with your
+username:
+
+```nix
+ security.polkit.extraConfig = ''
+     polkit.addRule(function(action, subject) {
+       if (subject.user == "user-name") {
+         if (action.id.indexOf("org.nixos") == 0) {
+           polkit.log("Caching admin authentication for single NixOS operation");
+           return polkit.Result.AUTH_ADMIN_KEEP;
+         }
+       }
+     });
+   '';
+```
+
+Create a zsh function for easy access:
+
+```nix
+# zsh.nix
+#...snip...
+initContent = ''
+  fr() {
+    run0 nixos-rebuild switch --flake "/home/$USER/flake#"$(hostname)
+  }
+'';
+```
+
+Needless to say, this is less secure but much more convenient than entering your
+password 3 times on every single rebuild.
+
+Without the `pam` settings for swaylock, it won't accept your password to log
+back in.
+
+**run0 Usage Example**
+
+When you are in a privileged shell, `run0` changes the color of the background
+to red to remind you of this.
+
+Example creating a user:
+
+1. `run0`
+
+2. `adduser admin`
+
+3. `usermod -aG wheel admin`
+
+4. `passwd admin`
+
+5. `exit`
+
+6. `reboot`
+
+This is just an example, since we manage our users declaratively the user
+created would be discarded on the next rebuild because of the
+`users.mutableUsers = false;` setting. You could of course change this to `true`
+to manage your users imperatively but I don't recommend it.
 
 ---
 
@@ -769,77 +852,6 @@ SUID binaries.
 
 ---
 
-You will have to use `run0` to authenticate your daily user, for example:
-
-```bash
-run0 nixos-rebuild switch --flake .
-```
-
-Since `run0` doesn't cache results and `nixos-rebuild` calls on Polkit 3 times,
-so on every rebuild, you will be asked for your password 3 times which isn't
-ideal. I found the following workaround that will only ask for your password
-once.
-
-Add the following to your `configuration.nix`, replacing `user-name` with your
-username:
-
-```nix
- security.polkit.extraConfig = ''
-     polkit.addRule(function(action, subject) {
-       if (subject.user == "user-name") {
-         if (action.id.indexOf("org.nixos") == 0) {
-           polkit.log("Caching admin authentication for single NixOS operation");
-           return polkit.Result.AUTH_ADMIN_KEEP;
-         }
-       }
-     });
-   '';
-```
-
-Create a zsh function for easy access:
-
-```nix
-# zsh.nix
-#...snip...
-initContent = ''
-  fr() {
-    run0 nixos-rebuild switch --flake "/home/$USER/flake#"$(hostname)
-  }
-'';
-```
-
-Needless to say, this is less secure but much more convenient than entering your
-password 3 times on every single rebuild.
-
-Without the `pam` settings for swaylock, it won't accept your password to log
-back in.
-
-**run0 Usage Example**
-
-When you are in a privileged shell, `run0` changes the color of the background
-to red to remind you of this.
-
-Example creating a user:
-
-1. `run0`
-
-2. `adduser admin`
-
-3. `usermod -aG wheel admin`
-
-4. `passwd admin`
-
-5. `exit`
-
-6. `reboot`
-
-This is just an example, since we manage our users declaratively the user
-created would be discarded on the next rebuild because of the
-`users.mutableUsers = false;` setting. You could of course change this to `true`
-to manage your users imperatively but I don't recommend it.
-
----
-
 ## Impermanence
 
 Impermanence, especially when using a `tmpfs` as the root filesystem, provides
@@ -941,6 +953,8 @@ Useful Resources:
 Practical Lanzaboote Secure Boot setup for NixOS:
 [Guide:Secure Boot on NixOS with Lanzaboote](https://saylesss88.github.io/installation/enc/lanzaboote.html)
 
+---
+
 ### The Kernel
 
 The Kernel Self Protection Project:
@@ -1023,6 +1037,8 @@ support (LTS). Choosing either has consequences, do your research.
 **OR**, you can choose the hardened kernel for a kernel that prioritizes
 security over everything else.
 
+---
+
 ### The Hardened Kernel
 
 > NOTE: Expect breakage when using the hardened kernel. `linux-hardened`
@@ -1056,6 +1072,8 @@ You can inspect
 [nixpkgs/pkgs/os-specific/linux/kernel/hardened/patches.json](https://github.com/NixOS/nixpkgs/blob/master/pkgs/os-specific/linux/kernel/hardened/patches.json)
 to see the metadata of the patches that are applied. You can then follow the
 links in the `.json` file to see the patch diffs.
+
+---
 
 ### sysctl
 
@@ -1124,6 +1142,8 @@ diff before.txt after.txt
 You can also diff against `after.txt` for future changes to avoid duplicates,
 this seems easier to me than trying to parse through the patches.
 
+---
+
 ## Kernel Security Settings
 
 ```nix
@@ -1143,6 +1163,8 @@ security = {
       allowSimultaneousMultithreading = true;
 }
 ```
+
+---
 
 ## Further Hardening with sysctl
 
@@ -1265,12 +1287,14 @@ Also see the
 > ❗ Note: The above settings are fairly aggressive and can break common
 > programs, read the comment warnings.
 
+---
+
 ## Hardening Boot Parameters
 
 `boot.kernelParams` can be used to set additional kernel command line arguments
 at boot time. It can only be used for built-in modules.
 
-You can find the following settings in the above guide in the
+You can find the following settings in the
 [Boot parameters section](https://madaidans-insecurities.github.io/guides/linux-hardening.html#boot-parameters)
 
 ```nix
@@ -1418,6 +1442,9 @@ for more ideas.
 > some apps will not work without a workaround such as Firefox, Thunderbird,
 > Torbrowser, LibreWolf, and ZenBrowser to name a few.
 
+With memory corruption bugs being the leading zero day category, it's clearly
+something that you should be concerned with.
+
 The grapheneOS `hardened_malloc` is available for NixOS in two variants, add
 either to your `configuration.nix` or equivalent to apply them:
 
@@ -1443,6 +1470,8 @@ either to your `configuration.nix` or equivalent to apply them:
 - [ld.so man page](https://man7.org/linux/man-pages/man8/ld.so.8.html)
 
 - [Exploring hardened_malloc](https://www.synacktiv.com/en/publications/exploring-grapheneos-secure-allocator-hardened-malloc)
+
+---
 
 ## Hardening Systemd
 
@@ -1536,7 +1565,7 @@ systemd-analyze security NetworkManager
 ```
 
 Optionally disable vulnerable services to reduce the attack surface, obviously
-don't disable what you need or change your habits:
+don't disable what you need, or change your habits:
 
 ```nix
 services = {
@@ -1595,6 +1624,14 @@ systemd.services = {
       SystemCallArchitectures = "native";
     };
 }
+```
+
+As you can see from above, you typically use the `serviceConfig` attribute to
+harden settings for systemd services.
+
+```bash
+systemd-analyze security bluetooth
+→ Overall exposure level for bluetooth.service: 3.3 OK 🙂
 ```
 
 <details>
@@ -1989,13 +2026,7 @@ systemd.services = {
 
 </details>
 
-As you can see from above, you typically use the `serviceConfig` attribute to
-harden settings for systemd services.
-
-```bash
-systemd-analyze security bluetooth
-→ Overall exposure level for bluetooth.service: 3.3 OK 🙂
-```
+---
 
 ## Lynis and other tools
 
@@ -2331,6 +2362,8 @@ Further reading:
 
 </details>
 
+---
+
 ## Key generation
 
 ### ssh-keygen
@@ -2339,10 +2372,10 @@ The `ed25519` algorithm is significantly faster and more secure when compared to
 `RSA`. You can also specify the key derivation function (KDF) rounds to
 strengthen protection even more.
 
-For example, to generate a strong key for MdBook:
+For example, to generate a strong key for GitHub:
 
 ```bash
-ssh-keygen -t ed25519 -a 32 -f ~/.ssh/id_ed25519_github_$(date +%Y-%m-%d) -C "SSH Key for MdBook"
+ssh-keygen -t ed25519 -a 32 -f ~/.ssh/id_ed25519_github_$(date +%Y-%m-%d) -C "SSH Key for GitHub"
 ```
 
 - `-t` is for type
@@ -2362,7 +2395,8 @@ The following are some recommendations from Mozilla on OpenSSH:
 - [Mozilla OpenSSH guidelines](https://infosec.mozilla.org/guidelines/openssh.html)
 
 The following OpenSSH setup is based on the above guidelines with strong
-algorithms, and best practices: (EDITED: 10-07-25 to follow best-practices)
+algorithms, and best practices: (EDITED: 10-07-25 to follow best-practices on
+post-quantum crypto)
 
 ```nix
 {config, ...}: {
@@ -2485,6 +2519,8 @@ Further Reading:
 
 - [DigitalOcean how fail2ban works](https://www.digitalocean.com/community/tutorials/how-fail2ban-works-to-protect-services-on-a-linux-server)
 
+---
+
 ## Encrypted Secrets
 
 Never store secrets in plain text in repositories. Use something like
@@ -2499,6 +2535,8 @@ Another option is [agenix](https://github.com/ryantm/agenix)
 
 Protect your secrets, the following guide is on setting up Sops on NixOS:
 [Sops Encrypted Secrets](https://saylesss88.github.io/installation/enc/sops-nix.html)
+
+---
 
 ## Auditd
 
@@ -2532,6 +2570,8 @@ log every program execution (`execve`) on a 64-bit architecture.
 - `execve` (program executions)
 
 - This is just a basic configuration, there is much more that can be tracked.
+
+---
 
 ## USB Port Protection
 
@@ -2651,23 +2691,30 @@ Further Reading:
 
 - [NixCraft USBGuard](https://www.cyberciti.biz/security/how-to-protect-linux-against-rogue-usb-devices-using-usbguard/)
 
-## Doas over sudo
+---
+
+## Doas over sudo (Warning Doas is unmaintained)
+
+<details>
+<summary> ✔️ Click to Expand Unmaintained Doas example </summary>
 
 > NOTE: I have moved to `run0` for authentication which is included by default
 > with systemd. It's actually a symlink to the existing `systemd-run` tool. It
 > behaves like a secure `sudo` alternative: it spawns a transient service under
 > PID 1 for privilege escalation, without relying on SUID (set user ID)
-> binaries. Also note that the Nixpkgs version of `doas` is unmaintained and
-> hasn't been updated in 4 years.
+> binaries.
+
+> ⚠️ Warning the Nixpkgs version of `doas`,
+> [OpenDoas](https://github.com/Duncaen/OpenDoas) is unmaintained and hasn't
+> been updated in 3 to 4 years. If you don't like `run0`, consider using
+> `sudo-rs`. I'm leaving this here for now, may remove it in the future to not
+> promote using unmaintained software, you've been warned.
 
 - [Why run0](https://mastodon.social/@pid_eins/112353324518585654)
 
 - SUID = "Set User ID": When a binary has the SUID bit set, it runs with the
   privileges of the file's owner (often root). There is a long history of
   vulnerabilities with SUID binaries.
-
-- `run0` configuration is explained in the
-  [Hardening README](https://saylesss88.github.io/nix/index.html)
 
 For a more minimalist version of `sudo` with a smaller codebase and attack
 surface, consider `doas`. Replace `userName` with your username:
@@ -2731,6 +2778,10 @@ custom.security.doas.enable = true;
 > ❗ NOTE: Many people opt for the less secure `groups = ["wheel"];` in the
 > above configuration instead of `users = ["userName"];` to give wider access,
 > the choice is yours.
+
+</details>
+
+---
 
 ## Firejail
 
@@ -2886,7 +2937,7 @@ CLI apps can be installed through it but not all.
 I have heard that it is not recommended to use Flatpak browsers because in order
 for flatpak to work it has to disable some of the built-in browser sandboxing
 which can reduce security. I haven't found any examples of Flatpak browsers
-being exposed but it's something to keep in mind.
+being exploited but it's something to keep in mind.
 
 ---
 
@@ -2911,6 +2962,8 @@ security on NixOS.
 See the following guide on hardening networking:
 
 - [Hardening Networking](https://saylesss88.github.io/nix/hardening_networking.html)
+
+---
 
 ## Resources
 
@@ -2999,3 +3052,5 @@ nix-shell -p grype sbomnix --run '
 ```
 
 - [neal.codes nixos-stig-anduril](https://github.com/nealfennimore/nixos-stig-anduril)
+
+- [Suse Linux Hardening Guide](https://www.suse.com/c/linux-hardeningthe-complete-guide-to-securing-your-systems/)
