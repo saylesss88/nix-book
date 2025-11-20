@@ -72,6 +72,10 @@ That being said, there is a lot you can do to harden NixOS...
   to assert their privacy rights when faced with countless corporate /
   government network observers and censors.
 
+- True anonymity is very difficult to successfully pull off and not something
+  that you can maintain for a long time.
+  - [Whonix Tips for remaining Anonymous](https://www.whonix.org/wiki/Tips_on_Remaining_Anonymous)
+
 ## 🔑 Key Terms
 
 Whonix is an operating system based on Debian base (Kicksecure Hardened) and the

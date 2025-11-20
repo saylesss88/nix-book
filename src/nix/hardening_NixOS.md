@@ -122,6 +122,9 @@ xdg.portal.wlr.enable = false;
 
 ## Common Attack Vectors for Linux
 
+<details>
+<summary> ✔️ Click to Expand Common Attack Vectors in Linux </summary>
+
 **Privilege escalation**: The unauthorized act of gaining elevated permissions
 rather than legitimate, controlled privilege use. It's a very common tactic that
 threat actors use to take over a system, steal data, delete files, and more.
@@ -199,6 +202,35 @@ data, execute malicious code, and cause damage.
 
 - It is recommended to start slowly and try to ensure that you understand your
   configuration. Avoid copy-pasting config files that you don't understand yet.
+
+---
+
+**Zero Day Exploits**:
+
+The term "Zero-Day" refers to a security vulnerability or flaw that is unknown
+to the software developers or security teams, meaning they have had zero days to
+create a patch or fix for it. This term is often associated with concepts such
+as Vulnerabilities, Exploits, and Threats, and it’s important to distinguish
+among them:
+
+- A **Zero-Day Vulnerability** is a previously undiscovered security weakness or
+  flaw in software that malicious actors can exploit.
+
+- A **Zero-Day Exploit** describes the specific method or technique attackers
+  use to take advantage of that vulnerability to compromise a system.
+
+- A **Zero-Day Attack** happens when malicious actors launch an attack using a
+  zero-day exploit before the software vendor has had a chance to patch or fix
+  the vulnerability.
+
+- [Project Zero's 0day spreadsheet](https://docs.google.com/spreadsheets/d/1lkNJ0uQwbeC1ZTRrxdtuPLCIl7mlUreoKfSIgajnSyY/view?gid=0#gid=0).
+  You'll see that a majority of zero-days are Memory Corruption bugs.
+
+- [Zero-Day tracking project](https://www.zero-day.cz/database/)
+
+- [ Trend Micro's zero day inituative](https://www.zerodayinitiative.com/advisories/published/)
+
+</details>
 
 ---
 

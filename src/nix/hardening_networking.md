@@ -167,6 +167,50 @@ expression.--[The Intercept](https://theintercept.com/2016/04/28/new-study-shows
 There are much more scary examples in
 [Privacy, The new Oil](https://thenewoil.org/en/guides/prologue/why/)
 
+## Protections from Surveillance in the U.S.
+
+<details>
+<summary> ✔️ Click to Expand U.S. Surveillance protections </summary>
+
+> ⚠️ A crucial caveat to keep in mind regarding surveillance protections in the
+> U.S., whether grounded in the Fourth Amendment, the First Amendment, or
+> statutory laws is that **these protections are not foolproof and have
+> repeatedly failed or been circumvented in practice**.
+
+- **Fourth Amendment Basics**: It demands reasonableness in searches and usually
+  requires a warrant. This means government agents cannot arbitrarily listen to
+  your private communications or search your digital data without judicial
+  approval
+
+- **Electronic Surveillance Challenges**: Courts have wrestled with how the
+  Fourth Amendment applies to modern communications. The Supreme Court has ruled
+  in some cases that pervasive or non-consensual electronic surveillance
+  violates reasonable expectations of privacy, but other rulings have allowed
+  broader state actions in national security contexts.
+
+- **The Third-Party Doctrine**: A major limitation arises from the "third-party
+  doctrine," which holds that information voluntarily shared with third parties
+  (like phone companies or internet providers) has reduced Fourth Amendment
+  protections. This means data held by third parties may be subject to
+  government access without a warrant in some cases
+
+- **The First Amendment** guarantees free speech and the freedom to receive
+  information without government censorship or intimidation. Excessive or
+  secretive government surveillance can chill free speech by making people
+  afraid their communications are monitored, discouraging open expression and
+  participation in public discourse.
+  - Advocates argue that courts should recognize government surveillance not
+    only as a Fourth Amendment search issue but also as a First Amendment
+    violation where surveillance suppresses or chills constitutionally protected
+    expression.
+
+While the Fourth Amendment traditionally governs searches and surveillance
+legality, the First Amendment frames the broader impact on free speech and
+democratic engagement. Invoking both provides a more comprehensive
+constitutional shield against intrusive surveillance practices.
+
+</details>
+
 ---
 
 ### Choosing Secure/Private Browsers and Search Engines
@@ -204,7 +248,7 @@ There are two main approaches to obfuscating your fingerprint:
 #### Firefox
 
 My understanding here is evolving, Firefox on Linux may be very privacy friendly
-but is not necessarily a secure browser.
+after some tweaks, but is not necessarily a secure browser.
 
 Firefox's defaults are not privacy respecting or secure but allows a high level
 of customization to make it so. Firefox will be patched with security fixes
@@ -246,7 +290,11 @@ and enable RFP, go to `about:config` and set `privacy.resistFingerprinting` to
 
 - [Mozilla Resist Fingerprinting](https://support.mozilla.org/en-US/kb/resist-fingerprinting)
 
-- [Mozilla Project_Fission](https://wiki.mozilla.org/Project_Fission)
+- [Mozilla Project_Fission](https://wiki.mozilla.org/Project_Fission), Firefox's
+  implementation of Site Isolation.
+  - To ensure Site Isolation is enabled, in `about:config`, set
+    `fission.autostart`, and `gfx.webrender.all` prefs to `true`.(It's disabled
+    by default on android).
 
 ---
 
