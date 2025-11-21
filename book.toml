@@ -2,3 +2,5 @@
 title = "nix-book"
 authors = ["saylesss88"]
 language = "en"
+[preprocessor.toc]
+renderers = ["html"]
