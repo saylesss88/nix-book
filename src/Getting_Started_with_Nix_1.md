@@ -1,10 +1,5 @@
 # Chapter1
 
-> mdbook updated on 11-17-25 and it caused some issues with gh-actions and
-> mdbook-toc. I was able to get gh-actions to build successfully by temporarily
-> disabling mdbook-toc so the Table of Content dropdowns will not work ATM,
-> sorry for any inconvenience this has caused. I'll fix this ASAP.
-
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 

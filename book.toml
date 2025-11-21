@@ -4,3 +4,6 @@ authors = ["saylesss88"]
 language = "en"
 [preprocessor.toc]
 renderers = ["html"]
+[output.html]
+additional-css = ["theme/extra.css"]
+additional-js = ["theme/extra.js"]
