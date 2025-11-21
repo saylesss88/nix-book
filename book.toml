@@ -1,8 +1,10 @@
 [book]
 authors = ["saylesss88"]
 language = "en"
-[preprocessor.toc]
-renderers = ["html"]
+[preprocessor.rss]
+command = "/home/jr/mdbook-rss/target/release/mdbook-rss"
+# [preprocessor.toc]
+# renderers = ["html"]
 [output.html]
 additional-css = ["theme/extra.css"]
 additional-js = ["theme/extra.js"]

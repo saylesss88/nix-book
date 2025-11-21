@@ -1,3 +1,10 @@
+---
+title: My Chapter
+date: 2025-11-21
+author: saylesss88
+description: Chapter 5
+---
+
 # Chapter 5
 
 <details>
