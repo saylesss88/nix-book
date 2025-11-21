@@ -3035,6 +3035,8 @@ refer directly to its
 
 - [Excellent Kicksecure Docs](https://www.kicksecure.com/wiki/Documentation)
 
+- [Awesome-Security-Hardening List](https://github.com/decalage2/awesome-security-hardening)
+
 - [factorable.net (study of RSA and DSA crypto keys) FAQ](https://factorable.net/faq.html)
 
 - [The cr.yp.to blog Entropy](https://blog.cr.yp.to/20140205-entropy.html)

@@ -23,13 +23,13 @@
 
 ### 🔑 Key Terms
 
-## Step 1: Install secureblue (Hardened Host)
-
-> NOTE: Secureblue enables the hardened_malloc by default which causes problems
-> for many browsers and will cause screen flashing with Firefox and others
-> within the VM. See:
+> NOTE: Secureblue enables the `hardened_malloc` by default which causes
+> problems for many browsers and will cause screen flashing with Firefox and
+> others within the VM. See:
 
 - [secureblue standard_malloc](https://secureblue.dev/faq#standard-malloc)
+
+## Step 1: Install secureblue (Hardened Host)
 
 1. Download a [secureblue image](https://secureblue.dev/install)
 
@@ -181,9 +181,6 @@ helping to protect the system beyond what the host provides.
 
 **Best Practices for Minimizing VM Device Exposure**
 
-> Much of the Host hardening is taken care of by secureblue with the ujust
-> command.
-
 Take a VM snapshot right after a fresh install. This snapshot acts as a clean
 restore point. Many people safely test malware or potentially dangerous software
 by running it within the VM, then reverting to the snapshot afterward to wipe
@@ -222,6 +219,10 @@ environment.memoryAllocator.provider = "graphene-hardened";
 # OR for a more permissive and better performing allocator:
 # environment.memoryAllocator.provider = "graphene-hardened-light";
 ```
+
+- Remember that certain programs won't run with the `hardened_malloc`. I have
+  read that you need to recompile Firefox for it to respect and work with the
+  `hardened_malloc`. I haven't attempted this as of yet and use Brave for now.
 
 Continue
 [hardening NixOS](https://saylesss88.github.io/nix/hardening_NixOS.html)
