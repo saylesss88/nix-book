@@ -63,7 +63,6 @@
         <script src="{{ resource "toc.js" }}"></script>
     </head>
     <body>
-    <a href="#" class="top-link" id="back-to-top">Up</a>
     <div id="mdbook-help-container">
         <div id="mdbook-help-popup">
             <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
@@ -359,26 +358,6 @@
                     let url = new URL(target, window.location.href);
                     window.location.replace(url.href);
                 }
-            });
-        </script>
-        {{/if}}
-
-    </div>
-    {{#each additional_js}}
-        <script src="{{ resource this}}"></script>
-        {{/each}}
-
-        <!-- Back-to-top scroll behaviour (add this) -->
-        <script>
-            // Smooth scroll back to top
-            document.getElementById('back-to-top')?.addEventListener('click', e => {
-                e.preventDefault();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            });
-
-            // Show/hide button on scroll
-            window.addEventListener('scroll', () => {
-                document.getElementById('back-to-top')?.classList.toggle('show', window.scrollY > 300);
             });
         </script>
         {{/if}}
