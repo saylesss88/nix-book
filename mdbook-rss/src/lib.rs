@@ -1,4 +1,3 @@
-// mdbook-rss/src/lib.rs
 use anyhow::Result;
 use chrono::{DateTime, NaiveDate, TimeZone, Utc};
 use pulldown_cmark::{html, Options, Parser};
@@ -47,7 +46,7 @@ pub fn parse_markdown_file(root: &Path, path: &Path) -> Result<Article> {
     let mut yaml = String::new();
     let mut in_yaml = false;
 
-    // Extract YAML front matter
+    // Extract YAML front matter from markdown file
     for line in lines.by_ref() {
         let trimmed = line.trim();
         if trimmed == "---" {
@@ -64,8 +63,10 @@ pub fn parse_markdown_file(root: &Path, path: &Path) -> Result<Article> {
         }
     }
 
+    // Remaining content after front matter
     let content = lines.collect::<Vec<_>>().join("\n") + "\n";
 
+    // Deserialize YAML front matter or fallback to defaults
     let fm = if !yaml.trim().is_empty() {
         serde_yaml::from_str(&yaml).unwrap_or_else(|_| FrontMatter {
             title: path
@@ -90,7 +91,7 @@ pub fn parse_markdown_file(root: &Path, path: &Path) -> Result<Article> {
         }
     };
 
-    // Corrected: use `root` here instead of undefined `src_dir`
+    // Compute relative path from root directory
     let rel_path = path.strip_prefix(root).unwrap_or(path);
 
     Ok(Article {
@@ -108,13 +109,15 @@ pub fn collect_articles(src_dir: &Path) -> Result<Vec<Article>> {
         if !path.is_file() {
             continue;
         }
+        // Accept files with md or markdown extension (case-insensitive)
         if !matches!(
-            path.extension().and_then(|e| e.to_str()),
-            Some("md" | "markdown")
+            path.extension().and_then(|e| e.to_str().map(|s| s.to_ascii_lowercase())),
+            Some(ref ext) if ext == "md" || ext == "markdown"
         ) {
             continue;
         }
 
+        // Skip SUMMARY.md files as these are special in mdBook
         let file_name = path.file_name().unwrap().to_string_lossy();
         if file_name.eq_ignore_ascii_case("SUMMARY.md") {
             continue;
@@ -133,9 +136,10 @@ pub fn collect_articles(src_dir: &Path) -> Result<Vec<Article>> {
         }
     }
 
-    // Sort newest first
+    // Sort articles by date newest first
     articles.sort_by_key(|a| a.fm.date);
     articles.reverse();
+
     Ok(articles)
 }
 
@@ -162,12 +166,13 @@ pub fn build_feed(
         .map(|article| {
             eprintln!("Generating RSS item for: {}", article.path);
 
-            // Convert src-relative path to HTML path
+            // Convert src-relative path to HTML path with forward slashes
             let html_path = article
                 .path
+                .replace('\\', "/")
                 .replace(".md", ".html")
                 .replace("/README.html", "/index.html");
-            let link = format!("{base_url}/{html_path}");
+            let link = format!("{}/{}", base_url, html_path);
 
             let raw_html = markdown_to_html(
                 article
@@ -177,7 +182,7 @@ pub fn build_feed(
                     .unwrap_or(&article.content),
             );
 
-            // Manual XML escaping — rss crate fails silently with CDATA + & or < in content
+            // Manual XML escaping to avoid issues with rss crate CDATA
             let safe_description = raw_html
                 .replace('&', "&amp;")
                 .replace('<', "&lt;")
@@ -188,7 +193,7 @@ pub fn build_feed(
             let mut item_builder = ItemBuilder::default();
             item_builder.title(Some(article.fm.title.clone()));
             item_builder.link(Some(link.clone()));
-            item_builder.description(Some(safe_description)); // ← no CDATA, safe HTML
+            item_builder.description(Some(safe_description));
             item_builder.guid(Some(Guid {
                 value: link.clone(),
                 permalink: true,
@@ -204,10 +209,11 @@ pub fn build_feed(
         })
         .collect();
 
-    let mut channel_builder = ChannelBuilder::default();
-    channel_builder.title(title);
-    channel_builder.link(site_url);
+    eprintln!("Total RSS items generated: {}", items.len());
 
+    let mut channel_builder = ChannelBuilder::default();
+    channel_builder.title(title.to_string());
+    channel_builder.link(site_url.to_string());
     let safe_channel_desc = description
         .replace('&', "&amp;")
         .replace('<', "&lt;")
@@ -218,5 +224,7 @@ pub fn build_feed(
     channel_builder.items(items);
     channel_builder.generator(Some("mdbook-rss 0.1.0".to_string()));
 
-    Ok(channel_builder.build())
+    let channel = channel_builder.build();
+    eprintln!("Final channel item count: {}", channel.items().len());
+    Ok(channel)
 }
