@@ -176,17 +176,23 @@ pub fn build_feed(
                     .as_deref()
                     .unwrap_or(&article.content),
             );
-            let description = format!("<![CDATA[{}]]>", raw_html);
+
+            // Manual XML escaping — rss crate fails silently with CDATA + & or < in content
+            let safe_description = raw_html
+                .replace('&', "&amp;")
+                .replace('<', "&lt;")
+                .replace('>', "&gt;")
+                .replace('"', "&quot;")
+                .replace('\'', "&apos;");
 
             let mut item_builder = ItemBuilder::default();
             item_builder.title(Some(article.fm.title.clone()));
             item_builder.link(Some(link.clone()));
-            item_builder.description(Some(description));
+            item_builder.description(Some(safe_description)); // ← no CDATA, safe HTML
             item_builder.guid(Some(Guid {
                 value: link.clone(),
                 permalink: true,
             }));
-
             if let Some(date) = article.fm.date {
                 item_builder.pub_date(Some(date.to_rfc2822()));
             }
@@ -201,7 +207,14 @@ pub fn build_feed(
     let mut channel_builder = ChannelBuilder::default();
     channel_builder.title(title);
     channel_builder.link(site_url);
-    channel_builder.description(format!("<![CDATA[{}]]>", description));
+
+    let safe_channel_desc = description
+        .replace('&', "&amp;")
+        .replace('<', "&lt;")
+        .replace('>', "&gt;")
+        .replace('"', "&quot;")
+        .replace('\'', "&apos;");
+    channel_builder.description(safe_channel_desc);
     channel_builder.items(items);
     channel_builder.generator(Some("mdbook-rss 0.1.0".to_string()));
 
