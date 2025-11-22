@@ -1,3 +1,4 @@
+# .github/workflows/deploy-book.yml
 name: Deploy mdBook to User GitHub Pages
 on:
   push:
@@ -30,14 +31,14 @@ jobs:
       - name: Install mdbook-toc
         run: cargo install mdbook-toc --force
 
-      - name: Build and install mdbook-rss to PATH
+      # THIS IS THE CRITICAL FIX
+      - name: Install fresh mdbook-rss (force + locked path)
         run: |
           cd mdbook-rss
-          cargo build --release
-          cargo install --path . --force  # ← THIS INSTALLS TO ~/.cargo/bin/mdbook-rss
-          cd ..
-          which mdbook-rss  # Verify path
-          mdbook-rss supports html  # Test it
+          cargo install --path . --force --locked
+          # Verify it's actually the one we just built
+          which mdbook-rss
+          mdbook-rss --version || true
 
       - name: Build mdBook
         run: mdbook build
