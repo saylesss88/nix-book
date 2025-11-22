@@ -1,5 +1,5 @@
 ---
-title: My Chapter
+title: Intro to JJ
 date: 2025-11-22
 author: saylesss88
 description: Intro to JJ

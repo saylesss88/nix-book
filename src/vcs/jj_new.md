@@ -1,5 +1,5 @@
 ---
-title: My Chapter
+title: JJ New
 date: 2025-11-22
 author: saylesss88
 description: JJ New

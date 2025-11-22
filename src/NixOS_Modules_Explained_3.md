@@ -1,5 +1,5 @@
 ---
-title: My Chapter
+title: Nix Module System Explained
 date: 2025-11-21
 author: saylesss88
 description: Chapter 3

@@ -1,5 +1,5 @@
 ---
-title: My Chapter
+title: Intro to Nix
 date: 2025-11-21
 author: saylesss88
 description: Chapter 1

@@ -38,7 +38,7 @@ pub struct FrontMatter {
 pub struct Article {
     pub fm: FrontMatter,
     pub content: String,
-    pub path: String,
+    pub path: String, // relative path from src
 }
 
 pub fn parse_markdown_file(root: &Path, path: &Path) -> Result<Article> {
@@ -47,6 +47,7 @@ pub fn parse_markdown_file(root: &Path, path: &Path) -> Result<Article> {
     let mut yaml = String::new();
     let mut in_yaml = false;
 
+    // Extract YAML front matter
     for line in lines.by_ref() {
         let trimmed = line.trim();
         if trimmed == "---" {
@@ -89,7 +90,9 @@ pub fn parse_markdown_file(root: &Path, path: &Path) -> Result<Article> {
         }
     };
 
+    // Corrected: use `root` here instead of undefined `src_dir`
     let rel_path = path.strip_prefix(root).unwrap_or(path);
+
     Ok(Article {
         fm,
         content,
@@ -97,10 +100,10 @@ pub fn parse_markdown_file(root: &Path, path: &Path) -> Result<Article> {
     })
 }
 
-pub fn collect_articles(root: &Path) -> Result<Vec<Article>> {
+pub fn collect_articles(src_dir: &Path) -> Result<Vec<Article>> {
     let mut articles = Vec::new();
 
-    for entry in WalkDir::new(root).into_iter().filter_map(|e| e.ok()) {
+    for entry in WalkDir::new(src_dir).into_iter().filter_map(|e| e.ok()) {
         let path = entry.path();
         if !path.is_file() {
             continue;
@@ -113,12 +116,11 @@ pub fn collect_articles(root: &Path) -> Result<Vec<Article>> {
         }
 
         let file_name = path.file_name().unwrap().to_string_lossy();
-        if file_name == "SUMMARY.md" || file_name.eq_ignore_ascii_case("README.md") {
+        if file_name.eq_ignore_ascii_case("SUMMARY.md") {
             continue;
         }
 
-        eprintln!("Found markdown file: {}", path.display());
-        match parse_markdown_file(root, path) {
+        match parse_markdown_file(src_dir, path) {
             Ok(article) => {
                 if article.fm.title.trim().is_empty() && article.fm.description.is_none() {
                     eprintln!("Skipping empty article: {}", path.display());
@@ -131,6 +133,7 @@ pub fn collect_articles(root: &Path) -> Result<Vec<Article>> {
         }
     }
 
+    // Sort newest first
     articles.sort_by_key(|a| a.fm.date);
     articles.reverse();
     Ok(articles)
@@ -159,6 +162,7 @@ pub fn build_feed(
         .map(|article| {
             eprintln!("Generating RSS item for: {}", article.path);
 
+            // Convert src-relative path to HTML path
             let html_path = article
                 .path
                 .replace(".md", ".html")

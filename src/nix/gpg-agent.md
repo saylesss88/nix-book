@@ -1,5 +1,5 @@
 ---
-title: My Chapter
+title: GnuPG gpg-agent
 date: 2025-11-22
 author: saylesss88
 description: gpg-agent on NixOS

@@ -1,5 +1,5 @@
 ---
-title: My Chapter
+title: Intro to Nushell
 date: 2025-11-21
 author: saylesss88
 description: Chapter 12
