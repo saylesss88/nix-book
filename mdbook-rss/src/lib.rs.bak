@@ -6,7 +6,6 @@ use serde::{Deserialize, Deserializer};
 use std::{fs, path::Path};
 use walkdir::WalkDir;
 
-/// Deserialize frontmatter date (RFC3339 or YYYY-MM-DD)
 fn deserialize_date<'de, D>(deserializer: D) -> Result<Option<DateTime<Utc>>, D::Error>
 where
     D: Deserializer<'de>,
@@ -28,7 +27,7 @@ where
 #[derive(Debug, Deserialize, Clone)]
 pub struct FrontMatter {
     pub title: String,
-    #[serde(default, deserialize_with = "deserialize_date")]
+    #[serde(deserialize_with = "deserialize_date")]
     pub date: Option<DateTime<Utc>>,
     pub author: Option<String>,
     pub description: Option<String>,
@@ -38,17 +37,16 @@ pub struct FrontMatter {
 pub struct Article {
     pub fm: FrontMatter,
     pub content: String,
-    pub path: String,
+    pub path: String, // relative path from src
 }
 
-/// Parse a Markdown file, extracting frontmatter
 pub fn parse_markdown_file(root: &Path, path: &Path) -> Result<Article> {
     let text = fs::read_to_string(path)?;
     let mut lines = text.lines();
-
     let mut yaml = String::new();
     let mut in_yaml = false;
 
+    // Extract YAML front matter from markdown file
     for line in lines.by_ref() {
         let trimmed = line.trim();
         if trimmed == "---" {
@@ -65,10 +63,12 @@ pub fn parse_markdown_file(root: &Path, path: &Path) -> Result<Article> {
         }
     }
 
+    // Remaining content after front matter
     let content = lines.collect::<Vec<_>>().join("\n") + "\n";
 
+    // Deserialize YAML front matter or fallback to defaults
     let fm = if !yaml.trim().is_empty() {
-        serde_yaml::from_str(&yaml).unwrap_or(FrontMatter {
+        serde_yaml::from_str(&yaml).unwrap_or_else(|_| FrontMatter {
             title: path
                 .file_stem()
                 .unwrap_or_default()
@@ -91,7 +91,13 @@ pub fn parse_markdown_file(root: &Path, path: &Path) -> Result<Article> {
         }
     };
 
+    // Compute relative path from root directory
     let rel_path = path.strip_prefix(root).unwrap_or(path);
+    let _html_path = rel_path
+        .to_string_lossy()
+        .replace('\\', "/")
+        .replace(".md", ".html")
+        .replace("/README.html", "/index.html");
 
     Ok(Article {
         fm,
@@ -100,7 +106,6 @@ pub fn parse_markdown_file(root: &Path, path: &Path) -> Result<Article> {
     })
 }
 
-/// Collect all Markdown files under src/
 pub fn collect_articles(src_dir: &Path) -> Result<Vec<Article>> {
     let mut articles = Vec::new();
 
@@ -109,38 +114,41 @@ pub fn collect_articles(src_dir: &Path) -> Result<Vec<Article>> {
         if !path.is_file() {
             continue;
         }
-
-        match path.extension().and_then(|e| e.to_str()) {
-            Some(ext) if ext.eq_ignore_ascii_case("md") || ext.eq_ignore_ascii_case("markdown") => {
-            }
-            _ => continue,
-        }
-
-        if path
-            .file_name()
-            .unwrap()
-            .to_string_lossy()
-            .eq_ignore_ascii_case("SUMMARY.md")
-        {
+        // Accept files with md or markdown extension (case-insensitive)
+        if !matches!(
+            path.extension().and_then(|e| e.to_str().map(|s| s.to_ascii_lowercase())),
+            Some(ref ext) if ext == "md" || ext == "markdown"
+        ) {
             continue;
         }
 
-        if let Ok(article) = parse_markdown_file(src_dir, path) {
-            if article.fm.title.trim().is_empty() && article.fm.description.is_none() {
-                eprintln!("Skipping empty article: {}", path.display());
-            } else {
-                eprintln!("Parsed article: {} ({})", article.fm.title, article.path);
-                articles.push(article);
-            }
+        // Skip SUMMARY.md files as these are special in mdBook
+        let file_name = path.file_name().unwrap().to_string_lossy();
+        if file_name.eq_ignore_ascii_case("SUMMARY.md") {
+            continue;
         }
+
+        match parse_markdown_file(src_dir, path) {
+            Ok(article) => {
+                if article.fm.title.trim().is_empty() && article.fm.description.is_none() {
+                    eprintln!("Skipping empty article: {}", path.display());
+                } else {
+                    eprintln!("Parsed article: {} ({})", article.fm.title, article.path);
+                    articles.push(article);
+                }
+            }
+            Err(e) => eprintln!("Failed to parse {}: {}", path.display(), e),
+        }
+        eprintln!("Found markdown file: {}", path.display());
     }
 
+    // Sort articles by date newest first
     articles.sort_by_key(|a| a.fm.date);
     articles.reverse();
+
     Ok(articles)
 }
 
-/// Convert Markdown -> HTML
 fn markdown_to_html(md: &str) -> String {
     let mut html = String::new();
     let parser = Parser::new_ext(md, Options::all());
@@ -148,22 +156,26 @@ fn markdown_to_html(md: &str) -> String {
     html
 }
 
-/// Build RSS feed
 pub fn build_feed(
     src_dir: &Path,
     title: &str,
     site_url: &str,
     description: &str,
 ) -> Result<Channel> {
+    eprintln!("build_feed called with site_url = '{}'", site_url);
     let articles = collect_articles(src_dir)?;
     let base_url = site_url.trim_end_matches('/');
+    eprintln!("Using base_url = '{}'", base_url);
 
     let items: Vec<Item> = articles
         .into_iter()
         .map(|article| {
+            eprintln!("Generating RSS item for: {}", article.path);
+
+            // Convert src-relative path to HTML path with forward slashes
             let html_path = article
                 .path
-                .replace("\\", "/")
+                .replace('\\', "/")
                 .replace(".md", ".html")
                 .replace("/README.html", "/index.html");
             let link = format!("{}/{}", base_url, html_path);
@@ -176,31 +188,52 @@ pub fn build_feed(
                     .unwrap_or(&article.content),
             );
 
+            // Manual XML escaping
+            let safe_description = raw_html
+                .replace('&', "&amp;")
+                .replace('<', "&lt;")
+                .replace('>', "&gt;")
+                .replace('"', "&quot;")
+                .replace('\'', "&apos;");
+
             let mut item_builder = ItemBuilder::default();
             item_builder.title(Some(article.fm.title.clone()));
             item_builder.link(Some(link.clone()));
+            item_builder.description(Some(safe_description));
             item_builder.guid(Some(Guid {
                 value: link.clone(),
                 permalink: true,
             }));
-            item_builder.description(Some(format!("<![CDATA[{}]]>", raw_html)));
             if let Some(date) = article.fm.date {
                 item_builder.pub_date(Some(date.to_rfc2822()));
             }
-            if let Some(author) = article.fm.author {
+            if let Some(author) = &article.fm.author {
                 item_builder.author(Some(author.clone()));
             }
+
             item_builder.build()
         })
         .collect();
 
-    let channel = ChannelBuilder::default()
-        .title(title.to_string())
-        .link(base_url.to_string())
-        .description(description.to_string())
-        .generator(Some("mdbook-rss 0.1.0".to_string()))
-        .items(items)
-        .build();
+    eprintln!("Total RSS items generated: {}", items.len());
 
+    let mut channel_builder = ChannelBuilder::default();
+    channel_builder.title(title.to_string());
+
+    // 💥 FIX 1: Use the trimmed base_url for the channel link to prevent an empty <link> tag
+    channel_builder.link(base_url.to_string());
+
+    let safe_channel_desc = description
+        .replace('&', "&amp;")
+        .replace('<', "&lt;")
+        .replace('>', "&gt;")
+        .replace('"', "&quot;")
+        .replace('\'', "&apos;");
+    channel_builder.description(safe_channel_desc);
+    channel_builder.items(items);
+    channel_builder.generator(Some("mdbook-rss 0.1.0".to_string()));
+
+    let channel = channel_builder.build();
+    eprintln!("Final channel item count: {}", channel.items().len());
     Ok(channel)
 }

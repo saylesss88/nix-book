@@ -10,6 +10,6 @@ renders = ["html"]
 # [preprocessor.toc]
 # renderers = ["html"]
 [output.html]
-site-url = "https://saylesss88.github.io/nix-book/"
+site-url = "https://saylesss88.github.io/nix-book"
 additional-css = ["theme/extra.css"]
 additional-js = ["theme/extra.js"]
