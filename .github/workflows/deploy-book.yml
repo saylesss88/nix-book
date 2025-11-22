@@ -3,7 +3,7 @@ name: Deploy mdBook to User GitHub Pages
 on:
   push:
     branches:
-      - main # This workflow runs when you push to the 'main' branch of 'nix-book'
+      - main
 
 jobs:
   build_and_deploy:
@@ -12,7 +12,7 @@ jobs:
       contents: write
 
     steps:
-      - name: Checkout mdBook source
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -28,17 +28,22 @@ jobs:
         with:
           mdbook-version: "latest"
 
-      - name: Install mdbook-toc preprocessor
+      - name: Install mdbook-toc
         run: cargo install mdbook-toc --force
 
-      - name: Build mdbook-rss preprocessor
-        working-directory: ./mdbook-rss   # path to your preprocessor crate
-        run: cargo build --release
+      # THIS IS THE CRITICAL FIX
+      - name: Install fresh mdbook-rss (force + locked path)
+        run: |
+          cd mdbook-rss
+          cargo install --path . --force --locked
+          # Verify it's actually the one we just built
+          which mdbook-rss
+          mdbook-rss --version || true
 
       - name: Build mdBook
         run: mdbook build
 
-      - name: Deploy to saylesss88.github.io
+      - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           personal_token: ${{ secrets.PAT_TOKEN }}
