@@ -30,7 +30,7 @@ fn main() {
         .pointer("/root")
         .and_then(|v| v.as_str())
         .unwrap_or(".");
-    let src_dir = PathBuf::from(root).join("src");
+    let src_dir = PathBuf::from(root); //.join("src");
 
     let site_url = context
         .pointer("/config/output/html/site-url")

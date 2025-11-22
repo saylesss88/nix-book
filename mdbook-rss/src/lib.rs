@@ -93,6 +93,11 @@ pub fn parse_markdown_file(root: &Path, path: &Path) -> Result<Article> {
 
     // Compute relative path from root directory
     let rel_path = path.strip_prefix(root).unwrap_or(path);
+    let html_path = rel_path
+        .to_string_lossy()
+        .replace('\\', "/")
+        .replace(".md", ".html")
+        .replace("/README.html", "/index.html");
 
     Ok(Article {
         fm,
