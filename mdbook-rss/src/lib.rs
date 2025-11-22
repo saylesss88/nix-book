@@ -187,7 +187,7 @@ pub fn build_feed(
                     .unwrap_or(&article.content),
             );
 
-            // Manual XML escaping to avoid issues with rss crate CDATA
+            // Manual XML escaping
             let safe_description = raw_html
                 .replace('&', "&amp;")
                 .replace('<', "&lt;")
@@ -218,7 +218,10 @@ pub fn build_feed(
 
     let mut channel_builder = ChannelBuilder::default();
     channel_builder.title(title.to_string());
-    channel_builder.link(site_url.to_string());
+
+    // 💥 FIX 1: Use the trimmed base_url for the channel link to prevent an empty <link> tag
+    channel_builder.link(base_url.to_string());
+
     let safe_channel_desc = description
         .replace('&', "&amp;")
         .replace('<', "&lt;")
