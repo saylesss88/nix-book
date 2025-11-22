@@ -1,0 +1,890 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Encrypted Setups</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-9dfbd86b.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../../theme/extra-c3f37c9a.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../../searchindex-2e054b37.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-370a735a.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title"></h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <hr>
+<h2 id="title-my-chapter-date-2025-11-22-author-saylesss88-description-encrypted-install"><a class="header" href="#title-my-chapter-date-2025-11-22-author-saylesss88-description-encrypted-install">title: My Chapter
+date: 2025-11-22
+author: saylesss88
+description: Encrypted Install</a></h2>
+<h1 id="encrypted-setups"><a class="header" href="#encrypted-setups">Encrypted Setups</a></h1>
+<details>
+<summary> ✔️ Click to Expand Table of Contents</summary>
+<!-- toc -->
+</details>
+<p>NixOS supports file systems that are encrypted using LUKS (Linux Unified Key
+Setup). This guide walks you through an encrypted NixOS installation using Disko
+for disk management and Btrfs for subvolumes. It is designed for users who want
+full disk encryption and a modern filesystem layout. If you prefer an
+unencrypted setup, you can skip the LUKS and encryption steps, but this guide
+focuses on security and flexibility.</p>
+<ul>
+<li>For Unencrypted layout
+<a href="https://saylesss88.github.io/installation/unencrypted/unencrypted.html">Click Here</a></li>
+</ul>
+<p>If you choose to set up impermanence, ensure it matches your install. Encrypted
+Setup with Encrypted Impermanence and Unencrypted Setup with Unencrypted
+Impermanence.</p>
+<blockquote>
+<p>❗ NOTE: This is a bit convoluted, there are a few paths you can follow. If
+you choose to use the starter repo (<a href="https://github.com/saylesss88/my-flake">https://github.com/saylesss88/my-flake</a>)
+just follow the included README and use this for reference.</p>
+</blockquote>
+<h2 id="what-does-luks-encryption-protect"><a class="header" href="#what-does-luks-encryption-protect">What does LUKS Encryption Protect?</a></h2>
+<p>It’s important to understand what disk encryption protects and what it doesn’t
+protect so you don’t have any misconceptions about how safe your data is.</p>
+<ul>
+<li>
+<p><a href="https://wiki.nixos.org/wiki/Full_Disk_Encryption">NixOS Wiki FDE</a></p>
+</li>
+<li>
+<p><a href="https://wiki.archlinux.org/title/Data-at-rest_encryption">Arch Wiki Data-at-rest encryption</a></p>
+</li>
+<li>
+<p><a href="https://0pointer.net/blog/authenticated-boot-and-disk-encryption-on-linux.html">Authenticated Booot and DE on Linux</a></p>
+</li>
+<li>
+<p><a href="https://oddlama.org/blog/bypassing-disk-encryption-with-tpm2-unlock/">Bypassing FDE with TPM2 Unlock</a></p>
+</li>
+</ul>
+<p><strong>What LUKS Protects</strong>:</p>
+<ul>
+<li>
+<p><strong>Data Confidentiality at Rest</strong>: LUKS encrypts entire block devices (such as
+disk partitions or whole drives), ensuring that all data stored on the
+encrypted device is unreadable without the correct decryption key or
+passphrase. This protects sensitive information from unauthorized access if
+the device is lost, stolen, or physically accessed by an attacker.</p>
+</li>
+<li>
+<p><strong>Physical Security</strong>: If someone gains physical possession of your device
+(for example, by stealing your laptop or removing a hard drive), LUKS ensures
+the data remains inaccessible and appears as random, meaningless bytes without
+the correct credentials.</p>
+</li>
+<li>
+<p><strong>Protection Against Offline Attacks</strong>: LUKS defends against attackers who
+attempt to bypass the operating system by booting from another device or
+removing the drive and mounting it elsewhere. Without the decryption key, the
+data remains protected.</p>
+</li>
+</ul>
+<p><strong>What LUKS Does Not Protect</strong>:</p>
+<ul>
+<li>
+<p><strong>Data in Use</strong>: Once the system is booted and the encrypted device is
+unlocked, the data becomes accessible to the operating system and any user or
+process with the necessary permissions. LUKS does not protect against attacks
+on a running system, such as malware, remote exploits, or unauthorized users
+with access to an unlocked session.</p>
+</li>
+<li>
+<p><strong>File-Level Access Control</strong>: LUKS encrypts entire partitions or disks, not
+individual files or directories. It does not provide granular file-level
+encryption or access control within the operating system.</p>
+</li>
+<li>
+<p><strong>Network Attacks</strong>: LUKS only protects data stored on disk. It does not
+encrypt data transmitted over networks or protect against network-based
+attacks.</p>
+</li>
+<li>
+<p><strong>Bootloader and EFI Partitions</strong>: The initial bootloader or EFI system
+partition cannot be encrypted with LUKS, so some parts of the boot process may
+remain exposed unless additional measures are taken. (i.e., Secure Boot,
+additional passwords, TPM2)</p>
+</li>
+</ul>
+<p>To Sum it Up: LUKS encryption protects the confidentiality of all data stored on
+an encrypted block device by making it unreadable without the correct passphrase
+or key. This ensures that, if your device is lost or stolen, your data remains
+secure and inaccessible to unauthorized users. However, LUKS does not protect
+data once the system is unlocked and running, nor does it provide file-level
+encryption or protect against malware and network attacks. For comprehensive
+security, LUKS should be combined with strong access controls and other security
+best practices.</p>
+<h2 id="the-install"><a class="header" href="#the-install">The Install</a></h2>
+<ol>
+<li>
+<p>Get the
+<a href="https://channels.nixos.org/nixos-25.05/latest-nixos-minimal-x86_64-linux.iso">Nixos Minimal ISO</a>
+Get it on a usb stick, I use Ventoy with Ventoy2Disk.sh. The following is the
+link to the
+<a href="https://sourceforge.net/projects/ventoy/files/v1.1.05/ventoy-1.1.05-linux.tar.gz/download">Ventoy TarBall</a>
+download, untar it with <code>tar -xzf ventoy-1.1.05-linux.tar.gz</code>, and make it
+executable with <code>chmod +x Ventoy2Disk.sh</code>, and finally execute it with
+<code>sudo bash Ventoy2Disk.sh</code> Follow the prompts to finish the install.</p>
+</li>
+<li>
+<p>Configuring Networking</p>
+</li>
+</ol>
+<p>The minimal installer uses <code>wpa_supplicant</code> instead of NetworkManager. Choose
+one of the following methods to enable networking:</p>
+<pre><code class="language-bash">sudo systemctl start wpa_supplicant
+wpa_cli
+</code></pre>
+<h3 id="option-a-interactive-wpa_cli"><a class="header" href="#option-a-interactive-wpa_cli">Option A: Interactive <code>wpa_cli</code></a></h3>
+<pre><code class="language-bash">&gt; add_network
+0
+
+&gt; set_network 0 ssid "myhomenetwork"
+OK
+
+&gt; set_network 0 psk "mypassword"
+OK
+
+&gt; enable_network 0
+OK
+</code></pre>
+<p>To exit type <code>quit</code>, then check your connection with <code>ping google.com</code>.</p>
+<h3 id="option-b-non-interactive-wpa_passphrase"><a class="header" href="#option-b-non-interactive-wpa_passphrase">Option B: Non-Interactive <code>wpa_passphrase</code></a></h3>
+<p>This method is quicker for known networks and persists the configuration for the
+live environment.</p>
+<p>First, identify your wireless interface name (e.g., <code>wlan0</code>) using <code>ip a</code>.</p>
+<pre><code class="language-bash">sudo systemctl start wpa_supplicant # Ensure wpa_supplicant is running
+# This command generates the config and appends it to a file specific to wlan0
+sudo wpa_passphrase "myhomenetwork" "mypassword" | sudo tee /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
+sudo systemctl restart wpa_supplicant@wlan0.service
+</code></pre>
+<p>After either method, exit <code>wpa_cli</code> with <code>quit</code>. Then test your connection:</p>
+<pre><code class="language-bash">ping 1.1.1.1
+</code></pre>
+<ol start="3">
+<li>Get your Disk Name with <code>lsblk</code></li>
+</ol>
+<p>The output should be something like:</p>
+<pre><code class="language-bash">NAME        MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
+nvme0n1     259:0    0   1,8T  0 disk
+</code></pre>
+<blockquote>
+<p>❗ From here, you can either</p>
+</blockquote>
+<ol start="4">
+<li>Copy the disk configuration to your machine. You can choose one from the
+<a href="https://github.com/nix-community/disko/tree/master/example">examples directory</a>.</li>
+</ol>
+<p>There is still a starter repo that can save you some typing, make sure to
+carefully review if you decide to use it:</p>
+<pre><code class="language-bash">export NIX_CONFIG='experimental-features = nix-command flakes'
+export EDITOR='hx' # or 'vi'
+nix-shell -p git yazi helix mkpasswd
+git config --global user.name "gitUsername"
+git config --global user.email "gitEmail"
+# OPTIONAL starter repo containing disk-config set up for impermanence
+git clone https://github.com/saylesss88/my-flake.git
+</code></pre>
+<p>I prefer <code>helix</code> here as it’s defaults are great. (i.e., auto closing brackets
+and much more)</p>
+<p>If you choose to use the starter repo you won’t need to run the next command as
+it is already populated in the repo and should use the
+<a href="https://github.com/saylesss88/my-flake">Starter Repo README</a> most of the rest
+of the guide is for manual disko without the starter repo.</p>
+<p>If you click on the layout you want then click the <code>Raw</code> button near the top,
+then copy the <code>url</code> and use it in the following command:</p>
+<pre><code class="language-bash">cd /tmp
+curl https://raw.githubusercontent.com/nix-community/disko/refs/heads/master/example/luks-btrfs-subvolumes.nix -o /tmp/disk-config.nix
+</code></pre>
+<p>The above curl command is to the <code>luks-btrfs-subvolumes.nix</code> layout.</p>
+<ol start="5">
+<li>Make Necessary changes, I prepared mine for impermanence with the following:</li>
+</ol>
+<pre><code class="language-bash">hx /tmp/disk-config.nix
+</code></pre>
+<p>Make sure you identify your system disk name with <code>lsblk</code> and change the
+<code>device</code> attribute below to match your disk.</p>
+<pre><code class="language-bash">lsblk
+nvme0n1       259:0    0 476.9G  0 disk
+├─nvme0n1p1   259:1    0   512M  0 part  /boot
+└─nvme0n1p2   259:2    0 476.4G  0 part
+</code></pre>
+<p>My disk is <code>nvme0n1</code>, change below to match yours:</p>
+<pre><code class="language-nix">{
+  disko.devices = {
+    disk = {
+      nvme0n1 = {
+        type = "disk";
+        # Make sure this is correct with `lsblk`
+        device = "/dev/nvme0n1";
+        content = {
+          type = "gpt";
+          partitions = {
+            ESP = {
+              label = "boot";
+              name = "ESP";
+              size = "1G";
+              type = "EF00";
+              content = {
+                type = "filesystem";
+                format = "vfat";
+                mountpoint = "/boot";
+                mountOptions = [
+                  "defaults"
+                ];
+              };
+            };
+            luks = {
+              size = "100%";
+              label = "luks";
+              content = {
+                type = "luks";
+                name = "cryptroot";
+                content = {
+                  type = "btrfs";
+                  extraArgs = ["-L" "nixos" "-f"];
+                  subvolumes = {
+                    "/root" = {
+                      mountpoint = "/";
+                      mountOptions = ["subvol=root" "compress=zstd" "noatime"];
+                    };
+                    "/root-blank" = {
+                      mountOptions = ["subvol=root-blank" "nodatacow" "noatime"];
+                    };
+                    "/home" = {
+                      mountpoint = "/home";
+                      mountOptions = ["subvol=home" "compress=zstd" "noatime"];
+                    };
+                    "/nix" = {
+                      mountpoint = "/nix";
+                      mountOptions = ["subvol=nix" "compress=zstd" "noatime"];
+                    };
+                    "/persist" = {
+                      mountpoint = "/persist";
+                      mountOptions = ["subvol=persist" "compress=zstd" "noatime"];
+                    };
+                    "/log" = {
+                      mountpoint = "/var/log";
+                      mountOptions = ["subvol=log" "compress=zstd" "noatime"];
+                    };
+                    "/lib" = {
+                      mountpoint = "/var/lib";
+                      mountOptions = ["subvol=lib" "compress=zstd" "noatime"];
+                    };
+                    "/persist/swap" = {
+                      mountpoint = "/persist/swap";
+                      mountOptions = ["subvol=swap" "noatime" "nodatacow" "compress=no"];
+                      swap.swapfile.size = "18G";
+                    };
+                  };
+                };
+              };
+            };
+          };
+        };
+      };
+    };
+  };
+
+  fileSystems."/persist".neededForBoot = true;
+  fileSystems."/var/log".neededForBoot = true;
+  fileSystems."/var/lib".neededForBoot = true;
+}
+</code></pre>
+<p>I have 16G of RAM so to be safe for hibernation I chose to give it some extra
+space. The boot partition is 1G, this extra space is for specialisations and
+lanzaboote.</p>
+<p>or for a swapfile:</p>
+<pre><code class="language-nix">swapDevices = [
+  {
+    device = "/persist/swap/swapfile";
+    size = 18 * 1024; # Size in MB (18GB)
+    # or
+    # size = 16384; # Size in MB (16G);
+  }
+];
+</code></pre>
+<h2 id="setting-up-zram-and-tmp-on-ram"><a class="header" href="#setting-up-zram-and-tmp-on-ram">Setting up zram and /tmp on RAM</a></h2>
+<p>While <code>/tmp</code> is handled by <code>tmpfs</code> (as shown the below <code>configuration.nix</code>), you
+can further enhance memory efficiency with <code>zram</code> for compressed swap, as shown
+below.</p>
+<blockquote>
+<pre><code class="language-nix">{
+  lib,
+  config,
+  ...
+}: let
+  cfg = config.custom.zram;
+in {
+  options.custom.zram = {
+    enable = lib.mkEnableOption "Enable utils module";
+  };
+
+  config = lib.mkIf cfg.enable {
+    zramSwap = {
+      enable = true;
+      # one of "lzo", "lz4", "zstd"
+      algorithm = "zstd";
+       priority = 5;
+       memoryPercent = 50;
+    };
+  };
+}
+</code></pre>
+<p>And in your <code>configuration.nix</code> you would add:</p>
+<pre><code class="language-nix"># configuration.nix
+custom = {
+    zram.enable = true;
+};
+</code></pre>
+</blockquote>
+<p>After adding the above module and rebuilding, you can see it with:</p>
+<pre><code class="language-bash">swapon --show
+NAME       TYPE      SIZE USED PRIO
+/dev/zram0 partition 7.5G   0B    5
+</code></pre>
+<ol start="6">
+<li>Run disko to partition, format and mount your disks. <strong>Warning</strong> this will
+wipe <strong>EVERYTHING</strong> on your disk. Disko doesn’t work with dual boot.</li>
+</ol>
+<pre><code class="language-bash">sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko/latest -- --mode destroy,format,mount /tmp/disk-config.nix
+</code></pre>
+<p>Check it with the following:</p>
+<pre><code class="language-bash">mount | grep /mnt
+</code></pre>
+<p>The output for an <code>nvme0n1</code> disk would be similar to the following:</p>
+<pre><code class="language-bash">#... snip ...
+/dev/nvme0n1p2 on /mnt type btrfs (rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=285,subvol=/root)
+/dev/nvme0n1p2 on /mnt/persist type btrfs (rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=261,subvol=/persist)
+/dev/nvme0n1p2 on /mnt/etc type btrfs (rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=261,subvol=/persist)
+/dev/nvme0n1p2 on /mnt/nix type btrfs (rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=260,subvol=/nix)
+/dev/nvme0n1p2 on /mnt/var/lib type btrfs (rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=258,subvol=/lib)
+/dev/nvme0n1p2 on /mnt/var/log type btrfs (rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=259,subvol=/log)
+/dev/nvme0n1p2 on /mnt/nix/store type btrfs (ro,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=260,subvol=/nix)
+# ... snip ...
+</code></pre>
+<ol start="7">
+<li>Generate necessary files, here we use <code>--no-filesystems</code> because disko
+handles the <code>fileSystems</code> attribute for us.</li>
+</ol>
+<pre><code class="language-bash">nixos-generate-config --no-filesystems --root /mnt
+</code></pre>
+<ul>
+<li>The above command will place a <code>configuration.nix</code> and
+<code>hardware-configuration.nix</code> in <code>/mnt/etc/nixos/</code></li>
+</ul>
+<p>It may be helpful to add a couple things to your <code>configuration.nix</code> now, while
+it’s in its default location. You can just add what you want and rebuild once
+with <code>sudo nixos-rebuild switch</code> and move on. (i.e. <code>git</code>, an editor, etc.).</p>
+<h3 id="setting-a-flake-for-your-minimal-install"><a class="header" href="#setting-a-flake-for-your-minimal-install">Setting a Flake for your minimal Install</a></h3>
+<ol start="8">
+<li>Create the flake in your home directory to avoid needing to use sudo for
+every command:</li>
+</ol>
+<pre><code class="language-bash">cd   # Move to home directory
+mkdir flake
+cd /mnt/etc/nixos/
+sudo mv hardware-configuration.nix configuration.nix ~/flake/
+sudo mv /tmp/disk-config.nix ~/flake/
+</code></pre>
+<pre><code class="language-bash">cd flake
+hx flake.nix
+</code></pre>
+<blockquote>
+<p>You’ll change <code>hostName = nixpkgs.lib.nixosSystem</code> to your chosen hostname,
+(e.g. <code>magic = nixpkgs.lib.nixosSystem</code>). This will be the same as your
+<code>networking.hostName = "magic";</code> in your <code>configuration.nix</code> that we will set
+up shortly.</p>
+</blockquote>
+<pre><code class="language-nix"># flake.nix
+{
+  description = "NixOS configuration";
+
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    disko.url = "github:nix-community/disko/latest";
+    disko.inputs.nixpkgs.follows = "nixpkgs";
+    # impermanence.url = "github:nix-community/impermanence";
+  };
+
+  outputs = inputs@{ nixpkgs, ... }: {
+    nixosConfigurations = {
+      # Change `hostName` to your chosen host name
+      nixos = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          ./configuration.nix
+          inputs.disko.nixosModules.disko
+          # inputs.impermanence.nixosModules.impermanence
+        ];
+      };
+    };
+  };
+}
+</code></pre>
+<ol start="9">
+<li>Edit <code>configuration.nix</code> with what is required, the following are required, I
+clone my original flake repo and move the pieces into place but it’s fairly
+easy to just type it all out:</li>
+</ol>
+<ul>
+<li>
+<p>Bootloader, (e.g., <code>boot.loader.systemd-boot.enable = true;</code>)</p>
+</li>
+<li>
+<p>User, the example uses <code>username</code> change this to your chosen username. If you
+don’t set your hostname it will be <code>nixos</code>.</p>
+</li>
+<li>
+<p>Networking, <code>networking.networkmanager.enable = true;</code></p>
+</li>
+<li>
+<p><code>hardware-configuration.nix</code> &amp; <code>disk-config.nix</code> for this setup</p>
+</li>
+<li>
+<p>If you type this out by hand and mess up a single character, you will have to
+start over completely. A fairly safe way to do this is with <code>vim</code> or <code>hx</code> and
+redirect the hashed pass to a <code>/tmp/pass.txt</code>, you can then read it into your
+<code>users.nix</code>:</p>
+</li>
+</ul>
+<pre><code class="language-bash">mkpasswd --method=yescrypt &gt; /tmp/pass.txt
+# Enter your chosen password
+</code></pre>
+<p>And then when inside <code>configuration.nix</code>, move to the line where you want the
+hashed password and type <code>:r /tmp/pass.txt</code> to read the hash into your current
+file.</p>
+<pre><code class="language-nix"># configuration.nix
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
+}: {
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+    ./disk-config.nix
+  ];
+
+  # systemd Stage 1: if enabled, it handles unlocking of LUKS-encrypted volumes during boot.
+    boot.initrd.luks.devices = {
+    cryptroot = {
+      device = "/dev/disk/by-partlabel/luks";
+      allowDiscards = true;
+    };
+  };
+
+  # This complements using zram, putting /tmp on RAM
+    boot = {
+    tmp = {
+      useTmpfs = true;
+      tmpfsSize = "50%";
+    };
+  };
+
+  # Enable autoScrub for btrfs
+    services.btrfs.autoScrub = {
+    enable = true;
+    interval = "weekly";
+    fileSystems = ["/"];
+  };
+
+
+  # Change me!
+  networking.hostName = "nixos"; # This will match the `hostname` of your flake
+
+  networking.networkmanager.enable = true;
+
+  boot.loader.systemd-boot.enable = true; # (for UEFI systems only)
+  # List packages installed in system profile.
+  # You can use https://search.nixos.org/ to find more packages (and options).
+  environment.systemPackages = with pkgs; [
+    vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
+    #   wget
+    git
+  ];
+
+  time.timeZone = "America/New_York";
+
+# Change me to your chosen username (i.e. change nixosUser to your username)
+  users.users.nixosUser = {
+    isNormalUser = true;
+    extraGroups = [ "wheel" "networkmanager" ]; # Add "wheel" for sudo access
+    initialHashedPassword = "READ_MKPASSWD_OUTPUT_HERE"; # &lt;-- This is where it goes!
+    # home = "/home/nixos"; # Optional: Disko typically handles home subvolumes
+  };
+  # Change me to match your chosen username
+  users.group.nixosUser = {};
+
+  console.keyMap = "us";
+
+  nixpkgs.config.allowUnfree = true;
+
+  system.stateVersion = "25.05";
+}
+</code></pre>
+<p>Although, just adding the <code>disk-config.nix</code> works for prompting you for your
+encryption passphrase adding the following is a more robust way of ensuring Nix
+is aware of this:</p>
+<pre><code class="language-nix">    boot.initrd.luks.devices = {
+    cryptroot = {
+      device = "/dev/disk/by-partlabel/luks";
+      allowDiscards = true;
+    };
+  };
+</code></pre>
+<ol start="10">
+<li>Move the flake to <code>/mnt/etc/nixos</code> and run <code>nixos-install</code>:</li>
+</ol>
+<pre><code class="language-bash">sudo mv ~/flake /mnt/etc/nixos/
+</code></pre>
+<ul>
+<li>Give everything a quick once over, insuring your host is set in both your
+<code>flake.nix</code>, and <code>configuration.nix</code>. Ensure you changed the username in the
+<code>configuration.nix</code> from <code>nixos</code> to your chosen name, this is the name you’ll
+use to login after you enter your encryption passphrase.</li>
+</ul>
+<p>The below command uses <code>#nixos</code> because that’s what the defaults are, you’ll
+change it to your chosen hostname.</p>
+<pre><code class="language-bash">sudo nixos-install --flake /mnt/etc/nixos/flake#nixos
+</code></pre>
+<ul>
+<li>You will be prompted to enter a new password if everything succeeds.</li>
+</ul>
+<h2 id="create-a-blank-snapshot-of-root"><a class="header" href="#create-a-blank-snapshot-of-root">Create a Blank Snapshot of /root</a></h2>
+<p>This is essential if you plan on using impermanence with this encrypted setup.
+We take a snapshot of <code>/root</code> while it’s a clean slate, right after we run disko
+to format the disk.</p>
+<p>To access all of the subvolumes, we have to mount the Btrfs partitions
+top-level.</p>
+<ol>
+<li>Unlock the LUKS device, if not already unlocked as it should be from running
+disko:</li>
+</ol>
+<pre><code class="language-bash">sudo cryptsetup open /dev/disk/by-partlabel/luks cryptroot
+</code></pre>
+<ol start="2">
+<li>Mount the Btrfs top-level (<code>subvolid=5</code>):</li>
+</ol>
+<pre><code class="language-bash">sudo mount -o subvolid=5 /dev/mapper/cryptroot /mnt
+</code></pre>
+<ol start="3">
+<li>List the contents:</li>
+</ol>
+<pre><code class="language-bash">ls /mnt
+# you should see something like
+root   home  nix  persist  log  lib  ...
+</code></pre>
+<ol start="4">
+<li>Now we can take a snapshot of the <code>root</code> subvolume:</li>
+</ol>
+<pre><code class="language-bash">sudo btrfs subvolume snapshot -r /mnt/root /mnt/root-blank
+</code></pre>
+<ol start="5">
+<li>Verify Your Blank Snapshot:</li>
+</ol>
+<p>Before continuing, make sure your blank snapshot exists. This is crucial for
+impermanence to work properly.</p>
+<pre><code class="language-bash">sudo btrfs subvolume list /mnt
+</code></pre>
+<p>You should see output containing both <code>root</code> and <code>root-blank</code> subvolumes:</p>
+<pre><code class="language-bash">ID 256 gen ... path root
+ID 257 gen ... path root-blank
+</code></pre>
+<p>Check that the snapshot is read only, this ensures that our snapshot will remain
+the same as the day we took it. It was set <code>ro</code> in disko but lets check anyways:</p>
+<pre><code class="language-bash">sudo btrfs property get -ts /mnt/root-blank
+# output should be
+ro=true
+</code></pre>
+<ol start="5">
+<li>Make sure to unmount:</li>
+</ol>
+<pre><code class="language-bash">sudo umount /mnt
+</code></pre>
+<ul>
+<li>
+<p>If everything checks out, reboot the system and you should be prompted to
+enter your <code>user</code> and <code>password</code> to login to a shell to get started.</p>
+</li>
+<li>
+<p>The flake will be placed at <code>/etc/nixos/flake</code> after the install and reboot, I
+choose to move it to my home directory. Since the file was first in <code>/etc</code>
+you’ll need to adjust the permissions with something like
+<code>sudo chown -R $USER:$USER ~/flake</code> and then you can work on it without
+privilege escalation. This requires that you create a group for your user as
+done in the <code>configuration.nix</code> above.</p>
+</li>
+<li>
+<p>You can check the layout of your btrfs system with:</p>
+</li>
+</ul>
+<pre><code class="language-bash">sudo btrfs subvolume list /
+</code></pre>
+<h2 id="persisting-critical-system-state"><a class="header" href="#persisting-critical-system-state">Persisting Critical System State</a></h2>
+<p>The following is a one time operation, we’re just getting it out of the way now.
+This moves all of the important system state to a persistant location, further
+preparing for impermanence.</p>
+<p>It’s essential that you have first run the <code>nixos-install</code> command to populate
+these directories before copying them over.</p>
+<pre><code class="language-bash">sudo mkdir -p /mnt/persist/etc
+sudo mkdir -p /mnt/persist/var/lib
+sudo mkdir -p /mnt/persist/var/log
+sudo mkdir -p /mnt/persist/home
+sudo mkdir -p /mnt/persist/root
+sudo cp -a /mnt/etc/. /mnt/persist/etc/
+sudo cp -a /mnt/var/lib/. /mnt/persist/var/lib
+sudo cp -a /mnt/var/log/. /mnt/persist/var/log
+sudo cp -a /mnt/home/. /mnt/persist/home/
+sudo cp -a /mnt/root/. /mnt/persist/root/
+</code></pre>
+<p>Since we are in a live environment, after the install and reboot the <code>/mnt</code>
+prefix will be removed.</p>
+<h2 id="reboot"><a class="header" href="#reboot">Reboot</a></h2>
+<p>Now that everything is done, we can safely reboot and ensure that our LUKS
+password/passphrase is accepted as well as our userlevel password and username.</p>
+<p>After reboot, you can continue to setup
+<a href="https://saylesss88.github.io/installation/enc/sops-nix.html">Sops Encrypted Secrets</a>
+and
+<a href="https://saylesss88.github.io/installation/enc/lanzaboote.html">Lanzaboote Secure Boot</a></p>
+<ul>
+<li>
+<p>To set up impermanence for this specific layout, follow the link
+<a href="https://saylesss88.github.io/installation/enc/encrypted_impermanence.html">Encrypted Impermanence</a></p>
+</li>
+<li>
+<p><a href="https://btrfs.readthedocs.io/en/latest/Subvolumes.html">BTRFS Subvolumes</a></p>
+</li>
+<li>
+<p><a href="https://www.freedesktop.org/software/systemd/man/latest/systemd-cryptenroll.html">systemd-cryptenroll man page</a></p>
+</li>
+<li>
+<p><a href="https://uapi-group.org/specifications/specs/linux_tpm_pcr_registry/">Linux TPM PCR Registry</a></p>
+</li>
+<li>
+<p><a href="https://oddlama.org/blog/bypassing-disk-encryption-with-tpm2-unlock/">Bypassing FDE with TPM2</a></p>
+</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../installation/unencrypted/impermanence.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../installation/enc/encrypted_impermanence.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../installation/unencrypted/impermanence.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../installation/enc/encrypted_impermanence.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../../mark-09e88c2c.min.js"></script>
+        <script src="../../searcher-c2a407aa.js"></script>
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../../theme/extra-e0f03105.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

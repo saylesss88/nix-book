@@ -1,3 +1,10 @@
+---
+title: My Chapter
+date: 2025-11-22
+author: saylesss88
+description: Nix Flake Outputs
+---
+
 # Nix Flake Outputs
 
 <details>
@@ -19,15 +26,15 @@ outputs simultaneously such as:
 
 - [Nix templates](https://github.com/NixOS/templates)
 
-- The `outputs` top-level attribute is actually a function that takes an attribute
-  set of inputs and returns an attribute set that is essentially a recipe for
-  building the flake.
+- The `outputs` top-level attribute is actually a function that takes an
+  attribute set of inputs and returns an attribute set that is essentially a
+  recipe for building the flake.
 
 ## Output Schema
 
 Once the inputs are resolved, they're passed to the `outputs` attribute. This
-`outputs` attribute is, in fact, a function, as indicated by the `:` colon
-(or the `lambda` syntax) that follows its definition. This function takes the
+`outputs` attribute is, in fact, a function, as indicated by the `:` colon (or
+the `lambda` syntax) that follows its definition. This function takes the
 resolved inputs (and `self`, the flake's directory in the store) as arguments,
 and its return value dictates the outputs of the flake, following this schema:
 
@@ -79,16 +86,16 @@ and its return value dictates the outputs of the flake, following this schema:
 }
 ```
 
-The first line `{ self, nixpkgs, ... }@ inputs:` defines the functions parameters:
-It's important to understand that within the scope of the `outputs` function
-`nixpkgs` is available at the top-level because we explicitly passed it as an
-argument but for individual modules outside this flake the scope is lost,
+The first line `{ self, nixpkgs, ... }@ inputs:` defines the functions
+parameters: It's important to understand that within the scope of the `outputs`
+function `nixpkgs` is available at the top-level because we explicitly passed it
+as an argument but for individual modules outside this flake the scope is lost,
 and you need to use `inputs.nixpkgs` (or equivalent)
 
-1. It explicitly names the `self` attribute, making it directly accessible.
-   The variadic `...` ellipses part of the function signature is what allows
-   all your flake inputs to be brought into the function's scope without having
-   to list each one explicitly.
+1. It explicitly names the `self` attribute, making it directly accessible. The
+   variadic `...` ellipses part of the function signature is what allows all
+   your flake inputs to be brought into the function's scope without having to
+   list each one explicitly.
 
 2. It destructures all other attributes (your defined `inputs`) into the
    functions scope.
@@ -102,13 +109,14 @@ You can also define additional arbitrary attributes, but these are the outputs
 that Nix knows about.
 
 As you can see, the majority of the outputs within the outputs schema expect a
-derivation. This means that for packages, applications, formatters, checks,
-and development shells, you'll be defining a Nix derivation—a set of
-instructions that tells Nix how to build a particular software component. This
-is central to Nix's declarative nature.
+derivation. This means that for packages, applications, formatters, checks, and
+development shells, you'll be defining a Nix derivation—a set of instructions
+that tells Nix how to build a particular software component. This is central to
+Nix's declarative nature.
 
 - The command `nix flake show`, takes a flake URI and prints all the outputs of
-  the flake as a nice tree structure, mapping attribute paths to the types of values.
+  the flake as a nice tree structure, mapping attribute paths to the types of
+  values.
 
 ```bash
   ~/players/third  3s
@@ -180,9 +188,8 @@ various `nix` utilities. `packages` is one of these:
 - Re-exporting happens when you take the value of `hello` in its standard
   derivation format, exactly as `nixpkgs` produces it and assign it to an
   attribute in your own flake's outputs.
-
-  - `packages.x86_64-linux.hello`(your flake's output path)
-    `=` ` nixpkgs.legacyPackages.x86_64-linux.hello`(the source from the `nixpkgs`
+  - `packages.x86_64-linux.hello`(your flake's output path) `=`
+    ` nixpkgs.legacyPackages.x86_64-linux.hello`(the source from the `nixpkgs`
     flake's output)
 
   - We're saying, My flakes `hello` package is exactly the same as the `hello`
@@ -191,8 +198,8 @@ various `nix` utilities. `packages` is one of these:
   - It's important to understand that within the scope of the `outputs` function
     (i.e. within your flake), `nixpkgs` is available at the top-level (i.e. the
     `= nixpkgs` part) because we explicitly passed it as an argument but for
-    individual modules outside of this flake the scope is lost, and `inputs.nixpkgs`
-    is needed.
+    individual modules outside of this flake the scope is lost, and
+    `inputs.nixpkgs` is needed.
 
 The following command builds the reexported package:
 
@@ -206,25 +213,25 @@ or run it with:
 nix run .#hello
 ```
 
-You might notice `x86_64-linux` appearing in the package path, and there's a good
-reason for it. Flakes are designed to provide _hermetic evaluation_, meaning
-their outputs should be identical regardless of the environment where they're
-built. A key factor in any build system is the platform (which combines the
-architecture and operating system, like `x86_64-linux` or `aarch64-darwin`).
+You might notice `x86_64-linux` appearing in the package path, and there's a
+good reason for it. Flakes are designed to provide _hermetic evaluation_,
+meaning their outputs should be identical regardless of the environment where
+they're built. A key factor in any build system is the platform (which combines
+the architecture and operating system, like `x86_64-linux` or `aarch64-darwin`).
 
 Because of Nix's commitment to reproducibility across different systems, any
 flake output that involves building software packages must explicitly specify
 the platform. The standard approach is to structure these outputs as an
 attribute set where the names are platforms, and the values are the outputs
-specific to that platform. For the packages output, each platform-specific
-value is itself an attribute set containing the various packages built for
-that particular system.
+specific to that platform. For the packages output, each platform-specific value
+is itself an attribute set containing the various packages built for that
+particular system.
 
 ## Exporting Functions
 
-This example outputs a `sayGoodbye` function, via the `lib` attribute, that takes
-a name for its input and outputs a string saying Goodbye very nicely to the person
-with that name:
+This example outputs a `sayGoodbye` function, via the `lib` attribute, that
+takes a name for its input and outputs a string saying Goodbye very nicely to
+the person with that name:
 
 ```nix
 {
@@ -236,8 +243,8 @@ with that name:
 }
 ```
 
-You could then specify this flake as an input to another flake and use `sayGoodbye`
-however you'd like.
+You could then specify this flake as an input to another flake and use
+`sayGoodbye` however you'd like.
 
 Or load it into the `nix repl` like so:
 
@@ -263,7 +270,8 @@ boilerplate when defining outputs for multiple systems.
 A commonly used function is `flake-utils.lib.eachDefaultSystem`, which
 automatically generates outputs for common platforms (like `x86_64-linux`,
 `aarch64-linux`, `x86_64-darwin`, `aarch64-darwin`). This transforms your
-outputs definition from manually listing each system to a more concise structure:
+outputs definition from manually listing each system to a more concise
+structure:
 
 # Example using flake-utils
 
@@ -418,8 +426,8 @@ Now we have a few commands available to us in our flake directory:
 
 - `nix fmt`: Will format your whole configuration consistently
 
-- `nix flake check`: While this command was already available, it is now tied
-  to treefmt's check which will check the style of your syntax and provide
+- `nix flake check`: While this command was already available, it is now tied to
+  treefmt's check which will check the style of your syntax and provide
   suggestions.
 
 And this is `lib/dev-shell.nix`:

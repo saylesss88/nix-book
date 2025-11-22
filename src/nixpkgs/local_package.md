@@ -1,3 +1,10 @@
+---
+title: My Chapter
+date: 2025-11-22
+author: saylesss88
+description: Local Nixpkgs
+---
+
 # Creating and Building a Local Package within a Nixpkgs Clone
 
 This chapter demonstrates the fundamental pattern for creating a package. Every
@@ -92,7 +99,6 @@ Nixpkgs uses different conventions for package placement:
 
 - **The new `pkgs/by-name/` convention:** This is the _preferred location for
   new packages_.
-
   - Packages here are placed in a directory structure like
     `pkgs/by-name/<first-two-letters>/<package-name>/`.
 

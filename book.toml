@@ -1,10 +1,15 @@
 [book]
+title = "nix-book"
 authors = ["saylesss88"]
 language = "en"
+src = "src"
 [preprocessor.rss]
-command = "/home/jr/mdbook-rss/target/release/mdbook-rss"
+command = "./mdbook-rss-wrapper.sh"
+renders = ["html"]
+# [preprocessor.rss]
 # [preprocessor.toc]
 # renderers = ["html"]
 [output.html]
+site-url = "https://saylesss88.github.io/nix-book/"
 additional-css = ["theme/extra.css"]
 additional-js = ["theme/extra.js"]

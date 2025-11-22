@@ -1,0 +1,14 @@
+[
+  {
+    "root": "/var/home/jr/nix-book",
+    "config": {
+      "book": {
+        "title": "nix-book"
+      }
+    }
+  },
+  {
+    "sections": [],
+    "title": "nix-book"
+  }
+]

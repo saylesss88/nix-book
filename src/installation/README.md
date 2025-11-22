@@ -1,3 +1,10 @@
+---
+title: My Chapter
+date: 2025-11-22
+author: saylesss88
+description: README 2
+---
+
 # Installation Guides
 
 This section provides detailed guides for installing NixOS. You'll choose
@@ -13,7 +20,6 @@ secrets, `lanzaboote` for Secure Boot, or `impermanence` for a stateless system.
   [Minimal Btrfs-Subvol Install with Disko and Flakes](https://saylesss88.github.io/installation/unencrypted/unencrypted.html)
 
 - **Best for:**
-
   - Users who want a straightforward and quick setup.
 
   - [Unencrypted Impermanence](https://saylesss88.github.io/installation/unencrypted/impermanence.html)
@@ -32,7 +38,6 @@ secrets, `lanzaboote` for Secure Boot, or `impermanence` for a stateless system.
 - [Encrypted Impermanence](https://saylesss88.github.io/installation/enc/encrypted_impermanence.html)
 
 - **Important Considerations:**
-
   - [Secure Boot with Lanzaboote](https://saylesss88.github.io/enc/lanzaboote.html)
     For the full benefit of Secure Boot (with Lanzaboote), it's highly
     recommended to have a second stage of protection, such as an encrypted disk.

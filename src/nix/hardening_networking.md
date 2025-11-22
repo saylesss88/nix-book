@@ -1,3 +1,10 @@
+---
+title: My Chapter
+date: 2025-11-22
+author: saylesss88
+description: Hardening Networking
+---
+
 # Hardening Networking
 
 <details>

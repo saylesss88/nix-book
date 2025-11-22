@@ -33,7 +33,6 @@
 - [Understanding Top-Level Attributes](./Understanding_Top-Level_Attributes_5.md)
 - [Package Definitions Explained](./Package_Definitions_Explained_6.md)
 - [Intro to Nix Derivations](./Intro_to_Nix_Derivations_7.md)
-  - [Builders and Autotools](drv/builders_and_autotools.md)
 - [Comparing Flakes and Traditional Nix](./Comparing_Flakes_and_Traditional_Nix_8.md)
 - [Debugging and Tracing NixOS Modules](./Debugging_and_Tracing_NixOS_Modules_9.md)
 - [Working with Nixpkgs Locally](./Working_with_Nixpkgs_Locally_10.md)

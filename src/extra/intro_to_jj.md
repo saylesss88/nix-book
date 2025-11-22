@@ -1,3 +1,10 @@
+---
+title: My Chapter
+date: 2025-11-22
+author: saylesss88
+description: Intro to JJ
+---
+
 # Intro to Jujutsu (Using jj in an existing Git Repo)
 
 ![Jujutsu Logo](../images/jujutsu.png)--[jj repo](https://github.com/jj-vcs/jj/blob/main/docs/images/jj-logo.svg)

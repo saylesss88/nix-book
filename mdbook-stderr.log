@@ -1,0 +1,4 @@
+ INFO Book building has started
+mdbook-rss: RSS feed generated at ./book/rss.xml
+ERROR Unable to parse the preprocessed book from "rss" processor
+	Caused by: invalid type: map, expected a sequence at line 1 column 1

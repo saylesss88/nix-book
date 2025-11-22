@@ -1,0 +1,5 @@
+error: unexpected argument '--json-preprocessor-logging' found
+
+Usage: mdbook build [OPTIONS] [dir]
+
+For more information, try '--help'.

@@ -1,3 +1,10 @@
+---
+title: My Chapter
+date: 2025-11-22
+author: saylesss88
+description: Fork, Clone, Contribute
+---
+
 # Fork, Clone, Contribute
 
 - In the [Nixpkgs](https://github.com/NixOS/nixpkgs) Repository.

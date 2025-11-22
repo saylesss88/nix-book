@@ -1,0 +1,23 @@
+[package]
+name = "mdbook-rss"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "mdbook_rss"
+path = "src/lib.rs"
+
+[[bin]]
+name = "mdbook-rss"
+path = "src/bin/mdbook-rss.rs"
+
+[dependencies]
+clap = {version = "4", features = ["derive"]}
+anyhow = "1"
+walkdir = "2"
+rss = {version = "2", features = ["builders"]}
+serde = {version = "1", features = ["derive"]}
+serde_yaml = "0.9"
+chrono = {version = "0.4", features = ["serde"]}
+pulldown-cmark = "0.13"
+serde_json = "1"

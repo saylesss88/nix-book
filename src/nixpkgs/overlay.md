@@ -1,3 +1,10 @@
+---
+title: My Chapter
+date: 2025-11-22
+author: saylesss88
+description: Nixpkgs Overlays
+---
+
 # Nixpkgs Overlays
 
 The following is done with a local clone of Nixpkgs located at `~/src/nixpkgs`.

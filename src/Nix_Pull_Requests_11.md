@@ -1,3 +1,10 @@
+---
+title: My Chapter
+date: 2025-11-22
+author: saylesss88
+description: Chapter 11
+---
+
 # Chapter 11
 
 <details>
@@ -54,8 +61,8 @@ graph LR
 - **D [Pull Request on GitHub]**: This is where collaborators can see your
   proposed changes, discuss them, and provide feedback.
 
-- **D -- "Review & Discussion" --> D**: The pull request facilitates communication
-  and potential revisions based on the review.
+- **D -- "Review & Discussion" --> D**: The pull request facilitates
+  communication and potential revisions based on the review.
 
 - **D -- "Merge" --> E (Main Branch on GitHub)**: Once the changes are approved,
   they are merged into the main branch of the Nixpkgs repository.
@@ -63,15 +70,15 @@ graph LR
 - **E (Main Branch on GitHub)**: The main branch now contains the integrated
   changes.
 
-- **E --> F [Nixpkgs Users]**): Eventually, these changes become available to all
-  Nixpkgs users through updates to their Nix installations.
+- **E --> F [Nixpkgs Users]**): Eventually, these changes become available to
+  all Nixpkgs users through updates to their Nix installations.
 
 </details>
 
-Flakes often rely on having access to the full history of the Git repository
-to correctly determine dependencies, identify specific revisions of inputs,
-and evaluate the flake. Not in all situations will a shallow clone work and
-this is one of them.
+Flakes often rely on having access to the full history of the Git repository to
+correctly determine dependencies, identify specific revisions of inputs, and
+evaluate the flake. Not in all situations will a shallow clone work and this is
+one of them.
 
 If you have any changes to your local copy of Nixpkgs make sure to stash them
 before the following:
@@ -99,14 +106,16 @@ To find specifig commits and releases:
 for each release - use when pinning to specific commits. List of active release
 channels - use when tracking latest channel versions.
 
-The complete list of channels is available at [nixos.org/channels](https://channels.nixos.org/)
+The complete list of channels is available at
+[nixos.org/channels](https://channels.nixos.org/)
 
 To find a relevant PR you can go to:
 
 - [Nixpkgs Pull Requests](https://github.com/NixOS/nixpkgs/pulls)
 
-- The following example actually uses the [Nix Pull Requests](https://github.com/NixOS/nix/pulls)
-  the process is the same, but that is an important distinction.
+- The following example actually uses the
+  [Nix Pull Requests](https://github.com/NixOS/nix/pulls) the process is the
+  same, but that is an important distinction.
 
 - In the Filters enter `stack trace` for this example.
 
@@ -114,9 +123,9 @@ To find a relevant PR you can go to:
 
 **Step 3 Add the Remote Repository (if necessary)**
 
-If the pull request is from a different repository than your local clone
-(as in the case of the `nix` PR while working in a `nixpkgs` clone), you need to
-add that repository as a remote. It's common to name the main Nixpkgs remote
+If the pull request is from a different repository than your local clone (as in
+the case of the `nix` PR while working in a `nixpkgs` clone), you need to add
+that repository as a remote. It's common to name the main Nixpkgs remote
 `origin` and other related repositories like `nix` as `upstream`.
 
 Assuming you are in your `nixpkgs` clone and want to test a PR from the `nix`
@@ -135,7 +144,8 @@ git fetch upstream refs/pull/8623/head:pr-8623
 ```
 
 - This command fetches the branch named `head` from the pull request `8623` in
-  the `upstream` remote and creates a local branch named `pr-8623` that tracks it.
+  the `upstream` remote and creates a local branch named `pr-8623` that tracks
+  it.
 
 **Output**:
 
@@ -235,7 +245,6 @@ error: builder for '/nix/store/rk86daqgf6a9v6pdx6vcc5b580lr9f09-nix-2.20.0pre202
 </details>
 
 - **`nix build`** (Part of the Nix Unified CLI):
-
   - Declarative: when used within a Nix flake (`flake.nix`), `nix build` is a
     bit more declarative. It understands the outputs defined in your flake.
 
@@ -295,9 +304,9 @@ git diff tests/functional/lang.sh.test
 ```
 
 - **Verifies if Changes are Intentional:** If the difference is reasonable and
-  expected (due to a legitimate update in the logic), you can commit these changes
-  to update the test suit. If not, you have to refine the test normalization process
-  further.
+  expected (due to a legitimate update in the logic), you can commit these
+  changes to update the test suit. If not, you have to refine the test
+  normalization process further.
 
 If the changes seem valid, commit them:
 
@@ -316,6 +325,6 @@ nix log /nix/store/rk86daqgf6a9v6pdx6vcc5b580lr9f09-nix-2.20.0pre20240115_20b495
 
 Testing Nixpkgs pull requests is a vital part of contributing to a healthy and
 reliable Nix ecosystem. By following these steps, you can help ensure that
-changes are well-vetted before being merged, ultimately benefiting all Nix users.
-Your efforts in testing contribute significantly to the quality and stability
-of Nixpkgs.
+changes are well-vetted before being merged, ultimately benefiting all Nix
+users. Your efforts in testing contribute significantly to the quality and
+stability of Nixpkgs.
