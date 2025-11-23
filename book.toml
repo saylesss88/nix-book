@@ -16,3 +16,6 @@ renderers = ["html"]
 site-url = "https://saylesss88.github.io/"
 additional-css = ["theme/extra.css"]
 additional-js = ["theme/extra.js"]
+
+[output.html.code]
+hidelines = {markdown = "~"}
