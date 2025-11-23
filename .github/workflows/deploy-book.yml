@@ -32,9 +32,9 @@ jobs:
         run: cargo install mdbook-toc --force
 
       # THIS IS THE CRITICAL FIX
-      - name: Install fresh mdbook-rss (force + locked path)
+      - name: Install fresh mdbook-rss-feed (force + locked path)
         run: |
-          cd mdbook-rss
+          cd mdbook-rss-feed
           cargo install --path . --force --locked
           # Verify it's actually the one we just built
           cd ..
