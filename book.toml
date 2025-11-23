@@ -5,7 +5,7 @@ language = "en"
 src = "src"
 
 [preprocessor.rss]
-command = "mdbook-rss/target/release/mdbook-rss"
+command = "mdbook-rss-feed/target/release/mdbook-rss-feed"
 renderers = ["html"]
 
 [preprocessor.toc]

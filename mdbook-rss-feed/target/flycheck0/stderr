@@ -1,0 +1,88 @@
+   0.105820724s  INFO prepare_target{force=false package_id=mdbook-rss-feed v0.1.0 (/home/jr/nix-book/mdbook-rss-feed) target="mdbook-rss"}: cargo::core::compiler::fingerprint: fingerprint error for mdbook-rss-feed v0.1.0 (/home/jr/nix-book/mdbook-rss-feed)/Check { test: false }/TargetInner { name: "mdbook-rss", doc: true, ..: with_path("/home/jr/nix-book/mdbook-rss-feed/src/bin/mdbook-rss-feed.rs", Edition2021) }
+   0.105839401s  INFO prepare_target{force=false package_id=mdbook-rss-feed v0.1.0 (/home/jr/nix-book/mdbook-rss-feed) target="mdbook-rss"}: cargo::core::compiler::fingerprint:     err: failed to read `/home/jr/nix-book/mdbook-rss-feed/target/debug/.fingerprint/mdbook-rss-feed-6ef98ae0784291c0/bin-mdbook-rss`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: cargo_util::paths::read_bytes
+   1: cargo_util::paths::read
+   2: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   3: cargo::core::compiler::fingerprint::prepare_target
+   4: cargo::core::compiler::compile
+   5: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   6: cargo::ops::cargo_compile::compile_ws
+   7: cargo::ops::cargo_compile::compile_with_exec
+   8: cargo::ops::cargo_compile::compile
+   9: cargo::commands::check::exec
+  10: <cargo::cli::Exec>::exec
+  11: cargo::main
+  12: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  13: std::rt::lang_start::<()>::{closure#0}
+  14: core::ops::function::impls::<impl core::ops::function::FnOnce<A> for &F>::call_once
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/core/src/ops/function.rs:290:21
+  15: std::panicking::catch_unwind::do_call
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:589:40
+  16: std::panicking::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:552:19
+  17: std::panic::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panic.rs:359:14
+  18: std::rt::lang_start_internal::{{closure}}
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/rt.rs:175:24
+  19: std::panicking::catch_unwind::do_call
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:589:40
+  20: std::panicking::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:552:19
+  21: std::panic::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panic.rs:359:14
+  22: std::rt::lang_start_internal
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/rt.rs:171:5
+  23: main
+  24: __libc_start_call_main
+  25: __libc_start_main_alias_1
+  26: <unknown>
+   0.118960639s  INFO prepare_target{force=false package_id=mdbook-rss-feed v0.1.0 (/home/jr/nix-book/mdbook-rss-feed) target="mdbook-rss"}: cargo::core::compiler::fingerprint: fingerprint error for mdbook-rss-feed v0.1.0 (/home/jr/nix-book/mdbook-rss-feed)/Check { test: true }/TargetInner { name: "mdbook-rss", doc: true, ..: with_path("/home/jr/nix-book/mdbook-rss-feed/src/bin/mdbook-rss-feed.rs", Edition2021) }
+   0.118977122s  INFO prepare_target{force=false package_id=mdbook-rss-feed v0.1.0 (/home/jr/nix-book/mdbook-rss-feed) target="mdbook-rss"}: cargo::core::compiler::fingerprint:     err: failed to read `/home/jr/nix-book/mdbook-rss-feed/target/debug/.fingerprint/mdbook-rss-feed-cc8ca5afdbefa0dc/test-bin-mdbook-rss`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: cargo_util::paths::read_bytes
+   1: cargo_util::paths::read
+   2: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   3: cargo::core::compiler::fingerprint::prepare_target
+   4: cargo::core::compiler::compile
+   5: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   6: cargo::ops::cargo_compile::compile_ws
+   7: cargo::ops::cargo_compile::compile_with_exec
+   8: cargo::ops::cargo_compile::compile
+   9: cargo::commands::check::exec
+  10: <cargo::cli::Exec>::exec
+  11: cargo::main
+  12: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  13: std::rt::lang_start::<()>::{closure#0}
+  14: core::ops::function::impls::<impl core::ops::function::FnOnce<A> for &F>::call_once
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/core/src/ops/function.rs:290:21
+  15: std::panicking::catch_unwind::do_call
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:589:40
+  16: std::panicking::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:552:19
+  17: std::panic::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panic.rs:359:14
+  18: std::rt::lang_start_internal::{{closure}}
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/rt.rs:175:24
+  19: std::panicking::catch_unwind::do_call
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:589:40
+  20: std::panicking::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:552:19
+  21: std::panic::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panic.rs:359:14
+  22: std::rt::lang_start_internal
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/rt.rs:171:5
+  23: main
+  24: __libc_start_call_main
+  25: __libc_start_main_alias_1
+  26: <unknown>
+    Checking mdbook-rss-feed v0.1.0 (/home/jr/nix-book/mdbook-rss-feed)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.19s
