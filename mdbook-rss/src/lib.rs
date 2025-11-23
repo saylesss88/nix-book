@@ -3,8 +3,13 @@ use chrono::{DateTime, NaiveDate, TimeZone, Utc};
 use pulldown_cmark::{html, Options, Parser};
 use rss::{Channel, ChannelBuilder, Guid, Item, ItemBuilder};
 use serde::{Deserialize, Deserializer};
-use std::{fs, path::Path};
+use std::{fs, path::Path, time::SystemTime};
 use walkdir::WalkDir;
+
+// Helper: convert file modification time → UTC DateTime
+fn systemtime_to_utc(st: SystemTime) -> DateTime<Utc> {
+    DateTime::<Utc>::from(st)
+}
 
 fn deserialize_date<'de, D>(deserializer: D) -> Result<Option<DateTime<Utc>>, D::Error>
 where
@@ -13,10 +18,12 @@ where
     let s: Option<String> = Option::deserialize(deserializer)?;
 
     if let Some(date_str) = s {
+        // Try RFC3339 first (e.g. 2025-11-20T10:00:00Z)
         if let Ok(dt) = DateTime::parse_from_rfc3339(&date_str) {
             return Ok(Some(dt.with_timezone(&Utc)));
         }
 
+        // Then try YYYY-MM-DD
         if let Ok(nd) = NaiveDate::parse_from_str(&date_str, "%Y-%m-%d") {
             return Ok(Some(
                 Utc.from_utc_datetime(&nd.and_hms_opt(0, 0, 0).unwrap()),
@@ -27,7 +34,6 @@ where
 }
 
 #[derive(Debug, Deserialize, Clone)]
-
 pub struct FrontMatter {
     pub title: String,
 
@@ -40,52 +46,47 @@ pub struct FrontMatter {
 }
 
 #[derive(Debug)]
-
 pub struct Article {
     pub fm: FrontMatter,
-
     pub content: String,
-
-    pub path: String, // relative path from src
+    pub path: String, // relative path from src/
 }
 
 pub fn parse_markdown_file(root: &Path, path: &Path) -> Result<Article> {
     let text = fs::read_to_string(path)?;
 
     let mut lines = text.lines();
-
     let mut yaml = String::new();
-
     let mut in_yaml = false;
 
-    // Extract YAML front matter from markdown file
-
+    // Extract front-matter
     for line in lines.by_ref() {
         let trimmed = line.trim();
-
         if trimmed == "---" {
             if !in_yaml {
                 in_yaml = true;
-
                 continue;
             } else {
                 break;
             }
         }
-
         if in_yaml {
             yaml.push_str(line);
-
             yaml.push('\n');
         }
     }
 
-    // Remaining content after front matter
-
+    // Remaining markdown content
     let content = lines.collect::<Vec<_>>().join("\n") + "\n";
 
-    // Deserialize YAML front matter or fallback to defaults
+    // Fallback date from file modification time
+    let fallback_date = path
+        .metadata()
+        .ok()
+        .and_then(|m| m.modified().ok())
+        .map(systemtime_to_utc);
 
+    // Parse front-matter or use defaults
     let fm = if !yaml.trim().is_empty() {
         serde_yaml::from_str(&yaml).unwrap_or_else(|_| FrontMatter {
             title: path
@@ -93,11 +94,8 @@ pub fn parse_markdown_file(root: &Path, path: &Path) -> Result<Article> {
                 .unwrap_or_default()
                 .to_string_lossy()
                 .into_owned(),
-
-            date: None,
-
+            date: fallback_date,
             author: None,
-
             description: Some(content.clone()),
         })
     } else {
@@ -107,30 +105,17 @@ pub fn parse_markdown_file(root: &Path, path: &Path) -> Result<Article> {
                 .unwrap_or_default()
                 .to_string_lossy()
                 .into_owned(),
-
-            date: None,
-
+            date: fallback_date,
             author: None,
-
             description: Some(content.clone()),
         }
     };
 
-    // Compute relative path from root directory
-
     let rel_path = path.strip_prefix(root).unwrap_or(path);
-
-    let _html_path = rel_path
-        .to_string_lossy()
-        .replace('\\', "/")
-        .replace(".md", ".html")
-        .replace("/README.html", "/index.html");
 
     Ok(Article {
         fm,
-
         content,
-
         path: rel_path.to_string_lossy().into_owned(),
     })
 }
@@ -140,28 +125,25 @@ pub fn collect_articles(src_dir: &Path) -> Result<Vec<Article>> {
 
     for entry in WalkDir::new(src_dir).into_iter().filter_map(|e| e.ok()) {
         let path = entry.path();
-
         if !path.is_file() {
             continue;
         }
 
-        // Accept files with md or markdown extension (case-insensitive)
+        let ext = path
+            .extension()
+            .and_then(|e| e.to_str())
+            .map(|s| s.to_ascii_lowercase());
 
-        if !matches!(
-
-            path.extension().and_then(|e| e.to_str().map(|s| s.to_ascii_lowercase())),
-
-            Some(ref ext) if ext == "md" || ext == "markdown"
-
-        ) {
+        if !matches!(ext.as_deref(), Some("md" | "markdown")) {
             continue;
         }
 
-        // Skip SUMMARY.md files as these are special in mdBook
-
-        let file_name = path.file_name().unwrap().to_string_lossy();
-
-        if file_name.eq_ignore_ascii_case("SUMMARY.md") {
+        if path
+            .file_name()
+            .and_then(|n| n.to_str())
+            .map(|n| n.eq_ignore_ascii_case("SUMMARY.md"))
+            .unwrap_or(false)
+        {
             continue;
         }
 
@@ -171,19 +153,15 @@ pub fn collect_articles(src_dir: &Path) -> Result<Vec<Article>> {
                     eprintln!("Skipping empty article: {}", path.display());
                 } else {
                     eprintln!("Parsed article: {} ({})", article.fm.title, article.path);
-
                     articles.push(article);
                 }
             }
-
             Err(e) => eprintln!("Failed to parse {}: {}", path.display(), e),
         }
     }
 
-    // Sort articles by date newest first
-
+    // Sort newest first (fallback date works automatically)
     articles.sort_by_key(|a| a.fm.date);
-
     articles.reverse();
 
     Ok(articles)
@@ -191,37 +169,30 @@ pub fn collect_articles(src_dir: &Path) -> Result<Vec<Article>> {
 
 fn markdown_to_html(md: &str) -> String {
     let mut html = String::new();
-
     let parser = Parser::new_ext(md, Options::all());
-
     html::push_html(&mut html, parser);
-
     html
 }
 
 pub fn build_feed(
     src_dir: &Path,
-
     title: &str,
-
     site_url: &str,
-
     description: &str,
 ) -> Result<Channel> {
-    eprintln!("build_feed called with site_url = '{}'", site_url);
+    eprintln!("build_feed called with site_url = '{site_url}'");
 
     let articles = collect_articles(src_dir)?;
 
+    // IMPORTANT: channel.link MUST be non-empty or the rss crate silently drops all items!
     let base_url = site_url.trim_end_matches('/');
 
-    eprintln!("Using base_url = '{}'", base_url);
+    eprintln!("Using base_url = '{base_url}'");
 
     let items: Vec<Item> = articles
         .into_iter()
         .map(|article| {
             eprintln!("Generating RSS item for: {}", article.path);
-
-            // Convert src-relative path to HTML path with forward slashes
 
             let html_path = article
                 .path
@@ -229,7 +200,7 @@ pub fn build_feed(
                 .replace(".md", ".html")
                 .replace("/README.html", "/index.html");
 
-            let link = format!("{}/{}", base_url, html_path);
+            let link = format!("{base_url}/{html_path}");
 
             let raw_html = markdown_to_html(
                 article
@@ -239,8 +210,7 @@ pub fn build_feed(
                     .unwrap_or(&article.content),
             );
 
-            // Manual XML escaping to avoid issues with rss crate CDATA
-
+            // Proper XML escaping
             let safe_description = raw_html
                 .replace('&', "&amp;")
                 .replace('<', "&lt;")
@@ -248,56 +218,62 @@ pub fn build_feed(
                 .replace('"', "&quot;")
                 .replace('\'', "&apos;");
 
-            let mut item_builder = ItemBuilder::default();
+            let mut item = ItemBuilder::default();
 
-            item_builder.title(Some(article.fm.title.clone()));
-
-            item_builder.link(Some(link.clone()));
-
-            item_builder.description(Some(safe_description));
-
-            item_builder.guid(Some(Guid {
+            item.title(Some(article.fm.title.clone()));
+            item.link(Some(link.clone()));
+            item.description(Some(safe_description));
+            item.guid(Some(Guid {
                 value: link.clone(),
-
                 permalink: true,
             }));
 
             if let Some(date) = article.fm.date {
-                item_builder.pub_date(Some(date.to_rfc2822()));
+                item.pub_date(Some(date.to_rfc2822()));
+            }
+            if let Some(author) = article.fm.author {
+                item.author(Some(author));
             }
 
-            if let Some(author) = &article.fm.author {
-                item_builder.author(Some(author.clone()));
-            }
-
-            item_builder.build()
+            item.build()
         })
         .collect();
 
     eprintln!("Total RSS items generated: {}", items.len());
 
     let mut channel_builder = ChannelBuilder::default();
-
     channel_builder.title(title.to_string());
+    channel_builder.link(base_url.to_string());
 
-    channel_builder.link(site_url.to_string());
-
-    let safe_channel_desc = description
+    let safe_desc = description
         .replace('&', "&amp;")
         .replace('<', "&lt;")
         .replace('>', "&gt;")
         .replace('"', "&quot;")
         .replace('\'', "&apos;");
 
-    channel_builder.description(safe_channel_desc);
-
+    channel_builder.description(&safe_desc);
     channel_builder.items(items);
-
     channel_builder.generator(Some("mdbook-rss 0.1.0".to_string()));
 
-    let channel = channel_builder.build();
+    let mut channel = channel_builder.build();
+
+    // Explicitly set to ensure builder applies them (overrides any issues)
+    channel.set_title(title.to_string());
+    let full_link = format!("{}/", base_url); // Trailing / for site root
+    channel.set_link(full_link);
+    channel.set_description(safe_desc);
+    channel.set_generator(Some("mdbook-rss 0.1.0".to_string()));
 
     eprintln!("Final channel item count: {}", channel.items().len());
+    eprintln!("Channel title: {}", channel.title());
+    eprintln!("Channel link: {}", channel.link());
+    eprintln!("Channel description: {}", channel.description());
+    let rss_output = channel.to_string();
+    eprintln!(
+        "Full RSS preview (first 500 chars): {}",
+        &rss_output[..rss_output.len().min(500)]
+    );
 
     Ok(channel)
 }

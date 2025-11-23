@@ -5,8 +5,8 @@ language = "en"
 src = "src"
 
 [preprocessor.rss]
-command = "./mdbook-rss-wrapper.sh"
-renders = ["html"]
+command = "mdbook-rss/target/release/mdbook-rss"
+renderers = ["html"]
 
 [preprocessor.toc]
 command = "mdbook-toc"
@@ -16,6 +16,7 @@ renderers = ["html"]
 site-url = "https://saylesss88.github.io/"
 additional-css = ["theme/extra.css"]
 additional-js = ["theme/extra.js"]
+# copy-files = ["rss.xml"]
 
 [output.html.code]
 hidelines = {nix = "~"}

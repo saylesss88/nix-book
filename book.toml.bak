@@ -1,0 +1,21 @@
+[book]
+title = "nix-book"
+authors = ["saylesss88"]
+language = "en"
+src = "src"
+
+[preprocessor.rss]
+command = "mdbook-rss/target/release/mdbook-rss"
+renders = ["html"]
+
+[preprocessor.toc]
+command = "mdbook-toc"
+renderers = ["html"]
+
+[output.html]
+site-url = "https://saylesss88.github.io/"
+additional-css = ["theme/extra.css"]
+additional-js = ["theme/extra.js"]
+
+[output.html.code]
+hidelines = {nix = "~"}

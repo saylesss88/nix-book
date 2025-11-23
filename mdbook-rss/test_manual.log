@@ -1,0 +1,4 @@
+
+thread 'main' panicked at src/bin/mdbook-rss.rs:19:64:
+Invalid JSON from mdBook: Error("expected value", line: 1, column: 1)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

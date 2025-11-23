@@ -1,0 +1,132 @@
+Read 310 bytes from stdin
+Stdin preview (first 100 chars): [
+  {
+    "root": "/var/home/jr/nix-book",
+    "config": {
+      "book": {
+        "title": "nix-boo
+Root: /var/home/jr/nix-book
+Site URL: https://saylesss88.github.io
+Title: nix-book
+build_feed called with site_url = 'https://saylesss88.github.io'
+Parsed article: Intro to JJ (extra/intro_to_jj.md)
+Parsed article: Nix Flake Tips (extra/nix_flakes_tips.md)
+Parsed article: Flake outputs (flakes/flake_outputs_4.2.md)
+Parsed article: Nix Flake Examples (flakes/flake_examples_4.3.md)
+Parsed article: Helix Flake (flakes/helix_flake_4.4.md)
+Parsed article: Overlays (flakes/overlays_4.5.md)
+Parsed article: Flake Inputs (flakes/flake_inputs_4.1.md)
+Parsed article: Specialisations (flakes/specialisations_4.6.md)
+Parsed article: Practical Nix Functions (functions/practical_functions_2.1.md)
+Parsed article: Functions and NixOS Modules (functions/functions_and_modules_2.2.md)
+Parsed article: USB Keyfile (installation/enc/USB_keyfile.md)
+Parsed article: Encrypted Impermanence (installation/enc/encrypted_impermanence.md)
+Parsed article: Lanzaboote (installation/enc/lanzaboote.md)
+Parsed article: Encrypted Install (installation/enc/enc_install.md)
+Parsed article: Sops-Nix (installation/enc/sops-nix.md)
+Parsed article: Unencrypted Impermanence (installation/unencrypted/impermanence.md)
+Parsed article: Unencrypted Install (installation/unencrypted/unencrypted.md)
+Parsed article: My Chapter (installation/README.md)
+Parsed article: Nix Paths (nix/nixLang/nix_paths.md)
+Parsed article: Encrypted Impermanence (nix/encrypted_impermanence.md)
+Parsed article: GnuPG gpg-agent (nix/gpg-agent.md)
+Parsed article: Readme1 (nix/README.md)
+Parsed article: Unencrypted Impermanence (nix/impermanence.md)
+Parsed article: Nix Lang (nix/nix_language.md)
+Parsed article: Sops-Nix (nix/sops-nix.md)
+Parsed article: Nix Package Manager (nix/nix_package_manager.md)
+Parsed article: Cachix devour-flake (nix/cachix_devour.md)
+Parsed article: Whonix KVM on NixOS (nix/whonix_kvm.md)
+Parsed article: Hardening Networking (nix/hardening_networking.md)
+Parsed article: KVM (nix/kvm.md)
+Parsed article: Hardening NixOS (nix/hardening_NixOS.md)
+Parsed article: Local Nixpkgs (nixpkgs/local_package.md)
+Parsed article: Nixpkgs Overlays (nixpkgs/overlay.md)
+Parsed article: Fork, Clone, Contribute (nixpkgs/fork_clone_contribute.md)
+Parsed article: impermanence (unencrypted/impermanence.md)
+Parsed article: unencrypted (unencrypted/unencrypted.md)
+Parsed article: JJ New (vcs/jj_new.md)
+Parsed article: JJ (vcs/jujutsu.md)
+Parsed article: Git (vcs/git.md)
+Parsed article: Intro to Derivations (Intro_to_Nix_Derivations_7.md)
+Parsed article: Intro to Nushell (intro_to_nushell_on_NixOS.md)
+Parsed article: Nix Pull Requests (Nix_Pull_Requests_11.md)
+Parsed article: Debugging NixOS modules (Debugging_and_Tracing_NixOS_Modules_9.md)
+Parsed article: NixOS Containers (nixos_containers.md)
+Parsed article: Comparing Flakes and Traditional Nix (Comparing_Flakes_and_Traditional_Nix_8.md)
+Parsed article: Local Nixpkgs (Working_with_Nixpkgs_Locally_10.md)
+Parsed article: Package Definitions Explained (Package_Definitions_Explained_6.md)
+Parsed article: Top-Level Attributes (Understanding_Top-Level_Attributes_5.md)
+Parsed article: Nix Flakes Explained (Nix_Flakes_Explained_4.md)
+Parsed article: Nix Module System Explained (NixOS_Modules_Explained_3.md)
+Parsed article: Intro to Nix (Getting_Started_with_Nix_1.md)
+Parsed article: Understanding Nix Functions (Understanding_Nix_Functions_2.md)
+Using base_url = 'https://saylesss88.github.io'
+Generating RSS item for: Working_with_Nixpkgs_Locally_10.md
+Generating RSS item for: Comparing_Flakes_and_Traditional_Nix_8.md
+Generating RSS item for: nixos_containers.md
+Generating RSS item for: Debugging_and_Tracing_NixOS_Modules_9.md
+Generating RSS item for: Nix_Pull_Requests_11.md
+Generating RSS item for: vcs/git.md
+Generating RSS item for: vcs/jujutsu.md
+Generating RSS item for: vcs/jj_new.md
+Generating RSS item for: nixpkgs/fork_clone_contribute.md
+Generating RSS item for: nixpkgs/overlay.md
+Generating RSS item for: nixpkgs/local_package.md
+Generating RSS item for: nix/hardening_NixOS.md
+Generating RSS item for: nix/kvm.md
+Generating RSS item for: nix/hardening_networking.md
+Generating RSS item for: nix/whonix_kvm.md
+Generating RSS item for: nix/cachix_devour.md
+Generating RSS item for: nix/nix_package_manager.md
+Generating RSS item for: nix/sops-nix.md
+Generating RSS item for: nix/nix_language.md
+Generating RSS item for: nix/impermanence.md
+Generating RSS item for: nix/README.md
+Generating RSS item for: nix/gpg-agent.md
+Generating RSS item for: nix/encrypted_impermanence.md
+Generating RSS item for: nix/nixLang/nix_paths.md
+Generating RSS item for: installation/README.md
+Generating RSS item for: installation/unencrypted/unencrypted.md
+Generating RSS item for: installation/unencrypted/impermanence.md
+Generating RSS item for: installation/enc/sops-nix.md
+Generating RSS item for: installation/enc/enc_install.md
+Generating RSS item for: installation/enc/lanzaboote.md
+Generating RSS item for: installation/enc/encrypted_impermanence.md
+Generating RSS item for: installation/enc/USB_keyfile.md
+Generating RSS item for: functions/functions_and_modules_2.2.md
+Generating RSS item for: functions/practical_functions_2.1.md
+Generating RSS item for: flakes/specialisations_4.6.md
+Generating RSS item for: flakes/flake_inputs_4.1.md
+Generating RSS item for: flakes/overlays_4.5.md
+Generating RSS item for: flakes/helix_flake_4.4.md
+Generating RSS item for: flakes/flake_examples_4.3.md
+Generating RSS item for: flakes/flake_outputs_4.2.md
+Generating RSS item for: extra/nix_flakes_tips.md
+Generating RSS item for: extra/intro_to_jj.md
+Generating RSS item for: Understanding_Nix_Functions_2.md
+Generating RSS item for: Getting_Started_with_Nix_1.md
+Generating RSS item for: NixOS_Modules_Explained_3.md
+Generating RSS item for: Nix_Flakes_Explained_4.md
+Generating RSS item for: Understanding_Top-Level_Attributes_5.md
+Generating RSS item for: Package_Definitions_Explained_6.md
+Generating RSS item for: intro_to_nushell_on_NixOS.md
+Generating RSS item for: Intro_to_Nix_Derivations_7.md
+Generating RSS item for: unencrypted/unencrypted.md
+Generating RSS item for: unencrypted/impermanence.md
+Total RSS items generated: 52
+Final channel item count: 52
+Channel title: nix-book
+Channel link: https://saylesss88.github.io/
+Channel description: An mdBook-generated site
+Full RSS preview (first 500 chars): <?xml version="1.0" encoding="utf-8"?><rss version="2.0"><channel><title>nix-book</title><link>https://saylesss88.github.io/</link><description>An mdBook-generated site</description><generator>mdbook-rss 0.1.0</generator><item><title>Local Nixpkgs</title><link>https://saylesss88.github.io/Working_with_Nixpkgs_Locally_10.html</link><description><![CDATA[&lt;p&gt;Chapter 10&lt;/p&gt;
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Working_with_Nixpkgs_Locally_10.html
+RSS content size before write: 17418 bytes
+RSS path: /var/home/jr/nix-book/book/rss.xml
+Book dir exists: true
+Book dir writable: true
+Write succeeded! Written file size: 17418 bytes
+Read-back success! Size: 17418 bytes
+Read-back preview (first 400 chars): <?xml version="1.0" encoding="utf-8"?><rss version="2.0"><channel><title>nix-book</title><link>https://saylesss88.github.io/</link><description>An mdBook-generated site</description><generator>mdbook-rss 0.1.0</generator><item><title>Local Nixpkgs</title><link>https://saylesss88.github.io/Working_with_Nixpkgs_Locally_10.html</link><description><![CDATA[&lt;p&gt;Chapter 10&lt;/p&gt;
+]]></descriptio
+RSS feed written to /var/home/jr/nix-book/book/rss.xml
