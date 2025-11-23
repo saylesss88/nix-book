@@ -3,13 +3,15 @@ title = "nix-book"
 authors = ["saylesss88"]
 language = "en"
 src = "src"
+
 [preprocessor.rss]
 command = "./mdbook-rss-wrapper.sh"
 renders = ["html"]
-# [preprocessor.rss]
+
 [preprocessor.toc]
 command = "mdbook-toc"
 renderers = ["html"]
+
 [output.html]
 site-url = "https://saylesss88.github.io/"
 additional-css = ["theme/extra.css"]

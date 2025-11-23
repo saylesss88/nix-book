@@ -37,8 +37,7 @@ jobs:
           cd mdbook-rss
           cargo install --path . --force --locked
           # Verify it's actually the one we just built
-          which mdbook-rss
-          mdbook-rss --version || true
+          cd ..
 
       - name: Build mdBook
         run: mdbook build
