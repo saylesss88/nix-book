@@ -18,4 +18,4 @@ additional-css = ["theme/extra.css"]
 additional-js = ["theme/extra.js"]
 
 [output.html.code]
-hidelines = {markdown = "~"}
+hidelines = {nix = "~"}
