@@ -1,23 +1,3 @@
 [book]
-title = "nix-book"
 authors = ["saylesss88"]
 language = "en"
-src = "src"
-# [preprocessing."mdbook-rss-feed"]
-[preprocessor.rss-feed]
-# [preprocessor.rss]
-# command = "mdbook-rss-feed/target/release/mdbook-rss-feed"
-# renderers = ["html"]
-
-# [preprocessor.toc]
-# command = "mdbook-toc"
-# renderers = ["html"]
-
-[output.html]
-site-url = "https://saylesss88.github.io/"
-additional-css = ["theme/extra.css"]
-additional-js = ["theme/extra.js"]
-# copy-files = ["rss.xml"]
-
-[output.html.code]
-hidelines = {nix = "~"}
