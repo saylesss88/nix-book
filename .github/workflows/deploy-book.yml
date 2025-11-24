@@ -5,7 +5,7 @@ on:
       - main
 
 jobs:
-  build_and_deploy:  # Job name is fine; warnings were from actions, not this
+  build_and_deploy:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -24,23 +24,26 @@ jobs:
       - name: Setup mdBook
         uses: peaceiris/actions-mdbook@v2
         with:
-          # mdbook-version: "latest"
-          mdbook-version: "0.4.40"  # Pinned for stability (avoids "latest" flakiness)
+          mdbook-version: "0.4.40"  # Pinned for stability
 
-      - name: Install mdbook-toc
-        run: cargo install mdbook-toc --force
+      - name: Install mdBook plugins
+        run: |
+          cargo install mdbook-toc --force
+          cargo install mdbook-rss-feed --force
 
-      - name: Install mdbook-rss-feed
-        run: cargo install mdbook-rss-feed --force
+      - name: Verify mdBook plugins
+        run: |
+          which mdbook-toc
+          mdbook-toc --version
+          which mdbook-rss-feed
+          mdbook-rss-feed --version
 
       - name: Build mdBook
         run: mdbook build
 
       - name: Generate RSS Feed
         run: |
-          # Generate from project root
           mdbook-rss-feed --input .
-          # Copy to deploy dir
           cp src/rss.xml book/rss.xml
 
       - name: Deploy to GitHub Pages
