@@ -9,7 +9,6 @@ command = "mdbook-rss-feed"
 renderers = ["html"]
 
 [preprocessor.frontmatter-strip]
-command = "mdbook-frontmatter-strip"
 
 [preprocessor.toc]
 command = "mdbook-toc"
