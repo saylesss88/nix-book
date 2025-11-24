@@ -1,0 +1,55 @@
+name: Deploy mdBook to User GitHub Pages
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Setup mdBook
+        uses: peaceiris/actions-mdbook@v2
+        with:
+          mdbook-version: "latest"
+          # mdbook-version: "0.4.40"  # Pinned for stability
+
+      - name: Install mdBook plugins
+        run: |
+          # cargo install mdbook-toc --force
+          cargo install mdbook-rss-feed --force
+
+      - name: Verify mdBook plugins
+        run: |
+          # which mdbook-toc
+          # mdbook-toc --version
+          # which mdbook-rss-feed
+
+      - name: Build mdBook
+        run: mdbook build
+
+      - name: Generate RSS Feed
+        run: |
+          mdbook-rss-feed --input .
+          cp src/rss.xml book/rss.xml
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          personal_token: ${{ secrets.PAT_TOKEN }}
+          publish_dir: ./book
+          publish_branch: main
+          external_repository: saylesss88/saylesss88.github.io
