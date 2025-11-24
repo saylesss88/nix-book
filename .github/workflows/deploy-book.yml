@@ -30,7 +30,7 @@ jobs:
       - name: Install mdBook preprocessors
         run: |
           # Install mdbook-toc if used in book.toml
-          cargo install mdbook-toc
+          # cargo install mdbook-toc
           # Install your RSS preprocessor (pinned to published version)
           cargo install mdbook-rss-feed --version 0.1.0
           # Ensure Cargo bin is in PATH
@@ -38,7 +38,7 @@ jobs:
 
       - name: Verify mdBook preprocessors
         run: |
-          which mdbook-toc || echo "mdbook-toc not found"
+          # which mdbook-toc || echo "mdbook-toc not found"
           which mdbook-rss-feed || echo "mdbook-rss-feed not found"
           # Test functionality via build preview instead of --help
           mdbook build --quiet | grep -q "RSS feed written" || echo "RSS generation check failed"

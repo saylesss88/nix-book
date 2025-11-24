@@ -6,11 +6,11 @@ src = "src"
 
 [preprocessor.rss-feed]
 command = "mdbook-rss-feed"
-renders = ["html"]
-
-[preprocessor.toc]
-command = "mdbook-toc"
 renderers = ["html"]
+
+# [preprocessor.toc]
+# command = "mdbook-toc"
+# renderers = ["html"]
 
 [output.html]
 site-url = "https://saylesss88.github.io/"
