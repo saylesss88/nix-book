@@ -16,7 +16,7 @@ renderers = ["html"]
 site-url = "https://saylesss88.github.io/"
 additional-css = ["theme/extra.css"]
 additional-js = ["theme/extra.js"]
-theme = "navy"
+theme = "book"
 
 [output.html.code]
 hidelines = {nix = "~"}
