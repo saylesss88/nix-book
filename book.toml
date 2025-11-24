@@ -3,8 +3,8 @@ title = "nix-book"
 authors = ["saylesss88"]
 language = "en"
 src = "src"
-[preprocessing."mdbook-rss-feed"]
-# [preprocessor.rss-feed]
+# [preprocessing."mdbook-rss-feed"]
+[preprocessor.rss-feed]
 # [preprocessor.rss]
 # command = "mdbook-rss-feed/target/release/mdbook-rss-feed"
 # renderers = ["html"]
