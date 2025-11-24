@@ -2,10 +2,12 @@
 title: Debugging NixOS modules
 date: 2025-11-22
 author: saylesss88
-description: Chapter 9
+description:
+  This chapter follows Nix Hour 40 and walks through practical techniques for
+  debugging NixOS modules.
 ---
 
-# Chapter 9
+# Chapter 11
 
 This chapter covers debugging NixOS modules, focusing on tracing module options
 and evaluating merges.

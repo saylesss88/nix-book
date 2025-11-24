@@ -2,10 +2,10 @@
 title: Package Definitions Explained
 date: 2025-11-21
 author: saylesss88
-description: Chapter 6
+description: Chapter 8
 ---
 
-# Chapter 6
+# Chapter 8
 
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
