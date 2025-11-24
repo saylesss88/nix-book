@@ -37,7 +37,9 @@ jobs:
 
       # Install your custom preprocessor from the current repo
       - name: Install mdbook-frontmatter-strip (local crate)
-        run: cargo install --locked --path . --bin mdbook-frontmatter-strip
+        run: |
+          cargo install --git https://github.com/saylesss88/mdbook-frontmatter-strip \
+                  --bin mdbook-frontmatter-strip
 
       # Install other preprocessors you use
       - name: Install additional preprocessors
