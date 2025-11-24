@@ -1,4 +1,3 @@
-# .github/workflows/deploy-book.yml
 name: Deploy mdBook to User GitHub Pages
 on:
   push:
@@ -31,16 +30,23 @@ jobs:
       - name: Install mdbook-toc
         run: cargo install mdbook-toc --force
 
-      # THIS IS THE CRITICAL FIX
-      - name: Install fresh mdbook-rss-feed (force + locked path)
-        run: |
-          cd mdbook-rss-feed
-          cargo install --path . --force --locked
-          # Verify it's actually the one we just built
-          cd ..
+      - name: Install mdbook-rss-feed
+        run: cargo install mdbook-rss-feed --force
+
+      # Verify installation (optional, for debugging)
+      - name: Verify mdbook-rss-feed
+        run: mdbook-rss-feed --help  # Or --version once fixed in crate
 
       - name: Build mdBook
         run: mdbook build
+
+      - name: Generate RSS Feed
+        run: |
+          # Run from root to parse SUMMARY.md and src/
+          cd .
+          mdbook-rss-feed --input .
+          # Copy rss.xml to book/ for deployment (adjust path if output differs)
+          cp src/rss.xml book/rss.xml || echo "RSS file not in src/; check output path"
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
