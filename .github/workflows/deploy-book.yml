@@ -35,7 +35,7 @@ jobs:
 
       # Verify installation (optional, for debugging)
       - name: Verify mdbook-rss-feed
-        run: mdbook-rss-feed --help  # Or --version once fixed in crate
+        run: mdbook-rss-feed  # Or --version once fixed in crate
 
       - name: Build mdBook
         run: mdbook build
