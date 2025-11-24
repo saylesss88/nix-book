@@ -28,14 +28,14 @@ jobs:
 
       - name: Install mdBook plugins
         run: |
-          cargo install mdbook-toc --force
+          # cargo install mdbook-toc --force
           cargo install mdbook-rss-feed --force
 
       - name: Verify mdBook plugins
         run: |
-          which mdbook-toc
-          mdbook-toc --version
-          which mdbook-rss-feed
+          # which mdbook-toc
+          # mdbook-toc --version
+          # which mdbook-rss-feed
 
       - name: Build mdBook
         run: mdbook build
