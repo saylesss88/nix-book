@@ -8,9 +8,9 @@ src = "src"
 command = "mdbook-rss-feed"
 renderers = ["html"]
 
-# [preprocessor.toc]
-# command = "mdbook-toc"
-# renderers = ["html"]
+[preprocessor.toc]
+command = "mdbook-toc"
+renderers = ["html"]
 
 [output.html]
 # theme = "navy"
