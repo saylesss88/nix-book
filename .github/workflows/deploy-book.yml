@@ -69,9 +69,9 @@ jobs:
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
-          github_token: ${{ secrets.PAT_TOKEN }}  # Works without PAT in same repo!
+          personal_token: ${{ secrets.PAT_TOKEN }}  # Works without PAT in same repo!
           publish_dir: ./book
           publish_branch: main
           # Remove external_repository if deploying to the same repo's gh-pages
-          # external_repository: saylesss88/saylesss88.github.io   # ← delete this line if same repo
+          external_repository: saylesss88/saylesss88.github.io 
           commit_message: "Deploy nix-book: ${{ github.sha }}"
