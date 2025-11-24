@@ -13,7 +13,7 @@ renderers = ["html"]
 # renderers = ["html"]
 
 [output.html]
-theme = "navy"
+# theme = "navy"
 default-theme = "navy"
 site-url = "https://saylesss88.github.io/"
 additional-css = ["theme/extra.css"]
