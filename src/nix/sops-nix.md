@@ -8,7 +8,7 @@ description: Sops-Nix
 # Sops-Nix encrypted secrets
 
 <details>
-<summary> Click to Expand Table of Contents</summary>
+<summary> ✔️ Click to Expand Table of Contents</summary>
 
 <!-- toc -->
 
