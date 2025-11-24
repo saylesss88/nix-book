@@ -71,7 +71,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}  # Works without PAT in same repo!
           publish_dir: ./book
-          publish_branch: main
+          publish_branch: gh-pages
           # Remove external_repository if deploying to the same repo's gh-pages
           # external_repository: saylesss88/saylesss88.github.io   # ← delete this line if same repo
           commit_message: "Deploy nix-book: ${{ github.sha }}"
