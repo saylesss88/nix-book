@@ -1,0 +1,1591 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Hardening Networking - nix-book</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-2459343d.css">
+        <link rel="stylesheet" href="../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/extra-c3f37c9a.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-c321a705.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-e65ad3d7.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">nix-book</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <hr>
+<h2 id="title-hardening-networking-date-2025-11-22-author-saylesss88-description-hardening-networking"><a class="header" href="#title-hardening-networking-date-2025-11-22-author-saylesss88-description-hardening-networking">title: Hardening Networking
+date: 2025-11-22
+author: saylesss88
+description: Hardening Networking</a></h2>
+<h1 id="hardening-networking"><a class="header" href="#hardening-networking">Hardening Networking</a></h1>
+<details>
+<summary> Click to Expand Table of Contents</summary>
+<ul>
+<li><a href="#introduction">Introduction</a>
+<ul>
+<li><a href="#safe-browsing--privacy-enhancing-habits">Safe Browsing / Privacy Enhancing Habits</a></li>
+<li><a href="#why-follow-these-basics">Why Follow These Basics?</a></li>
+</ul>
+</li>
+<li><a href="#protections-from-surveillance-in-the-us">Protections from Surveillance in the U.S.</a>
+<ul>
+<li><a href="#choosing-secureprivate-browsers-and-search-engines">Choosing Secure/Private Browsers and Search Engines</a></li>
+<li><a href="#fingerprinting">Fingerprinting</a>
+<ul>
+<li><a href="#firefox">Firefox</a></li>
+<li><a href="#tor-browser">Tor Browser</a></li>
+</ul>
+</li>
+<li><a href="#torplusvpn">TorPlusVPN</a>
+<ul>
+<li><a href="#mullvad-browser">Mullvad-Browser</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#librewolf">LibreWolf</a>
+<ul>
+<li><a href="#metasearch-engines">Metasearch Engines</a></li>
+<li><a href="#fingerprint-testing">Fingerprint Testing</a></li>
+<li><a href="#virtual-private-networks-vpns">Virtual Private Networks (VPNs)</a></li>
+<li><a href="#setting-up-tailscale">Setting up Tailscale</a></li>
+</ul>
+</li>
+<li><a href="#encrypted-dns">Encrypted DNS</a></li>
+<li><a href="#mac-randomization">MAC Randomization</a></li>
+<li><a href="#firewalls">Firewalls</a></li>
+<li><a href="#nixos-firewall-vs-nftables-ruleset">NixOS Firewall vs <code>nftables</code> Ruleset</a></li>
+<li><a href="#testing">Testing</a></li>
+<li><a href="#opensnitch">OpenSnitch</a>
+<ul>
+<li><a href="#resources">Resources</a></li>
+</ul>
+</li>
+</ul>
+</details>
+<blockquote>
+<p>Since networks and systems vary, some adjustments may cause unexpected issues,
+especially around critical components like DNS or firewalls. Always review and
+test changes in a controlled environment before applying them broadly.</p>
+</blockquote>
+<blockquote>
+<p>Understand the trade-offs and tailor the settings to your threat model and
+workflow. Take what’s useful, adapt as needed, and seek expert guidance for
+more advanced scenarios.</p>
+</blockquote>
+<h2 id="introduction"><a class="header" href="#introduction">Introduction</a></h2>
+<p>Every setup is unique, feel free to adapt or skip sections based on your needs.
+Start with the basics and build up as you gain confidence. The goal is
+practical, tested hardening tailored to you.</p>
+<h3 id="safe-browsing--privacy-enhancing-habits"><a class="header" href="#safe-browsing--privacy-enhancing-habits">Safe Browsing / Privacy Enhancing Habits</a></h3>
+<p><strong>Adopt Encrypted DNS and HTTPS Everywhere</strong></p>
+<ul>
+<li>
+<p>Configure your system and browsers to use DNS over HTTPS (DoH), DNS over TLS
+(DoT), or DNSCrypt to prevent DNS leakage. Use HTTPS-Only mode in browsers to
+encrypt all web traffic. Prefer browsers with strong privacy defaults or add
+recommended extensions.</p>
+</li>
+<li>
+<p><a href="https://www.privacyguides.org/en/dns/#dnscrypt-proxy">Privacy Guides dnscrypt-proxy recommendation</a></p>
+</li>
+<li>
+<p>Disable browser “remember password” and autofill features, clear cookies and
+site data upon exit, and carefully vet suspicious URLs with tools like
+<a href="https://www.virustotal.com/gui/home/url">VirusTotal</a>.</p>
+</li>
+</ul>
+<p><strong>Limit Account Linking and Use Unique Credentials</strong></p>
+<ul>
+<li>Create separate accounts with unique passwords instead of signing in with
+Google, Facebook, or similar services to limit broad data exposure from
+compromises.</li>
+</ul>
+<p><strong>Use Metadata Cleaning Tools</strong></p>
+<ul>
+<li>
+<p>Many files like images, PDFs, and office documents contain hidden metadata
+information such as location data, device details, and more that can reveal
+your identity or other sensitive information when you share files publicly.</p>
+</li>
+<li>
+<p>To protect your privacy, always sanitize files by removing this metadata
+before sharing. Tools like <a href="https://0xacab.org/jvoisin/mat2">mat2</a> are
+designed to strip metadata from a wide range of media files efficiently.
+(<code>pkgs.mat2</code>). You just type <code>mat2 swappy-2025.png</code> for example and there will
+then be a new <code>mat2 swappy-2025.cleaned.png</code> that can safely be shared.</p>
+</li>
+</ul>
+<p><strong>Use Anonymous File-Sharing Tools</strong></p>
+<ul>
+<li>For sensitive transfers, consiter tools like
+<a href="https://github.com/onionshare/onionshare">OnionShare</a> that provide anonymity
+and security.(<code>pkgs.onionshare</code>)</li>
+</ul>
+<p><strong>Avoid Scanning Random QR Codes Without Verification</strong></p>
+<ul>
+<li>Use QR code scanner apps that check for malicious content before loading
+links.</li>
+</ul>
+<p><strong>Understand Your Threat Model</strong></p>
+<ul>
+<li>Apply these basics universally, but tailor advanced hardening according to
+your unique environment, connectivity needs, and risk profile.</li>
+</ul>
+<p><strong>Delete cookies and site data when the browser is closed</strong>. (security not
+usability).</p>
+<p><strong>Use Strong, Unique Passwords and a Password Manager</strong></p>
+<ul>
+<li>
+<p>Avoid reused passwords by using reliable password managers like KeePassXC or
+Bitwarden, both available on NixOS. Pair this with enabling two-factor
+authentication <strong>(2FA) wherever possible</strong>.</p>
+</li>
+<li>
+<p>It’s advisable to only use the desktop version and not the browser extension
+for a number of reasons. One is that you can store your passwords completely
+offline and have complete ownership of them.</p>
+</li>
+</ul>
+<pre><code class="language-nix">environment.systemPackages = [
+    pkgs.keepassxc
+    pkgs.kpcli     # KeePass CLI
+    # OR
+    pkgs.bitwarden-desktop
+    pkgs.bitwarden-cli
+];
+</code></pre>
+<p>With KeePassXC, you can require 3 different authentication methods at the same
+time. You can choose a password, a keyfile, and a security key where it won’t
+open unless all 3 are present giving you additional security. All 3 might not be
+necessary but it’s possible. It’s also easy to migrate to KeePassXC, you can
+import your vault from many different managers.</p>
+<p>KeepassXC also makes it easy to keep your complete password database offline
+which can significantly reduce the risk of a breach.</p>
+<p>With Bitwarden, to enable 2 factor authentication, you need to log in with your
+master password through the web interface.</p>
+<ul>
+<li><a href="https://www.privacyguides.org/en/basics/passwords-overview/">PrivacyGuides Intro to Passwords</a></li>
+</ul>
+<hr>
+<h3 id="why-follow-these-basics"><a class="header" href="#why-follow-these-basics">Why Follow These Basics?</a></h3>
+<p>These recommended steps help protect your privacy and security while maintaining
+usability and minimizing system interruptions. They catch common threats like
+network eavesdropping, password reuse, fingerprinting, and data leakage,
+providing a solid foundation to build on.</p>
+<p>A vast majority of secure and privacy-focused browsers available for NixOS are
+based on Firefox.</p>
+<blockquote>
+<p>❗ NOTE: Firefox does lack some security features available in Chrome and
+sandbox escapes in Linux are relatively easy. People such as madaidan say to
+never use Linux or Firefox period when you’re worried about security and
+privacy. I’m not personally going to jump to proprietary software with known
+backdoors in a misguided attempt at increasing security/privacy.</p>
+</blockquote>
+<ul>
+<li><a href="https://techstory.in/eu-hits-google-with-3-5-billion-antitrust-fine-over-adtech-practices/">EU Hits Google with 3.5 Billion Antitrust</a></li>
+</ul>
+<p>This <a href="https://grapheneos.org/usage#web-browsing">GrapheneOS article</a>, breaks
+down why they use Chromium-based browsers and specifically mentions that it’s
+not recommended to use Firefox, especially on Linux because of the weak
+sandboxing.</p>
+<p>As a Chromium-based browser, Brave has been growing on me. Brave uses
+randomization rather than standardization for fingerprinting protection. If you
+run Cover Your Tracks with Brave, it will show a randomized fingerprint.</p>
+<details>
+<summary> ✔️ Click To Expand United States Patriot Act Overview </summary>
+<p><a href="https://www.csis.org/analysis/fact-sheet-section-215-usa-patriot-act">Section 215 USA Patriot Act</a>
+permits the collection of “Tangible Things” or “Business Records”, e.g., your
+phone records, medical records, etc. for an investigation to obtain foreign
+intelligence information. If it does relate to a US person it must be relevant
+to preventing terrorism or espionage, and not be based solely on activities
+protected by the first amendment. “Relevant” is the key word here and it is at
+the governments discretion meaning they sweep everything and sift it later.
+Criticized for violating American citizens Fourth Amendment protections against
+warrantless search and seizure and proven to be ineffective.</p>
+</details>
+<p>What is “normal” and allowed today might be suppressed tomorrow, look at the UK
+<a href="https://en.wikipedia.org/wiki/Online_Safety_Act_2023">Online Safety Act</a>
+purported to protect children, accused of banning privacy. This is because the
+only way to verify age is to make everyone submit KYC with their drivers license
+or ID, completely taking away any anonymity of adults and children alike.</p>
+<p>Also see
+<a href="https://www.bbc.com/news/articles/cq68j5g2nr1o">BBC 4chan refuses to pay fine</a></p>
+<p>The mere existence of a surveillance state breeds fear and conformity and
+stifles free
+expression.–<a href="https://theintercept.com/2016/04/28/new-study-shows-mass-surveillance-breeds-meekness-fear-and-self-censorship/">The Intercept</a></p>
+<p>There are much more scary examples in
+<a href="https://thenewoil.org/en/guides/prologue/why/">Privacy, The new Oil</a></p>
+<h2 id="protections-from-surveillance-in-the-us"><a class="header" href="#protections-from-surveillance-in-the-us">Protections from Surveillance in the U.S.</a></h2>
+<details>
+<summary> ✔️ Click to Expand U.S. Surveillance protections </summary>
+<blockquote>
+<p>⚠️ A crucial caveat to keep in mind regarding surveillance protections in the
+U.S., whether grounded in the Fourth Amendment, the First Amendment, or
+statutory laws is that <strong>these protections are not foolproof and have
+repeatedly failed or been circumvented in practice</strong>.</p>
+</blockquote>
+<ul>
+<li>
+<p><strong>Fourth Amendment Basics</strong>: It demands reasonableness in searches and usually
+requires a warrant. This means government agents cannot arbitrarily listen to
+your private communications or search your digital data without judicial
+approval</p>
+</li>
+<li>
+<p><strong>Electronic Surveillance Challenges</strong>: Courts have wrestled with how the
+Fourth Amendment applies to modern communications. The Supreme Court has ruled
+in some cases that pervasive or non-consensual electronic surveillance
+violates reasonable expectations of privacy, but other rulings have allowed
+broader state actions in national security contexts.</p>
+</li>
+<li>
+<p><strong>The Third-Party Doctrine</strong>: A major limitation arises from the “third-party
+doctrine,” which holds that information voluntarily shared with third parties
+(like phone companies or internet providers) has reduced Fourth Amendment
+protections. This means data held by third parties may be subject to
+government access without a warrant in some cases</p>
+</li>
+<li>
+<p><strong>The First Amendment</strong> guarantees free speech and the freedom to receive
+information without government censorship or intimidation. Excessive or
+secretive government surveillance can chill free speech by making people
+afraid their communications are monitored, discouraging open expression and
+participation in public discourse.</p>
+<ul>
+<li>Advocates argue that courts should recognize government surveillance not
+only as a Fourth Amendment search issue but also as a First Amendment
+violation where surveillance suppresses or chills constitutionally protected
+expression.</li>
+</ul>
+</li>
+</ul>
+<p>While the Fourth Amendment traditionally governs searches and surveillance
+legality, the First Amendment frames the broader impact on free speech and
+democratic engagement. Invoking both provides a more comprehensive
+constitutional shield against intrusive surveillance practices.</p>
+</details>
+<hr>
+<h3 id="choosing-secureprivate-browsers-and-search-engines"><a class="header" href="#choosing-secureprivate-browsers-and-search-engines">Choosing Secure/Private Browsers and Search Engines</a></h3>
+<blockquote>
+<p>“The major problem with current systems is their inability to provide
+effective isolation between various programs running on one machine. E.g. if
+the user’s Web browser gets compromised (due to a bug exploited by a malicious
+web site), the OS is usually unable to protect other user’s applications and
+data from also being compromised.” –Qubes arch-spec</p>
+</blockquote>
+<p>On a hardened Linux system, the browser is most often the weakest link exposed
+to the internet, and so security, privacy, and anti-tracking features of
+browsers are now as important, or even more important than platform-level
+protections.</p>
+<hr>
+<h3 id="fingerprinting"><a class="header" href="#fingerprinting">Fingerprinting</a></h3>
+<p>There are two main approaches to obfuscating your fingerprint:</p>
+<ul>
+<li>
+<p><strong>Standardization</strong>: Make browsers standardized and therefore have the same
+fingerprint to blend into a crowd. This is what Tor and Mullvad Browser do.
+Best for anonymity; increases the crowd you blend into, but may decrease
+usability (site breakage, CAPTCHAs); adversaries may still find subtle
+differences.</p>
+</li>
+<li>
+<p><strong>Randomization</strong>: Randomize fingerprint metrics so it’s not directly linkable
+to you. Brave has this feature, if you run coveryourtracks with Brave you will
+get a result of “your browser has a randomized fingerprint”. This is good for
+privacy but may be detectable by advanced scripts.</p>
+</li>
+</ul>
+<hr>
+<h4 id="firefox"><a class="header" href="#firefox">Firefox</a></h4>
+<p>My understanding here is evolving, Firefox on Linux may be very privacy friendly
+after some tweaks, but is not necessarily a secure browser.</p>
+<p>Firefox’s defaults are not privacy respecting or secure but allows a high level
+of customization to make it so. Firefox will be patched with security fixes
+sooner than any fork, and some forks are slow to apply the updates leaving a
+vulnerability open longer to exploit.</p>
+<p>The Tor Uplift Project was a collaboration between the Tor Project and Mozilla
+to integrate key privacy and anti-fingerprinting features from the Tor Browser
+into Firefox. This enables us to enable/disable a few settings and remove the
+need for most add-ons.</p>
+<p>If you use Firefox’s ETP, RFP, and other protections provided by the ghacks or
+Arkenfox scripts alongside uBlock configured to use dynamic filtering you can
+accomplish what it used to take 10 extensions to do.</p>
+<p>Firefox does implement Site Isolation with its Project Fission. This is much
+less mature than Chromes site isolation and often disabled by default on
+different versions of Firefox. To ensure it’s enabled, go to <code>about:config</code> and
+check that both <code>fission.autostart</code>, and <code>gfx.webrender.all</code> prefs are set to
+<code>true</code>.</p>
+<p>With uBlock you can <code>Disable JavaScript</code> which functions similar to NoScript,
+enable numerous blocklists and more.</p>
+<ul>
+<li><a href="https://github.com/gorhill/uBlock/wiki">uBlock Wiki</a></li>
+</ul>
+<p>To enable Enhanced Tracking Protection and FPP, go to
+<code>Settings -&gt; Privacy &amp; Security</code> -&gt; <code>Enhanced Tracking Protection -&gt; Custom</code>. If
+it causes breakage, while on the broken site, click the sheild next to the
+search bar. From there you can turn off ETP for <strong>just that site</strong>.</p>
+<p>Once you select <code>Custom</code>, you’ll see that among the options is to block
+<code>Known fingerprinters</code> as well as <code>Suspected fingerprinters</code>. The “Known
+Fingerprinters” protection works by blocking scripts listed in
+<a href="https://disconnect.me/trackerprotection#categories_of_trackers">Disconnect’s fingerprinting list</a>
+For most users they suggest using the above FPP to avoid breakage. To go further
+and enable RFP, go to <code>about:config</code> and set <code>privacy.resistFingerprinting</code> to
+<code>true</code>.</p>
+<ul>
+<li>
+<p><a href="https://support.mozilla.org/en-US/kb/resist-fingerprinting">Mozilla Resist Fingerprinting</a></p>
+</li>
+<li>
+<p><a href="https://wiki.mozilla.org/Project_Fission">Mozilla Project_Fission</a>, Firefox’s
+implementation of Site Isolation.</p>
+<ul>
+<li>To ensure Site Isolation is enabled, in <code>about:config</code>, set
+<code>fission.autostart</code>, and <code>gfx.webrender.all</code> prefs to <code>true</code>.(It’s disabled
+by default on android).</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="tor-browser"><a class="header" href="#tor-browser">Tor Browser</a></h4>
+<blockquote>
+<p>❗ NOTE: Tor is <strong>not</strong> the most secure browser, anonymity and security can
+often be at odds with each other. Having the exact same browser as many other
+people isn’t the best security practice, but it is great for anonymity. Tor is
+also based on Firefox Esr, which only receives patches for vulnerabilities
+considered Critical or High which can be taken advantage of.</p>
+</blockquote>
+<p>Tor is a modified version of Firefox specifically designed for use with Tor.</p>
+<p>Tor routes your internet traffic through a global volunteer-operated network,
+masking your IP address and activities from local observers, ISPs, websites, and
+surveillance systems. This helps you protect personal information and maintain
+anonymity when browsing, communicating, or using online services.</p>
+<p>Adding browser plugins to Tor can de-anonymize you, don’t do it. Tor is already
+built with the necessary plugins and privacy protecting rules, so adding more is
+unnecessary and actually dangerous for your anonymity.</p>
+<p>A Tor exit node can easily see your traffic, and if you’re not using HTTPS then
+it may be able to modify that traffic. Only use HTTPS when browsing the clear
+net with Tor, this doesn’t apply to onion services (<code>.onion</code>) as the traffic
+stays inside the Tor network all the way to the destination.</p>
+<p>You can visit both the clear web and <code>.onion</code> sites on Tor. Whenever possible
+you should utilize Onion Services (<code>.onion</code> addresses) so communications and web
+browsing stay within the Tor network. <code>.onion</code> URLS form a tunnel that is
+end-to-end encrypted using a random rendezvous point and incorporating
+<a href="https://en.wikipedia.org/wiki/Forward_secrecy">perfect forward secrecy (PFS)</a>.</p>
+<p>Bridges are only necessary in countries that don’t allow people to use Tor.
+Using Bridges when they aren’t needed takes resources away from people in
+oppressive regimes that need, only use them if necessary. Read the guides, and
+use Tails OS, or Whonix when it really matters.</p>
+<ul>
+<li><a href="https://saylesss88.github.io/nix/whonix_kvm.html">Whonix KVM on NixOS</a></li>
+</ul>
+<p>You will see a lot of conflicting information about using Tor with a VPN. If you
+are in an area that blocks access to Tor or it is dangerous to use Tor, by all
+means use a trusted VPN.</p>
+<h3 id="torplusvpn"><a class="header" href="#torplusvpn">TorPlusVPN</a></h3>
+<ul>
+<li>
+<p><a href="https://gitlab.torproject.org/legacy/trac/-/wikis/doc/TorPlusVPN">Tor Project Wiki TorPlusVPN</a></p>
+</li>
+<li>
+<p><a href="https://www.privacyguides.org/en/advanced/tor-overview/#safely-connecting-to-tor">Safely Connecting to Tor</a></p>
+</li>
+</ul>
+<p><strong>Learn about Tor</strong></p>
+<p>I recommend starting with
+<a href="https://www.privacyguides.org/articles/2025/04/30/in-praise-of-tor/#onion-sites-you-can-visit-using-the-tor-browser">Privacy Guides In Praise of Tor</a>
+and then reading their
+<a href="https://www.privacyguides.org/en/advanced/tor-overview/">Tor Overview</a> they
+have been the most informative resources I’ve come across yet.</p>
+<p>The Electronic Frontier Foundation sponsors and helps fund Tor and so does the
+United States Government.</p>
+<p>If you are fortunate to live outside of oppressive regimes with extreme
+censorship, using Tor for every day, mundane activities is likely safe and won’t
+put you on any harmful “list.” Even if it did, you’d be in good company—these
+lists mostly contain great people working tirelessly to defend human rights and
+online privacy worldwide.</p>
+<p>By using Tor regularly for ordinary browsing, you help strengthen the network,
+making it more robust and anonymous for everyone. This collective support makes
+staying private easier for activists, journalists, and anyone facing online
+surveillance or censorship. The writer of the PrivacyGuides article mentions
+using Tor when he needs to access Google Maps to protect his privacy</p>
+<p>So, consider embracing Tor not only for sensitive browsing but also for daily
+routine tasks. Every user adds valuable noise to the network, helping protect
+privacy and freedom for all.</p>
+<p><strong>Tor is at risk, and needs our help</strong>. Despite its strength and history, Tor
+isn’t safe from the same attacks oppressive regimes and misinformed legislators
+direct at encryption and many other privacy-enhancing
+technologies.–<a href="https://www.privacyguides.org/articles/2025/04/30/in-praise-of-tor/#how-to-support-tor">How to Support Tor</a></p>
+<ul>
+<li><a href="https://wiki.nixos.org/wiki/Tor">Tor on NixOS</a>
+<ul>
+<li>
+<p><a href="https://tb-manual.torproject.org/">Tor Browser User Manual</a></p>
+</li>
+<li>
+<p><a href="https://support.torproject.org/faq/staying-anonymous/">Tor staying-anonymous</a></p>
+</li>
+<li>
+<p><a href="https://ssd.eff.org/module/how-to-use-tor">How to Use Tor</a></p>
+</li>
+<li>
+<p><a href="https://torproject.github.io/manual/secure-connections/">Cool Graphic Showing Secure Connections with Tor</a></p>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="mullvad-browser"><a class="header" href="#mullvad-browser">Mullvad-Browser</a></h4>
+<p>Rather than try to tweak a browser into fingerprinting submission, I recommend
+using either Tor or Mullvad-Browser when fingerprintability is the highest
+issue. Both Tor and Mullvad-Browser were designed specifically for this purpose
+and you likely won’t get as much out of tweaking another browser.</p>
+<p>Mullvad-Browser is free and open-source and was developed by the Tor Project in
+collaboration with Mullvad VPN.(Another Firefox Derivative). It is also the top
+recommended browser from PrivacyGuides.</p>
+<p>It is the Tor Browser without the Tor Network, allowing you to use the privacy
+features Tor created along with a VPN if you so choose.</p>
+<ul>
+<li><a href="https://mullvad.net/en/browser">Mullvad-Browser</a>, is in Nixpkgs as:
+<code>pkgs.mullvad-browser</code></li>
+</ul>
+<h2 id="librewolf"><a class="header" href="#librewolf">LibreWolf</a></h2>
+<p><strong>LibreWolf</strong> is an open-source fork of Firefox with a strong focus on privacy,
+security, and user freedom. LibreWolf enables always HTTPS, includes
+uBlockOrigin, and only includes privacy focused search engines by default.</p>
+<h3 id="metasearch-engines"><a class="header" href="#metasearch-engines">Metasearch Engines</a></h3>
+<p><strong>Startpage</strong>: Advertised as the world’s most private search engine. “Startpage
+delivers Google search results via their proprietary personal data protection
+technology.”</p>
+<ul>
+<li>
+<p><a href="https://www.startpage.com/">Startpage</a></p>
+</li>
+<li>
+<p>To add Startpage as a search engine, add
+<code>https://www.startpage.com/sp/search?query=%s</code>.</p>
+</li>
+</ul>
+<p><strong>SearXNG</strong> an open-source, privacy-respecting metasearch engine that aggregates
+results from various search services, such as Google, DuckDuckGo, etc. without
+tracking you or profiling your searches. You can add SearXNG to firefox by going
+to <code>about:preferences#search</code> and at the bottom click <code>Add</code>, URL will be
+<code>https://searx.be/search?q=%s</code>.</p>
+<blockquote>
+<p>❗️ NOTE: SearXNGs google results are not working as of 11-17-25 and haven’t
+for a while now leading to bad results being returned for most instances. It’s
+my understanding this is because Google is actively blocking automated
+requests from SearXNG. Devs sometimes publish patches or workarounds, but
+these are quickly blocked when Google changes their back-end.</p>
+</blockquote>
+<blockquote>
+<p>❗️ NOTE: The above searx is the default and doesn’t give many relevant
+results. To get relevant results find a
+<a href="https://searx.space/">public instance</a> with a good rating from your area and
+add the <code>search?q=%s</code> to the end of it. For example, I’m using
+<code>https://priv.au/search?q=%s</code>.</p>
+</blockquote>
+<p>Searx is a bit different, you can choose which search engine you want for your
+current search with <code>!ddg search term</code> to use duckduckgo for example.</p>
+<p>Example LibreWolf config implementing many of the STIG recommendations:</p>
+<details>
+<summary> ✔️ Click to expand LibreWolf Example </summary>
+<pre><code class="language-nix"># librewolf.nix
+{pkgs, lib, config, ...}: let
+  cfg = config.custom.librewolf;
+in {
+  options.custom.librewolf = {
+    enable = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Enable the LibreWolf Module";
+    };
+  };
+
+  config = lib.mkIf cfg.enable {
+    programs.librewolf = {
+      enable = true;
+      policies = {
+        # A bit annoying
+        DontCheckDefaultBrowser = true;
+        # Pocket is insecure according to DoD
+        DisablePocket = true;
+        # No imperative updates
+        DisableAppUpdate = true;
+      };
+      settings = {
+        # // SV-16925 - DTBF030
+        "security.enable_tls" = true;
+        # // SV-16925 - DTBF030
+        "security.tls.version.min" = 2;
+        # // SV-16925 - DTBF030
+        "security.tls.version.max" = 4;
+
+        # // SV-111841 - DTBF210
+        "privacy.trackingprotection.fingerprinting.enabled" = true;
+
+        # // V-252881 - Retaining Data Upon Shutdown
+        "browser.sessionstore.privacy_level" = 0;
+
+        # // SV-251573 - Customizing the New Tab Page
+        "browser.newtabpage.activity-stream.enabled" = false;
+        "browser.newtabpage.activity-stream.feeds.section.topstories" = false;
+        "browser.newtabpage.activity-stream.showSponsored" = false;
+        "browser.newtabpage.activity-stream.feeds.snippets" = false;
+
+        # // V-251580 - Disabling Feedback Reporting
+        "browser.chrome.toolbar_tips" = false;
+        "browser.selfsupport.url" = "";
+        "extensions.abuseReport.enabled" = false;
+        "extensions.abuseReport.url" = "";
+
+        # // V-251558 - Controlling Data Submission
+        "datareporting.policy.dataSubmissionEnabled" = false;
+        "datareporting.healthreport.uploadEnabled" = false;
+        "datareporting.policy.firstRunURL" = "";
+        "datareporting.policy.notifications.firstRunURL" = "";
+        "datareporting.policy.requiredURL" = "";
+
+        # // V-252909 - Disabling Firefox Studies
+        "app.shield.optoutstudies.enabled" = false;
+        "app.normandy.enabled" = false;
+        "app.normandy.api_url" = "";
+
+        # // V-252908 - Disabling Pocket
+        "extensions.pocket.enabled" = false;
+
+        # // V-251555 - Preventing Improper Script Execution
+        "dom.disable_window_flip" = true;
+
+        # // V-251554 - Restricting Window Movement and Resizing
+        "dom.disable_window_move_resize" = true;
+
+        # // V-251551 - Disabling Form Fill Assistance
+        "browser.formfill.enable" = false;
+
+        # // V-251550 - Blocking Unauthorized MIME Types
+        "plugin.disable_full_page_plugin_for_types" = "application/pdf,application/fdf,application/xfdf,application/lso,application/lss,application/iqy,application/rqy,application/lsl,application/xlk,application/xls,application/xlt,application/pot,application/pps,application/ppt,application/dos,application/dot,application/wks,application/bat,application/ps,application/eps,application/wch,application/wcm,application/wb1,application/wb3,application/rtf,application/doc,application/mdb,application/mde,application/wbk,application/ad,application/adp";
+      };
+    };
+    xdg.desktopEntries.librewolf = {
+      name = "LibreWolf";
+      exec = "${pkgs.librewolf}/bin/librewolf";
+    };
+    xdg.mimeApps = {
+      enable = true;
+      defaultApplications = {
+        "text/html" = "librewolf.desktop";
+        "x-scheme-handler/http" = "librewolf.desktop";
+        "x-scheme-handler/https" = "librewolf.desktop";
+        "x-scheme-handler/about" = "librewolf.desktop";
+        "x-scheme-handler/unknown" = "librewolf.desktop";
+      };
+    };
+  };
+}
+</code></pre>
+<p>And enable it in your <code>home.nix</code> or equivalent with:</p>
+<pre><code class="language-nix"># home.nix
+custom.librewolf.enable = true;
+</code></pre>
+<p>The <code>xdg</code> settings at the end make LibreWolf the defaults for what is listed.</p>
+<p>Thanks to <code>JosefKatic</code> for putting the above STIG settings in NixOS format.</p>
+<p>Also, go to
+<a href="https://accounts.firefox.com/settings#data-collection">accounts.firefox</a> and
+turn off “Allow Mozilla accounts to send technical and interaction data to
+Mozilla”. Also set 2-fa in
+<a href="https://accounts.firefox.com/settings#security">Security Settings</a></p>
+<p>I always set <code>Max Protection</code> for DNS over HTTPS and personally set a custom
+resolver to <code>https://dns.quad9.net/dns-query</code></p>
+<ul>
+<li>Mullvad is also a good option:
+<a href="https://mullvad.net/en/help/no-logging-data-policy">Mullvad no-logging-data-policy</a></li>
+</ul>
+<p>Firefox Relay is a pretty cool privacy tool too, it gives you temporary email
+and phone number aliases so you don’t have to give out your real ones. There is
+an autofill option available also, but you can just click on the Relay button
+and generate a new alias and use it like your normal email.</p>
+<details>
+<summary> ✔️ Alternative LibreWolf Configuration utilizing Arkenfox </summary>
+<pre><code class="language-nix">{
+  pkgs,
+  lib,
+  config,
+  ...
+}: let
+  cfg = config.custom.librewolf;
+in {
+  options.custom.librewolf = {
+    enable = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Enable the LibreWolf Module";
+    };
+  };
+
+  config = lib.mkIf cfg.enable {
+    programs.librewolf = {
+      enable = true;
+      policies = {
+        DontCheckDefaultBrowser = true;
+        DisablePocket = true;
+        DisableAppUpdate = true;
+      };
+      profiles.my-default = {
+        isDefault = true;
+        name = "Default Profile";
+        extraConfig = ''
+          ${builtins.readFile ./user.js}
+          "general.autoScroll" = true;
+          "sidebar.verticalTabs" = true;
+        '';
+
+        settings = {
+        };
+      };
+    };
+    xdg.desktopEntries.librewolf = {
+      name = "LibreWolf";
+      exec = "${pkgs.librewolf}/bin/librewolf";
+    };
+    xdg.mimeApps = {
+      enable = true;
+      defaultApplications = {
+        "text/html" = "librewolf.desktop";
+        "x-scheme-handler/http" = "librewolf.desktop";
+        "x-scheme-handler/https" = "librewolf.desktop";
+        "x-scheme-handler/about" = "librewolf.desktop";
+        "x-scheme-handler/unknown" = "librewolf.desktop";
+      };
+    };
+  };
+}
+</code></pre>
+<p>Download the
+<a href="https://github.com/arkenfox/user.js/blob/master/user.js">Arkenfox user.js</a> and
+review it making sure that you agree with the settings. If you do, place it in
+the same directory as your <code>librewolf.nix</code>.</p>
+<p>Read the <a href="https://github.com/arkenfox/user.js/wiki">Arkenfox Wiki</a></p>
+<p>The <code>user.js</code> is full of comments and information, read it and adjust it for
+your needs. The following enables RFP fingerprint protection:</p>
+<pre><code class="language-js">***/ user.js ***/
+user_pref("privacy.resistFingerprinting", true); // [FF41+]
+user_pref("privacy.resistFingerprinting.pbmode", true); // [FF114+]
+</code></pre>
+<p>As you learn more, you can get more strict if you so choose.</p>
+<p>Rebuild, launch LibreWolf, and check your <code>~/.librewolf/my-default/user.js</code>. It
+should match the Arkenfox settings. Initially, only the <code>user.js</code> will be
+listed, as you run LibreWolf other profile files and folders are created
+dynamically.</p>
+<p>In LibreWolf type <code>Ctrl + Shift + J</code> and look for any errors.</p>
+<p>Type <code>about:config</code> into the address bar and search a few of the settings that
+Arkenfox changes, do they match?</p>
+<p>The <code>user.js</code> is read <strong>in order</strong>, if there are 2 of the same setting, the last
+one will be applied. Adding overrides to the settings attribute above places the
+changes at the <strong>beginning</strong> of the <code>user.js</code> which isn’t what we want. Placing
+them after the <code>${builtins.readFile ./user.js}</code> in <code>extraConfig</code> amends them to
+the <strong>end</strong> of the <code>user.js</code> allowing us to override the defaults.</p>
+<p>The process is the same with Firefox but since Arkenfox strongly recommends
+Ublock Origin and it is built into LibreWolf it makes sense to use the browser
+with the stronger defaults.</p>
+<blockquote>
+<p>❗ NOTE: There is a home-manager module called <code>arkenfox-nixos</code> that is
+supposed to make updates easier but IMO the documentation leaves you guessing
+how to use it. As updates come in to Firefox/LibreWolf some of the settings
+become unnecessary so it’s important to keep an eye on both Firefox and
+Arkenfox updates. Which both have RSS feeds that will alert you upon changes.</p>
+</blockquote>
+<p>I personally use <a href="https://feeder.co/">Feeder</a> as my open-source RSS feed reader,
+available in most app stores including F-Droid. It is listed on
+<a href="https://www.privacytools.io/privacy-rss-feed-readers">PrivacyTools</a>.</p>
+<ul>
+<li>
+<p><a href="https://github.com/arkenfox/user.js/commits/master.atom">Arkenfox Recent Commits RSS feed</a></p>
+</li>
+<li>
+<p><a href="https://github.com/arkenfox/user.js/releases.atom">Arkenfox Release Notes RSS</a></p>
+</li>
+<li>
+<p><a href="https://www.mozilla.org/en-US/firefox/nightly/notes/feed/">Firefox Nightly release notes</a></p>
+</li>
+</ul>
+</details>
+</details>
+<h3 id="fingerprint-testing"><a class="header" href="#fingerprint-testing">Fingerprint Testing</a></h3>
+<p>You can test your browser to see how well you are protected from tracking and
+fingerprinting at <a href="https://coveryourtracks.eff.org/">Cover Your Tracks</a>.</p>
+<p>Also check out, <a href="https://amiunique.org/fingerprint">Am I Unique</a></p>
+<blockquote>
+<p>⚠️ WARNING: Don’t put too much weight into the results as people often check
+their fingerprint, change one metric and check it again over and over skewing
+the results. It is helpful for knowing the fingerprint values that trackers
+track.</p>
+</blockquote>
+<ul>
+<li>
+<p><a href="https://forum.torproject.org/t/browser-fingerprinting/1228/25">Browser Fingerprinting Tor Forum</a></p>
+</li>
+<li>
+<p><a href="https://madaidans-insecurities.github.io/browser-tracking.html">Madaidans Hot Take on Browser Tracking</a></p>
+</li>
+</ul>
+<details>
+<summary> ✔️ Click to Expand Script to wipe cache and generate new `machine-id` </summary>
+<ul>
+<li>
+<p><a href="https://www.man7.org/linux/man-pages/man5/machine-id.5.html">man page machine-id(5)</a></p>
+</li>
+<li>
+<p>The following example is adapted from
+<a href="https://firejail.wordpress.com/all-about-tor/">Firejail All About Tor</a>
+section, adapted for NixOS.</p>
+</li>
+</ul>
+<p>Save the following script as <code>cleanup.sh</code>, change <code>Your-User</code> to your username:</p>
+<pre><code class="language-bash">#!/bin/sh -e
+USER="Your-User"
+HOME_DIR="/home/$USER"
+# clear user cache directly as root
+sudo -u "$USER" rm -fr "$HOME_DIR/.cache"
+# generate a new machine-id
+rm -f /var/lib/machine-id
+dbus-uuidgen &gt; /var/lib/machine-id
+cp /var/lib/machine-id /etc/machine-id
+chmod 444 /etc/machine-id
+exit 0
+</code></pre>
+<p>The <code>~/.cache</code> directory is where most programs store runtime information:
+webpages you visited, torrent trackers you connected to, and deleted emails.
+It’s a good idea to remove them at shutdown. –Firejail all-about-tor</p>
+<p>Check <code>/etc/machine-id</code> &amp; <code>~/.cache</code> before running the script:</p>
+<pre><code class="language-bash">cat /etc/machine-id
+# Output
+0b46feb27a20469da0ee62baaeb51c5c
+ls ~/.cache
+</code></pre>
+<pre><code class="language-bash">chmod +x cleanup.sh
+sudo ./cleanup.sh
+</code></pre>
+<p>Recheck your <code>machine-id</code> and <code>~/.cache</code> directories, you should have a newly
+generated <code>machine-id</code> and minimal files in the <code>~/.cache</code> directory. The
+Firejail example shows a systemd unit that runs the above script at every
+shutdown but that may be overkill, I suggest running it occasionally to make it
+harder for sites to link your <code>machine-id</code> to you.</p>
+</details>
+<p>Privacy protection doesn’t need to be perfect to make a difference. The best
+protection against tracking and fingerprinting available is to use Tor. Many
+add-ons are redundant, do some research and avoid using an add-on for something
+that can be accomplished with built-in settings.</p>
+<ul>
+<li><a href="https://ssd.eff.org/module/how-to-use-tor">Surveillance Self-Defense How to: Use Tor</a></li>
+</ul>
+<p>There are more hardening parameters that can be set but this should be a good
+starting point for a hardened version of LibreWolf. When testing with Cover your
+tracks, customized LibreWolf tested as having stronger tracking protection than
+default Mullvad-Browser and NoScript significantly cuts down the data available
+for fingerprinting by disabling JavaScript.</p>
+<ul>
+<li>The <a href="https://wiki.garudalinux.org/en/privacy-guide">Garuda Privacy-Guide</a> has
+good tips and recommendations for browser add-ons.</li>
+</ul>
+<h3 id="virtual-private-networks-vpns"><a class="header" href="#virtual-private-networks-vpns">Virtual Private Networks (VPNs)</a></h3>
+<p>A <strong>VPN</strong> (Virtual Private Network) encrypts your Internet connection and routes
+your traffic through a VPN provider’s servers, masking your IP address from
+local network observers, ISPs, and websites. Using a VPN can prevent your ISP or
+local Wi-Fi owner from tracking what sites you visit (they only see a connection
+to the VPN), and can help circumvent some regional restrictions or filtering.</p>
+<p>However, VPNs simply shift your trust: Instead of your ISP seeing your activity,
+your VPN provider can, so you must trust their privacy policies and
+infrastructure. Quality and privacy protections vary widely from one VPN company
+to another.</p>
+<p>I see over and over again that Mullvad VPN is the best, I am in no way
+affiliated with them this is just what I hear. They allow you to pay with cash
+completely anonymously and keep very minimal metadata. Metadata is a big deal,
+the US gov has admitted to killing people based solely on their metadata.</p>
+<p>Your ISP almost certainly does sketchy stuff with your data, personally I would
+rather trust a company like Mullvad whose whole reputation is based on their
+trustworthiness, transparency, and data protection.</p>
+<p>You can use a VPN with Tor, but it’s not recommended by the Tor Project unless
+you’re an advanced user who knows how to configure both in a way that doesn’t
+compromise your privacy.</p>
+<p><strong>Popular VPNs on NixOS</strong></p>
+<ul>
+<li>
+<p><a href="https://wiki.nixos.org/wiki/Mullvad_VPN">Mullvad VPN</a> Mullvad VPN uses
+WireGuard under the hood and only works if <code>systemd-resolvd</code> is enabled.</p>
+</li>
+<li>
+<p><a href="https://wiki.nixos.org/wiki/WireGuard">WireGuard VPN</a>, WireGuard is a
+protocol, but also a VPN provider on NixOS.</p>
+</li>
+<li>
+<p><a href="https://wiki.nixos.org/wiki/Tailscale">Tailscale</a></p>
+</li>
+<li>
+<p><a href="https://wiki.nixos.org/wiki/OpenVPN">OpenVPN</a>, OpenVPN is both a protocol and
+full-featured VPN provider on NixOS.</p>
+</li>
+</ul>
+<h3 id="setting-up-tailscale"><a class="header" href="#setting-up-tailscale">Setting up Tailscale</a></h3>
+<p>I was surprised at how easy this actually was to set up. Either go to
+<a href="https://www.tailscale.com">https://www.tailscale.com</a> and/or download the app for either Android or IOS,
+sign up with your identity provider, and click <code>Start connecting devices -&gt;</code></p>
+<ul>
+<li><a href="https://tailscale.com/kb/1017/install">Tailscale quickstart</a></li>
+</ul>
+<p>To add tailscale to NixOS:</p>
+<pre><code class="language-nix"># tailscale.nix
+{...}: {
+  services.tailscale.enable = true;
+  # Tell the firewall to implicitly trust packets routed over Tailscale:
+  networking.firewall.trustedInterfaces = ["tailscale0"];
+}
+</code></pre>
+<p>Tailscale will automatically use the hostname of your device as the name of the
+network. If you want to change it to something else:</p>
+<pre><code class="language-bash">sudo tailscale set --hostname=&lt;name&gt;
+# You can also give your account a nickname
+sudo tailscale set --nickname=&lt;name&gt;
+</code></pre>
+<p>This allows you to refer to your network by <code>name</code> rather than IP address.</p>
+<p>Tailscale uses <a href="https://tailscale.com/kb/1081/magicdns">MagicDNS</a> which is
+enabled by default, and they recommend you keep it enabled.</p>
+<p>The docs say that by default, devices in your tailnet prefer their local DNS
+settings and only use the tailnet’s DNS servers when needed. I had to completely
+disable my Androids DNS settings for tailscale to access the internet through
+MagicDNS.</p>
+<pre><code class="language-bash">sudo tailscale set --accept-dns=false
+</code></pre>
+<p>To connect to tailscale after rebuilding you can run:</p>
+<pre><code class="language-bash">sudo tailscale up
+</code></pre>
+<p>Use <code>nslookup</code> to review and debug DNS responses:</p>
+<pre><code class="language-bash">nslookup google.com
+Server:         127.0.0.1
+Address:        127.0.0.1#53
+
+Non-authoritative answer:
+Name:   google.com
+Address: 142.251.40.206
+Name:   google.com
+Address: 2a00:1450:4001:827::200e
+</code></pre>
+<ul>
+<li>The <code>127.0.0.1#53</code> indicate that instead of using the DNS server pushed by
+your ISP, router, or Tailscale’s MagicDNS, the system is sending all DNS
+requests through the loopback device to <code>dnscrypt-proxy</code> in my case.</li>
+</ul>
+<p>Get the status of your connections to other Tailscale devices:</p>
+<pre><code class="language-bash">tailscale status
+1           2         3           4         5
+100.1.2.3   device-a  apenwarr@   linux     active; direct &lt;ip-port&gt;, tx 1116 rx 1124
+100.4.5.6   device-b  crawshaw@   macOS     active; relay &lt;relay-server&gt;, tx 1351 rx 4262
+100.7.8.9   device-c  danderson@  windows   idle; tx 1214 rx 50
+100.0.1.2   device-d  ross@       iOS       —
+</code></pre>
+<ul>
+<li>
+<p><a href="https://tailscale.com/kb/1196/security-hardening">Tailscale Best Practices</a></p>
+</li>
+<li>
+<p><a href="https://tailscale.com/kb/1080/cli">Tailscale CLI</a></p>
+</li>
+<li>
+<p>There is much more you can do with Tailscale, including integrating
+Mullvad-VPN and using Exit Nodes.</p>
+</li>
+</ul>
+<h2 id="encrypted-dns"><a class="header" href="#encrypted-dns">Encrypted DNS</a></h2>
+<p>DNS (Domain Name System) resolution is the process of translating a website’s
+domain name into its corresponding IP address. By default, this traffic isn’t
+encrypted, which means anyone on the network, from your ISP to potential
+hackers, can see the websites you’re trying to visit. <strong>Encrypted DNS</strong> uses
+protocols to scramble this information, protecting your queries and responses
+from being intercepted and viewed by others.</p>
+<blockquote>
+<p>❗ NOTE: There are many other ways for someone monitoring your traffic to see
+what domain you looked up via DNS that it’s effectiveness is questionable
+without also using Tor or a VPN. Encrypted DNS will not help you hide any of
+your browsing activity.</p>
+</blockquote>
+<p>There are 3 main types of DNS protection:</p>
+<ul>
+<li>
+<p><strong>DNS over HTTPS (DoH)</strong>: Uses the HTTPS protocol to encrypt data between the
+client and the resolver.</p>
+</li>
+<li>
+<p><strong>DNS over TLS (DoT)</strong>: Similar to (DoH), differs in the methods used for
+encryption and delivery using a separate port from HTTPS.</p>
+</li>
+<li>
+<p><strong>DNSCrypt</strong>: Uses end-to-end encryption with the added benefit of being able
+to prevent DNS spoofing attacks.</p>
+</li>
+</ul>
+<p>Useful resources:</p>
+<details>
+<summary> ✔️ Click to Expand DNS Resources </summary>
+<ul>
+<li>
+<p><a href="https://wiki.nixos.org/wiki/Encrypted_DNS">NixOS Wiki Encrypted DNS</a></p>
+</li>
+<li>
+<p><a href="https://www.cloudflare.com/learning/dns/what-is-dns/">Domain Name System (DNS)</a></p>
+</li>
+<li>
+<p><a href="https://en.wikipedia.org/wiki/DNS_over_HTTPS">Wikipedia DNS over HTTPS (DoH)</a></p>
+</li>
+<li>
+<p><a href="https://en.wikipedia.org/wiki/DNS_over_TLS">Wikipedia DNS over TLS (DoT)</a></p>
+</li>
+<li>
+<p><a href="https://blog.cloudflare.com/dns-encryption-explained/">Cloudflare Dns Encryption Explained</a></p>
+</li>
+<li>
+<p><a href="https://nordvpn.com/blog/encrypted-dns-traffic/">NordVPN Encrypted Dns Traffic</a></p>
+</li>
+</ul>
+<p><strong>Hot Take</strong>:</p>
+<ul>
+<li><a href="https://madaidans-insecurities.github.io/encrypted-dns.html">Encrypted DNS is ineffective without a VPN or Tor by madaidan</a></li>
+</ul>
+</details>
+<p>The following sets up dnscrypt-proxy using DoH (DNS over HTTPS) with an oisd
+blocklist, they both come directly from the Wiki:</p>
+<p>Add <code>oisd</code> to your flake inputs:</p>
+<pre><code class="language-nix"># flake.nix
+inputs = {
+    oisd = {
+      url = "https://big.oisd.nl/domainswild";
+      flake = false;
+    };
+};
+</code></pre>
+<blockquote>
+<p>❗ NOTE: The <code>oisd</code> blocklist is a plain text file that updates frequently.
+This can cause <code>nh os switch</code> to fail with a <code>NarHash</code> mismatch error. To fix
+this, you need to run <code>nix flake update</code> to refresh the blocklist and its hash
+in your <code>flake.lock</code> file. After that, you can run your <code>nh</code> command again.</p>
+</blockquote>
+<p>And the import the following into your <code>configuration.nix</code>:</p>
+<pre><code class="language-nix"># dnscrypt-proxy.nix
+{
+  pkgs,
+  lib,
+  inputs,
+  ...
+}: let
+  blocklist_base = builtins.readFile inputs.oisd;
+  extraBlocklist = '''';
+  blocklist_txt = pkgs.writeText "blocklist.txt" ''
+    ${extraBlocklist}
+    ${blocklist_base}
+  '';
+  hasIPv6Internet = true;
+  StateDirectory = "dnscrypt-proxy";
+in {
+  networking = {
+    # Set DNS nameservers to the local host addresses for iPv4 (`127.0.0.1`) &amp; iPv6 (::1)
+    nameservers = ["127.0.0.1" "::1"];
+    # If using dhcpcd
+    # dhcpcd.extraConfig = "nohook resolv.conf";
+    # If using NetworkManager
+    networkmanager.dns = "none";
+  };
+  services.resolved.enable = lib.mkForce false;
+  # See https://wiki.nixos.org/wiki/Encrypted_DNS
+  services.dnscrypt-proxy2 = {
+    enable = true;
+    # See https://github.com/DNSCrypt/dnscrypt-proxy/blob/master/dnscrypt-proxy/example-dnscrypt-proxy.toml
+    settings = {
+      # See https://github.com/DNSCrypt/dnscrypt-resolvers/blob/master/v3/public-resolvers.md
+      sources.public-resolvers = {
+        urls = [
+          "https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/public-resolvers.md"
+          "https://download.dnscrypt.info/resolvers-list/v3/public-resolvers.md"
+        ];
+        minisign_key = "RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3";
+        cache_file = "/var/lib/${StateDirectory}/public-resolvers.md";
+      };
+     # sources.quad9-resolvers = {
+     #   urls = [
+     #     "https://quad9.net/dnscrypt/quad9-resolvers.md"
+     #     "https://raw.githubusercontent.com/Quad9DNS/dnscrypt-settings/main/dnscrypt/quad9-resolvers.md"
+     #   ];
+     #   minisign_key = "RWTp2E4t64BrL651lEiDLNon+DqzPG4jhZ97pfdNkcq1VDdocLKvl5FW";
+     #   cache_file = "/var/cache/dnscrypt-proxy/quad9-resolvers.md";
+     # };
+
+      # Use servers reachable over IPv6 -- Do not enable if you don't have IPv6 connectivity
+      ipv6_servers = hasIPv6Internet;
+      block_ipv6 = ! hasIPv6Internet;
+      blocked_names.blocked_names_file = blocklist_txt;
+      require_dnssec = true;
+      # Logs can get large very quickly...
+      require_nolog = false;
+      # This stops dns malware filtering, etc. if true
+      require_nofilter = false;
+      dnscrypt_servers = true;
+
+      # If you want, choose a specific set of servers that come from your sources.
+      # Here it's from https://github.com/DNSCrypt/dnscrypt-resolvers/blob/master/v3/public-resolvers.md
+      # If you don't specify any, dnscrypt-proxy will automatically rank servers
+      # that match your criteria and choose the best one.
+      # server_names = [ ... ];
+      # server_names = ['quad9-dnscrypt-ip6-filter-pri', 'quad9-dnscrypt-ip4-filter-pri', 'mullvad-adblock-d'];
+
+    };
+  };
+
+  systemd.services.dnscrypt-proxy2.serviceConfig.StateDirectory = StateDirectory;
+}
+</code></pre>
+<blockquote>
+<p>❗️ NOTE: Upon testing dnscrypt-proxy on Arch, it was able to route the browser
+through the proxy, removing the need for Max Protection. I’m still currently
+on Arch and plan to test this further ASAP. We test the above settings further
+down, but I’m curious why the browser isn’t routed correctly…</p>
+</blockquote>
+<ul>
+<li>Above, we have a local DNS proxy that encrypts and forwards queries.</li>
+</ul>
+<pre><code class="language-bash"># You should see that dnscrypt-proxy chooses the Server with the lowest initial latency
+sudo systemctl status dnscrypt-proxy2
+# verify that dnscrypt-proxy is listening
+sudo ss -lnp | grep 53
+# Test a DNS query, if you get valid responses it's working
+dig @127.0.0.1 example.com +short
+# check the logs
+sudo journalctl -u dnscrypt-proxy2
+</code></pre>
+<p><code>dnscrypt-proxy2</code> acts as your local DNS resolver listening on your machine
+(<code>127.0.0.1</code>) for IPv4 and <code>::1</code> for iPv6.</p>
+<p>The system’s DNS settings (<code>networking.nameservers</code>) point to localhost, so
+<strong>all DNS queries</strong> go to dnscrypt-proxy accept for your browser. Your browser
+has to be configured separately with a local resolver in which I haven’t figured
+out yet. I recommend setting your browsers DNS over HTTPS to strict with a
+respected custom DNS resolver such as <code>https://dns.quad9.net/dns-query</code>.</p>
+<p><code>inputs.oisd</code> refers to the flake input oisd blocklist, it prevents your device
+from connecting to unwanted or harmful domains.</p>
+<p><code>dnscrypt-proxy2</code> then encrypts and forwards our DNS requests to third-party
+public DNSCrypt or DoH servers.</p>
+<h2 id="mac-randomization"><a class="header" href="#mac-randomization">MAC Randomization</a></h2>
+<p>All network cards have a unique identifier called a MAC address. They’re stored
+in hardware and are used to assign an address to computers on the local network.</p>
+<p>The MAC address is typically only traceable on the local network, it’s not
+passively sent out beyond the local router making it more critical on untrusted,
+public networks.</p>
+<p>Leak-proof MAC randomization is very difficult to implement:</p>
+<ul>
+<li><a href="https://www.kicksecure.com/wiki/Dev/MAC#Leak-proof_MAC_Randomization_-_Technical_Implementation_Challenges">Leak-proof MAC Randomization Implementation Challenges</a></li>
+</ul>
+<p>Android and iPhone already implement MAC Randomization by default.</p>
+<p>MAC Randomization enhances privacy by making it harder for third parties to
+track users across different networks.</p>
+<p>Randomizing MAC adresses obscures a device’s unique hardware identity when
+scanning for or connecting to Wi-Fi, blocking passive tracking as well as
+location tracking across networks.</p>
+<p>If you use NetworkManager you can set MAC randomization with:</p>
+<pre><code class="language-nix">    networking = {
+      networkmanager = {
+        enable = true;
+        wifi.scanRandMacAddress = true;
+        wifi.macAddress = "random";
+        plugins = [];
+      };
+</code></pre>
+<p>Right when I rebuilt, I got an alert from my router saying that a new device
+just connected to the network.</p>
+<p>There is also a utility for viewing/manipulating the MAC address of network
+interfaces, <code>pkgs.macchanger</code>. This is less reliable than the NetworkManager
+setting.</p>
+<h2 id="firewalls"><a class="header" href="#firewalls">Firewalls</a></h2>
+<p>NixOS includes an integrated firewall based on iptables/nftables.</p>
+<details>
+<summary> ✔️ Click to Expand Firewall Resources </summary>
+<p><a href="https://www.cloudflare.com/learning/security/what-is-a-firewall/">Cloudflare What is a Firewall</a></p>
+<p><a href="https://linux-audit.com/networking/nftables/nftables-beginners-guide-to-traffic-filtering/">Beginners guide to nftables</a></p>
+<p><a href="https://wiki.archlinux.org/title/Nftables">Arch Wiki nftables</a></p>
+</details>
+<p>The following firewall setup is based on the dnscrypt setup above utilizing
+nftables.</p>
+<p>This nftables firewall configuration is a strong recommended practice for
+enforcing encrypted DNS on your system by restricting all outbound DNS traffic
+to a local dnscrypt-proxy process. It greatly reduces DNS leak risks and
+enforces privacy by limiting DNS queries to trusted, encrypted upstream
+servers.(This was edited on 08-08-25) replace <code>&lt;DNSCRYPT-UID&gt;</code> with the UID
+given from the command <code>ps -o uid,user,pid,cmd -C dnscrypt-proxy</code>:</p>
+<pre><code class="language-nix">{ ... }: {
+  networking.nftables = {
+    enable = true;
+
+    ruleset = ''
+      table inet filter {
+        chain output {
+          type filter hook output priority 0; policy accept;
+
+          # Allow localhost DNS for dnscrypt-proxy2
+          ip daddr 127.0.0.1 udp dport 53 accept
+          ip6 daddr ::1 udp dport 53 accept
+          ip daddr 127.0.0.1 tcp dport 53 accept
+          ip6 daddr ::1 tcp dport 53 accept
+
+          # Allow dnscrypt-proxy2 to talk to upstream servers
+          # Replace &lt;DNSCRYPT-UID&gt; with:
+          # ps -o uid,user,pid,cmd -C dnscrypt-proxy
+          meta skuid &lt;DNSCRYPT-UID&gt; udp dport { 443, 853 } accept
+          meta skuid &lt;DNSCRYPT-UID&gt; tcp dport { 443, 853 } accept
+
+          # Block all other outbound DNS
+          udp dport { 53, 853 } drop
+          tcp dport { 53, 853 } drop
+        }
+      }
+    '';
+  };
+  networking.firewall = {
+    enable = true;
+    allowedTCPPorts = [
+      # Ports open for inbound connections.
+      # Limit these to reduce the attack surface.
+
+      22 # SSH – Keep open only if you need remote access.
+         # To change the SSH port in NixOS:
+         # services.openssh.ports = [ 2222 ];
+         # Update this list to match the new port.
+
+      # 53  # DNS – Only if running a public DNS server.
+      # 80  # HTTP – Only if hosting a website.
+      # 443 # HTTPS – Only if hosting a secure website.
+    ];
+    allowedUDPPorts = [
+      # Ports open for inbound UDP traffic.
+      # Most NixOS workstations won't need any here.
+
+      # 53 # DNS – Only if running a public DNS server.
+    ];
+  };
+}
+</code></pre>
+<details>
+<summary> ✔️ Click to Expand Tip on changing the default SSH Port </summary>
+<blockquote>
+<p>❗ TIP: Reduce SSH noise by changing the default port On most systems, SSH
+listens on TCP port 22 — which means automated bots and scanners will hit it
+constantly. While this doesn’t replace real security measures, moving SSH to a
+different port drastically cuts down on drive-by brute-force attempts you’ll
+see in your logs.</p>
+<p>In NixOS, change both the SSH daemon port and your firewall rule:</p>
+<pre><code class="language-nix"> # Example: Move SSH to port 2222
+ networking.firewall.allowedTCPPorts = [ 2222 ];
+ services.openssh.ports = [ 2222 ];
+</code></pre>
+<ul>
+<li>After rebuilding, test from another terminal/session before closing your
+existing one:</li>
+</ul>
+<pre><code class="language-bash">ssh -p 2222 user@host
+</code></pre>
+</blockquote>
+</details>
+<p><code>nft</code> is a cli tool used to set up, maintain and inspect packet filtering and
+classification rules in the Linux kernel, in the nftables framework. The Linux
+kernel subsystem is known as nftables, and ‘nf’ stands for Netfilter.–<code>man nft</code></p>
+<pre><code class="language-bash">sudo nft list ruleset
+</code></pre>
+<ul>
+<li>Since we declare our firewall, we’ll only use <code>nft</code> to inspect our ruleset.</li>
+</ul>
+<h2 id="nixos-firewall-vs-nftables-ruleset"><a class="header" href="#nixos-firewall-vs-nftables-ruleset">NixOS Firewall vs <code>nftables</code> Ruleset</a></h2>
+<p><code>networking.nftables</code>: This section provides a raw <code>nftables</code> ruleset that gives
+you granular, low-level control. The rules here are more specific and are meant
+to handle the intricate logic of the DNS proxy setup. They will be applied
+directly to the kernel’s <code>nftables</code> subsystem and prevent DNS leaks.</p>
+<p><code>networking.firewall</code>: This is a higher-level, simpler NixOS option that uses
+<code>iptables</code> rules to open ports for inbound traffic. The rules defined here
+(allowing port 22) is for incoming SSH connections to the machine, not for
+outbound traffic, so they do not interfere with the <code>nftables</code> rules that filter
+the outgoing traffic. (Make sure to comment out or remove this if you don’t SSH
+into your machine).</p>
+<p>The firewall ensures only authorized, local encrypted DNS proxy process can
+speak DNS with the outside world, and that all other DNS requests from any other
+process are blocked unless they’re to <code>127.0.0.1</code> (our local proxy). This is a
+robust policy against both DNS leaks and local compromise.</p>
+<h2 id="testing"><a class="header" href="#testing">Testing</a></h2>
+<p>Review listening ports: After each rebuild, use <code>ss -tlpn</code>, <code>nmap</code> or <code>netstat</code>
+to see which services are accepting connections. Close or firewall anything
+unnecessary.</p>
+<p>You can also test firewall DNS restrictions using <code>dig</code>:</p>
+<pre><code class="language-bash">dig @127.0.0.1 example.com  # Should work
+
+dig @8.8.8.8 example.com    # Should fail/time out for normal users
+</code></pre>
+<ul>
+<li>This test is actually what alerted me of an improper configuration in the
+above firewalls nftables rules allowing me to fix it. Initially the second
+<code>dig</code> command gave results letting me know that the restrictions weren’t being
+applied correctly.</li>
+</ul>
+<p>Since we defined an <code>output</code> chain inside <code>table inet filter</code> with the line:</p>
+<pre><code class="language-bash">type filter hook output priority 0; policy accept;
+</code></pre>
+<p>This attaches the chain to the kernel’s OUTPUT hook, so all locally generated
+packets, including DNS queries are filtered by this chain.</p>
+<p>Within this chain, the rules:</p>
+<ul>
+<li>
+<p>Explicitly allow DNS queries to localhost addresses (<code>127.0.0.1</code> and <code>::1</code>).</p>
+</li>
+<li>
+<p>Allow the <code>dnscrypt-proxy</code> process (running with UID <code>62396</code>) to send DNS
+queries on ports 443 and 853 (for DNS-over-HTTPS and DNS-over-TLS).</p>
+</li>
+<li>
+<p>Drop all other outbound DNS traffic on ports <code>53</code> and <code>853</code>.</p>
+</li>
+</ul>
+<p>Because of this setup, dig queries to your local resolver at <code>127.0.0.1</code> pass,
+but queries directly to public DNS servers like <code>8.8.8.8</code> are blocked for
+users/processes other than the allowed DNS proxy.</p>
+<h2 id="opensnitch"><a class="header" href="#opensnitch">OpenSnitch</a></h2>
+<ul>
+<li><a href="https://wiki.nixos.org/wiki/OpenSnitch">NixOS Wiki OpenSnitch</a></li>
+</ul>
+<p><a href="https://github.com/evilsocket/opensnitch">Opensnitch</a> is an open-source
+application firewall that focuses on monitoring and controlling outgoing network
+connections on a per-application basis.</p>
+<p>This can be used to block apps from accessing the internet that shouldn’t need
+to (i.e., block telemetry and more). Opensnitch will report that the app has
+attempted to make an outbound internet connection and block it or allow it based
+on the rules you set.</p>
+<h3 id="resources"><a class="header" href="#resources">Resources</a></h3>
+<details>
+<summary> ✔️ Click to Expand Resources </summary>
+<ul>
+<li>
+<p><a href="https://cloudflare.com/learning/ssl/what-is-https">Cloudflare What is HTTPS</a></p>
+</li>
+<li>
+<p><a href="https://ssd.eff.org/">Surveillance Self-Defence</a> has a lot of helpful info to
+protect your privacy.</p>
+</li>
+<li>
+<p><a href="https://ssd.eff.org/module/what-fingerprinting">What is Fingerprinting</a>, more
+than you realize is being tracked constantly.</p>
+</li>
+<li>
+<p><a href="https://oisd.nl/">oisd.nl</a> the oisd website</p>
+</li>
+<li>
+<p>For potentially dangerous file types like PDFs, office documents, or images,
+especially those downloaded from untrusted sources such as torrents, consider
+converting them to a safe PDF format with
+<a href="https://github.com/freedomofpress/dangerzone">dangerzone</a>. Dangerzone not
+only removes metadata but also applies robust sanitization to neutralize
+malicious content.</p>
+</li>
+<li>
+<p><a href="https://wiki.nixos.org/wiki/Librewolf">NixOS Wiki LibreWolf</a>, the options in
+the wiki make it less secure and aren’t recommended settings to use. They
+explicitly disable several of LibreWolf’s default privacy-enhancing features,
+such as fingerprinting resistance and clearing session data on shutdown.</p>
+</li>
+<li>
+<p><a href="https://librewolf.net/docs/features/">LibreWolf Features</a> You still need to
+enable DNS over HTTPS through privacy settings.</p>
+</li>
+<li>
+<p><a href="https://wiki.nixos.org/wiki/SearXNG">SearXNG on NixOS</a></p>
+<ul>
+<li><a href="https://docs.searxng.org/">Welcome to SearXNG</a></li>
+</ul>
+</li>
+<li>
+<p><a href="https://brainfucksec.github.io/firefox-hardening-guide">Firefox Hardening Guide</a></p>
+</li>
+<li>
+<p><a href="https://www.ghacks.net/2015/08/18/a-comprehensive-list-of-firefox-privacy-and-security-settings/">Firefox ghacks</a></p>
+</li>
+<li>
+<p><a href="https://github.com/arkenfox/user.js">Arkenfox</a></p>
+</li>
+<li>
+<p><a href="https://www.privacytools.io/private-browser">PrivacyTools.io</a></p>
+</li>
+<li>
+<p><a href="https://github.com/simeononsecurity/FireFox-Privacy-Script">simeononsecurity Firefox-Privacy-Script</a></p>
+</li>
+<li>
+<p><a href="https://brainfucksec.github.io/firefox-hardening-guide">brianfucksec firefox-hardening-Guide 2023</a></p>
+</li>
+<li>
+<p><a href="https://simeononsecurity.com/guides/enhance-firefox-security-configuring-guide/">STIG Firefox Hardening</a></p>
+</li>
+</ul>
+<blockquote>
+<p>If you should trust the U.S. Governments recommendations is another story but
+it can be good to compare and contrast with other trusted resources. You’ll
+have to think whether the CISA recommending that everyone uses Signal is solid
+advice or guiding you towards a honeypot, I can’t say for sure.</p>
+</blockquote>
+<ul>
+<li>
+<p><a href="https://stigviewer.com/stigs/mozilla_firefox">Mozilla Firefox Security Technical Implementation Guide</a>
+The STIG for Mozilla Firefox (Security Technical Implementation Guide) is a
+set of security configuration standards developed by the U.S. Department of
+Defense. They are created by the Defense Information Systems Agency (DISA) to
+secure and harden DoD information systems and software.</p>
+</li>
+<li>
+<p><a href="https://thenewoil.org/en/guides/prologue/why/">Privacy, The New Oil (Why Privacy &amp; Security Matter)</a></p>
+</li>
+<li>
+<p><a href="https://www.privacyguides.org/en/">PrivacyGuides</a></p>
+</li>
+<li>
+<p><a href="https://relay.firefox.com/accounts/profile/">Firefox Relay</a> can be used to
+create email aliases that forward to your real email address. The paid plan
+also lets you create phone number aliases that forward to your phone number.</p>
+</li>
+<li>
+<p><a href="https://zebracrossing.narwhalacademy.org/">Zebra Crossing digital safety checklist</a></p>
+</li>
+<li>
+<p><a href="https://datadetoxkit.org/en/privacy/essentials#step-1">DataDetoxKit</a></p>
+</li>
+<li>
+<p><a href="https://datadetoxkit.org/en/privacy/degooglise/">DataDetox Degooglise</a></p>
+</li>
+<li>
+<p><a href="https://tb-manual.torproject.org/">Tor Browser User Manual</a></p>
+</li>
+<li>
+<p><a href="https://gitlab.torproject.org/tpo/team/-/wikis/home">Tor Wiki</a></p>
+</li>
+<li>
+<p><a href="https://tldp.org/LDP/nag2/x-087-2-intro.html">Linux Network Administrators Guide</a></p>
+</li>
+</ul>
+</details>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../nix/gpg-agent.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../nix/whonix_kvm.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../nix/gpg-agent.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../nix/whonix_kvm.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-c2a407aa.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../theme/extra-e0f03105.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

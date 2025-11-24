@@ -1,0 +1,719 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Unencrypted Setups - nix-book</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../../theme/extra-c3f37c9a.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../../searchindex-c321a705.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-e65ad3d7.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">nix-book</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <hr>
+<h2 id="title-unencrypted-install-date-2025-11-22-author-saylesss88-description-unencrypted-install-guide-for-btrfs-with-disko-and-flakes"><a class="header" href="#title-unencrypted-install-date-2025-11-22-author-saylesss88-description-unencrypted-install-guide-for-btrfs-with-disko-and-flakes">title: Unencrypted Install
+date: 2025-11-22
+author: saylesss88
+description: Unencrypted Install guide for BTRFS with Disko and Flakes</a></h2>
+<h1 id="minimal-btrfs-subvol-install-with-disko-and-flakes"><a class="header" href="#minimal-btrfs-subvol-install-with-disko-and-flakes">Minimal BTRFS-Subvol Install with Disko and Flakes</a></h1>
+<details>
+<summary> ✔️ Click to Expand Table of Contents</summary>
+<ul>
+<li><a href="#unencrypted-setups">Unencrypted Setups</a>
+<ul>
+<li><a href="#getting-started-with-disko">Getting Started with Disko</a></li>
+<li><a href="#setting-a-flake-for-your-minimal-install">Setting a Flake for your minimal Install</a></li>
+</ul>
+</li>
+</ul>
+</details>
+<h1 id="unencrypted-setups"><a class="header" href="#unencrypted-setups">Unencrypted Setups</a></h1>
+<p>Figure 1: BTRFS Logo: Image of the BTRFS logo. Sourced from the BTRFS repo BTRFS
+logo</p>
+<p>Why I Chose BTRFS I chose BTRFS because I was already familiar with it from
+using it with Arch Linux and I found it to be very easy to use. From what I’ve
+read, there are licensing issues between the Linux Kernel and ZFS which means
+that ZFS is not part of the Linux Kernel; it’s maintained by the OpenZFS project
+and available as a separate kernel module. This can cause issues and make you
+think more about your filesystem than I personally want to at this point.</p>
+<details>
+<summary>✔️ Click for BTRFS Subvolume Overview</summary>
+<p>A <strong>Btrfs subvolume</strong> is essentially a distinct section within a Btrfs
+filesystem that maintains its own set of files and directories, along with a
+separate inode numbering system. Unlike block-level partitions (such as LVM
+logical volumes), Btrfs subvolumes operate at the file level and are based on
+file extents.</p>
+<p><strong>Extents</strong> in Btrfs are contiguous blocks of data on disk that store the actual
+contents of files. When files are created or modified, Btrfs manages these
+extents efficiently, allowing features like deduplication and snapshots.
+Multiple subvolumes can reference the same extents, meaning that identical data
+is not duplicated on disk, which saves space and improves performance.</p>
+<p>A <strong>snapshot</strong> in Btrfs is a special kind of subvolume that starts with the same
+content as another subvolume at the time the snapshot is taken. Snapshots are
+typically writable by default, so you can make changes in the snapshot without
+affecting the original subvolume. This is possible because Btrfs tracks changes
+at the extent level, only creating new extents when files are modified (a
+technique called copy-on-write).</p>
+<p>Subvolumes in Btrfs behave much like regular directories from a user’s
+perspective, but they support additional operations such as renaming, moving,
+and nesting (placing subvolumes within other subvolumes). There are no
+restrictions on nesting, though it can affect how snapshots are created and
+managed. Each subvolume is assigned a unique and unchangeable numeric ID
+(subvolid or rootid).</p>
+<p>You can access a Btrfs subvolume in two main ways:</p>
+<ul>
+<li>
+<p>As a normal directory within the filesystem.</p>
+</li>
+<li>
+<p>By mounting it directly as if it were a separate filesystem, using the subvol
+or subvolid mount options. When mounted this way, you only see the contents of
+that subvolume, similar to how a bind mount works.</p>
+</li>
+</ul>
+<p>When a new Btrfs filesystem is created, it starts with a “top-level” subvolume
+(with an internal ID of 5). This subvolume is always present and cannot be
+deleted or replaced, and it is the default mount point unless changed with btrfs
+subvolume set-default.</p>
+<p>Subvolumes can also have storage quotas set using Btrfs’s quota groups , but
+otherwise, they all draw from the same underlying storage pool. Thanks to
+features like deduplication and snapshots, subvolumes can share data efficiently
+at the extent level.While ZFS is a solid choice and offers some benefits over
+BTRFS, I recommend looking into it before making your own decision.</p>
+<p>If you have a ton of RAM you could most likely skip the minimal install and just
+set your system up as needed or just use
+<a href="https://elis.nu/blog/2020/05/nixos-tmpfs-as-root/">tmpfs as root</a></p>
+</details>
+<h2 id="getting-started-with-disko"><a class="header" href="#getting-started-with-disko">Getting Started with Disko</a></h2>
+<p>Disko allows you to declaratively partition and format your disks, and then
+mount them to your system. I recommend checking out the
+<a href="https://github.com/nix-community/disko/tree/master?tab=readme-ov-file">README</a>
+as it is a disk destroyer if used incorrectly.</p>
+<p>We will mainly be following the
+<a href="https://github.com/nix-community/disko/blob/master/docs/quickstart.md">disko quickstart guide</a></p>
+<p>Figure 2: <strong>Disko Logo</strong>: Image of the logo for Disko, the NixOS declarative
+disk partitioning tool. Sourced from the
+<a href="https://github.com/nix-community/disko">Disko project</a> disko logo</p>
+<ol>
+<li>Get the
+<a href="https://channels.nixos.org/nixos-25.05/latest-nixos-minimal-x86_64-linux.iso">Nixos Minimal ISO</a>
+Get it on a usb stick, I use Ventoy with Ventoy2Disk.sh. The following is the
+link to the
+<a href="https://sourceforge.net/projects/ventoy/files/v1.1.05/ventoy-1.1.05-linux.tar.gz/download">Ventoy TarBall</a>
+download, untar it with <code>tar -xzf ventoy-1.1.05-linux.tar.gz</code>, and make it
+executable with <code>chmod +x Ventoy2Disk.sh</code>, and finally execute it with
+<code>sudo ./Ventoy2Disk.sh</code> Follow the prompts to finish the install.</li>
+</ol>
+<p>You’ll have to run it on for the USB drive you’re trying to use, you can do that
+by unplugging the USB stick and running <code>lsblk</code>, then plug it in again and run:</p>
+<pre><code class="language-bash">lsblk -f
+NAME          FSTYPE      FSVER LABEL   UUID                                 FSAVAIL FSUSE% MOUNTPOINTS
+sda
+└─sda1        vfat        FAT32 MYUSB   46E8-9304
+sdb           vfat        FAT12         F054-697D                               1.4M     0% /run/media/jr/F054-697D
+nvme0n1
+├─nvme0n1p1   vfat        FAT32         BCD8-8C51                               1.8G    12% /boot
+</code></pre>
+<ul>
+<li><code>sdb</code> is a USB plugin for a mouse. <code>sda</code> is the USB stick that I want to
+target here:</li>
+</ul>
+<pre><code class="language-bash">sudo ./Ventoy2Disk.sh -i /dev/sda
+# Or to force overwrite an existing Ventoy entry
+sudo ./Ventoy2Disk.sh -I /dev/sda
+</code></pre>
+<ol start="2">
+<li>The minimal installer uses wpa_supplicant instead of NetworkManager, to
+enable networking run the following:</li>
+</ol>
+<pre><code class="language-bash">sudo systemctl start wpa_supplicant
+wpa_cli
+</code></pre>
+<pre><code class="language-bash">&gt; add_network
+0
+
+&gt; set_network 0 ssid "myhomenetwork"
+OK
+
+&gt; set_network 0 psk "mypassword"
+OK
+
+&gt; enable_network 0
+OK
+</code></pre>
+<p>To exit type <code>quit</code>, then check your connection with <code>ping google.com</code>.</p>
+<p>Another option is to do the following, so either the above method or the below
+method after starting <code>wpa_supplicant</code>:</p>
+<pre><code class="language-bash"># Alternative for quick setup (less interactive, but often faster)
+sudo wpa_passphrase "myhomenetwork" "mypassword" &gt;&gt; /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
+sudo systemctl restart wpa_supplicant@wlan0.service
+</code></pre>
+<ol start="3">
+<li>Get your Disk Name with lsblk</li>
+</ol>
+<p>The output should be something like:</p>
+<pre><code class="language-bash">NAME        MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
+nvme0n1     259:0    0   1,8T  0 disk
+</code></pre>
+<ol start="4">
+<li>Copy the disk configuration to your machine. You can choose one from the
+examples directory.</li>
+</ol>
+<ul>
+<li><strong>Option A</strong>: (Simpler for new users) I also created a starter repo containing
+much of what’s needed. If you choose this option follow the README.md included
+with the repo.</li>
+</ul>
+<pre><code class="language-bash">cd ~
+git clone https://github.com/saylesss88/my-flake.git
+</code></pre>
+<blockquote>
+<p>Make sure to change line 7 in disk-config.nix to what you got from step 3
+device = “/dev/nvme0n1”;</p>
+</blockquote>
+<ul>
+<li><strong>Option B</strong>: (More flexible, more manual steps) Skip cloning the repo above
+and for the btrfs-subvolume default layout, run the following:</li>
+</ul>
+<pre><code class="language-bash">cd /tmp
+curl https://raw.githubusercontent.com/nix-community/disko/refs/heads/master/example/btrfs-subvolumes.nix -o /tmp/disk-config.nix
+</code></pre>
+<ol start="5">
+<li>Make Necessary changes, I set mine up for impermanence with the following:</li>
+</ol>
+<pre><code class="language-bash">nano /tmp/disk-config.nix
+</code></pre>
+<pre><code class="language-nix">{
+  disko.devices = {
+    disk = {
+      main = {
+        type = "disk";
+        device = "/dev/nvme0n1";
+        content = {
+          type = "gpt";
+          partitions = {
+            ESP = {
+              priority = 1;
+              name = "ESP";
+              start = "1M";
+              end = "512M";
+              type = "EF00";
+              content = {
+                type = "filesystem";
+                format = "vfat";
+                mountpoint = "/boot";
+                mountOptions = ["umask=0077"];
+              };
+            };
+            root = {
+              size = "100%";
+              content = {
+                type = "btrfs";
+                extraArgs = ["-f"]; # Override existing partition
+                # Subvolumes must set a mountpoint in order to be mounted,
+                # unless their parent is mounted
+                subvolumes = {
+                  # Subvolume name is different from mountpoint
+                  "/root" = {
+                    mountpoint = "/";
+                    mountOptions = ["subvol=root" "compress=zstd" "noatime"];
+                  };
+                  # Subvolume name is the same as the mountpoint
+                  "/home" = {
+                    mountOptions = ["subvol=home" "compress=zstd" "noatime"];
+                    mountpoint = "/home";
+                  };
+                  # Sub(sub)volume doesn't need a mountpoint as its parent is mounted
+                  "/home/user" = {};
+                  # Parent is not mounted so the mountpoint must be set
+                  "/nix" = {
+                    mountOptions = [
+                      "subvol=nix"
+                      "compress=zstd"
+                      "noatime"
+                    ];
+                    mountpoint = "/nix";
+                  };
+                  "/nix/persist" = {
+                    mountpoint = "/nix/persist";
+                    mountOptions = ["subvol=persist" "compress=zstd" "noatime"];
+                  };
+                  "/log" = {
+                    mountpoint = "/var/log";
+                    mountOptions = ["subvol=log" "compress=zstd" "noatime"];
+                  };
+                  "/lib" = {
+                    mountpoint = "/var/lib";
+                    mountOptions = ["subvol=lib" "compress=zstd" "noatime"];
+                  };
+                  # This subvolume will be created but not mounted
+                  "/test" = {};
+                };
+              };
+            };
+          };
+        };
+      };
+    };
+  };
+  fileSystems."/nix/persist".neededForBoot = true;
+  fileSystems."/var/log".neededForBoot = true;
+  fileSystems."/var/lib".neededForBoot = true;
+}
+</code></pre>
+<ul>
+<li>For <code>/tmp</code> on RAM use something like the following. I’ve found that having
+disko manage swaps causes unnecessary issues. Using zram follows the ephemeral
+route:</li>
+</ul>
+<pre><code class="language-nix">{
+  lib,
+  config,
+  ...
+}: let
+  cfg = config.custom.zram;
+in {
+  options.custom.zram = {
+    enable = lib.mkEnableOption "Enable utils module";
+  };
+
+  config = lib.mkIf cfg.enable {
+    zramSwap = {
+      enable = true;
+      # one of "lzo", "lz4", "zstd"
+      algorithm = "zstd";
+       priority = 5;
+       memoryPercent = 50;
+    };
+  };
+}
+</code></pre>
+<p>And in your <code>configuration.nix</code> you would add:</p>
+<pre><code class="language-nix"># configuration.nix
+custom = {
+    zram.enable = true;
+};
+</code></pre>
+<p>After adding the above module, you can see it with:</p>
+<pre><code class="language-bash">swapon --show
+NAME       TYPE      SIZE USED PRIO
+/dev/zram0 partition 7.5G   0B    5
+</code></pre>
+<ol start="6">
+<li>Run disko to partition, format and mount your disks. Warning this will wipe
+EVERYTHING on your disk. Disko doesn’t work with dual boot.</li>
+</ol>
+<pre><code class="language-bash">sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko/latest -- --mode destroy,format,mount /tmp/disk-config.nix
+</code></pre>
+<p>Check it with the following:</p>
+<pre><code class="language-bash">mount | grep /mnt
+</code></pre>
+<p>The output for an nvme0n1 disk would be similar to the following:</p>
+<pre><code class="language-bash">#... snip ...
+/dev/nvme0n1p2 on /mnt type btrfs (rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=285,subvol=/root)
+/dev/nvme0n1p2 on /mnt/persist type btrfs (rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=261,subvol=/persist)
+/dev/nvme0n1p2 on /mnt/etc type btrfs (rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=261,subvol=/persist)
+/dev/nvme0n1p2 on /mnt/nix type btrfs (rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=260,subvol=/nix)
+/dev/nvme0n1p2 on /mnt/var/lib type btrfs (rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=258,subvol=/lib)
+/dev/nvme0n1p2 on /mnt/var/log type btrfs (rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=259,subvol=/log)
+/dev/nvme0n1p2 on /mnt/nix/store type btrfs (ro,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=260,subvol=/nix)
+# ... snip ...
+</code></pre>
+<ol start="7">
+<li>Generate necessary files, here we use –no-filesystems because disko handles
+the fileSystems attribute for us.</li>
+</ol>
+<pre><code class="language-bash">nixos-generate-config --no-filesystems --root /mnt
+</code></pre>
+<p>It may be helpful to add a couple things to your <code>configuration.nix</code> now,
+rebuild and then move on. Such as, your hostname, git, an editor of your choice.
+After your additions run <code>sudo nixos-rebuild</code> switch to apply the changes. If
+you do this, you can skip the <code>nix-shell -p</code> command coming up.</p>
+<pre><code class="language-bash">sudo mv /tmp/disk-config.nix /mnt/etc/nixos
+</code></pre>
+<h2 id="setting-a-flake-for-your-minimal-install"><a class="header" href="#setting-a-flake-for-your-minimal-install">Setting a Flake for your minimal Install</a></h2>
+<ol start="8">
+<li>Create the flake in your home directory, then move it to /mnt/etc/nixos. This
+avoids needing to use sudo for every command while in the /mnt/etc/nixos
+directory.</li>
+</ol>
+<pre><code class="language-bash">cd ~
+mkdir flake &amp;&amp; cd flake
+nix-shell -p git yazi helix
+export NIX_CONFIG='experimental-features = nix-command flakes'
+export EDITOR='hx'
+hx flake.nix
+</code></pre>
+<blockquote>
+<p>You’ll change hostname = nixpkgs.lib.nixosSystem to your chosen hostname,
+(e.g. magic = nixpkgs.lib.nixosSystem). This will be the same as your
+networking.hostName = “magic”; in your configuration.nix that we will set up
+shortly.</p>
+</blockquote>
+<pre><code class="language-nix"># flake.nix
+{
+  description = "NixOS configuration";
+
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    disko.url = "github:nix-community/disko/latest";
+    disko.inputs.nixpkgs.follows = "nixpkgs";
+    # impermanence.url = "github:nix-community/impermanence";
+  };
+
+  outputs = inputs@{ nixpkgs, ... }: {
+    nixosConfigurations = {
+      # Change `my-hostname` to match `networking.hostName`
+      my-hostname = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          ./configuration.nix
+          inputs.disko.nixosModules.disko
+          # inputs.impermanence.nixosModules.impermanence
+        ];
+      };
+    };
+  };
+}
+</code></pre>
+<p>Move all the files into your flake:</p>
+<pre><code class="language-bash">cd /mnt/etc/nixos/
+sudo mv disk-config.nix hardware-configuration.nix configuration.nix ~/flake
+</code></pre>
+<ol start="9">
+<li>Edit configuration.nix with what is required, the following is required, I
+clone my original flake repo and move the pieces into place but it’s fairly
+easy to just type it all out:</li>
+</ol>
+<ul>
+<li>
+<p>Bootloader, (e.g., boot.loader.systemd-boot.enable = true;)</p>
+</li>
+<li>
+<p>User, the example uses username change this to your chosen username. If you
+don’t set your hostname it will be nixos.</p>
+</li>
+<li>
+<p>Networking, networking.networkmanager.enable = true;</p>
+</li>
+<li>
+<p><code>hardware-configuration.nix</code> &amp; <code>disk-config.nix</code> for this setup</p>
+</li>
+<li>
+<p><code>initialHashedPassword</code>: Run <code>mkpasswd --method=yescrypt</code>, then enter your
+desired password. Example output,</p>
+</li>
+</ul>
+<pre><code class="language-bash">mkpasswd --method=yescrypt &gt; /tmp/pass.txt
+</code></pre>
+<ul>
+<li>You can check the quality with pwscore:</li>
+</ul>
+<pre><code class="language-bash">nix-shell -p libpwquality
+
+pwscore
+very-secure-password
+100
+</code></pre>
+<p>read the hashed password into the file with :r /tmp/pass.txt and move it into
+place.</p>
+<pre><code class="language-nix"># configuration.nix
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
+}: {
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+    ./disk-config.nix
+  ];
+
+  networking.hostName = "my-hostname"; # This will match the `hostname` of your flake
+
+  networking.networkmanager.enable = true;
+
+  boot.loader.systemd-boot.enable = true; # (for UEFI systems only)
+  # List packages installed in system profile.
+  # You can use https://search.nixos.org/ to find more packages (and options).
+  environment.systemPackages = with pkgs; [
+    vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
+    #   wget
+    git
+  ];
+
+  time.timeZone = "America/New_York";
+
+# Change `nixos` to your chosen username, change the group to match
+  users.users.nixos = {
+    isNormalUser = true;
+    extraGroups = [ "wheel" "networkmanager" ]; # Add "wheel" for sudo access
+    initialHashedPassword = "COPY_YOUR_MKPASSWD_OUTPUT_HERE"; # &lt;-- This is where it goes!
+    # home = "/home/nixos"; # Optional: Disko typically handles home subvolumes
+  };
+  # Create a matching group
+  users.groups.nixos = {};
+
+  console.keyMap = "us";
+
+  nixpkgs.config.allowUnfree = true;
+
+  system.stateVersion = "25.05";
+}
+</code></pre>
+<p>Shred pass.txt:</p>
+<pre><code class="language-bash">shred /tmp/pass.txt
+rm /tmp/pass.txt
+</code></pre>
+<ol start="10">
+<li>Move the flake to /mnt/etc/nixos and run nixos-install:</li>
+</ol>
+<pre><code class="language-bash">sudo mv ~/flake /mnt/etc/nixos/
+sudo nixos-install --flake /mnt/etc/nixos/flake .#hostname
+# if the above command doesn't work try this:
+sudo nixos-install --flake /mnt/etc/nixos/flake#hostname
+</code></pre>
+<p>You will be prompted to enter a new password if everything succeeds.</p>
+<p>If everything checks out, reboot the system and you should be prompted to enter
+your user and password to login to a shell to get started.</p>
+<p>The flake will be placed at <code>/etc/nixos/flake</code>, I choose to move it to my home
+directory. Since the file was first in <code>/etc</code> you’ll need to adjust the
+permissions with something like <code>sudo chown nixos:nixos ~/flake</code>. This is based
+off of the example above where we created both a nixos user and group.</p>
+<p>You can check the layout of your btrfs system with:</p>
+<pre><code class="language-bash">sudo btrfs subvolume list /
+</code></pre>
+<ul>
+<li>You may notice some old_roots in the output, which are snapshots, which are
+likely created before system upgrades or reboots for rollback purposes. They
+can be deleted or rolled back as needed.</li>
+</ul>
+<p><a href="https://btrfs.readthedocs.io/en/latest/Subvolumes.html">BTRFS Subvolumes</a></p>
+<p>To continue following along and set up impermanence
+<a href="https://saylesss88.github.io/installation/unencrypted/impermanence.html">Click Here</a></p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../installation/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../installation/unenc/unenc_impermanence.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../installation/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../installation/unenc/unenc_impermanence.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../../mark-09e88c2c.min.js"></script>
+        <script src="../../searcher-c2a407aa.js"></script>
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../../theme/extra-e0f03105.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

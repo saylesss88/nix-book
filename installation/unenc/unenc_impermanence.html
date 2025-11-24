@@ -1,0 +1,666 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Unencrypted Impermanence - nix-book</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../../theme/extra-c3f37c9a.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../../searchindex-c321a705.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-e65ad3d7.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">nix-book</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <hr>
+<h2 id="title-unencrypted-btrfs-impermanence-with-flakes-date-2025-11-24-author-saylesss88-description-guided-unencrypted-impermanence-guide-with-btrfs"><a class="header" href="#title-unencrypted-btrfs-impermanence-with-flakes-date-2025-11-24-author-saylesss88-description-guided-unencrypted-impermanence-guide-with-btrfs">title: Unencrypted BTRFS Impermanence with Flakes
+date: 2025-11-24
+author: saylesss88
+description: Guided Unencrypted Impermanence guide with BTRFS</a></h2>
+<h1 id="unencrypted-btrfs-impermanence-with-flakes"><a class="header" href="#unencrypted-btrfs-impermanence-with-flakes">Unencrypted BTRFS Impermanence with Flakes</a></h1>
+<details>
+<summary> ✔️ Click to Expand Table of Contents</summary>
+<ul>
+<li><a href="#impermanence-the-concept-and-its-btrfs-implementation">Impermanence: The Concept and Its BTRFS Implementation</a></li>
+<li><a href="#what-does-impermanence-do">What Does Impermanence Do?</a>
+<ul>
+<li><a href="#getting-started">Getting Started</a></li>
+<li><a href="#applying-your-impermanence-configuration">Applying Your Impermanence Configuration</a></li>
+<li><a href="#recovery-with-nixos-enter-and-chroot">Recovery with nixos-enter and chroot</a>
+<ul>
+<li><a href="#related-material">Related Material</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</details>
+<p>Figure 1: Impermanence Logo: Image of the Impermanence logo. Sourced from the</p>
+<p><a href="https://github.com/nix-community/impermanence">Impermanence repo</a></p>
+<p>This guide is for an unencrypted setup, there are a few links at the end for
+encrypted setups. This guide follows the previous
+<a href="https://saylesss88.github.io/installation/unencrypted_setups.html">minimal install guide</a>
+but you should be able to adjust it carefully to meet your needs.</p>
+<p>This section details how to set up impermanence on your NixOS system using BTRFS
+subvolumes. With impermanence, your operating system’s root filesystem will
+reset to a pristine state on each reboot, while designated directories and files
+remain persistent. This provides a highly reliable and rollback-friendly system.</p>
+<p>In NixOS, “state” is any data or condition of the system that isn’t defined in
+your declarative configuration. The impermanence approach aims to make this
+state temporary (ephemeral) or easily resettable, so your system always matches
+your configuration and can recover from unwanted changes or corruption.</p>
+<h2 id="impermanence-the-concept-and-its-btrfs-implementation"><a class="header" href="#impermanence-the-concept-and-its-btrfs-implementation">Impermanence: The Concept and Its BTRFS Implementation</a></h2>
+<p>In a traditional Linux system, most of this state is stored on the disk and
+persists indefinitely unless manually deleted or modified. However, this can
+lead to configuration drift, where the system accumulates changes (e.g., log
+files, temporary files, or unintended configuration tweaks) that make it harder
+to reproduce or maintain.</p>
+<p>Impermanence, in the context of operating systems, refers to a setup where the
+majority of the system’s root filesystem (<code>/</code>) is reset to a pristine state on
+every reboot. This means any changes made to the system (e.g., installing new
+packages, modifying system files outside of configuration management, creating
+temporary files) are discarded upon shutdown or reboot.</p>
+<h2 id="what-does-impermanence-do"><a class="header" href="#what-does-impermanence-do">What Does Impermanence Do?</a></h2>
+<p>Impermanence is a NixOS approach that makes the system stateless (or nearly
+stateless) by wiping the root filesystem (<code>/</code>) on each boot, ensuring a clean,
+predictable starting point. Only explicitly designated data (persistent state)
+is preserved across reboots, typically stored in specific locations like the
+/nix/persist subvolume. This is possible because NixOS can boot with only the
+<code>/boot</code>, and <code>/nix</code> directories. This achieves:</p>
+<ol>
+<li>Clean Root Filesystem:</li>
+</ol>
+<ul>
+<li>
+<p>The root subvolume is deleted and recreated on each boot, erasing transient
+state (e.g., temporary files, runtime data).</p>
+</li>
+<li>
+<p>This ensures the system starts fresh, reducing clutter and making it behave
+closer to a declarative system defined by your NixOS configuration.</p>
+</li>
+</ul>
+<ol start="2">
+<li>Selective Persistence:</li>
+</ol>
+<ul>
+<li>
+<p>Critical state (e.g., user files, logs, system configuration) is preserved in
+designated persistent subvolumes (e.g., /nix/persist, /var/log, /var/lib) or
+files.</p>
+</li>
+<li>
+<p>You control exactly what state persists by configuring
+<code>environment.persistence."/nix/persist"</code> or other mechanisms.</p>
+</li>
+<li>
+<p>❗ The understanding around persisting <code>/var/lib/nixos</code> seems to be evolving.
+See,The importance of persisting <code>/var/lib/nixos</code> See also necessary system
+state</p>
+</li>
+</ul>
+<ol start="3">
+<li>Reproducibility and Security:</li>
+</ol>
+<ul>
+<li>
+<p>By wiping transient state, impermanence prevents unintended changes from
+accumulating, making the system more reproducible.</p>
+</li>
+<li>
+<p>It enhances security by ensuring sensitive temporary data (e.g., /tmp, runtime
+credentials) is erased on reboot.</p>
+</li>
+</ul>
+<h3 id="getting-started"><a class="header" href="#getting-started">Getting Started</a></h3>
+<ol>
+<li>Add impermanence to your flake.nix. You will change the hostname in the flake
+to match your networking.hostName.</li>
+</ol>
+<pre><code class="language-nix"># flake.nix
+{
+  description = "NixOS configuration";
+
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    disko.url = "github:nix-community/disko/latest";
+    disko.inputs.nixpkgs.follows = "nixpkgs";
+    impermanence.url = "github:nix-community/impermanence";
+  };
+
+  outputs = inputs@{ nixpkgs, ... }: {
+    nixosConfigurations = {
+      hostname = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          ./configuration.nix
+          inputs.disko.nixosModules.disko
+          inputs.impermanence.nixosModules.impermanence
+        ];
+      };
+    };
+  };
+}
+</code></pre>
+<ol start="2">
+<li>Discover where your root subvolume is located with <code>findmnt</code>:</li>
+</ol>
+<p>Before configuring impermanence, it’s crucial to know the device path and
+subvolume path of your main BTRFS partition where the root filesystem (/) is
+located. This information is needed for the mount command within the
+impermanence script.</p>
+<pre><code class="language-bash">findmnt /
+TARGET   SOURCE         FSTYPE OPTIONS
+/        /dev/disk/by-partlabel/disk-main-root[/root]
+                        btrfs  rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=275,sub
+</code></pre>
+<p>From the SOURCE column, note the full path, including the device (e.g.,
+<code>/dev/disk/by-partlabel/disk-main-root</code>) and the subvolume in brackets (e.g.,
+<code>[/root]</code>). You will use the device path in the next step</p>
+<p><code>/dev/disk/by-partlabel/disk-main-root</code> is a symlink to the actual device path
+(e.g. <code>/dev/nvme0n1p2</code>), but using the partlabel is generally more robust for
+scripts.</p>
+<ol start="3">
+<li>Create an impermanence.nix:</li>
+</ol>
+<p>Now, create a new file named <code>impermanence.nix</code> in your configuration directory
+(i.e. your flake directory). This file will contain all the specific settings
+for your impermanent setup, including BTRFS subvolume management and persistent
+data locations. Since this file is right next to your <code>configuration.nix</code>,
+you’ll just add an <code>imports = [ ./impermanence.nix</code> ] to your
+<code>configuration.nix</code> apply it to your configuration.</p>
+<pre><code class="language-nix">{lib, ...}: {
+  #  Reset root subvolume on boot
+  boot.initrd.postResumeCommands = lib.mkAfter ''
+    mkdir /btrfs_tmp
+      mount /dev/disk/by-partlabel/disk-main-root /btrfs_tmp # CONFIRM THIS IS CORRECT FROM findmnt
+      if [[ -e /btrfs_tmp/root ]]; then
+        mkdir -p /btrfs_tmp/old_roots
+        timestamp=$(date --date="@$(stat -c %Y /btrfs_tmp/root)" "+%Y-%m-%-d_%H:%M:%S")
+        mv /btrfs_tmp/root "/btrfs_tmp/old_roots/$timestamp"
+      fi
+
+      delete_subvolume_recursively() {
+        IFS=$'\n'
+        for i in $(btrfs subvolume list -o "$1" | cut -f 9- -d ' '); do
+          delete_subvolume_recursively "/btrfs_tmp/$i"
+        done
+        btrfs subvolume delete "$1"
+      }
+
+      for i in $(find /btrfs_tmp/old_roots/ -maxdepth 1 -mtime +30); do
+        delete_subvolume_recursively "$i"
+      done
+
+      btrfs subvolume create /btrfs_tmp/root
+      umount /btrfs_tmp
+  '';
+
+  # Use /persist as the persistence root, matching Disko's mountpoint
+  environment.persistence."/nix/persist" = {
+    hideMounts = true;
+    directories = [
+      "/etc" # System configuration (Keep this here for persistence via bind-mount)
+      "/var/spool" # Mail queues, cron jobs
+      "/srv" # Web server data, etc.
+      "/root"
+    ];
+    files = [
+    ];
+  };
+}
+</code></pre>
+<p>With btrfs subvolumes since each directory is its own subvolume, when the root
+is wiped on reboot the subvolumes are untouched.</p>
+<h3 id="applying-your-impermanence-configuration"><a class="header" href="#applying-your-impermanence-configuration">Applying Your Impermanence Configuration</a></h3>
+<p>Once you have completed all the steps and created or modified the necessary
+files (<code>flake.nix</code>, <code>impermanence.nix</code>), you need to apply these changes to your
+NixOS system.</p>
+<ol>
+<li>Navigate to your NixOS configuration directory (where your flake.nix is
+located).</li>
+</ol>
+<pre><code class="language-bash">cd /path/to/your/flake
+</code></pre>
+<ol start="2">
+<li>Rebuild and Switch: Execute the <code>nixos-rebuild switch</code> command. This command
+will:</li>
+</ol>
+<ul>
+<li>
+<p>Evaluate your flake.nix and the modules it imports (including your new
+impermanence.nix).</p>
+</li>
+<li>
+<p>Build a new NixOS system closure based on your updated configuration.</p>
+</li>
+<li>
+<p>Activate the new system configuration, making it the current running system.</p>
+</li>
+</ul>
+<blockquote>
+<p>❗ NOTE: On the first rebuild after setting up impermanence, you may find that
+you’re not in the password database or cannot log in/sudo. This occurs because
+the initial state of your new ephemeral root filesystem, including /etc (where
+user passwords are stored), is fresh. It has to do with the timing of when
+environment.persistence takes effect during the first boot.</p>
+</blockquote>
+<blockquote>
+<p>To avoid this password issue, before your first nixos-rebuild switch for
+impermanence, run:</p>
+<pre><code class="language-bash">sudo mkdir -p /nix/persist/etc # Ensure the target directory exists
+sudo cp -a /etc/* /nix/persist/etc
+</code></pre>
+<ul>
+<li>This copies your current /etc directory contents (including existing user
+passwords) into your persistent &gt;&gt;storage.</li>
+<li>Crucially: You must also ensure that <code>/etc</code> is explicitly included in your
+<code>environment.persistence."/nix/persist"</code>.directories list in your
+<code>impermanence.nix</code> like we did above, (or main configuration). This
+configures &gt;NixOS to persistently bind-mount <code>/nix/persist/etc</code> over <code>/etc</code>
+on every subsequent boot. Once these steps are done and you reboot, your
+user passwords should function correctly, and future rebuilds will &gt; not
+present this problem.</li>
+</ul>
+</blockquote>
+<pre><code class="language-bash">sudo nixos-rebuild switch --flake .#hostname # Replace 'hostname' with your actual system hostname
+</code></pre>
+<ol start="3">
+<li>Perform an Impermanence Test (Before Reboot):</li>
+</ol>
+<ul>
+<li>Before you reboot, create a temporary directory and file in a non-persistent
+location. Since you haven’t explicitly added <code>/imperm_test</code> to your
+<code>environment.persistence."/nix/persist"</code> directories, this file should not
+survive a reboot.</li>
+</ul>
+<pre><code class="language-bash">mkdir /imperm_test
+echo "This should be Gone after Reboot" | sudo tee /imperm_test/testfile
+ls -l /imperm_test/testfile # Verify the file exists
+cat /imperm_test/testfile # Verify content
+</code></pre>
+<ol start="4">
+<li>Reboot Your System: For the impermanence setup to take full effect and for
+your root filesystem to be reset for the first time, you must reboot your
+machine.</li>
+</ol>
+<pre><code class="language-bash">sudo reboot
+</code></pre>
+<ol start="5">
+<li>Verify Impermanence (After Reboot):</li>
+</ol>
+<ul>
+<li>After the system has rebooted, check if the test directory and file still
+exist:</li>
+</ul>
+<pre><code class="language-bash">ls -l /imperm_test/testfile
+</code></pre>
+<p>You should see an output like <code>ls: cannot access '/imperm_test/testfile'</code>: No
+such file or directory. This confirms that the <code>/imperm_test</code> directory and its
+contents were indeed ephemeral and were removed during the reboot process,
+indicating your impermanence setup is working correctly!</p>
+<p>Your system should now come up with a fresh root filesystem, and only the data
+specified in your <code>environment.persistence."/nix/persist"</code> configuration will be
+persistent.</p>
+<h3 id="recovery-with-nixos-enter-and-chroot"><a class="header" href="#recovery-with-nixos-enter-and-chroot">Recovery with nixos-enter and chroot</a></h3>
+<p>This is if you followed the minimal_install guide, it will need to be changed
+for a different disk layout.</p>
+<p><a href="https://en.wikipedia.org/wiki/Chroot">Chroot</a> is an operation that changes the
+apparent root directory for the current running process and their children. A
+program that is run in such a modified environment cannot access files and
+commands outside that environmental directory tree. This modified environment is
+called a chroot jail. –NixOS wiki</p>
+<p><code>nixos-enter</code> allows you to access a NixOS installation from a NixOS rescue
+system. To use, setup <code>/mnt</code> as described in the
+<a href="https://nixos.org/manual/nixos/stable/#sec-installation">installation manual</a></p>
+<p>🛠️ Recovery: Chroot into Your NixOS Btrfs+Impermanence System</p>
+<p>Take note of your layout from commands like:</p>
+<pre><code class="language-bash">sudo fdisk -l
+lsblk
+sudo btrfs subvol list /
+</code></pre>
+<p>Also inspect your <code>disk-config.nix</code> to ensure you refer to the correct <code>subvol=</code>
+names.</p>
+<p>If you need to repair your system (e.g., forgot root password, fix a broken
+config, etc.), follow these steps to chroot into your NixOS install:</p>
+<ol>
+<li>Boot a Live ISO</li>
+</ol>
+<p>Boot from a NixOS (or any recent Linux) live USB.</p>
+<p>Open a terminal and become root:</p>
+<pre><code class="language-bash">sudo -i
+</code></pre>
+<ol start="2">
+<li>Identify Your Devices</li>
+</ol>
+<p>Your main disk is <code>/dev/nvme0n1</code></p>
+<ul>
+<li>
+<p>EFI partition: <code>/dev/nvme0n1p1</code> (mounted at <code>/boot</code>)</p>
+</li>
+<li>
+<p>Root partition: <code>/dev/nvme0n1p2</code> (Btrfs, with subvolumes)</p>
+</li>
+</ul>
+<ol start="3">
+<li>Mount the Btrfs Root Subvolume</li>
+</ol>
+<p>First, mount the Btrfs partition somewhere temporary (not as / yet):</p>
+<pre><code class="language-bash">mount -o subvol=root,compress=zstd,noatime /dev/nvme0n1p2 /mnt
+</code></pre>
+<ol start="4">
+<li>Mount Other Subvolumes</li>
+</ol>
+<p>Now mount your other subvolumes as defined in your <code>disko.nix</code>:</p>
+<pre><code class="language-bash"># Mount Other Subvolumes
+# (Ensure /mnt directories are created for each *mountpoint*)
+
+# Home
+mkdir -p /mnt/home
+mount -o subvol=home,compress=zstd,noatime /dev/nvme0n1p2 /mnt/home
+
+# IMPORTANT: No separate mount for /mnt/home/user, as it's a nested subvolume
+# and handled by the /home mount.
+
+# Nix store
+mkdir -p /mnt/nix
+mount -o subvol=nix,compress=zstd,noatime /dev/nvme0n1p2 /mnt/nix
+
+# Nix persist
+mkdir -p /mnt/nix/persist
+# CRITICAL: Based our disko.nix, the subvolume name is 'persist', not 'nix/persist'
+mount -o subvol=persist,compress=zstd,noatime /dev/nvme0n1p2 /mnt/nix/persist
+
+# /var/log
+mkdir -p /mnt/var/log
+mount -o subvol=log,compress=zstd,noatime /dev/nvme0n1p2 /mnt/var/log
+
+# /var/lib
+mkdir -p /mnt/var/lib
+# Confirmed: The subvolume named 'lib' is mounted to /var/lib
+mount -o subvol=lib,compress=zstd,noatime /dev/nvme0n1p2 /mnt/var/lib
+</code></pre>
+<p>Note: If you get “subvolume not found,” check the subvolume names with
+<code>btrfs subvol list /mnt</code>.</p>
+<ol start="5">
+<li>Mount the EFI Partition</li>
+</ol>
+<pre><code class="language-bash">mkdir -p /mnt/boot mount /dev/nvme0n1p1 /mnt/boot
+</code></pre>
+<ol start="6">
+<li>(Optional) Mount Virtual Filesystems</li>
+</ol>
+<pre><code class="language-bash">mount --bind /dev /mnt/dev mount --bind /proc /mnt/proc mount --bind /sys
+/mnt/sys mount --bind /run /mnt/run
+</code></pre>
+<ol start="7">
+<li>Chroot</li>
+</ol>
+<pre><code class="language-bash">chroot /mnt /run/current-system/sw/bin/bash
+</code></pre>
+<p>or, if using a non-NixOS live system:</p>
+<pre><code class="language-bash">nixos-enter
+</code></pre>
+<p>(You may need to install nixos-enter with nix-shell -p nixos-enter.) 8. You’re
+In!</p>
+<p>You can now run nixos-rebuild, reset passwords, or fix configs as needed. 🔎</p>
+<p>📓 Notes</p>
+<ul>
+<li>
+<p>Adjust <code>compress=zstd,noatime</code> if your config uses different mount options.</p>
+</li>
+<li>
+<p>For impermanence, make sure to mount all persistent subvolumes you need.</p>
+</li>
+<li>
+<p>If you use swap, you may want to enable it too (e.g., swapon /dev/zram0 if
+relevant).</p>
+</li>
+</ul>
+<p>You can now recover, repair, or maintain your NixOS system as needed!</p>
+<h4 id="related-material"><a class="header" href="#related-material">Related Material</a></h4>
+<ul>
+<li>
+<p><a href="https://wiki.nixos.org/wiki/Change_root">Change root (chroot</a></p>
+</li>
+<li>
+<p><a href="https://www.mankier.com/8/nixos-enter">nixos-enter</a></p>
+</li>
+<li>
+<p><a href="https://grahamc.com/blog/erase-your-darlings/">erase your darlings</a></p>
+</li>
+<li>
+<p><a href="https://haseebmajid.dev/posts/2024-07-30-how-i-setup-btrfs-and-luks-on-nixos-using-disko/">Guide for Btrfs with LUKS</a></p>
+</li>
+<li>
+<p><a href="https://notashelf.dev/posts/impermanence">notashelf impermanence</a></p>
+</li>
+<li>
+<p><a href="https://wiki.nixos.org/wiki/Impermanence">NixOS wiki Impermanence</a></p>
+</li>
+<li>
+<p><a href="https://github.com/nix-community/impermanence">nix-community impermanence module</a></p>
+</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../installation/unenc/unencrypted_setups.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../installation/enc/enc_install.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../installation/unenc/unencrypted_setups.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../installation/enc/enc_install.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../../mark-09e88c2c.min.js"></script>
+        <script src="../../searcher-c2a407aa.js"></script>
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../../theme/extra-e0f03105.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

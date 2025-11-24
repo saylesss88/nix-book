@@ -12,23 +12,23 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="favicon.svg">
-        <link rel="shortcut icon" href="favicon.png">
-        <link rel="stylesheet" href="css/variables.css">
-        <link rel="stylesheet" href="css/general.css">
-        <link rel="stylesheet" href="css/chrome.css">
-        <link rel="stylesheet" href="css/print.css" media="print">
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        <link rel="stylesheet" href="fonts/fonts.css">
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" id="highlight-css" href="highlight.css">
-        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
-        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="theme/extra-c3f37c9a.css">
 
 
         <!-- Provide site root and default themes to javascript -->
@@ -36,12 +36,12 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex-c321a705.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc.js"></script>
+        <script src="toc-e65ad3d7.js"></script>
     </head>
     <body>
-    <a href="#" class="top-link" id="back-to-top">↑</a>
     <div id="mdbook-help-container">
         <div id="mdbook-help-popup">
             <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
@@ -53,7 +53,7 @@
             </div>
         </div>
     </div>
-    <div id="body-container">
+    <div id="mdbook-body-container">
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
         <script>
             try {
@@ -82,56 +82,59 @@
             html.classList.add("js");
         </script>
 
-        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
 
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
             let sidebar = null;
-            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
             } else {
                 sidebar = 'hidden';
+                sidebar_toggle.checked = false;
             }
-            sidebar_toggle.checked = sidebar === 'visible';
-            html.classList.remove('sidebar-visible');
-            html.classList.add("sidebar-" + sidebar);
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
         </script>
 
-        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
             <!-- populated by js -->
             <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
             <noscript>
                 <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
             </noscript>
-            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
             </div>
         </nav>
 
-        <div id="page-wrapper" class="page-wrapper">
+        <div id="mdbook-page-wrapper" class="page-wrapper">
 
             <div class="page">
-                <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
-                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
-                            <i class="fa fa-bars"></i>
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
                         </label>
-                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
-                            <i class="fa fa-paint-brush"></i>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
                         </button>
-                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
-                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
                         </ul>
-                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
-                            <i class="fa fa-search"></i>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
                         </button>
                     </div>
 
@@ -139,53 +142,86 @@
 
                     <div class="right-buttons">
                         <a href="print.html" title="Print this book" aria-label="Print this book">
-                            <i id="print-button" class="fa fa-print"></i>
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
                         </a>
 
                     </div>
                 </div>
 
-                <div id="search-wrapper" class="hidden">
-                    <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
                     </form>
-                    <div id="searchresults-outer" class="searchresults-outer hidden">
-                        <div id="searchresults-header" class="searchresults-header"></div>
-                        <ul id="searchresults">
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
                         </ul>
                     </div>
                 </div>
 
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
                 <script>
-                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
-                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
-                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
                         link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
                     });
                 </script>
 
-                <div id="content" class="content">
+                <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="chapter-9"><a class="header" href="#chapter-9">Chapter 9</a></h1>
+                        <hr>
+<h2 id="title-debugging-nixos-modules-date-2025-11-22-author-saylesss88-description-this-chapter-follows-nix-hour-40-and-walks-through-practical-techniques-for-debugging-nixos-modules"><a class="header" href="#title-debugging-nixos-modules-date-2025-11-22-author-saylesss88-description-this-chapter-follows-nix-hour-40-and-walks-through-practical-techniques-for-debugging-nixos-modules">title: Debugging NixOS modules
+date: 2025-11-22
+author: saylesss88
+description:
+This chapter follows Nix Hour 40 and walks through practical techniques for
+debugging NixOS modules.</a></h2>
+<h1 id="chapter-11"><a class="header" href="#chapter-11">Chapter 11</a></h1>
+<p>This chapter covers debugging NixOS modules, focusing on tracing module options
+and evaluating merges.</p>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
-<!-- toc -->
+<ul>
+<li><a href="#debugging-and-tracing-nixos-modules">Debugging and Tracing NixOS Modules</a></li>
+<li><a href="#example-2">Example 2</a></li>
+<li><a href="#example-3">Example 3</a></li>
+<li><a href="#example-4">Example 4</a></li>
+<li><a href="#summary">Summary</a></li>
+<li><a href="#more-functionality-between-modules">More Functionality between modules</a>
+<ul>
+<li><a href="#infinite-recursion-error">Infinite recursion error</a></li>
+<li><a href="#example-5">Example 5</a></li>
+<li><a href="#tests">Tests</a></li>
+<li><a href="#test-2">Test 2</a></li>
+<li><a href="#key-takeaways-for-debugging-nixos-modules">Key Takeaways for Debugging NixOS Modules</a>
+<ul>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 </details>
 <h2 id="debugging-and-tracing-nixos-modules"><a class="header" href="#debugging-and-tracing-nixos-modules">Debugging and Tracing NixOS Modules</a></h2>
-<p><img src="images/gruv17.png" alt="gruv17" /></p>
+<p><img src="images/coding4.png" alt="404"></p>
+<!-- ![gruv17](images/gruv17.png) -->
 <ul>
-<li>
-<p>Other related post if you haven't read my previous post on modules, that may
-be helpful before reading this one:</p>
+<li>Other related post if you haven’t read my previous post on modules, that may
+be helpful before reading this one:
 <ul>
 <li>
 <p><a href="https://saylesss88.github.io/posts/nix_modules_explained/">nix-modules-explained</a></p>
 </li>
 <li>
 <p>This post is my notes following Nix Hour 40. If it seems a little chaotic,
-try watching one. They are hard to follow if you're not extremely
-familiar with the concepts.</p>
+try watching one. They are hard to follow if you’re not extremely familiar
+with the concepts.</p>
 </li>
 <li>
 <p><a href="https://www.youtube.com/watch?v=aLy8id4wr-M&amp;t=2120s">Nix Hour 40</a></p>
@@ -197,7 +233,7 @@ familiar with the concepts.</p>
 declarative nature, layered modules)</p>
 <ul>
 <li>The following simple Nix code snippet illustrates a basic NixOS module
-definition and how options are declared and configured. We'll use this example
+definition and how options are declared and configured. We’ll use this example
 to demonstrate fundamental debugging techniques using <code>nix-instantiate</code>.</li>
 </ul>
 <pre><code class="language-nix">let
@@ -225,18 +261,18 @@ lib.evalModules {
 </code></pre>
 <ul>
 <li>
-<p>In the above code, adding <code>lib</code> to the function arguments isn't required but
+<p>In the above code, adding <code>lib</code> to the function arguments isn’t required but
 if you were to move the module to another file it would fail without it
-because <code>lib</code> comes from outside of it. So it's good practice to refer to <code>lib</code>
-in the modules themselves.</p>
+because <code>lib</code> comes from outside of it. So it’s good practice to refer to
+<code>lib</code> in the modules themselves.</p>
 </li>
 <li>
-<p>You should <strong>always</strong> assign a type to your options, if you don't know which type
-to use you could use <code>raw</code>. <code>raw</code> is a type that doesn't do any processing.
-So if you were to assign the entire packages set to the option e.g.
-<code>default = pkgs;</code> it wouldn't recurseinto all the packages and try to evaluate
-them. There is also <code>anything</code>, that is useful if you do want to recurse into
-the values.</p>
+<p>You should <strong>always</strong> assign a type to your options, if you don’t know which
+type to use you could use <code>raw</code>. <code>raw</code> is a type that doesn’t do any
+processing. So if you were to assign the entire packages set to the option
+e.g. <code>default = pkgs;</code> it wouldn’t recurseinto all the packages and try to
+evaluate them. There is also <code>anything</code>, that is useful if you do want to
+recurse into the values.</p>
 </li>
 <li>
 <p>The following is an example of how you would run this inside vim/neovim, the
@@ -251,7 +287,7 @@ rest of the examples will be from the command line:</p>
 <pre><code class="language-bash">{ bar = 10; baz = "bar"; list = [ 1 2 3 ]; }
 </code></pre>
 <p>To show the difference you could uncomment the <code>raw</code> type and comment the
-<code>anything</code> type and run the above command again you'll see that you get an
+<code>anything</code> type and run the above command again you’ll see that you get an
 error:</p>
 <pre><code class="language-bash">error: The option 'foo' is defined multiple times while it's expected to be
 unique
@@ -266,7 +302,7 @@ unique
 <h2 id="example-2"><a class="header" href="#example-2">Example 2</a></h2>
 <details>
 <summary> Click to Expand Example 2 </summary>
-<p>In the previous example, we looked at a simplified module. Now, let's examine a
+<p>In the previous example, we looked at a simplified module. Now, let’s examine a
 more realistic scenario involving a basic NixOS configuration file
 (<code>configuration.nix</code>).</p>
 <p>This example will demonstrate how to use <code>nix-instantiate</code> to evaluate an entire
@@ -294,7 +330,7 @@ represents the instantiated system configuration.</li>
 <p><strong>Output</strong>:</p>
 <pre><code class="language-bash">/nix/store/kfcwvvpdbsb3xcks1s76id16i1mc3l5k-nixos-system-nixos-25.05pre-git.drv
 </code></pre>
-<p>Ok, we can see that this successfully <em>instantiates</em>. Let's introduce an error
+<p>Ok, we can see that this successfully <em>instantiates</em>. Let’s introduce an error
 to trace:</p>
 <pre><code class="language-nix">{ lib, ... }: {
   boot.loader.grub.device = "nodev";
@@ -313,7 +349,8 @@ error: expected an integer but found null: null
 <ul>
 <li>This outputs a much longer trace than the first example. It shows you the file
 the error occured in and you can see that in this case they are a lot of
-internal functions. (e.g. <code>at /nix/store/ccfwxygjrarahgfv5865x2f828sjr5h0- source/lib/attrsets.nix:1529:14:</code>)</li>
+internal functions. (e.g.
+<code>at /nix/store/ccfwxygjrarahgfv5865x2f828sjr5h0- source/lib/attrsets.nix:1529:14:</code>)</li>
 </ul>
 <p>To show your own error message you could do something like this:</p>
 <pre><code class="language-nix">{lib, ...}: {
@@ -348,14 +385,14 @@ internal functions. (e.g. <code>at /nix/store/ccfwxygjrarahgfv5865x2f828sjr5h0- 
    error: expected an integer but found null: null
 </code></pre>
 <ul>
-<li>In the latest nix they actually inverted the error messages so the most relevant
-parts will be at the bottom.</li>
+<li>In the latest nix they actually inverted the error messages so the most
+relevant parts will be at the bottom.</li>
 </ul>
 </details>
 <h2 id="example-3"><a class="header" href="#example-3">Example 3</a></h2>
 <details>
 <summary> Click to Expand Example 3 </summary>
-<p>Let's consider another example, this time demonstrating the definition of
+<p>Let’s consider another example, this time demonstrating the definition of
 configuration options using <code>lib.mkOption</code> within a module structure.</p>
 <pre><code class="language-nix"># default.nix
 let
@@ -385,7 +422,7 @@ See https://github.com/NixOS/nixpkgs/pull/66346 for better alternative types.
 "foo"
 </code></pre>
 <ul>
-<li>Unfortunately you won't get the same depreciation warning from <code>lib.attrsOf</code></li>
+<li>Unfortunately you won’t get the same depreciation warning from <code>lib.attrsOf</code></li>
 </ul>
 <p>Below is an interesting way to provide nixpkgs run it on the command line:</p>
 <pre><code class="language-bash">export NIX_PATH=nixpkgs=channel:nixpkgs-unstable
@@ -519,20 +556,20 @@ shell returned 1
 <h2 id="summary"><a class="header" href="#summary">Summary</a></h2>
 <ul>
 <li>
-<p>So types in the module system aren't just types in the conventional sense
-but they also specify the emerging behavior of these values.</p>
+<p>So types in the module system aren’t just types in the conventional sense but
+they also specify the emerging behavior of these values.</p>
 </li>
 <li>
 <p>If we switch the type in the above example to <code>types.lines</code> you get this
 returned, <code>{ x = "foo\nbar"; }</code></p>
 </li>
 <li>
-<p><code>mkOptionDefault</code> isn't typically something you should generally use, instead
+<p><code>mkOptionDefault</code> isn’t typically something you should generally use, instead
 options have a <code>default</code> setting</p>
 </li>
 <li>
 <p>If you want to make sure that you set a default but if the user specifies it,
-it shouldn't get overridden. You should not set it in the following:</p>
+it shouldn’t get overridden. You should not set it in the following:</p>
 </li>
 </ul>
 <pre><code class="language-nix">options.strings = lib.mkOption {
@@ -589,7 +626,7 @@ in
 </code></pre>
 <p><strong>Output</strong>:</p>
 <ul>
-<li>This works now because there's no difference between <code>x</code> and <code>y</code></li>
+<li>This works now because there’s no difference between <code>x</code> and <code>y</code></li>
 </ul>
 <pre><code class="language-bash">{ x = "foo"; y = "bar"; }
 </code></pre>
@@ -642,8 +679,7 @@ when shadowing a name. The simplest example for this is:</li>
 </code></pre>
 </blockquote>
 <blockquote>
-<p>💡<strong>TIP</strong>: Avoid <code>rec</code>. Use <code>let ... in</code>
-Example:</p>
+<p>💡<strong>TIP</strong>: Avoid <code>rec</code>. Use <code>let ... in</code> Example:</p>
 <pre><code class="language-nix">let
  a = 1;
 in {
@@ -654,7 +690,7 @@ in {
 </blockquote>
 <details>
 <summary> Click to Expand a more involved infinite recursion error </summary>
-<p>We'll separate the logic for this example, this will be the <code>default.nix</code> this
+<p>We’ll separate the logic for this example, this will be the <code>default.nix</code> this
 is where having <code>lib</code> defined in your inline modules is helpful because you can
 just delete the section and paste it into your <code>modules.nix</code>:</p>
 <pre><code class="language-nix"># default.nix
@@ -688,7 +724,8 @@ in
 }
 </code></pre>
 <ul>
-<li>If you evaluate this with the following you will get an infinite recursion error.</li>
+<li>If you evaluate this with the following you will get an infinite recursion
+error.</li>
 </ul>
 <pre><code class="language-bash">nix-instantiate --eval --strict -A config.etc
 </code></pre>
@@ -711,15 +748,15 @@ definitions available.</p>
 Nixpkgs are defined as <em>derivations</em>.</p>
 </li>
 <li>
-<p><code>.out</code> is a common attribute name for the <em>main output</em> of a derivation
-(e.g., the installed package). Some packages, especially those with complex
-build processes or multiple outputs, might have nested output attributes.
-In the case of <code>hello</code>, accessing <code>.out.out.out</code> ultimately leads us to the
+<p><code>.out</code> is a common attribute name for the <em>main output</em> of a derivation (e.g.,
+the installed package). Some packages, especially those with complex build
+processes or multiple outputs, might have nested output attributes. In the
+case of <code>hello</code>, accessing <code>.out.out.out</code> ultimately leads us to the
 <em>derivation</em> itself.</p>
 </li>
 </ul>
 <p>The key takeaway here is that when you evaluate a package in the <code>nix repl</code>,
-you're often interacting with its derivation or one of its output paths in the
+you’re often interacting with its derivation or one of its output paths in the
 Nix store. The <code>«derivation ...»</code> indicates that <code>hello.out.out.out</code> evaluates
 to a derivation – the blueprint for building the <code>hello</code> package. This is in
 contrast to <code>--eval --strict</code>, which tries to fully evaluate values, potentially
@@ -740,7 +777,7 @@ evaluation to at least <code>nix-instantiate</code> which is based on derivation
 /nix/store/abyfp1rxk73p0n5kfilv7pawxwvc7hsg-foo.drv
 </code></pre>
 <ul>
-<li>We don't really have a derivation yet for example:</li>
+<li>We don’t really have a derivation yet for example:</li>
 </ul>
 <pre><code class="language-nix"># module.nix
 {
@@ -766,7 +803,7 @@ evaluation to at least <code>nix-instantiate</code> which is based on derivation
 }
 </code></pre>
 <p>Try to evaluate the above command with <code>nix-instantiate -A config.etc</code> and Nix
-doesn't even try to build it. With nested <code>attrsOf</code></p>
+doesn’t even try to build it. With nested <code>attrsOf</code></p>
 <pre><code class="language-bash">nix repl -f default.nix
 nix-repl&gt; config.etc
 {
@@ -779,7 +816,7 @@ nix-repl&gt; config.etc.foo
 </code></pre>
 <ul>
 <li>So <code>config.foo</code> is an attribute set and <code>config.etc.foo</code> is also an attribute
-set but it's not a derivation by itself. So <code>nix-instantiate</code> does this one
+set but it’s not a derivation by itself. So <code>nix-instantiate</code> does this one
 level of recursion here and it would have built <code>foo</code> value if it were a
 derivation.</li>
 </ul>
@@ -787,21 +824,20 @@ derivation.</li>
 <h3 id="example-5"><a class="header" href="#example-5">Example 5</a></h3>
 <details>
 <summary> Click to Expand Example 5 </summary>
-<p>We'll use the same <code>module.nix</code> and <code>default.nix</code> from the previous example.</p>
-<p>Building More Complex Configurations with Modules
-In this next example, we'll focus on a common task in system configuration:
-managing files within the <code>/etc/</code> directory. We'll define a module that allows
-us to specify the content of arbitrary files in <code>/etc/</code> and then use a special
-Nix function to combine these individual file definitions into a single,
-manageable entity.</p>
-<p>We'll introduce a new option, <code>options.etc</code>, which will allow us to define the
-content of files within <code>/etc/</code>. Then, we'll use <code>pkgs.linkFarm</code> to create a
+<p>We’ll use the same <code>module.nix</code> and <code>default.nix</code> from the previous example.</p>
+<p>Building More Complex Configurations with Modules In this next example, we’ll
+focus on a common task in system configuration: managing files within the
+<code>/etc/</code> directory. We’ll define a module that allows us to specify the content
+of arbitrary files in <code>/etc/</code> and then use a special Nix function to combine
+these individual file definitions into a single, manageable entity.</p>
+<p>We’ll introduce a new option, <code>options.etc</code>, which will allow us to define the
+content of files within <code>/etc/</code>. Then, we’ll use <code>pkgs.linkFarm</code> to create a
 derivation that represents the entire <code>/etc/</code> directory as a collection of
-symbolic links pointing to the individual file contents we've defined. This
+symbolic links pointing to the individual file contents we’ve defined. This
 demonstrates how modules can abstract away the details of creating complex
 system configurations, providing a declarative and reproducible way to manage
 even fundamental aspects of the operating system.</p>
-<p>Let's show how we can use Nix modules to declaratively manage the <code>/etc/</code>
+<p>Let’s show how we can use Nix modules to declaratively manage the <code>/etc/</code>
 directory</p>
 <pre><code class="language-nix"># default.nix
 let
@@ -901,10 +937,11 @@ went to the Nixpkgs Reference Manual. Make sure to go to the correct version.</p
 </ul>
 </li>
 </ul>
-<p>Or in your local copy of Nixpkgs you could go to <code>nixpkgs/pkgs/build-support/ trivial-builders/default.nix</code>. Then use your editors search feature, with nvim
-and helix you press <code>/symlinkjoin</code> or <code>/linkFarm</code> hit enter then press <code>n</code> to
-cycle to the next match. It will bring you to comments and up to date
-information.</p>
+<p>Or in your local copy of Nixpkgs you could go to
+<code>nixpkgs/pkgs/build-support/ trivial-builders/default.nix</code>. Then use your
+editors search feature, with nvim and helix you press <code>/symlinkjoin</code> or
+<code>/linkFarm</code> hit enter then press <code>n</code> to cycle to the next match. It will bring
+you to comments and up to date information.</p>
 <pre><code class="language-bash"># linkFarm "myexample" [ { name = "hello-test"; path = pkgs.hello; }
 # { name = "foobar"; path = pkgs.stack; } ]
 </code></pre>
@@ -913,8 +950,8 @@ information.</p>
 <details>
 <summary> Click to Expand Test Example </summary>
 <ul>
-<li>How to create a Derivation with <code>passthru.tests</code> outside of Nixpkgs
-and then run tests available to your package set?</li>
+<li>How to create a Derivation with <code>passthru.tests</code> outside of Nixpkgs and then
+run tests available to your package set?</li>
 </ul>
 <pre><code class="language-bash">mkdir passthru-tests &amp;&amp; cd passthru-tests
 </code></pre>
@@ -990,7 +1027,8 @@ in
 </code></pre>
 <ul>
 <li>
-<p><code>testers.testVersion</code> checks if an executable outputs a specific version string.</p>
+<p><code>testers.testVersion</code> checks if an executable outputs a specific version
+string.</p>
 </li>
 <li>
 <p><code>nix-build -A passthru.tests</code> specifically targets the derivations defined
@@ -1073,9 +1111,9 @@ error: build of '/nix/store/s4iawjy5zpv89dbkc3zz7z3ngz4jq2cv-foo-test.drv',
 </code></pre>
 <ul>
 <li>It turns out the correct command was <code>passAsFile</code> not <code>passAsFiles</code> but that
-change wasn't enough to fix it. <code>passAsFiles</code> expects a list of files, not a
-single file path. Running <code>nix-build -A passthru.tests</code> failed
-saying <code>&gt; foo --version returned a non-zero exit code.</code></li>
+change wasn’t enough to fix it. <code>passAsFiles</code> expects a list of files, not a
+single file path. Running <code>nix-build -A passthru.tests</code> failed saying
+<code>&gt; foo --version returned a non-zero exit code.</code></li>
 </ul>
 <pre><code class="language-nix">let
   pkgs = import &lt;nixpkgs&gt; {};
@@ -1135,65 +1173,66 @@ problem. Remember that in newer Nix versions, the most relevant parts of the
 trace are often at the bottom.</p>
 </li>
 <li>
-<p><strong>Understand Option Types:</strong> Nix option types (<code>raw</code>, <code>anything</code>, <code>string</code>/<code>str</code>,
-<code>lines</code>, <code>attrsOf</code>) are not just about data types; they also dictate how values
-are merged and processed within the module system.</p>
+<p><strong>Understand Option Types:</strong> Nix option types (<code>raw</code>, <code>anything</code>,
+<code>string</code>/<code>str</code>, <code>lines</code>, <code>attrsOf</code>) are not just about data types; they also
+dictate how values are merged and processed within the module system.</p>
 </li>
 <li>
 <p><strong>Be Mindful of <code>mkOptionDefault</code>:</strong> While useful in specific scenarios,
 <code>mkOptionDefault</code> sets a lower priority default. For standard defaults that
-can be overridden by user configuration, define them directly within the <code>config</code>
-attribute using <code>lib.mkDefault</code>.</p>
+can be overridden by user configuration, define them directly within the
+<code>config</code> attribute using <code>lib.mkDefault</code>.</p>
 </li>
 <li>
 <p><strong>Use <code>builtins.addErrorContext</code>:</strong> Enhance your custom error messages by
-providing specific context relevant to your module's logic using
+providing specific context relevant to your module’s logic using
 <code>builtins.addErrorContext</code>.</p>
 </li>
 <li>
 <p><strong>Derivations vs. Evaluation:</strong> Be aware of the difference between evaluating
-expressions (<code>--eval --strict</code>) and instantiating derivations (<code>nix-instantiate</code>).
-Strict evaluation can trigger infinite recursion if it encounters unevaluated
-derivations with cyclic dependencies during attribute access.</p>
+expressions (<code>--eval --strict</code>) and instantiating derivations
+(<code>nix-instantiate</code>). Strict evaluation can trigger infinite recursion if it
+encounters unevaluated derivations with cyclic dependencies during attribute
+access.</p>
 </li>
 <li>
-<p><strong>Explore with <code>nix repl</code>:</strong> The <code>nix repl</code> allows you to interactively explore
-Nix expressions and the outputs of derivations, providing insights into the
-structure and values within Nixpkgs.</p>
+<p><strong>Explore with <code>nix repl</code>:</strong> The <code>nix repl</code> allows you to interactively
+explore Nix expressions and the outputs of derivations, providing insights
+into the structure and values within Nixpkgs.</p>
 </li>
 </ul>
 <h4 id="conclusion"><a class="header" href="#conclusion">Conclusion</a></h4>
-<p>This chapter has equipped you with essential techniques for debugging and tracing
-NixOS modules. We've explored how to use <code>nix-instantiate</code> and <code>--show-trace</code> to
-pinpoint errors, how to interpret Nix's often-verbose error messages, and how to
-leverage the <code>nix repl</code> for interactive exploration. Understanding option types
-and the nuances of <code>mkOptionDefault</code> is crucial for writing robust and
-predictable modules. We've also touched upon the distinction between evaluation
-and instantiation, and how that impacts debugging.</p>
+<p>This chapter has equipped you with essential techniques for debugging and
+tracing NixOS modules. We’ve explored how to use <code>nix-instantiate</code> and
+<code>--show-trace</code> to pinpoint errors, how to interpret Nix’s often-verbose error
+messages, and how to leverage the <code>nix repl</code> for interactive exploration.
+Understanding option types and the nuances of <code>mkOptionDefault</code> is crucial for
+writing robust and predictable modules. We’ve also touched upon the distinction
+between evaluation and instantiation, and how that impacts debugging.</p>
 <p>While these tools and techniques are invaluable for understanding and
-troubleshooting your own Nix configurations, they also become essential
-when you want to contribute to or modify the vast collection of packages
-and modules within <strong>Nixpkgs</strong> itself. Nixpkgs is where the majority of Nix
-packages and NixOS modules reside, and learning how to navigate and contribute
-to it opens up a whole new level of control and customization within the Nix
-ecosystem.</p>
-<p>In the next chapter, <a href="https://saylesss88.github.io/Working_with_Nixpkgs_Locally_10.html">Working with Nixpkgs Locally</a>,
-we'll shift our focus to exploring and modifying Nixpkgs. We'll cover how to clone
-Nixpkgs, how to make changes to package definitions, and how to test those changes
-locally before contributing them back upstream. This chapter will empower you to
-not just use existing Nix packages, but also to customize and extend them to fit
-your specific needs.</p>
+troubleshooting your own Nix configurations, they also become essential when you
+want to contribute to or modify the vast collection of packages and modules
+within <strong>Nixpkgs</strong> itself. Nixpkgs is where the majority of Nix packages and
+NixOS modules reside, and learning how to navigate and contribute to it opens up
+a whole new level of control and customization within the Nix ecosystem.</p>
+<p>In the next chapter,
+<a href="https://saylesss88.github.io/Working_with_Nixpkgs_Locally_10.html">Working with Nixpkgs Locally</a>,
+we’ll shift our focus to exploring and modifying Nixpkgs. We’ll cover how to
+clone Nixpkgs, how to make changes to package definitions, and how to test those
+changes locally before contributing them back upstream. This chapter will
+empower you to not just use existing Nix packages, but also to customize and
+extend them to fit your specific needs.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                             <a rel="prev" href="Comparing_Flakes_and_Traditional_Nix_8.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
-                                <i class="fa fa-angle-left"></i>
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
                             <a rel="next prefetch" href="Working_with_Nixpkgs_Locally_10.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                <i class="fa fa-angle-right"></i>
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
                         <div style="clear: both"></div>
@@ -1203,16 +1242,21 @@ your specific needs.</p>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                     <a rel="prev" href="Comparing_Flakes_and_Traditional_Nix_8.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
-                        <i class="fa fa-angle-left"></i>
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
                     <a rel="next prefetch" href="Working_with_Nixpkgs_Locally_10.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                        <i class="fa fa-angle-right"></i>
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
 
         </div>
 
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
 
 
 
@@ -1221,15 +1265,17 @@ your specific needs.</p>
         </script>
 
 
-        <script src="elasticlunr.min.js"></script>
-        <script src="mark.min.js"></script>
-        <script src="searcher.js"></script>
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
 
-        <script src="clipboard.min.js"></script>
-        <script src="highlight.js"></script>
-        <script src="book.js"></script>
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
+        <script src="theme/extra-e0f03105.js"></script>
+
 
 
     </div>

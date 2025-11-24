@@ -12,23 +12,23 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="favicon.svg">
-        <link rel="shortcut icon" href="favicon.png">
-        <link rel="stylesheet" href="css/variables.css">
-        <link rel="stylesheet" href="css/general.css">
-        <link rel="stylesheet" href="css/chrome.css">
-        <link rel="stylesheet" href="css/print.css" media="print">
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        <link rel="stylesheet" href="fonts/fonts.css">
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" id="highlight-css" href="highlight.css">
-        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
-        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="theme/extra-c3f37c9a.css">
 
 
         <!-- Provide site root and default themes to javascript -->
@@ -36,12 +36,12 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex-c321a705.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc.js"></script>
+        <script src="toc-e65ad3d7.js"></script>
     </head>
     <body>
-    <a href="#" class="top-link" id="back-to-top">↑</a>
     <div id="mdbook-help-container">
         <div id="mdbook-help-popup">
             <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
@@ -53,7 +53,7 @@
             </div>
         </div>
     </div>
-    <div id="body-container">
+    <div id="mdbook-body-container">
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
         <script>
             try {
@@ -82,56 +82,59 @@
             html.classList.add("js");
         </script>
 
-        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
 
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
             let sidebar = null;
-            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
             } else {
                 sidebar = 'hidden';
+                sidebar_toggle.checked = false;
             }
-            sidebar_toggle.checked = sidebar === 'visible';
-            html.classList.remove('sidebar-visible');
-            html.classList.add("sidebar-" + sidebar);
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
         </script>
 
-        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
             <!-- populated by js -->
             <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
             <noscript>
                 <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
             </noscript>
-            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
             </div>
         </nav>
 
-        <div id="page-wrapper" class="page-wrapper">
+        <div id="mdbook-page-wrapper" class="page-wrapper">
 
             <div class="page">
-                <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
-                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
-                            <i class="fa fa-bars"></i>
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
                         </label>
-                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
-                            <i class="fa fa-paint-brush"></i>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
                         </button>
-                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
-                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
                         </ul>
-                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
-                            <i class="fa fa-search"></i>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
                         </button>
                     </div>
 
@@ -139,46 +142,80 @@
 
                     <div class="right-buttons">
                         <a href="print.html" title="Print this book" aria-label="Print this book">
-                            <i id="print-button" class="fa fa-print"></i>
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
                         </a>
 
                     </div>
                 </div>
 
-                <div id="search-wrapper" class="hidden">
-                    <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
                     </form>
-                    <div id="searchresults-outer" class="searchresults-outer hidden">
-                        <div id="searchresults-header" class="searchresults-header"></div>
-                        <ul id="searchresults">
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
                         </ul>
                     </div>
                 </div>
 
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
                 <script>
-                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
-                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
-                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
                         link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
                     });
                 </script>
 
-                <div id="content" class="content">
+                <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="chapter-3"><a class="header" href="#chapter-3">Chapter 3</a></h1>
+                        <hr>
+<h2 id="title-nix-module-system-explained-date-2025-11-21-author-saylesss88-description-chapter-3"><a class="header" href="#title-nix-module-system-explained-date-2025-11-21-author-saylesss88-description-chapter-3">title: Nix Module System Explained
+date: 2025-11-21
+author: saylesss88
+description: Chapter 3</a></h2>
+<h1 id="chapter-3"><a class="header" href="#chapter-3">Chapter 3</a></h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
-<!-- toc -->
+<ul>
+<li><a href="#nix-module-system-explained">Nix Module System Explained</a></li>
+<li><a href="#module-structure">Module Structure</a></li>
+<li><a href="#modularize-your-configurationnix">Modularize your configuration.nix</a>
+<ul>
+<li><a href="#declaring-options">Declaring Options</a></li>
+<li><a href="#defining-values">Defining Values</a></li>
+<li><a href="#evaluating-modules">Evaluating Modules</a></li>
+</ul>
+</li>
+<li><a href="#checking-out-the-vim-module-provided-by-nixpkgs">Checking out the Vim module provided by Nixpkgs</a>
+<ul>
+<li><a href="#module-composition">Module Composition</a></li>
+<li><a href="#nixos-modules-and-dependency-locking-with-npins">NixOS Modules and Dependency Locking with npins</a></li>
+<li><a href="#best-practices">Best Practices</a>
+<ul>
+<li><a href="#conclusion">Conclusion</a></li>
+<li><a href="#resources-on-modules">Resources on Modules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#videos">Videos</a></li>
+</ul>
 </details>
 <h2 id="nix-module-system-explained"><a class="header" href="#nix-module-system-explained">Nix Module System Explained</a></h2>
-<p><img src="images/gruv3.png" alt="gruv3" /></p>
-<p><strong>TL;DR</strong>: In this chapter, we will break down the Nix module system used by both
-NixOS and Home-Manager. We will discuss using home-manager as a module and the
-flexibility that modules give us. We will touch on options and break down the
-<code>vim</code> module from the Nixpkgs collection. Finally we will display how to test
-modules with the repl.</p>
+<!-- ![gruv3](images/gruv3.png) -->
+<p><img src="images/buildings1.png" alt="buildings"></p>
+<p><strong>TL;DR</strong>: In this chapter, we will break down the Nix module system used by
+both NixOS and Home-Manager. We will discuss using home-manager as a module and
+the flexibility that modules give us. We will touch on options and break down
+the <code>vim</code> module from the Nixpkgs collection. Finally we will display how to
+test modules with the repl.</p>
 <p>Your <code>configuration.nix</code> is a module. For the Nixpkgs collection most modules
 are in <code>nixos/modules</code>.</p>
 <p>The suggested way of using <code>home-manager</code> according to their manual is as a
@@ -208,15 +245,14 @@ Both home-manager and NixOS use the same module system.</p>
 </code></pre>
 <p><code>imports</code>, <code>options</code>, and <code>config</code> are the top-level attributes of a Nix module.
 They are the primary, reserved keys that the Nix module system recognizes and
-processes to combine different configurations into a single, cohesive system
-or user environment. <code>config</code> is the same <code>config</code> you receive as a
-module argument (e.g. <code>{ pkgs, config, ... }:</code> at the top of your module
-function)</p>
+processes to combine different configurations into a single, cohesive system or
+user environment. <code>config</code> is the same <code>config</code> you receive as a module argument
+(e.g. <code>{ pkgs, config, ... }:</code> at the top of your module function)</p>
 <p>Understanding <code>config</code>:</p>
 <p><code>config</code> is the big constantly updated blueprint of your entire system.</p>
-<p>Every time you bring in a new module, it adds its own settings and options
-to this blueprint. So, when a module receives the <code>config</code> argument, it's
-getting the complete picture of everything you've asked NixOS to set up so far.</p>
+<p>Every time you bring in a new module, it adds its own settings and options to
+this blueprint. So, when a module receives the <code>config</code> argument, it’s getting
+the complete picture of everything you’ve asked NixOS to set up so far.</p>
 <p>This allows the module to:</p>
 <ul>
 <li>
@@ -226,7 +262,7 @@ getting the complete picture of everything you've asked NixOS to set up so far.<
 <p>Make smart decisions based on those settings.</p>
 </li>
 <li>
-<p>Add its own pieces to the overall plan, building on what's already there.</p>
+<p>Add its own pieces to the overall plan, building on what’s already there.</p>
 </li>
 <li>
 <p>Most modules are functions that take an attribute set and return an attribute
@@ -276,16 +312,16 @@ enhanced with the <code>nixpkgs.config</code> option.</p>
 </ul>
 <h2 id="modularize-your-configurationnix"><a class="header" href="#modularize-your-configurationnix">Modularize your configuration.nix</a></h2>
 <p>Many people start of using a single <code>configuration.nix</code> and eventually their
-single file configuration gets too large to search through and maintain conveniently.</p>
-<p>This is where <strong>modules</strong> come in allowing you to break up your configuration into
-logical parts. You're <code>boot.nix</code> will contain settings and options related to
-the actual boot process. You're <code>services.nix</code> will only have services and so
-on...</p>
+single file configuration gets too large to search through and maintain
+conveniently.</p>
+<p>This is where <strong>modules</strong> come in allowing you to break up your configuration
+into logical parts. Your <code>boot.nix</code> will contain settings and options related to
+the actual boot process. You’re <code>services.nix</code> will only have services and so
+on…</p>
 <ul>
-<li>
-<p>These modules are placed in a logical path relative to either your
-<code>configuration.nix</code> or equivalent or if you're using flakes relative to your
-<code>flake.nix</code> or equivalent.</p>
+<li>These modules are placed in a logical path relative to either your
+<code>configuration.nix</code> or equivalent or if you’re using flakes relative to your
+<code>flake.nix</code> or equivalent.
 <ul>
 <li>The <code>imports</code> mechanism takes paths to other modules as its argument and
 combines them to be included in the evaluation of the system configuration.</li>
@@ -314,17 +350,17 @@ combines them to be included in the evaluation of the system configuration.</li>
 <p>❗: The <strong>imports</strong> mechanism includes and evaluates the Nix expression found
 at the given path <em>as a module</em>. If that path is a directory, it will
 automatically look for and evaluate a <code>default.nix</code> file within that directory
-<em>as a module</em>. It is common to have that <code>default.nix</code> be a function that
-only imports and combines all the modules in said directory. Like the above
+<em>as a module</em>. It is common to have that <code>default.nix</code> be a function that only
+imports and combines all the modules in said directory. Like the above
 example, in the nushell directory would be a <code>default.nix</code> that is
 automatically imported and evaluated.</p>
 </blockquote>
 <p><strong>Crucial Distinction: <code>imports</code> vs. <code>import</code></strong>:</p>
 <p>Beginners often confuse the modules attribute <code>imports = [./module.nix]</code> here
 with the Nix builtins function <code>import module.nix</code>. The first expects a path to
-a file containing a NixOS module (having the same specific structure we're
-describing here), while the second loads whatever Nix expression is in that
-file (no expected structure). --NixOS Wiki.</p>
+a file containing a NixOS module (having the same specific structure we’re
+describing here), while the second loads whatever Nix expression is in that file
+(no expected structure). –NixOS Wiki.</p>
 <p>Considering <code>configuration.nix</code> is a module, it can be imported like any other
 module and this is exactly what you do when getting started with flakes.</p>
 <pre><code class="language-nix"># flake.nix
@@ -358,14 +394,14 @@ module and this is exactly what you do when getting started with flakes.</p>
   };
 }
 </code></pre>
-<p><code>modules = [...]</code> in <code>flake.nix</code>: This is effectively the initial <code>imports</code> list for
-your entire NixOS system or Home Manager user configuration. It tells the Nix
-module system: "Start by collecting and merging the configurations defined in
-these specific modules."</p>
+<p><code>modules = [...]</code> in <code>flake.nix</code>: This is effectively the initial <code>imports</code> list
+for your entire NixOS system or Home Manager user configuration. It tells the
+Nix module system: “Start by collecting and merging the configurations defined
+in these specific modules.”</p>
 <p>The above example is what you get from running:
 <code>nix flake new /etc/nixos -t github:nix-community/home-manager#nixos</code></p>
-<p>If you notice the <code>home-manager.nixosModules.home-manager</code>, that is what
-imports home-manager as a module.</p>
+<p>If you notice the <code>home-manager.nixosModules.home-manager</code>, that is what imports
+home-manager as a module.</p>
 <p>You could also make the actual home-manager module and import it like this:</p>
 <pre><code class="language-nix"># home-manager.nix
 { inputs, outputs, ... }: {
@@ -383,9 +419,9 @@ imports home-manager as a module.</p>
   };
 }
 </code></pre>
-<p>This "module" isn't much different from the one included in the <code>flake.nix</code>
-above, it is just shown here to show the flexibility of modules. They can be
-as big and complex or as small and simple as you want. You can break up every
+<p>This “module” isn’t much different from the one included in the <code>flake.nix</code>
+above, it is just shown here to show the flexibility of modules. They can be as
+big and complex or as small and simple as you want. You can break up every
 single program or component of your configuration into individual modules or
 have modules that bundle similar programs the choice is yours.</p>
 <p>Then in your <code>configuration.nix</code> or equivalent you would add <code>home-manager.nix</code>
@@ -439,19 +475,20 @@ make sure you grasp modules!</p>
 <p>A NixOS module defines configuration options and behaviors for system
 components, allowing users to extend, customize, and compose configurations
 declaratively.</p>
-<p>A <strong>module</strong> is a file containing a Nix expression with a specific structure.
-It <em>declares</em> options for other modules to define (give a value). Modules were
+<p>A <strong>module</strong> is a file containing a Nix expression with a specific structure. It
+<em>declares</em> options for other modules to define (give a value). Modules were
 introduced to allow extending NixOS without modifying its source code.</p>
 <p>To define any values, the module system first has to know which ones are
-allowed. This is done by declaring options that specify which attributes can
-be set and used elsewhere.</p>
+allowed. This is done by declaring options that specify which attributes can be
+set and used elsewhere.</p>
 <p>If you want to write your own modules, I recommend setting up
-<a href="https://github.com/nix-community/nixd?tab=readme-ov-file">nixd</a>
-or <a href="https://github.com/oxalica/nil">nil</a> with your editor of choice.
-This will allow your editor to warn you about missing arguments and
-dependencies as well as syntax errors.</p>
+<a href="https://github.com/nix-community/nixd?tab=readme-ov-file">nixd</a> or
+<a href="https://github.com/oxalica/nil">nil</a> with your editor of choice. This will
+allow your editor to warn you about missing arguments and dependencies as well
+as syntax errors.</p>
 <h3 id="declaring-options"><a class="header" href="#declaring-options">Declaring Options</a></h3>
-<p>Options are declared under the top-level <code>options</code> attribute with <code>lib.mkOption</code>.</p>
+<p>Options are declared under the top-level <code>options</code> attribute with
+<code>lib.mkOption</code>.</p>
 <p><a href="https://nixos.org/manual/nixpkgs/stable/#function-library-lib.options.mkOption">mkOption</a>
 Creates an Option attribute set. It accepts an attribute set with certain keys
 such as, <code>default</code>, <code>package</code>, and <code>example</code>.</p>
@@ -467,13 +504,13 @@ such as, <code>default</code>, <code>package</code>, and <code>example</code>.</
 <p><code>lib</code> provides helper functions from <code>nixpkgs.lib</code> and the ellipsis (<code>...</code>) is
 for arbitrary arguments which means that this function is prepared to accept
 <strong>any additional arguments</strong> that the caller might provide, even if those
-arguments are not explicitly named or used within the module's body. They
-make the modules more flexible, without the <code>...</code> each module would have to
+arguments are not explicitly named or used within the module’s body. They make
+the modules more flexible, without the <code>...</code> each module would have to
 explicitly list every possible argument it might receive, which would be
-cumbersome and error-prone. So <code>{lib, ... }:</code> means that "I need the <code>lib</code>
-argument" <strong>and</strong> I acknowledge that the module system might pass other
-arguments automatically (like <code>config</code>, <code>pkgs</code>, etc.) and I'm fine with them
-being there, even if I don't use them directly in this specific module file.</p>
+cumbersome and error-prone. So <code>{lib, ... }:</code> means that “I need the <code>lib</code>
+argument” <strong>and</strong> I acknowledge that the module system might pass other
+arguments automatically (like <code>config</code>, <code>pkgs</code>, etc.) and I’m fine with them
+being there, even if I don’t use them directly in this specific module file.</p>
 </blockquote>
 <h3 id="defining-values"><a class="header" href="#defining-values">Defining Values</a></h3>
 <p>Options are <strong>set</strong> or <strong>defined</strong> under the top-level <code>config</code> attribute:</p>
@@ -489,7 +526,8 @@ being there, even if I don't use them directly in this specific module file.</p>
 set that same option to a string.</p>
 <p><strong>Option Definitions</strong> can be in a separate file than <strong>Option Declarations</strong></p>
 <h3 id="evaluating-modules"><a class="header" href="#evaluating-modules">Evaluating Modules</a></h3>
-<p>Modules are <strong>evaluated</strong> with <a href="https://nixos.org/manual/nixpkgs/stable/#module-system-lib-evalModules">lib.evalModules</a>
+<p>Modules are <strong>evaluated</strong> with
+<a href="https://nixos.org/manual/nixpkgs/stable/#module-system-lib-evalModules">lib.evalModules</a>
 <code>lib.evalModules</code> evaluates a set of modules, typically once per application
 (e.g. once for NixOS and once for Home-Manager).</p>
 <h2 id="checking-out-the-vim-module-provided-by-nixpkgs"><a class="header" href="#checking-out-the-vim-module-provided-by-nixpkgs">Checking out the Vim module provided by Nixpkgs</a></h2>
@@ -528,8 +566,8 @@ in
   };
 }
 </code></pre>
-<p>It provides options to enable Vim, set it as the default editor, and specify
-the Vim package to use.</p>
+<p>It provides options to enable Vim, set it as the default editor, and specify the
+Vim package to use.</p>
 <details>
 <summary> ✔️ Breakdown of the vim module.(Click to Expand)</summary>
 1. Module Inputs and Structure:
@@ -540,7 +578,8 @@ the Vim package to use.</p>
   ...
 }
 </code></pre>
-<p><strong>Inputs</strong>: The module takes the above inputs and <code>...</code> (catch-all for other args)</p>
+<p><strong>Inputs</strong>: The module takes the above inputs and <code>...</code> (catch-all for other
+args)</p>
 <ul>
 <li>
 <p><code>config</code>: Allows the module to read option values (e.g.
@@ -548,8 +587,8 @@ the Vim package to use.</p>
 configuration.</p>
 </li>
 <li>
-<p><code>lib</code>: The Nixpkgs library, giving us helper functions like <code>mkEnableOption</code>
-, <code>mkIf</code>, and <code>mkOverride</code>.</p>
+<p><code>lib</code>: The Nixpkgs library, giving us helper functions like <code>mkEnableOption</code> ,
+<code>mkIf</code>, and <code>mkOverride</code>.</p>
 </li>
 <li>
 <p><code>pkgs</code>: The Nixpkgs package set, used to access packages like <code>pkgs.vim</code></p>
@@ -561,12 +600,12 @@ for extension in the future.</p>
 </ul>
 <blockquote>
 <p>Key Takeaways: A NixOS module is typically a function that can include
-<code>config</code>, <code>lib</code>, and <code>pkgs</code>, but it doesn’t require them. The <code>...</code>
-argument ensures flexibility, allowing a module to accept extra inputs
-without breaking future compatibility. Using <code>lib</code> simplifies handling
-options (mkEnableOption, mkIf, mkOverride) and helps follow best practices.
-Modules define options, which users can set in their configuration, and
-<code>config</code>, which applies changes based on those options.</p>
+<code>config</code>, <code>lib</code>, and <code>pkgs</code>, but it doesn’t require them. The <code>...</code> argument
+ensures flexibility, allowing a module to accept extra inputs without breaking
+future compatibility. Using <code>lib</code> simplifies handling options (mkEnableOption,
+mkIf, mkOverride) and helps follow best practices. Modules define options,
+which users can set in their configuration, and <code>config</code>, which applies
+changes based on those options.</p>
 </blockquote>
 <ol start="2">
 <li>Local Configuration Reference:</li>
@@ -592,7 +631,7 @@ the module uses <code>cfg</code>.</p>
 <p><code>enable</code>: Turns on Vim support system-wide.</p>
 </li>
 <li>
-<p><code>defaultEditor</code>: Sets Vim as the system's default <code>$EDITOR</code>.</p>
+<p><code>defaultEditor</code>: Sets Vim as the system’s default <code>$EDITOR</code>.</p>
 </li>
 <li>
 <p><code>package</code>: lets the user override which Vim package is used.</p>
@@ -601,10 +640,11 @@ the module uses <code>cfg</code>.</p>
 <blockquote>
 <p><code>mkPackageOption</code> is a helper that defines a package-typed option with a
 default (<code>pkgs.vim</code>) and provides docs + example. Using <code>lib.mkEnableOption</code>
-makes it clear exactly where this function is coming from. Same with <code>lib.mkIf</code>
-and as you can see they can be further down the configuration, further from
-where you defined <code>with lib;</code> making it less clear where they come from.
-Explicitness is your friend when it comes to reproducability and clarity.</p>
+makes it clear exactly where this function is coming from. Same with
+<code>lib.mkIf</code> and as you can see they can be further down the configuration,
+further from where you defined <code>with lib;</code> making it less clear where they
+come from. Explicitness is your friend when it comes to reproducability and
+clarity.</p>
 </blockquote>
 <ol start="4">
 <li>Conditional Configuration</li>
@@ -623,8 +663,8 @@ Explicitness is your friend when it comes to reproducability and clarity.</p>
    which will be enforced after the 24.11 release"
 ];
 </code></pre>
-<p>Gives you a soft warning if you try to set <code>defaultEditor = true</code> without
-also enabling Vim.</p>
+<p>Gives you a soft warning if you try to set <code>defaultEditor = true</code> without also
+enabling Vim.</p>
 <ol start="6">
 <li>Actual System Config Changes</li>
 </ol>
@@ -634,8 +674,8 @@ also enabling Vim.</p>
   pathsToLink = [ "/share/vim-plugins" ];
 };
 </code></pre>
-<p>It adds Vim to your <code>systemPackages</code>, sets <code>$EDITOR</code> if <code>defaultEditor</code> is
-true, and makes <code>/share/vim-plugins</code> available in the environment.</p>
+<p>It adds Vim to your <code>systemPackages</code>, sets <code>$EDITOR</code> if <code>defaultEditor</code> is true,
+and makes <code>/share/vim-plugins</code> available in the environment.</p>
 </details>
 <p>The following is a bat home-manager module that I wrote:</p>
 <pre><code class="language-nix"># bat.nix
@@ -683,9 +723,9 @@ custom = {
   batModule.enable = true;
 }
 </code></pre>
-<p>If I set this option to true the bat configuration is dropped in place. If
-it's not set to true, it won't put the bat configuration in the system. Same
-as with options defined in modules within the Nixpkgs repository.</p>
+<p>If I set this option to true the bat configuration is dropped in place. If it’s
+not set to true, it won’t put the bat configuration in the system. Same as with
+options defined in modules within the Nixpkgs repository.</p>
 <p>If I had set the default to <code>true</code>, it would automatically enable the module
 without requiring an explicit <code>custom.batModule.enable = true;</code> call in my
 <code>home.nix</code>.</p>
@@ -694,10 +734,10 @@ without requiring an explicit <code>custom.batModule.enable = true;</code> call 
 defined in various modules. This composition is primarily handled through the
 <code>imports</code> mechanism.</p>
 <p><code>imports</code>: This is a standard option within a NixOS or Home Manager
-configuration (often found in your configuration.nix or home.nix). It takes
-a list of paths to other Nix modules. When you include a module in the imports
-list, the options and configurations defined in that module become part of
-your overall system configuration.</p>
+configuration (often found in your configuration.nix or home.nix). It takes a
+list of paths to other Nix modules. When you include a module in the imports
+list, the options and configurations defined in that module become part of your
+overall system configuration.</p>
 <p>You declaratively state the desired state of your system by setting options
 across various modules. The NixOS build system then evaluates and merges these
 option settings. The culmination of this process, which includes building the
@@ -715,7 +755,7 @@ Nixpkgs available when <code>nixos-rebuild</code> is run. However, for more robu
 reproducible setups, especially in collaborative environments or when rolling
 back to specific configurations, explicitly locking these dependencies to
 specific versions becomes crucial.</p>
-<p>In the following example, we'll explore how to use a tool called <code>npins</code> to
+<p>In the following example, we’ll explore how to use a tool called <code>npins</code> to
 manage and lock the dependencies of a NixOS configuration, ensuring a more
 predictable and reproducible system. This will involve setting up a project
 structure and using npins to pin the specific version of Nixpkgs our
@@ -800,13 +840,13 @@ vice-versa.</p>
 <p>You can test that this works by running:</p>
 <pre><code class="language-bash">nix-instantiate -A nixosSystem.system
 </code></pre>
-<p><code>nix-instantiate</code> performs only the evaluation phase of Nix expressions.
-During this phase, Nix interprets the Nix code, resolves all dependencies, and
+<p><code>nix-instantiate</code> performs only the evaluation phase of Nix expressions. During
+this phase, Nix interprets the Nix code, resolves all dependencies, and
 constructs derivations but does not execute any build actions. Useful for
 testing.</p>
-<p>To check if this worked and <code>git</code> is installed in systemPackages you can
-load it into <code>nix repl</code> but first you'll want <code>lib</code> to be available so uncomment
-this in your <code>default.nix</code>:</p>
+<p>To check if this worked and <code>git</code> is installed in systemPackages you can load it
+into <code>nix repl</code> but first you’ll want <code>lib</code> to be available so uncomment this in
+your <code>default.nix</code>:</p>
 <pre><code class="language-nix"># default.nix
 inherit lib;
 </code></pre>
@@ -822,16 +862,16 @@ true
 </code></pre>
 <p>As demonstrated with npins, explicitly managing the dependencies of your NixOS
 modules is a powerful technique for ensuring the long-term stability and
-reproducibility of your system configurations. By pinning specific versions
-of Nixpkgs and other resources, you gain greater control over your environment
-and reduce the risk of unexpected changes due to upstream updates.</p>
+reproducibility of your system configurations. By pinning specific versions of
+Nixpkgs and other resources, you gain greater control over your environment and
+reduce the risk of unexpected changes due to upstream updates.</p>
 </details>
 <h3 id="best-practices"><a class="header" href="#best-practices">Best Practices</a></h3>
-<p>You'll see the following all throughout Nix code and is convenient although it
-doesn't follow best practices. One reason is static analysis can't reason about
-the code (e.g. Because it implicitly brings all attributes into scope, tools can't
-verify which ones are actually being used), because it would have to actually
-evaluate the files to see which names are in scope:</p>
+<p>You’ll see the following all throughout Nix code and is convenient although it
+doesn’t follow best practices. One reason is static analysis can’t reason about
+the code (e.g. Because it implicitly brings all attributes into scope, tools
+can’t verify which ones are actually being used), because it would have to
+actually evaluate the files to see which names are in scope:</p>
 <pre><code class="language-nix"># utils.nix
 { pkgs, ... }: {
   environment.systemPackages = with pkgs; [
@@ -841,11 +881,12 @@ evaluate the files to see which names are in scope:</p>
   ];
 }
 </code></pre>
-<p>Another reason the above expression is considered an "anti-pattern" is when more
-then one <code>with</code> is used, it's no longer clear where the names are coming from.</p>
-<p>Scoping rules for <code>with</code> are not intuitive, see <a href="https://github.com/NixOS/nix/issues/490">issue</a> --nix.dev
-This can make debugging harder, as searching for variable origins becomes ambiguous
-(i.e. open to more than one interpretation).</p>
+<p>Another reason the above expression is considered an “anti-pattern” is when more
+then one <code>with</code> is used, it’s no longer clear where the names are coming from.</p>
+<p>Scoping rules for <code>with</code> are not intuitive, see
+<a href="https://github.com/NixOS/nix/issues/490">issue</a> –nix.dev This can make
+debugging harder, as searching for variable origins becomes ambiguous (i.e. open
+to more than one interpretation).</p>
 <p>The following follows best practices:</p>
 <pre><code class="language-nix">{pkgs, ... }: {
   environment.systemPackages = builtins.attrValues {
@@ -875,9 +916,9 @@ This can make debugging harder, as searching for variable origins becomes ambigu
 <p>Applying <code>builtins.attrValues</code> produces:</p>
 <pre><code class="language-nix">[ pkgs.evcxr pkgs.nix-prefetch-git pkgs.rustup ]
 </code></pre>
-<p>As you can see only the values are included in the list, not the keys. This
-is more explicit and declarative but can be more complicated, especially for
-a beginner.</p>
+<p>As you can see only the values are included in the list, not the keys. This is
+more explicit and declarative but can be more complicated, especially for a
+beginner.</p>
 <p><code>builtins.attrValues</code> returns the values of all attributes in the given set,
 sorted by attribute name. The above expression turns into something like the
 following avoiding bringing every attribute name from <code>nixpkgs</code> into scope.</p>
@@ -888,7 +929,7 @@ following avoiding bringing every attribute name from <code>nixpkgs</code> into 
 </details>
 <p>This approach avoids unintended name clashes or confusion when debugging.</p>
 <p>Upon looking into this a bit further, most people use the following format to
-avoid the "anti-pattern" from using <code>with pkgs;</code>:</p>
+avoid the “anti-pattern” from using <code>with pkgs;</code>:</p>
 <pre><code class="language-nix"># utils.nix
 { pkgs, ... }: {
   environment.systemPackages = [
@@ -900,18 +941,17 @@ avoid the "anti-pattern" from using <code>with pkgs;</code>:</p>
 </code></pre>
 <p>While the performance differences might be negligible on modern computers,
 adopting this best practice from the start is highly recommended. The above
-approach is more explicit, it's clear exactly where each package is coming
-from.</p>
+approach is more explicit, it’s clear exactly where each package is coming from.</p>
 <p>If maintaining strict scope control matters, use <code>builtins.attrValues</code>.</p>
 <p>If readability and simplicity are more your priority, explicitly referencing
 <code>pkgs.&lt;packageName&gt;</code> might be better. Now you can choose for yourself.</p>
 <h4 id="conclusion"><a class="header" href="#conclusion">Conclusion</a></h4>
 <p>As we have seen throughout this chapter, modules are the building blocks of your
 NixOS system and are themselves often functions. There are a few different ways
-to use these modules to build your system. In the next chapter, <a href="https://saylesss88.github.io/Nix_Flakes_Explained_4.html">Nix Flakes
-Explained</a> we will learn about Nix
-Flakes as a more modern and comprehensive entrypoint for managing your entire
-system and its dependencies.</p>
+to use these modules to build your system. In the next chapter,
+<a href="https://saylesss88.github.io/Nix_Flakes_Explained_4.html">Nix Flakes Explained</a>
+we will learn about Nix Flakes as a more modern and comprehensive entrypoint for
+managing your entire system and its dependencies.</p>
 <p>To further deepen your understanding of NixOS Modules and the broader ecosystem
 of tools and best practices surrounding them, the following resources offer
 valuable insights and information.</p>
@@ -939,7 +979,8 @@ valuable insights and information.</p>
 </li>
 </ul>
 <h1 id="videos"><a class="header" href="#videos">Videos</a></h1>
-<p><a href="https://www.youtube.com/watch?v=N7hFP_40DJo&amp;t=17s">NixHour Writing NixOS modules</a> -- This example is from this video
+<p><a href="https://www.youtube.com/watch?v=N7hFP_40DJo&amp;t=17s">NixHour Writing NixOS modules</a>
+– This example is from this video
 <a href="https://infinisil.com/modules.mp4">infinisilModules</a></p>
 <p><a href="https://www.youtube.com/watch?v=cZjOzOHb2ow">tweagModuleSystemRecursion</a></p>
 </details>
@@ -949,11 +990,11 @@ valuable insights and information.</p>
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                             <a rel="prev" href="functions/functions_and_modules_2.2.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
-                                <i class="fa fa-angle-left"></i>
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
                             <a rel="next prefetch" href="Nix_Flakes_Explained_4.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                <i class="fa fa-angle-right"></i>
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
                         <div style="clear: both"></div>
@@ -963,16 +1004,21 @@ valuable insights and information.</p>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                     <a rel="prev" href="functions/functions_and_modules_2.2.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
-                        <i class="fa fa-angle-left"></i>
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
                     <a rel="next prefetch" href="Nix_Flakes_Explained_4.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                        <i class="fa fa-angle-right"></i>
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
 
         </div>
 
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
 
 
 
@@ -981,15 +1027,17 @@ valuable insights and information.</p>
         </script>
 
 
-        <script src="elasticlunr.min.js"></script>
-        <script src="mark.min.js"></script>
-        <script src="searcher.js"></script>
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
 
-        <script src="clipboard.min.js"></script>
-        <script src="highlight.js"></script>
-        <script src="book.js"></script>
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
+        <script src="theme/extra-e0f03105.js"></script>
+
 
 
     </div>
