@@ -42,6 +42,7 @@ jobs:
         run: |
           which mdbook-toc || echo "mdbook-toc not found"
           which mdbook-rss-feed || echo "mdbook-rss-feed not found"
+          which mdbook-yml-header || echo "mdbook-yml-header not found"
           # Test functionality via build preview instead of --help
           mdbook build --quiet | grep -q "RSS feed written" || echo "RSS generation check failed"
 
