@@ -69,7 +69,7 @@ jobs:
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}  # Works without PAT in same repo!
+          github_token: ${{ secrets.PAT_TOKEN }}  # Works without PAT in same repo!
           publish_dir: ./book
           publish_branch: main
           # Remove external_repository if deploying to the same repo's gh-pages
