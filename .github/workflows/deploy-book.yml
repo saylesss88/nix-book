@@ -55,6 +55,10 @@ jobs:
       - name: Build mdBook
         run: mdbook build
 
+      - name: Verify frontmatter-strip is installed
+        run: |
+          which mdbook-frontmatter-strip || (echo "binary missing!" && exit 1)
+          mdbook-frontmatter-strip supports html && echo "Preprocessor is working!"
       # Optional: verify RSS was generated
       - name: Verify RSS output
         run: |
