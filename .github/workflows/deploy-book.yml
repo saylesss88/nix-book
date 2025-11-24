@@ -25,7 +25,8 @@ jobs:
       - name: Setup mdBook
         uses: peaceiris/actions-mdbook@v1  # Use v1 for stability; v2 is experimental
         with:
-          mdbook-version: "0.4.40"  # Pin to stable version; update as needed
+          mdbook-version: "latest"
+          # mdbook-version: "0.4.40"  # Pin to stable version; update as needed
 
       - name: Install mdBook preprocessors
         run: |
