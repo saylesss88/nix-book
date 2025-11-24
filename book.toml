@@ -8,6 +8,8 @@ src = "src"
 command = "mdbook-rss-feed"
 renderers = ["html"]
 
+[preprocessor.yml-header]
+
 [preprocessor.toc]
 command = "mdbook-toc"
 renderers = ["html"]
