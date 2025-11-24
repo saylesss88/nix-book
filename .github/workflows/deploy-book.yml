@@ -36,7 +36,6 @@ jobs:
           which mdbook-toc
           mdbook-toc --version
           which mdbook-rss-feed
-          mdbook-rss-feed --version
 
       - name: Build mdBook
         run: mdbook build
