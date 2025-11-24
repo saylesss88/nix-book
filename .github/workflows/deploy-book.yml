@@ -5,7 +5,7 @@ on:
       - main
 
 jobs:
-  build_and_deploy:
+  build_and_deploy:  # Job name is fine; warnings were from actions, not this
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -17,15 +17,14 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Rust
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@v1
         with:
           toolchain: stable
-          override: true
 
       - name: Setup mdBook
         uses: peaceiris/actions-mdbook@v2
         with:
-          mdbook-version: "latest"
+          mdbook-version: "0.4.40"  # Pinned for stability (avoids "latest" flakiness)
 
       - name: Install mdbook-toc
         run: cargo install mdbook-toc --force
@@ -38,18 +37,10 @@ jobs:
 
       - name: Generate RSS Feed
         run: |
-          # Pipe book JSON to mdbook-rss-feed (mimics stdin from build process)
-          # Outputs to src/rss.xml per your local log
-          mdbook json | mdbook-rss-feed
-          
-          # Copy to book/ for deployment (adjust if output path differs)
-          if [ -f "src/rss.xml" ]; then
-            cp src/rss.xml book/rss.xml
-            echo "RSS generated and copied to book/rss.xml"
-          else
-            echo "RSS not in src/; check logs for output path"
-            ls -la src/ | grep xml  # Debug: list XML files
-          fi
+          # Generate from project root
+          mdbook-rss-feed --input .
+          # Copy to deploy dir
+          cp src/rss.xml book/rss.xml
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
