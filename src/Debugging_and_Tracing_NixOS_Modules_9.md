@@ -7,6 +7,9 @@ description: Chapter 9
 
 # Chapter 9
 
+This chapter covers debugging NixOS modules, focusing on tracing module options
+and evaluating merges.
+
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 
