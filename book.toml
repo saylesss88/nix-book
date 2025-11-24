@@ -9,9 +9,9 @@ src = "src"
 # command = "mdbook-rss-feed/target/release/mdbook-rss-feed"
 # renderers = ["html"]
 
-[preprocessor.toc]
-command = "mdbook-toc"
-renderers = ["html"]
+# [preprocessor.toc]
+# command = "mdbook-toc"
+# renderers = ["html"]
 
 [output.html]
 site-url = "https://saylesss88.github.io/"

@@ -24,11 +24,11 @@ jobs:
       - name: Setup mdBook
         uses: peaceiris/actions-mdbook@v2
         with:
-          mdbook-version: "latest"
-          # mdbook-version: "0.4.40"  # Pinned for stability (avoids "latest" flakiness)
+          # mdbook-version: "latest"
+          mdbook-version: "0.4.40"  # Pinned for stability (avoids "latest" flakiness)
 
-      - name: Install mdbook-toc
-        run: cargo install mdbook-toc --force
+      # - name: Install mdbook-toc
+      #   run: cargo install mdbook-toc --force
 
       - name: Install mdbook-rss-feed
         run: cargo install mdbook-rss-feed --force
