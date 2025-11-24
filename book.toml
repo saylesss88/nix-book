@@ -5,7 +5,7 @@ language = "en"
 src = "src"
 
 [preprocessor.rss-feed]
-command = "mdbook-rss-feed"
+# command = "mdbook-rss-feed"
 renderers = ["html"]
 
 [preprocessor.frontmatter-strip]
