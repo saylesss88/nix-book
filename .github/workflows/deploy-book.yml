@@ -1,47 +1,25 @@
 name: Deploy mdBook to GitHub Pages
-'on':
+
+on:
   push:
     branches:
       - main
+
 permissions:
   contents: write
+
 jobs:
-  lint-preprocessor:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          components: clippy
-      - name: Checkout preprocessor repo
-        uses: actions/checkout@v4
-        with:
-          repository: saylesss88/mdbook-frontmatter-strip
-          ref: main
-          fetch-depth: 0
-      - name: Cache cargo registry & build for preprocessor
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: >-
-            ${{ runner.os }}-cargo-preprocessor-${{ hashFiles('**/Cargo.lock')
-            }}
-          restore-keys: '${{ runner.os }}-cargo-preprocessor-'
-      - name: Run Clippy on preprocessor
-        run: cargo clippy --all-targets -- -D warnings
   deploy:
-    needs: lint-preprocessor
     runs-on: ubuntu-latest
     steps:
       - name: Checkout main repository (mdBook project)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - name: Setup Rust toolchain
         uses: dtolnay/rust-toolchain@stable
+
       - name: Cache cargo registry & build
         uses: actions/cache@v4
         with:
@@ -49,36 +27,31 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: '${{ runner.os }}-cargo-${{ hashFiles(''**/Cargo.lock'') }}'
-          restore-keys: '${{ runner.os }}-cargo-'
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-
+
       - name: Install mdBook
         uses: peaceiris/actions-mdbook@v2
         with:
           mdbook-version: latest
-      - name: Checkout preprocessor source
-        uses: actions/checkout@v4
-        with:
-          repository: saylesss88/mdbook-frontmatter-strip
-          ref: main
-          path: ./preprocessors/mdbook-frontmatter-strip
-      - name: Install mdbook-frontmatter-strip (local path)
+
+      - name: Install preprocessors from crates.io
         run: |
-          cargo install --path ./preprocessors/mdbook-frontmatter-strip \
-                  --bin mdbook-frontmatter-strip --locked --force
-      - name: Install additional preprocessors
-        run: |
+          cargo install mdbook-frontmatter-strip --locked --version 0.1.0
           cargo install mdbook-toc --locked
           cargo install mdbook-rss-feed --locked --version 0.1.4
+
       - name: Add cargo bin to PATH
         run: echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
       - name: Build mdBook
         run: mdbook build
-      - name: Verify frontmatter-strip is installed
-        run: >
-          which mdbook-frontmatter-strip || (echo "binary missing!" && exit 1)
 
-          mdbook-frontmatter-strip supports html && echo "Preprocessor is
-          working!"
+      - name: Verify frontmatter-strip is installed
+        run: |
+          which mdbook-frontmatter-strip || (echo "binary missing!" && exit 1)
+          mdbook-frontmatter-strip supports html && echo "Preprocessor is working!"
+
       - name: Check that YAML frontmatter is stripped
         run: |
           if grep -R "title: Intro to Nix" book; then
@@ -87,24 +60,16 @@ jobs:
           else
             echo "No YAML frontmatter strings found in built HTML"
           fi
+
       - name: Verify RSS output
-        run: >
-          test -f book/rss.xml && echo "RSS generated successfully" || echo "RSS
-          missing!"
-      - name: Verify frontmatter is stripped
         run: |
-          if grep -R "title: Intro to Nix" book; then
-            echo "YAML frontmatter still present in built HTML"
-            exit 1
-          else
-            echo "No YAML frontmatter strings found in built HTML"
-          fi
-          # No cp needed; feed is in book/rss.xml post-build
+          test -f book/rss.xml && echo "RSS generated successfully" || echo "RSS missing!"
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
-          personal_token: '${{ secrets.PAT_TOKEN }}'
+          personal_token: ${{ secrets.PAT_TOKEN }}
           publish_dir: ./book
           publish_branch: gh-pages
           external_repository: saylesss88/saylesss88.github.io
-          commit_message: 'Deploy nix-book: ${{ github.sha }}'
+          commit_message: "Deploy nix-book: ${{ github.sha }}"
