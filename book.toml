@@ -5,10 +5,10 @@ language = "en"
 src = "src"
 
 [preprocessor.rss-feed]
-# command = "mdbook-rss-feed"
 renderers = ["html"]
 
 [preprocessor.frontmatter-strip]
+renderers = ["html"]
 
 [preprocessor.toc]
 command = "mdbook-toc"
@@ -23,3 +23,6 @@ additional-js = ["theme/extra.js", "theme/header-buttons.js"]
 
 [output.html.code]
 hidelines = {nix = "~"}
+
+[output.html.print]
+enable = true
