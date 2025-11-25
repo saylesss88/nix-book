@@ -1,52 +1,116 @@
-# .github/workflows/deploy-book.yml
-name: Deploy mdBook to User GitHub Pages
+name: Deploy mdBook to GitHub Pages
+
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
+
+permissions:
+  contents: write
 
 jobs:
-  build_and_deploy:
+  lint-preprocessor:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
     steps:
-      - name: Checkout repository
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy  # Ensure Clippy is available
+
+      - name: Checkout preprocessor repo
+        uses: actions/checkout@v4
+        with:
+          repository: saylesss88/mdbook-frontmatter-strip  # Your crate repo
+          ref: main  # Or specific branch/tag
+          fetch-depth: 0
+
+      - name: Cache cargo registry & build for preprocessor
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-preprocessor-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-preprocessor-
+
+      - name: Run Clippy on preprocessor
+        run: cargo clippy --all-targets -- -D warnings
+        # Optional: Add --fix for auto-fixes, or -D clippy::pedantic for stricter checks
+
+  deploy:
+    needs: lint-preprocessor  # Block deploy if lint fails
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main repository (mdBook project)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Setup Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
 
-      - name: Setup mdBook
+      - name: Cache cargo registry & build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-
+
+      # Install mdBook (fastest method)
+      - name: Install mdBook
         uses: peaceiris/actions-mdbook@v2
         with:
-          mdbook-version: "latest"
+          mdbook-version: 'latest'
 
-      - name: Install mdbook-toc
-        run: cargo install mdbook-toc --force
+      # Checkout and install mdbook-frontmatter-strip from local path (after source)
+      - name: Checkout preprocessor source
+        uses: actions/checkout@v4
+        with:
+          repository: saylesss88/mdbook-frontmatter-strip
+          ref: main  # Matches your lint job; use tag for stability if preferred
+          path: ./preprocessors/mdbook-frontmatter-strip  # Checkout to subdir
 
-      # THIS IS THE CRITICAL FIX
-      - name: Install fresh mdbook-rss (force + locked path)
+      # Install your custom preprocessor from the local path
+      - name: Install mdbook-frontmatter-strip (local path)
         run: |
-          cd mdbook-rss
-          cargo install --path . --force --locked
-          # Verify it's actually the one we just built
-          which mdbook-rss
-          mdbook-rss --version || true
+          cargo install --path ./preprocessors/mdbook-frontmatter-strip \
+                  --bin mdbook-frontmatter-strip
 
+      # Install other preprocessors you use
+      - name: Install additional preprocessors
+        run: |
+          cargo install mdbook-toc --locked
+          cargo install mdbook-rss-feed --locked --version 0.1.4
+
+      # Ensure cargo bin is on PATH (usually already is, but safe)
+      - name: Add cargo bin to PATH
+        run: echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      # Build the book — all preprocessors now available
       - name: Build mdBook
         run: mdbook build
 
+      - name: Verify frontmatter-strip is installed
+        run: |
+          which mdbook-frontmatter-strip || (echo "binary missing!" && exit 1)
+          mdbook-frontmatter-strip supports html && echo "Preprocessor is working!"
+
+      # Optional: verify RSS was generated (mdbook-rss-feed outputs directly to book/)
+      - name: Verify RSS output
+        run: |
+          test -f book/rss.xml && echo "RSS generated successfully" || echo "RSS missing!"
+          # No cp needed; feed is in book/rss.xml post-build
+
+      # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
-          personal_token: ${{ secrets.PAT_TOKEN }}
+          personal_token: ${{ secrets.PAT_TOKEN }}  # Works without PAT in same repo!
           publish_dir: ./book
-          publish_branch: main
-          external_repository: saylesss88/saylesss88.github.io
+          publish_branch: gh-pages  # Standard for Pages; adjust if using main
+          # Remove external_repository if deploying to the same repo's gh-pages
+          external_repository: saylesss88/saylesss88.github.io 
+          commit_message: "Deploy nix-book: ${{ github.sha }}"
