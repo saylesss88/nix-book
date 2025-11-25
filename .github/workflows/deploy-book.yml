@@ -38,9 +38,10 @@ jobs:
         # Optional: Add --fix for auto-fixes, or -D clippy::pedantic for stricter checks
 
   deploy:
+    needs: lint-preprocessor  # Block deploy if lint fails
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout main repository (mdBook project)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -64,10 +65,18 @@ jobs:
         with:
           mdbook-version: 'latest'
 
-      # Install your custom preprocessor from the current repo
-      - name: Install mdbook-frontmatter-strip (local crate)
+      # Checkout and install mdbook-frontmatter-strip from local path (after source)
+      - name: Checkout preprocessor source
+        uses: actions/checkout@v4
+        with:
+          repository: saylesss88/mdbook-frontmatter-strip
+          ref: main  # Matches your lint job; use tag for stability if preferred
+          path: ./preprocessors/mdbook-frontmatter-strip  # Checkout to subdir
+
+      # Install your custom preprocessor from the local path
+      - name: Install mdbook-frontmatter-strip (local path)
         run: |
-          cargo install --git https://github.com/saylesss88/mdbook-frontmatter-strip \
+          cargo install --path ./preprocessors/mdbook-frontmatter-strip \
                   --bin mdbook-frontmatter-strip
 
       # Install other preprocessors you use
@@ -89,12 +98,11 @@ jobs:
           which mdbook-frontmatter-strip || (echo "binary missing!" && exit 1)
           mdbook-frontmatter-strip supports html && echo "Preprocessor is working!"
 
-      # Optional: verify RSS was generated
+      # Optional: verify RSS was generated (mdbook-rss-feed outputs directly to book/)
       - name: Verify RSS output
         run: |
           test -f book/rss.xml && echo "RSS generated successfully" || echo "RSS missing!"
-          cp src/rss.xml book/rss.xml  # make it available at /rss.xml on the site
-          # Note: Adjusted to check book/rss.xml after build; src/rss.xml may not exist
+          # No cp needed; feed is in book/rss.xml post-build
 
       # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
