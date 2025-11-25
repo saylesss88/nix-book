@@ -8,6 +8,35 @@ permissions:
   contents: write
 
 jobs:
+  lint-preprocessor:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy  # Ensure Clippy is available
+
+      - name: Checkout preprocessor repo
+        uses: actions/checkout@v4
+        with:
+          repository: saylesss88/mdbook-frontmatter-strip  # Your crate repo
+          ref: main  # Or specific branch/tag
+          fetch-depth: 0
+
+      - name: Cache cargo registry & build for preprocessor
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-preprocessor-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-preprocessor-
+
+      - name: Run Clippy on preprocessor
+        run: cargo clippy --all-targets -- -D warnings
+        # Optional: Add --fix for auto-fixes, or -D clippy::pedantic for stricter checks
+
   deploy:
     runs-on: ubuntu-latest
     steps:
@@ -59,11 +88,13 @@ jobs:
         run: |
           which mdbook-frontmatter-strip || (echo "binary missing!" && exit 1)
           mdbook-frontmatter-strip supports html && echo "Preprocessor is working!"
+
       # Optional: verify RSS was generated
       - name: Verify RSS output
         run: |
-          test -f src/rss.xml && echo "RSS generated successfully" || echo "RSS missing!"
+          test -f book/rss.xml && echo "RSS generated successfully" || echo "RSS missing!"
           cp src/rss.xml book/rss.xml  # make it available at /rss.xml on the site
+          # Note: Adjusted to check book/rss.xml after build; src/rss.xml may not exist
 
       # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
@@ -71,7 +102,7 @@ jobs:
         with:
           personal_token: ${{ secrets.PAT_TOKEN }}  # Works without PAT in same repo!
           publish_dir: ./book
-          publish_branch: main
+          publish_branch: gh-pages  # Standard for Pages; adjust if using main
           # Remove external_repository if deploying to the same repo's gh-pages
           external_repository: saylesss88/saylesss88.github.io 
           commit_message: "Deploy nix-book: ${{ github.sha }}"
