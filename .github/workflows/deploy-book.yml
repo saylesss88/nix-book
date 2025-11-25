@@ -100,12 +100,13 @@ jobs:
 
       - name: Check that YAML frontmatter is stripped
         run: |
-          if rg -n "title: Intro to Nix" book; then
+          if grep -R "title: Intro to Nix" book; then
             echo "YAML frontmatter still present in built HTML"
             exit 1
           else
             echo "No YAML frontmatter strings found in built HTML"
           fi
+
       # Optional: verify RSS was generated (mdbook-rss-feed outputs directly to book/)
       - name: Verify RSS output
         run: |
