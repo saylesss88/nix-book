@@ -20,3 +20,14 @@
     stroke: #f26522;
 }
 
+/* Force the right-hand header buttons (Print, Theme, Search, etc.) to always be visible */
+.menu-bar .right-buttons {
+    display: flex !important;
+}
+
+/* If mdBook hides the whole button group on small screens, override that too */
+@media (max-width: 840px) {
+    .menu-bar .right-buttons {
+        display: flex !important;
+    }
+}
