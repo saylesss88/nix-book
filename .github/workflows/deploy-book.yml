@@ -74,7 +74,7 @@ jobs:
       - name: Install additional preprocessors
         run: |
           cargo install mdbook-toc --locked
-          cargo install mdbook-rss-feed --locked --version 0.1.0
+          cargo install mdbook-rss-feed --locked --version 0.1.4
 
       # Ensure cargo bin is on PATH (usually already is, but safe)
       - name: Add cargo bin to PATH
