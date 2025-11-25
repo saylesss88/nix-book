@@ -18,8 +18,8 @@ renderers = ["html"]
 # theme = "navy"
 # default-theme = "navy"
 site-url = "https://saylesss88.github.io/"
-additional-css = ["theme/extra.css"]
-additional-js = ["theme/extra.js"]
+additional-css = ["theme/extra.css", "theme/header-buttons.css"]
+additional-js = ["theme/extra.js", "theme/header-buttons.js"]
 
 [output.html.code]
 hidelines = {nix = "~"}

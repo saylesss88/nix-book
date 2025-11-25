@@ -1,0 +1,22 @@
+/* Make the RSS button match the style of the other header buttons */
+.header-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    margin-left: 8px;
+    color: var(--sidebar-fg, #333);
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+.header-btn:hover {
+    opacity: 1;
+    color: var(--sidebar-fg, #333);
+}
+
+/* Optional: make it orange on hover like the classic RSS icon */
+.header-btn:hover svg {
+    stroke: #f26522;
+}
+
