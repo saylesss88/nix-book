@@ -2,7 +2,8 @@
 title: Nix Module System Explained
 date: 2025-11-21
 author: saylesss88
-description: Chapter 3
+description: In this chapter, we will break down the Nix module system used by
+both NixOS and Home-Manager. We will discuss using home-manager as a module and the flexibility that modules give us. We will touch on options and break down the `vim` module from the Nixpkgs collection. Finally we will displayhow to test modules with the repl.
 ---
 
 # Chapter 3

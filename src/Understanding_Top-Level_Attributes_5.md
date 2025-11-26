@@ -2,7 +2,8 @@
 title: Top-Level Attributes
 date: 2025-11-21
 author: saylesss88
-description: Chapter 5
+description:
+  Here I break down what top-level attributes are, and how to use them.
 ---
 
 # Chapter 5
@@ -14,9 +15,9 @@ description: Chapter 5
 
 </details>
 
-![coding1](images/coding1.png)
+<!-- ![coding1](images/coding1.png) -->
 
-<!-- <img src="images/gruv9.png" width="800" height="600"> -->
+<img src="images/gruv9.png" width="800" height="600">
 
 ## Understanding Top-Level Attributes in NixOS Modules
 
@@ -188,7 +189,7 @@ options.mine.desktop.enable = lib.mkEnableOption "desktop settings";
 
 # This will cause an error because 'environment' and 'appstream'
 
-# are not 'options' and 'config' is also present at the top level.
+# are not 'options' and 'config' is also present at the top level.jjjj
 
 environment.systemPackages =
 lib.mkIf config.appstream.enable [ pkgs.git ];

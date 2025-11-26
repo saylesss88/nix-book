@@ -2,7 +2,9 @@
 title: Nix Flakes Explained
 date: 2025-11-21
 author: saylesss88
-description: Chapter 4
+description: This chapter introduces Nix Flakes, the modern standard for reproducible Nix projects. Flakes replace confusing stateful channels by making all dependencies, or inputs, explicit and version-pinned in the auto-generated flake.lock file.
+
+We dissect the mandatory flake.nix file, which defines a flake's dependencies and its outputs (like packages, devShells, and NixOS configurations). Learn key Nix helper functions (lib.genAttrs, pkgs.mkShell) and understand how the outputs function receives its arguments and defines the flake's available artifacts. This chapter provides the foundation for building hermetic, shareable, and fully deterministic Nix code.
 ---
 
 # Chapter 4

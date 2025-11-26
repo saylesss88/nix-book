@@ -4,9 +4,7 @@ date: 2025-11-21
 author: saylesss88
 description: This introductory chapter maps out the Nix ecosystem, contrasting traditional Nix with a Flakes-centric approach. We explore the core philosophy behind Nix's declarative and reproducible builds, highlighting key features like atomic upgrades and package isolation in the Nix store (/nix/store).
 
-You'll learn how the Nix Language creates Expressions that are evaluated by the Nix Package Manager into precise Derivations (build blueprints). We also introduce Nixpkgs—the vast collection of package definitions—and how it forms the basis for the fully declarative operating system, NixOS.
-
-Get a foundational understanding of the entire system before diving into the next chapter on Nix functions. 
+You'll learn how the Nix Language creates Expressions that are evaluated by the Nix Package Manager into precise Derivations (build blueprints). We also introduce Nixpkgs—the vast collection of package definitions—and how it forms the basis for the fully declarative operating system, NixOS. Get a foundational understanding of the entire system before diving into the next chapter on Nix functions. 
 ---
 
 # Chapter1
@@ -32,6 +30,9 @@ more cohesive.
 In this chapter, I will touch on the different parts of the Nix ecosystem, give
 a quick example of each and explain how they fit together.
 
+- Click [Here](https://saylesss88.github.io/rss.xml), or the logo on the top
+  right, next to print for the RSS feed.
+
 <details>
 <summary>
 - ✔️: Will indicate an expandable section, click the little triangle to expand.
@@ -45,7 +46,8 @@ The code blocks have an option to hide code, where I find it reasonable I will
 hide the outputs of the expressions. Click the eye in the right corner of the
 code block next to the copy clipboard.
 
-Example click the eye to see hidden text:
+Example hover over top-right corner of code block and click the eye to see
+hidden text:
 
 ```nix
 {
