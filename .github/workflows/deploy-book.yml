@@ -37,9 +37,9 @@ jobs:
 
       - name: Install preprocessors from crates.io
         run: |
-          cargo install mdbook-frontmatter-strip --locked --version 0.1.0
+          cargo install mdbook-frontmatter-strip --locked
           cargo install mdbook-toc --locked
-          cargo install mdbook-rss-feed --locked --version 0.1.4
+          cargo install mdbook-rss-feed --locked
 
       - name: Add cargo bin to PATH
         run: echo "$HOME/.cargo/bin" >> $GITHUB_PATH
