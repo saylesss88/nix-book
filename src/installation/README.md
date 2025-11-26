@@ -2,7 +2,6 @@
 title: My Chapter
 date: 2025-11-22
 author: saylesss88
-description: README 2
 ---
 
 # Installation Guides

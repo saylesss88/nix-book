@@ -2,7 +2,6 @@
 title: Functions and NixOS Modules
 date: 2025-11-22
 author: saylesss88
-description: Functions and NixOS Modules
 ---
 
 # Functions and NixOS Modules

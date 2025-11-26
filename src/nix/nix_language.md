@@ -2,7 +2,6 @@
 title: Nix Lang
 date: 2025-11-22
 author: saylesss88
-description: Nix Lang
 ---
 
 # Nix Language

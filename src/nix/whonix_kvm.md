@@ -2,7 +2,6 @@
 title: Whonix KVM on NixOS
 date: 2025-11-22
 author: saylesss88
-description: Whonix KVM on NixOS
 ---
 
 # Whonix KVM on NixOS

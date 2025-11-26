@@ -2,7 +2,6 @@
 title: Sops-Nix
 date: 2025-11-22
 author: saylesss88
-description: Sops-Nix
 ---
 
 # Sops-Nix encrypted secrets

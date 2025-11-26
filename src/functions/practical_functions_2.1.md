@@ -2,7 +2,6 @@
 title: Practical Nix Functions
 date: 2025-11-22
 author: saylesss88
-description: Practical Nix Functions
 ---
 
 # Practical Nix Functions

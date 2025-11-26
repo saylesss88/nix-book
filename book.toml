@@ -8,7 +8,6 @@ src = "src"
 renderers = ["html"]
 
 [preprocessor.frontmatter-strip]
-# command = "mdbook-frontmatter-strip"
 renderers = ["html"]
 
 [preprocessor.toc]

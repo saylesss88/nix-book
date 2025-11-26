@@ -2,7 +2,6 @@
 title: Understanding Nix Functions
 date: 2025-11-21
 author: saylesss88
-description:**Functions** are the building blocks of Nix, appearing everywhere in Nix expressions and configurations. Mastering them is essential for writing effective Nix code and understanding tools like NixOS and Home Manager. This chapter explores how Nix functions work, focusing on their **single-argument nature**, **currying**, **partial application**, and their role in **modules**.
 ---
 
 # Chapter 2

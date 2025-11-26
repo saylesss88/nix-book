@@ -2,7 +2,6 @@
 title: NixOS Containers
 date: 2025-11-22
 author: saylesss88
-description: Containers
 ---
 
 # NixOS Containers

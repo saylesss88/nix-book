@@ -2,8 +2,6 @@
 title: Top-Level Attributes
 date: 2025-11-21
 author: saylesss88
-description:
-  Here I break down what top-level attributes are, and how to use them.
 ---
 
 # Chapter 5

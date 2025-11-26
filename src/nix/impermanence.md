@@ -2,7 +2,6 @@
 title: Unencrypted Impermanence
 date: 2025-11-22
 author: saylesss88
-description: Unencrypted Impermanence
 ---
 
 # Unencrypted BTRFS Impermanence with Flakes

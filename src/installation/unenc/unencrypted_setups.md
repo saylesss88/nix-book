@@ -2,7 +2,6 @@
 title: Unencrypted Install
 date: 2025-11-22
 author: saylesss88
-description: Unencrypted Install guide for BTRFS with Disko and Flakes
 ---
 
 # Minimal BTRFS-Subvol Install with Disko and Flakes

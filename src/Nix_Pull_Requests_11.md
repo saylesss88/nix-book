@@ -2,7 +2,6 @@
 title: Nix Pull Requests
 date: 2025-11-22
 author: saylesss88
-description: Chapter 11
 ---
 
 # Chapter 11

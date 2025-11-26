@@ -2,7 +2,6 @@
 title: Package Definitions Explained
 date: 2025-11-21
 author: saylesss88
-description: Chapter 8
 ---
 
 # Chapter 8

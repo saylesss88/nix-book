@@ -2,21 +2,16 @@
 title: Nix Flake Tips
 date: 2025-11-22
 author: saylesss88
-description: Nix Flake Tips
 ---
 
+<details>
+<summary> ✔️ Click to Expand Table of Contents</summary>
+
+<!-- toc -->
+
+</details>
+
 # Sub-Chapter 1
-
-<!--toc:start-->
-
-- [Sub-Chapter 1](#sub-chapter-1)
-- [Shallow Clone Nixpkgs](#shallow-clone-nixpkgs)
-  - [Import your Non-Flake Wallpaper Repo](#import-your-non-flake-wallpaper-repo)
-  - [Understanding @-patterns](#understanding-patterns)
-  - [Understanding `specialArgs`](#understanding-specialargs)
-  - [Set up Flake Check and Formatter Outputs](#set-up-flake-check-and-formatter-outputs) -
-  [Add a devShell Output](#add-a-devshell-output)
-  <!--toc:end-->
 
 # Shallow Clone Nixpkgs
 

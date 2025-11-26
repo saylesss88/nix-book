@@ -2,7 +2,6 @@
 title: Flake Inputs
 date: 2025-11-22
 author: saylesss88
-description: Nix Flake Inputs
 ---
 
 # Nix Flake Inputs

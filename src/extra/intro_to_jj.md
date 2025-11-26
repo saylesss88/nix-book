@@ -2,8 +2,14 @@
 title: Intro to JJ
 date: 2025-11-22
 author: saylesss88
-description: Intro to JJ
 ---
+
+<details>
+<summary> ✔️ Click to Expand Table of Contents</summary>
+
+<!-- toc -->
+
+</details>
 
 # Intro to Jujutsu (Using jj in an existing Git Repo)
 

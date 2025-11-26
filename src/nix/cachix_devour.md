@@ -2,7 +2,6 @@
 title: Cachix devour-flake
 date: 2025-11-22
 author: saylesss88
-description: Cachix
 ---
 
 # Cachix and the devour-flake

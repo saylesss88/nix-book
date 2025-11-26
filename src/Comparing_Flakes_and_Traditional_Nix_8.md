@@ -2,7 +2,6 @@
 title: Comparing Flakes and Traditional Nix
 date: 2025-11-22
 author: saylesss88
-description: Chapter 8
 ---
 
 # Chapter 8

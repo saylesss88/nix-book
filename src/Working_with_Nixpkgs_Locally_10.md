@@ -2,7 +2,6 @@
 title: Local Nixpkgs
 date: 2025-11-22
 author: saylesss88
-description: Chapter 10
 ---
 
 # Chapter 10

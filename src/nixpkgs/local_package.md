@@ -2,7 +2,6 @@
 title: Local Nixpkgs
 date: 2025-11-22
 author: saylesss88
-description: Local Nixpkgs
 ---
 
 # Creating and Building a Local Package within a Nixpkgs Clone

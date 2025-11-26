@@ -2,7 +2,6 @@
 title: Flake outputs
 date: 2025-11-22
 author: saylesss88
-description: Nix Flake Outputs
 ---
 
 # Nix Flake Outputs

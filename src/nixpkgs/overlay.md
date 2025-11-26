@@ -2,7 +2,6 @@
 title: Nixpkgs Overlays
 date: 2025-11-22
 author: saylesss88
-description: Nixpkgs Overlays
 ---
 
 # Nixpkgs Overlays

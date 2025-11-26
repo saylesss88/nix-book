@@ -2,7 +2,6 @@
 title: USB Keyfile
 date: 2025-11-22
 author: saylesss88
-description: USB Keyfile
 ---
 
 # USB Stick Keyfile

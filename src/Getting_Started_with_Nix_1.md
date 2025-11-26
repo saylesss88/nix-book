@@ -2,9 +2,6 @@
 title: Intro to Nix
 date: 2025-11-21
 author: saylesss88
-description: This introductory chapter maps out the Nix ecosystem, contrasting traditional Nix with a Flakes-centric approach. We explore the core philosophy behind Nix's declarative and reproducible builds, highlighting key features like atomic upgrades and package isolation in the Nix store (/nix/store).
-
-You'll learn how the Nix Language creates Expressions that are evaluated by the Nix Package Manager into precise Derivations (build blueprints). We also introduce Nixpkgs—the vast collection of package definitions—and how it forms the basis for the fully declarative operating system, NixOS. Get a foundational understanding of the entire system before diving into the next chapter on Nix functions. 
 ---
 
 # Chapter1
