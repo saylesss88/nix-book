@@ -24,5 +24,5 @@ additional-js = ["theme/extra.js", "theme/rss-button.js"]
 [output.html.code]
 hidelines = {nix = "~"}
 
-[output.html.print]
-enable = true
+#[output.html.print]
+# enable = true
