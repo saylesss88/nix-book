@@ -1,0 +1,23 @@
+/* Simple RSS header button */
+.rss-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin-left: 8px;
+  color: var(--sidebar-fg, #333);
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.rss-btn:hover {
+  opacity: 1;
+  color: var(--sidebar-fg, #333);
+}
+
+/* Optional: orange hover like classic RSS */
+.rss-btn:hover svg {
+  stroke: #f26522;
+}
+

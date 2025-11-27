@@ -1,93 +1,58 @@
-<?xml version="1.0" encoding="utf-8"?><rss version="2.0"><channel><title>nix-book</title><link>https://saylesss88.github.io/</link><description>An mdBook-generated site</description><generator>mdbook-rss-feed 0.1.0</generator><item><title>Nix_Flakes_Explained_4</title><link>https://saylesss88.github.io/Nix_Flakes_Explained_4.html</link><description><![CDATA[<p><img src="images/trees3.cleaned.png" alt="trees3" /></p><p>If you’re completely new, take a look at
-<a href="https://nixos.wiki/wiki/flakes#Installing_flakes">this</a> to get flakes on your
-system.</p>]]></description><guid>https://saylesss88.github.io/Nix_Flakes_Explained_4.html</guid><pubDate>Wed, 26 Nov 2025 13:42:52 +0000</pubDate></item><item><title>NixOS_Modules_Explained_3</title><link>https://saylesss88.github.io/NixOS_Modules_Explained_3.html</link><description><![CDATA[<p><img src="images/buildings1.png" alt="buildings" /></p><p><strong>TL;DR</strong>: In this chapter, we will break down the Nix module system used by
-both NixOS and Home-Manager. We will discuss using home-manager as a module and
-the flexibility that modules give us. We will touch on options and break down
-the <code>vim</code> module from the Nixpkgs collection. Finally we will display how to
-test modules with the repl.</p>]]></description><guid>https://saylesss88.github.io/NixOS_Modules_Explained_3.html</guid><pubDate>Wed, 26 Nov 2025 13:41:41 +0000</pubDate></item><item><title>Understanding_Nix_Functions_2</title><link>https://saylesss88.github.io/Understanding_Nix_Functions_2.html</link><description><![CDATA[<p><img src="images/trees2.cleaned.png" alt="trees2" /></p><p><strong>Functions</strong> are the building blocks of Nix, appearing everywhere in Nix
-expressions and configurations. Mastering them is essential for writing
-effective Nix code and understanding tools like NixOS and Home Manager. This
-chapter explores how Nix functions work, focusing on their <strong>single-argument
-nature</strong>, <strong>currying</strong>, <strong>partial application</strong>, and their role in <strong>modules</strong>.</p>]]></description><guid>https://saylesss88.github.io/Understanding_Nix_Functions_2.html</guid><pubDate>Wed, 26 Nov 2025 13:40:18 +0000</pubDate></item><item><title>Unencrypted BTRFS Impermanence with Flakes</title><link>https://saylesss88.github.io/installation/unenc/unenc_impermanence.html</link><description><![CDATA[<p>Figure 1: Impermanence Logo: Image of the Impermanence logo. Sourced from the</p><p><a href="https://github.com/nix-community/impermanence">Impermanence repo</a></p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/installation/unenc/unenc_impermanence.html</guid><pubDate>Mon, 24 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Debugging NixOS modules</title><link>https://saylesss88.github.io/Debugging_and_Tracing_NixOS_Modules_9.html</link><description><![CDATA[<p>This chapter covers debugging NixOS modules, focusing on tracing module options
-and evaluating merges.</p><p><img src="images/coding4.png" alt="404" /></p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Debugging_and_Tracing_NixOS_Modules_9.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Local Nixpkgs</title><link>https://saylesss88.github.io/Working_with_Nixpkgs_Locally_10.html</link><description><![CDATA[<p><img src="images/server_rack.cleaned.png" alt="server_rack" /></p><p>Nixpkgs, the package repository for NixOS, is a powerful resource for building
-and customizing software.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Working_with_Nixpkgs_Locally_10.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Comparing Flakes and Traditional Nix</title><link>https://saylesss88.github.io/Comparing_Flakes_and_Traditional_Nix_8.html</link><description><![CDATA[<p>A key benefit of Nix Flakes is their <em>default</em> enforcement of <strong>pure
-evaluation</strong>.</p><p>In Nix, an <strong>impure operation</strong> depends on something <em>outside</em> its explicit
-inputs. Examples include:</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Comparing_Flakes_and_Traditional_Nix_8.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>NixOS Containers</title><link>https://saylesss88.github.io/nixos_containers.html</link><description><![CDATA[<p><img src="images/boxes.cleaned.png" alt="boxes" /></p><p>NixOS containers are lightweight <code>systemd-nspawn</code> containers managed
+<?xml version="1.0" encoding="utf-8"?><rss version="2.0"><channel><title>nix-book</title><link>https://saylesss88.github.io/</link><description>An mdBook-generated site</description><generator>mdbook-rss-feed 0.1.0</generator><item><title>Unencrypted BTRFS Impermanence with Flakes</title><link>https://saylesss88.github.io/installation/unenc/unenc_impermanence.html</link><description><![CDATA[<p>Figure 1: Impermanence Logo: Image of the Impermanence logo. Sourced from the</p><p><a href="https://github.com/nix-community/impermanence">Impermanence repo</a></p><p>This guide is for an unencrypted setup, there are a few links at the end for
+encrypted setups. This guide follows the previous
+<a href="https://saylesss88.github.io/installation/unencrypted_setups.html">minimal install guide</a>
+but you should be able to adjust it carefully to meet your needs.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/installation/unenc/unenc_impermanence.html</guid><pubDate>Mon, 24 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Pull Requests</title><link>https://saylesss88.github.io/Nix_Pull_Requests_11.html</link><description><![CDATA[<p><img src="images/gruv16.png" alt="gruv16" /></p><p><strong>Pull requests</strong> communicate changes to a branch in a repository. Once a pull
+request is opened, you can review changes with collaborators and add follow-up
+commits.</p><p>A <strong>pull request</strong> is a proposal to merge a set of changes from one branch
+into another. In a pull request, collaborators can review and discuss the
+proposed set of changes before they integrate the changes into the main
+codebase.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Nix_Pull_Requests_11.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>NixOS Containers</title><link>https://saylesss88.github.io/nixos_containers.html</link><description><![CDATA[<p><img src="images/boxes.cleaned.png" alt="boxes" /></p><p>NixOS containers are lightweight <code>systemd-nspawn</code> containers managed
 declaratively through your NixOS configuration. They allow you to run separate,
 minimal NixOS instances on the same machine, each with its own services,
-packages, and (optionally) network stack.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nixos_containers.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Pull Requests</title><link>https://saylesss88.github.io/Nix_Pull_Requests_11.html</link><description><![CDATA[<p><img src="images/gruv16.png" alt="gruv16" /></p><p><strong>Pull requests</strong> communicate changes to a branch in a repository. Once a pull
-request is opened, you can review changes with collaborators and add follow-up
-commits.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Nix_Pull_Requests_11.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Git</title><link>https://saylesss88.github.io/vcs/git.html</link><description><![CDATA[<p>⚠️ <strong>Important</strong>: Never commit secrets (passwords, API keys, tokens, etc.) in
+packages, and (optionally) network stack.</p><p>❗ NixOS’ containers do not provide full security out of the box (just like
+docker). They do give you a separate chroot, but a privileged user (root) in a
+container can escape the container and become root on the host system.
+–<a href="https://blog.beardhatcode.be/2020/12/Declarative-Nixos-Containers.html">beardhatcode Declarative-Nixos-Containers</a></p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nixos_containers.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Comparing Flakes and Traditional Nix</title><link>https://saylesss88.github.io/Comparing_Flakes_and_Traditional_Nix_8.html</link><description><![CDATA[<p>A key benefit of Nix Flakes is their <em>default</em> enforcement of <strong>pure
+evaluation</strong>.</p><p>In Nix, an <strong>impure operation</strong> depends on something <em>outside</em> its explicit
+inputs. Examples include:</p><p>Impurity leads to unpredictable builds that may differ across systems or time.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Comparing_Flakes_and_Traditional_Nix_8.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Local Nixpkgs</title><link>https://saylesss88.github.io/Working_with_Nixpkgs_Locally_10.html</link><description><![CDATA[<p><img src="images/server_rack.cleaned.png" alt="server_rack" /></p><p>Nixpkgs, the package repository for NixOS, is a powerful resource for building
+and customizing software.</p><p>Working with a local copy enhances development, debugging, and contribution
+workflows.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Working_with_Nixpkgs_Locally_10.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Debugging NixOS modules</title><link>https://saylesss88.github.io/Debugging_and_Tracing_NixOS_Modules_9.html</link><description><![CDATA[<p>This chapter covers debugging NixOS modules, focusing on tracing module options
+and evaluating merges.</p><p><img src="images/coding4.png" alt="404" /></p><p><a href="https://saylesss88.github.io/posts/nix_modules_explained/">nix-modules-explained</a></p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Debugging_and_Tracing_NixOS_Modules_9.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Git</title><link>https://saylesss88.github.io/vcs/git.html</link><description><![CDATA[<p>⚠️ <strong>Important</strong>: Never commit secrets (passwords, API keys, tokens, etc.) in
 plain text to your Git repository. If you plan to publish your NixOS
 configuration, always use a secrets management tool like sops-nix or agenix to
 keep sensitive data safe. See the
 <a href="https://saylesss88.github.io/installation/enc/sops-nix.html">Sops-Nix Guide</a>
 for details.</p><p>It’s also important to understand that <strong>all files in the <code>/nix/store</code> are
 world-readable by default</strong> This has important security implications for anyone
-managing sensitive data on a NixOS system.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/vcs/git.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>JJ</title><link>https://saylesss88.github.io/vcs/jujutsu.html</link><description><![CDATA[<p><img src="../images/jujutsu.png" alt="JJ Logo" /></p><p>⚠️ <strong>Security Reminder</strong>: Never commit secrets (passwords, API keys, tokens,
+managing sensitive data on a NixOS system.</p><p>What Does “World-Readable” Mean?</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/vcs/git.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>JJ</title><link>https://saylesss88.github.io/vcs/jujutsu.html</link><description><![CDATA[<p><img src="../images/jujutsu.png" alt="JJ Logo" /></p><p>⚠️ <strong>Security Reminder</strong>: Never commit secrets (passwords, API keys, tokens,
 etc.) in plain text to your Git repository. If you plan to publish your NixOS
 configuration, always use a secrets management tool like <code>sops-nix</code> or <code>agenix</code>
 to keep sensitive data safe. See the
 <a href="https://saylesss88.github.io/installation/enc/sops-nix.html">Sops-Nix Guide</a>
-for details.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/vcs/jujutsu.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>JJ New</title><link>https://saylesss88.github.io/vcs/jj_new.html</link><description><![CDATA[<p><img src="../images/jujutsu.png" alt="JJ Logo" /></p><p>⚠️ <strong>Important</strong>: Never commit secrets (passwords, API keys, tokens, etc.) in
+for details.</p><p>Jujutsu (jj) is a modern, Git-compatible version control system designed to
+simplify and improve the developer experience. It offers a new approach to
+distributed version control, focusing on a more intuitive workflow, powerful
+undo capabilities, and a branchless model that reduces common pitfalls of Git.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/vcs/jujutsu.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>JJ New</title><link>https://saylesss88.github.io/vcs/jj_new.html</link><description><![CDATA[<p><img src="../images/jujutsu.png" alt="JJ Logo" /></p><p>⚠️ <strong>Important</strong>: Never commit secrets (passwords, API keys, tokens, etc.) in
 plain text to your Git repository. If you plan to publish your NixOS
 configuration, always use a secrets management tool like sops-nix or agenix to
 keep sensitive data safe. See the
 <a href="https://saylesss88.github.io/installation/enc/sops-nix.html">Sops-Nix Guide</a>
-for details.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/vcs/jj_new.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Fork, Clone, Contribute</title><link>https://saylesss88.github.io/nixpkgs/fork_clone_contribute.html</link><description><![CDATA[<p>In the <a href="https://github.com/NixOS/nixpkgs">Nixpkgs</a> Repository.</p><p>Click Fork, then Create a new Fork.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nixpkgs/fork_clone_contribute.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nixpkgs Overlays</title><link>https://saylesss88.github.io/nixpkgs/overlay.html</link><description><![CDATA[<p>The following is done with a local clone of Nixpkgs located at <code>~/src/nixpkgs</code>.</p><p>In this example, we will create an overlay to override the version of
-<code>btrfs-progs</code>. In the root directory of our local clone of Nixpkgs
-(i.e.<code>~/src/nixpkgs</code>) we can run the following command to locate <code>btrfs-progs</code>
-within Nixpkgs:</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nixpkgs/overlay.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Local Nixpkgs</title><link>https://saylesss88.github.io/nixpkgs/local_package.html</link><description><![CDATA[<p>This chapter demonstrates the fundamental pattern for creating a package. Every
+for details.</p><p>You may want to check
+<a href="https://steveklabnik.github.io/jujutsu-tutorial/">Steve’s Jujutsu Tutorial</a>, he
+does a great job of explaining how to use jj with practical examples. It is
+recommended in the official JJ docs as a more up to date intro.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/vcs/jj_new.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Local Nixpkgs</title><link>https://saylesss88.github.io/nixpkgs/local_package.html</link><description><![CDATA[<p>This chapter demonstrates the fundamental pattern for creating a package. Every
 package recipe is a file that declares a function. This function takes the
 packages dependencies as argument.</p><p>In this example we’ll make a simple package with <code>coreutils</code> and build it.
-Demonstrating the process of building and testing a local package.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nixpkgs/local_package.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Sops-Nix</title><link>https://saylesss88.github.io/nix/sops-nix.html</link><description><![CDATA[<p><a href="https://github.com/getsops/sops?ref=blog.gitguardian.com">SOPS</a>, short for
-<strong>S</strong>ecrets<strong>OP</strong>eration<strong>S</strong>, is an editor of encrypted files that supports
-quite a few BINARY formats and encrypts with AWS KMS, GCP KMS, Azure Key Vault,
-age, and PGP.</p><p>Managing secrets—like API keys, SSH deploy keys, and password hashes is a
-critical part of system configuration, but it’s also one of the trickiest to do
-securely and reproducibly. Traditionally, secrets might be stored in ad hoc
-locations, referenced by absolute paths, or managed manually outside of version
-control. This approach makes it hard to share, rebuild, or audit your
-configuration, and increases the risk of accidental leaks or inconsistencies
-between systems.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/sops-nix.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Hardening NixOS</title><link>https://saylesss88.github.io/nix/hardening_NixOS.html</link><description><![CDATA[<p><img src="../images/guy_fawks.png" alt="guy fawks hacker" /></p><p>Securing your NixOS system begins with a philosophy of minimalism, explicit
-configuration, and proactive control. As desktop Linux attracts more novice
-users, it has become an increasingly valuable target for attackers. This makes
-it crucial to adopt security best practices early to protect your desktop from
-common attack vectors and to avoid configuration mistakes that could expose
-vulnerabilities.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/hardening_NixOS.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>KVM</title><link>https://saylesss88.github.io/nix/kvm.html</link><description><![CDATA[<p><img src="images/steampunk5.cleaned.png" alt="sp5" /></p><p><strong>Host</strong> <code>secureblue</code> = Fedora Atomic with <strong>SELinux enforcing</strong>, <strong>sVirt</strong>,
-<strong>Secure Boot</strong>, and hardened defaults.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/kvm.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Hardening Networking</title><link>https://saylesss88.github.io/nix/hardening_networking.html</link><description><![CDATA[<p>Since networks and systems vary, some adjustments may cause unexpected issues,
-especially around critical components like DNS or firewalls. Always review and
-test changes in a controlled environment before applying them broadly.</p><p>Understand the trade-offs and tailor the settings to your threat model and
-workflow. Take what’s useful, adapt as needed, and seek expert guidance for
-more advanced scenarios.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/hardening_networking.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Whonix KVM on NixOS</title><link>https://saylesss88.github.io/nix/whonix_kvm.html</link><description><![CDATA[<p><img src="../images/swappy-20250901-101339.cleaned.png" alt="Whonix Logo" /></p><p>⚠️ WARNING: There is no general software that can guarantee absolute anonymity
-or security; perfect security is a myth. Security is a continuous process, not
-a one-time product. It also depends on time and resources: if an adversary has
-enough of either, eventual compromise is probable. However, by layering
-defenses and following best practices, we can make attacks costly and
-time-consuming, deterring all but highly targeted adversaries.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/whonix_kvm.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Cachix devour-flake</title><link>https://saylesss88.github.io/nix/cachix_devour.html</link><description><![CDATA[<p>Using devour-flake to Cache All Your Flake Outputs to Cachix</p><p>When working with Nix flakes, it’s common to have many outputs—packages, apps,
-dev shells, NixOS or Darwin configurations, and more. Efficiently building and
-caching all these outputs can be challenging, especially in CI or when
-collaborating. This is where devour-flake and Cachix shine. Why Use
-devour-flake?</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/cachix_devour.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Package Manager</title><link>https://saylesss88.github.io/nix/nix_package_manager.html</link><description><![CDATA[<p>Nix is a <em>purely functional package manager</em>. This means that it treats packages
-like values in purely functional programming languages – they are built by
-functions that don’t have side-effects, and they never change after they have
-been built.</p><p>Nix stores packages in the <em>Nix store</em>, usually the directory <code>/nix/store</code>,
-where each package has its own unique subdirectory such as:</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/nix_package_manager.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Lang</title><link>https://saylesss88.github.io/nix/nix_language.html</link><description><![CDATA[<p>The Nix language is designed for conveniently creating and composing
-<em>derivations</em> precise descriptions of how contents of files are used to derive
-new files. –<a href="https://nix.dev/manual/nix/2.28/language/">Nix Reference Manual</a></p><p>Nix is often described as “JSON with functions.” It’s a declarative language
-where you define outcomes, not step-by-step instructions. Instead of writing
-sequential code, you create expressions that describe data structures,
-functions, and dependencies. These expressions are evaluated lazily, meaning Nix
-computes values only when needed, making it efficient for managing large
-systems.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/nix_language.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Unencrypted Impermanence</title><link>https://saylesss88.github.io/nix/impermanence.html</link><description><![CDATA[<p>Figure 1: <strong>Impermanence Logo</strong>: Image of the Impermanence logo. Sourced from
-the</p><p><a href="https://github.com/nix-community/impermanence">Impermanence repo</a></p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/impermanence.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Readme1</title><link>https://saylesss88.github.io/nix/index.html</link><description><![CDATA[<p>📌 <strong>How to Use This Guide</strong></p><p><strong>Read warnings</strong>: Advanced hardening can break compatibility or cause data
-loss! Pause and research before enabling anything not listed above unless you
-understand the consequences.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/index.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>GnuPG gpg-agent</title><link>https://saylesss88.github.io/nix/gpg-agent.html</link><description><![CDATA[<p>⚠️ <strong>SECURITY WARNING</strong>: This guide involves sensitive cryptographic material.
-<strong>Never share your private key or passphrase</strong>. Backup your keys and handle
-them with extreme care.</p><p><strong>GnuPG</strong> is a complete and free implementation of the OpenPGP standard. It
-allows you to encrypt and sign your data and communications, has a versatile key
-management system, and access modules for many kinds of public key directories.
-GnuPG (GPG), is a command line tool for secure communication.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/gpg-agent.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Encrypted Impermanence</title><link>https://saylesss88.github.io/nix/encrypted_impermanence.html</link><description><![CDATA[<p>❗ Important Note: This guide details a setup involving encrypted partitions
+Demonstrating the process of building and testing a local package.</p><p>This chapter will assume you have already have a cloned fork of Nixpkgs. I
+choose to clone mine to the <code>~/src/</code> directory.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nixpkgs/local_package.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nixpkgs Overlays</title><link>https://saylesss88.github.io/nixpkgs/overlay.html</link><description><![CDATA[<p>The following is done with a local clone of Nixpkgs located at <code>~/src/nixpkgs</code>.</p><p>In this example, we will create an overlay to override the version of
+<code>btrfs-progs</code>. In the root directory of our local clone of Nixpkgs
+(i.e.<code>~/src/nixpkgs</code>) we can run the following command to locate <code>btrfs-progs</code>
+within Nixpkgs:</p><pre><code class="language-bash">fd 'btrfs-progs' .
+./pkgs/by-name/bt/btrfs-progs/
+</code></pre>
+<p>Open the <code>package.nix</code> in the above directory and copy the <code>src</code> block within
+the <code>stdenv.mkDerivation</code> block like so:</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nixpkgs/overlay.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Fork, Clone, Contribute</title><link>https://saylesss88.github.io/nixpkgs/fork_clone_contribute.html</link><description><![CDATA[<p>In the <a href="https://github.com/NixOS/nixpkgs">Nixpkgs</a> Repository.</p><p>Click Fork, then Create a new Fork.</p><p>Uncheck the box “Only fork the <code>master</code> branch”, for development we will need
+more branches.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nixpkgs/fork_clone_contribute.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Encrypted Impermanence</title><link>https://saylesss88.github.io/nix/encrypted_impermanence.html</link><description><![CDATA[<p>❗ Important Note: This guide details a setup involving encrypted partitions
 and impermanent NixOS. While powerful, such configurations require careful
 attention to detail. Incorrect steps, especially concerning encryption keys or
 persistent data paths, can lead to <strong>permanent data loss</strong>. Please read all
@@ -100,19 +65,65 @@ data beforehand. This has only been tested with the disk layout described in
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     disko.url = "github:nix-community/disko/latest";
-    disko.input]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/encrypted_impermanence.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Paths</title><link>https://saylesss88.github.io/nix/nixLang/nix_paths.html</link><description><![CDATA[<p>The following examples are done with a local <code>nixpkgs</code> clone located at
-<code>~/src/nixpkgs</code></p><p>Paths in Nix always need a <code>/</code> in them and always expand to absolute paths
-relative to your current directory.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/nixLang/nix_paths.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Unencrypted Install</title><link>https://saylesss88.github.io/installation/unenc/unencrypted_setups.html</link><description><![CDATA[<p>Figure 1: BTRFS Logo: Image of the BTRFS logo. Sourced from the BTRFS repo BTRFS
-logo</p><p>Why I Chose BTRFS I chose BTRFS because I was already familiar with it from
-using it with Arch Linux and I found it to be very easy to use. From what I’ve
-read, there are licensing issues between the Linux Kernel and ZFS which means
-that ZFS is not part of the Linux Kernel; it’s maintained by the OpenZFS project
-and available as a separate kernel module. This can cause issues and make you
-think more about your filesystem than I personally want to at this point.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/installation/unenc/unencrypted_setups.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>My Chapter</title><link>https://saylesss88.github.io/installation/index.html</link><description><![CDATA[<p>This section provides detailed guides for installing NixOS. You’ll choose
-between an <strong>unencrypted</strong> or <strong>encrypted</strong> base setup. After your core
-installation, you can explore adding optional features like <code>sops</code> for encrypted
-secrets, <code>lanzaboote</code> for Secure Boot, or <code>impermanence</code> for a stateless system.</p><p><strong>Guide:</strong>
-<a href="https://saylesss88.github.io/installation/unencrypted/unencrypted.html">Minimal Btrfs-Subvol Install with Disko and Flakes</a></p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/installation/index.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Sops-Nix</title><link>https://saylesss88.github.io/installation/enc/sops-nix.html</link><description><![CDATA[<p><a href="https://github.com/getsops/sops?ref=blog.gitguardian.com">SOPS</a>, short for
+    disko.input]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/encrypted_impermanence.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Lang</title><link>https://saylesss88.github.io/nix/nix_language.html</link><description><![CDATA[<p>The Nix language is designed for conveniently creating and composing
+<em>derivations</em> precise descriptions of how contents of files are used to derive
+new files. –<a href="https://nix.dev/manual/nix/2.28/language/">Nix Reference Manual</a></p><p>Nix is often described as “JSON with functions.” It’s a declarative language
+where you define outcomes, not step-by-step instructions. Instead of writing
+sequential code, you create expressions that describe data structures,
+functions, and dependencies. These expressions are evaluated lazily, meaning Nix
+computes values only when needed, making it efficient for managing large
+systems.</p><p>You can plug most of the following into the <code>nix repl</code> I’m showing it in a
+single code block here for brevity:</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/nix_language.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Readme1</title><link>https://saylesss88.github.io/nix/index.html</link><description><![CDATA[<p>📌 <strong>How to Use This Guide</strong></p><p><strong>Read warnings</strong>: Advanced hardening can break compatibility or cause data
+loss! Pause and research before enabling anything not listed above unless you
+understand the consequences.</p><p>The guide is broken up into 2 chapters:</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/index.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>GnuPG gpg-agent</title><link>https://saylesss88.github.io/nix/gpg-agent.html</link><description><![CDATA[<p>⚠️ <strong>SECURITY WARNING</strong>: This guide involves sensitive cryptographic material.
+<strong>Never share your private key or passphrase</strong>. Backup your keys and handle
+them with extreme care.</p><p><strong>GnuPG</strong> is a complete and free implementation of the OpenPGP standard. It
+allows you to encrypt and sign your data and communications, has a versatile key
+management system, and access modules for many kinds of public key directories.
+GnuPG (GPG), is a command line tool for secure communication.</p><p><strong>PGP (Pretty Good Privacy)</strong> and <strong>GPG (GNU Privacy Guard)</strong>. While distinct,
+they are deeply interconnected and, for the rest of this section, I’ll use the
+terms interchangeably.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/gpg-agent.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Unencrypted Impermanence</title><link>https://saylesss88.github.io/nix/impermanence.html</link><description><![CDATA[<p>Figure 1: <strong>Impermanence Logo</strong>: Image of the Impermanence logo. Sourced from
+the</p><p><a href="https://github.com/nix-community/impermanence">Impermanence repo</a></p><p><img src="../images/Impermanence.png" alt="Impermanence Logo" /></p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/impermanence.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Package Manager</title><link>https://saylesss88.github.io/nix/nix_package_manager.html</link><description><![CDATA[<p>Nix is a <em>purely functional package manager</em>. This means that it treats packages
+like values in purely functional programming languages – they are built by
+functions that don’t have side-effects, and they never change after they have
+been built.</p><p>Nix stores packages in the <em>Nix store</em>, usually the directory <code>/nix/store</code>,
+where each package has its own unique subdirectory such as:</p><pre><code class="language-bash">/nix/store/y53c0lamag5wpx7vsiv7wmnjdgq97yd6-yazi-25.5.14pre20250526_74a8ea9
+</code></pre>
+<p>You can use the Nix on most Linux distributions and Mac OS also has good support
+for Nix. It should work on most platforms that support POSIX threads and have a
+C++11 compiler.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/nix_package_manager.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Cachix devour-flake</title><link>https://saylesss88.github.io/nix/cachix_devour.html</link><description><![CDATA[<p>Using devour-flake to Cache All Your Flake Outputs to Cachix</p><p>When working with Nix flakes, it’s common to have many outputs—packages, apps,
+dev shells, NixOS or Darwin configurations, and more. Efficiently building and
+caching all these outputs can be challenging, especially in CI or when
+collaborating. This is where devour-flake and Cachix shine. Why Use
+devour-flake?</p><p>By default, building all outputs of a flake with <code>nix build .#a .#b ... .#z</code> can
+be slow and inefficient, as Nix will evaluate the flake multiple times—once for
+each output. devour-flake solves this by generating a “consumer” flake that
+depends on all outputs, allowing you to build everything in one go with a single
+evaluation</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/cachix_devour.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Whonix KVM on NixOS</title><link>https://saylesss88.github.io/nix/whonix_kvm.html</link><description><![CDATA[<p><img src="../images/swappy-20250901-101339.cleaned.png" alt="Whonix Logo" /></p><p>⚠️ WARNING: There is no general software that can guarantee absolute anonymity
+or security; perfect security is a myth. Security is a continuous process, not
+a one-time product. It also depends on time and resources: if an adversary has
+enough of either, eventual compromise is probable. However, by layering
+defenses and following best practices, we can make attacks costly and
+time-consuming, deterring all but highly targeted adversaries.</p><p>It is highly recommended to harden your Host Machine as Type 2 hypervisors are
+only as secure as their host. KVM is actually a type 1 hypervisor but relies on
+QEMU for emulation which is a Type 2 hypervisor. This actually makes it a sort
+of hybrid in between Type 1 ]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/whonix_kvm.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Hardening Networking</title><link>https://saylesss88.github.io/nix/hardening_networking.html</link><description><![CDATA[<p>Since networks and systems vary, some adjustments may cause unexpected issues,
+especially around critical components like DNS or firewalls. Always review and
+test changes in a controlled environment before applying them broadly.</p><p>Understand the trade-offs and tailor the settings to your threat model and
+workflow. Take what’s useful, adapt as needed, and seek expert guidance for
+more advanced scenarios.</p><p>Every setup is unique, feel free to adapt or skip sections based on your needs.
+Start with the basics and build up as you gain confidence. The goal is
+practical, tested hardening tailored to you.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/hardening_networking.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>KVM</title><link>https://saylesss88.github.io/nix/kvm.html</link><description><![CDATA[<p><img src="images/steampunk5.cleaned.png" alt="sp5" /></p><p><strong>Host</strong> <code>secureblue</code> = Fedora Atomic with <strong>SELinux enforcing</strong>, <strong>sVirt</strong>,
+<strong>Secure Boot</strong>, and hardened defaults.</p><p><strong>Guest</strong>: NixOS in a VM → full declarative power, near zero risk to host.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/kvm.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Hardening NixOS</title><link>https://saylesss88.github.io/nix/hardening_NixOS.html</link><description><![CDATA[<p><img src="../images/guy_fawks.png" alt="guy fawks hacker" /></p><p>Securing your NixOS system begins with a philosophy of minimalism, explicit
+configuration, and proactive control. As desktop Linux attracts more novice
+users, it has become an increasingly valuable target for attackers. This makes
+it crucial to adopt security best practices early to protect your desktop from
+common attack vectors and to avoid configuration mistakes that could expose
+vulnerabilities.</p><p>⚠️ Warning: I am not a security expert. This guide presents various options
+for hardening NixOS, but it is your responsibility to evaluate whether each
+adjustment suits your specific needs and environment. Security hardening and
+process isolation can introduce stability challenges, compatibility issues, or
+unexpected be]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/hardening_NixOS.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Sops-Nix</title><link>https://saylesss88.github.io/nix/sops-nix.html</link><description><![CDATA[<p><a href="https://github.com/getsops/sops?ref=blog.gitguardian.com">SOPS</a>, short for
 <strong>S</strong>ecrets<strong>OP</strong>eration<strong>S</strong>, is an editor of encrypted files that supports
 quite a few BINARY formats and encrypts with AWS KMS, GCP KMS, Azure Key Vault,
 age, and PGP.</p><p>Managing secrets—like API keys, SSH deploy keys, and password hashes is a
@@ -121,15 +132,32 @@ securely and reproducibly. Traditionally, secrets might be stored in ad hoc
 locations, referenced by absolute paths, or managed manually outside of version
 control. This approach makes it hard to share, rebuild, or audit your
 configuration, and increases the risk of accidental leaks or inconsistencies
-between systems.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/installation/enc/sops-nix.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Encrypted Install</title><link>https://saylesss88.github.io/installation/enc/enc_install.html</link><description><![CDATA[<p>NixOS supports file systems that are encrypted using LUKS (Linux Unified Key
-Setup). This guide walks you through an encrypted NixOS installation using Disko
-for disk management and Btrfs for subvolumes. It is designed for users who want
-full disk encryption and a modern filesystem layout. If you prefer an
-unencrypted setup, you can skip the LUKS and encryption steps, but this guide
-focuses on security and flexibility.</p><p>If you choose to set up impermanence, ensure it matches your install. Encrypted
-Setup with Encrypted Impermanence and Unencrypted Setup with Unencrypted
-Impermanence.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/installation/enc/enc_install.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Lanzaboote</title><link>https://saylesss88.github.io/installation/enc/lanzaboote.html</link><description><![CDATA[<p>⚠️ <strong>Warning: This can easily brick your system</strong> ⚠️</p><p>We will mainly follow the lanzaboote
-<a href="https://github.com/nix-community/lanzaboote/blob/master/docs/QUICK_START.md">Quick Start Guide</a></p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/installation/enc/lanzaboote.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Encrypted Impermanence</title><link>https://saylesss88.github.io/installation/enc/encrypted_impermanence.html</link><description><![CDATA[<p>❗ Important Note: This guide details a setup involving encrypted partitions
+between systems.</p><p><code>sops-nix]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/sops-nix.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Paths</title><link>https://saylesss88.github.io/nix/nixLang/nix_paths.html</link><description><![CDATA[<p>The following examples are done with a local <code>nixpkgs</code> clone located at
+<code>~/src/nixpkgs</code></p><p>Paths in Nix always need a <code>/</code> in them and always expand to absolute paths
+relative to your current directory.</p><pre><code class="language-bash">nix repl
+nix-repl&gt; ./.
+/home/jr/src/nixpkgs
+nix-repl&gt; ./. + "/lib"
+/home/jr/src/nixpkgs/lib
+</code></pre>
+<p>Nix does <em>path normalization</em> every time you append strings, so if you just add
+a slash <code>/</code> its not actually there:</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/nixLang/nix_paths.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>My Chapter</title><link>https://saylesss88.github.io/installation/index.html</link><description><![CDATA[<p>This section provides detailed guides for installing NixOS. You’ll choose
+between an <strong>unencrypted</strong> or <strong>encrypted</strong> base setup. After your core
+installation, you can explore adding optional features like <code>sops</code> for encrypted
+secrets, <code>lanzaboote</code> for Secure Boot, or <code>impermanence</code> for a stateless system.</p><p><strong>Guide:</strong>
+<a href="https://saylesss88.github.io/installation/unencrypted/unencrypted.html">Minimal Btrfs-Subvol Install with Disko and Flakes</a></p><p><strong>Best for:</strong></p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/installation/index.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Unencrypted Install</title><link>https://saylesss88.github.io/installation/unenc/unencrypted_setups.html</link><description><![CDATA[<p>Figure 1: BTRFS Logo: Image of the BTRFS logo. Sourced from the BTRFS repo BTRFS
+logo</p><p>Why I Chose BTRFS I chose BTRFS because I was already familiar with it from
+using it with Arch Linux and I found it to be very easy to use. From what I’ve
+read, there are licensing issues between the Linux Kernel and ZFS which means
+that ZFS is not part of the Linux Kernel; it’s maintained by the OpenZFS project
+and available as a separate kernel module. This can cause issues and make you
+think more about your filesystem than I personally want to at this point.</p><p>A <strong>Btrfs subvolume</strong> is essentially a distinct section within a Btrfs
+filesystem that maintains its own set of files and directories, along with a
+separate inode numbering system. Unlike block-level partitions (such as ]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/installation/unenc/unencrypted_setups.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>USB Keyfile</title><link>https://saylesss88.github.io/installation/enc/USB_keyfile.html</link><description><![CDATA[<p>This allows you to use a USB stick for your keyfile, with a backup in case you
+want or need it. There is a setting <code>fallbackToPassword</code> that protects you in
+case something fails with the USB key.</p><p>First, I’ll show how to set up a dedicated USB stick for a keyfile. (i.e., one
+that is only used for this). After that I will show the process of adding the
+keyfile to a USB stick with existing data on it that you don’t want to lose.</p><p><strong>Generate the keyfile</strong></p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/installation/enc/USB_keyfile.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Encrypted Impermanence</title><link>https://saylesss88.github.io/installation/enc/encrypted_impermanence.html</link><description><![CDATA[<p>❗ Important Note: This guide details a setup involving encrypted partitions
 and impermanent NixOS. While powerful, such configurations require careful
 attention to detail. Incorrect steps, especially concerning encryption keys or
 persistent data paths, can lead to <strong>permanent data loss</strong>. Please read all
@@ -137,14 +165,60 @@ instructions thoroughly before proceeding and consider backing up any critical
 data beforehand. This has only been tested with the disk layout described in
 <a href="https://saylesss88.github.io/installation/encrypted_manual.html">Encrypted Setups</a></p><p>As a system operates, it gradually accumulates state on its root partition. This
 state is stored in various directories such as <code>/etc</code> and <code>/var</code>, capturing all
-the configuration changes, logs, and o]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/installation/enc/encrypted_impermanence.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>USB Keyfile</title><link>https://saylesss88.github.io/installation/enc/USB_keyfile.html</link><description><![CDATA[<p>This allows you to use a USB stick for your keyfile, with a backup in case you
-want or need it. There is a setting <code>fallbackToPassword</code> that protects you in
-case something fails with the USB key.</p><p>First, I’ll show how to set up a dedicated USB stick for a keyfile. (i.e., one
-that is only used for this). After that I will show the process of adding the
-keyfile to a USB stick with existing data on it that you don’t want to lose.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/installation/enc/USB_keyfile.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Functions and NixOS Modules</title><link>https://saylesss88.github.io/functions/functions_and_modules_2.2.html</link><description><![CDATA[<p>When you start exploring NixOS configurations or tools like Home Manager, you’ll
+the configuration changes, logs, and o]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/installation/enc/encrypted_impermanence.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Lanzaboote</title><link>https://saylesss88.github.io/installation/enc/lanzaboote.html</link><description><![CDATA[<p>⚠️ <strong>Warning: This can easily brick your system</strong> ⚠️</p><p>We will mainly follow the lanzaboote
+<a href="https://github.com/nix-community/lanzaboote/blob/master/docs/QUICK_START.md">Quick Start Guide</a></p><p>For Windows dual-booters and BitLocker users, you should export your BitLocker
+recovery keys and confirm that they are correct. Refer to this
+<a href="https://support.microsoft.com/en-us/windows/find-your-bitlocker-recovery-key-6b71ad27-0b89-ea08-f143-056f5ab347d6">Microsoft support article</a></p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/installation/enc/lanzaboote.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Encrypted Install</title><link>https://saylesss88.github.io/installation/enc/enc_install.html</link><description><![CDATA[<p>NixOS supports file systems that are encrypted using LUKS (Linux Unified Key
+Setup). This guide walks you through an encrypted NixOS installation using Disko
+for disk management and Btrfs for subvolumes. It is designed for users who want
+full disk encryption and a modern filesystem layout. If you prefer an
+unencrypted setup, you can skip the LUKS and encryption steps, but this guide
+focuses on security and flexibility.</p><p>If you choose to set up impermanence, ensure it matches your install. Encrypted
+Setup with Encrypted Impermanence and Unencrypted Setup with Unencrypted
+Impermanence.</p><p>❗ NOTE: This is a bit convoluted, there are a few paths you can follow. If
+you choose to use the starter repo (<a href="https://github.com/saylesss88/my-flake">https://github.com/saylesss88/my-fl]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/installation/enc/enc_install.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Sops-Nix</title><link>https://saylesss88.github.io/installation/enc/sops-nix.html</link><description><![CDATA[<p><a href="https://github.com/getsops/sops?ref=blog.gitguardian.com">SOPS</a>, short for
+<strong>S</strong>ecrets<strong>OP</strong>eration<strong>S</strong>, is an editor of encrypted files that supports
+quite a few BINARY formats and encrypts with AWS KMS, GCP KMS, Azure Key Vault,
+age, and PGP.</p><p>Managing secrets—like API keys, SSH deploy keys, and password hashes is a
+critical part of system configuration, but it’s also one of the trickiest to do
+securely and reproducibly. Traditionally, secrets might be stored in ad hoc
+locations, referenced by absolute paths, or managed manually outside of version
+control. This approach makes it hard to share, rebuild, or audit your
+configuration, and increases the risk of accidental leaks or inconsistencies
+between systems.</p><p><code>sops-nix]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/installation/enc/sops-nix.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Practical Nix Functions</title><link>https://saylesss88.github.io/functions/practical_functions_2.1.html</link><description><![CDATA[<p><img src="images/coding6.png" alt="coding6" /></p><p><a href="https://gitlab.com/api/v4/projects/4207231/packages/generic/graphviz-releases/2.49.3/graphviz-2.49.3.tar.gz">graphviz</a></p><p><a href="https://ftp.gnu.org/gnu/hello/hello-2.12.1.tar.gz">hello</a></p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/functions/practical_functions_2.1.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Functions and NixOS Modules</title><link>https://saylesss88.github.io/functions/functions_and_modules_2.2.html</link><description><![CDATA[<p>When you start exploring NixOS configurations or tools like Home Manager, you’ll
 encounter a concept called Nix Modules. Modules are also functions, but they
 behave differently regarding their arguments, which can be a source of
-confusion.</p><p><strong>What are NixOS Modules</strong>?</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/functions/functions_and_modules_2.2.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Practical Nix Functions</title><link>https://saylesss88.github.io/functions/practical_functions_2.1.html</link><description><![CDATA[<p><img src="images/coding6.png" alt="coding6" /></p><p><a href="https://gitlab.com/api/v4/projects/4207231/packages/generic/graphviz-releases/2.49.3/graphviz-2.49.3.tar.gz">graphviz</a></p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/functions/practical_functions_2.1.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Specialisations</title><link>https://saylesss88.github.io/flakes/specialisations_4.6.html</link><description><![CDATA[<p><strong>NixOS specialisations</strong> are a powerful feature that allow you to define
+confusion.</p><p><strong>What are NixOS Modules</strong>?</p><p>Nix Modules are a powerful system built on top of basic Nix functions, primarily
+used for declarative system configurations (like NixOS, Home Manager, NixOps,
+etc.). They allow you to define parts of your system configuration in separate
+files that are then composed together.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/functions/functions_and_modules_2.2.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Flake outputs</title><link>https://saylesss88.github.io/flakes/flake_outputs_4.2.html</link><description><![CDATA[<p>Flake outputs are what the flake produces when built. Flakes can have multiple
+outputs simultaneously such as:</p><p><strong>Packages</strong>: Self-contained bundles that are built using derivations and
+provide either some kind of software or dependencies of software.</p><p><a href="https://saylesss88.github.io/NixOS_Modules_Explained_3.html">NixOS modules</a></p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/flakes/flake_outputs_4.2.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Flake Examples</title><link>https://saylesss88.github.io/flakes/flake_examples_4.3.html</link><description><![CDATA[<p>This chapter provides practical examples to illustrate the concepts discussed in
+“Nix Flakes Explained.”</p><p>NixOS modules and configurations offer us a powerful and composable way to
+define and share system configurations. Imagine we have several independent
+“players,” each with their own unique set of configurations or modules. How do
+we combine these individual contributions into a single, cohesive system without
+directly altering each player’s original flake?</p><p>This example demonstrates how flakes can extend and compose each other, allowing
+you to layer configurations on top of existing ones. This is particularly useful
+when you want to:</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/flakes/flake_examples_4.3.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Helix Flake</title><link>https://saylesss88.github.io/flakes/helix_flake_4.4.html</link><description><![CDATA[<p><img src="../images/helix.png" alt="Helix Logo" />–<a href="https://helix-editor.com/">helix-editor.com</a></p><p>As we’ve seen from previous examples, the helix editor repository includes a few
+<code>.nix</code> files including a <code>flake.nix</code>. Their flake uses a lot of idiomatic Nix
+code and advanced features. First I will break down their <code>flake.nix</code> and
+<code>default.nix</code> to understand why they do certain things. And finally, we will
+change the build to “debug” mode demonstrating how easily you can modify the
+behavior of a package defined within a Nix flake without changing the original
+source code or the upstream flake directly.</p><pre><code class="language-bash">git clone https://github.com/helix-editor/helix.git
+cd helix
+</code></pre>
+<p>When you enter ]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/flakes/helix_flake_4.4.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Overlays</title><link>https://saylesss88.github.io/flakes/overlays_4.5.html</link><description><![CDATA[<p><img src="../images/pokego.png" alt="Pokego Logo" />–<a href="https://github.com/rubiin/pokego">pokego repo</a></p><p>Overlays are Nix functions that accept two arguments, <code>final</code> and <code>prev</code> and
+return a set of packages. Overlays are similar to <code>packageOverrides</code> as a way to
+customize Nixpkgs, <code>packageOverrides</code> acts as an overlay with only the <code>prev</code>
+argument. Therefore, <code>packageOverrides</code> is appropriate for basic use, but
+overlays are more powerful and easier to distribute.</p><p>Example:</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/flakes/overlays_4.5.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Flake Inputs</title><link>https://saylesss88.github.io/flakes/flake_inputs_4.1.html</link><description><![CDATA[<p>The attribute <code>inputs</code> specifies the dependencies of a flake, as an attrset
+mapping input names to flake references.</p><p>If a repository provides a <code>flake.nix</code> you can include it as an input in your
+<code>flake.nix</code>.</p><p>For example, I like yazi as my file explorer and have been using helix as my
+editor. To be able to get yazi to work with helix I needed the latest versions
+of both yazi and helix. One way to get the latest versions was to add their
+flakes as inputs to my flake:</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/flakes/flake_inputs_4.1.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Specialisations</title><link>https://saylesss88.github.io/flakes/specialisations_4.6.html</link><description><![CDATA[<p><strong>NixOS specialisations</strong> are a powerful feature that allow you to define
 alternative system configurations variations within a single NixOS setup. Each
 specialisation can modify or extend the base configuration, and NixOS will
 generate separate boot entries for each, letting you choose at boot time (or
@@ -153,26 +227,14 @@ hardware-specific tweaks, or separating work and personal environments without
 maintaining multiple configuration files</p><p>Specialisations are defined as attributes under the <code>specialisation</code> option in
 your configuration. Each key (e.g., <code>niri-test</code>) represents a named
 specialisation, and its configuration attribute contains the NixOS options to
-apply on top of the base system</p]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/flakes/specialisations_4.6.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Flake Inputs</title><link>https://saylesss88.github.io/flakes/flake_inputs_4.1.html</link><description><![CDATA[<p>The attribute <code>inputs</code> specifies the dependencies of a flake, as an attrset
-mapping input names to flake references.</p><p>If a repository provides a <code>flake.nix</code> you can include it as an input in your
-<code>flake.nix</code>.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/flakes/flake_inputs_4.1.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Overlays</title><link>https://saylesss88.github.io/flakes/overlays_4.5.html</link><description><![CDATA[<p><img src="../images/pokego.png" alt="Pokego Logo" />–<a href="https://github.com/rubiin/pokego">pokego repo</a></p><p>Overlays are Nix functions that accept two arguments, <code>final</code> and <code>prev</code> and
-return a set of packages. Overlays are similar to <code>packageOverrides</code> as a way to
-customize Nixpkgs, <code>packageOverrides</code> acts as an overlay with only the <code>prev</code>
-argument. Therefore, <code>packageOverrides</code> is appropriate for basic use, but
-overlays are more powerful and easier to distribute.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/flakes/overlays_4.5.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Helix Flake</title><link>https://saylesss88.github.io/flakes/helix_flake_4.4.html</link><description><![CDATA[<p><img src="../images/helix.png" alt="Helix Logo" />–<a href="https://helix-editor.com/">helix-editor.com</a></p><p>As we’ve seen from previous examples, the helix editor repository includes a few
-<code>.nix</code> files including a <code>flake.nix</code>. Their flake uses a lot of idiomatic Nix
-code and advanced features. First I will break down their <code>flake.nix</code> and
-<code>default.nix</code> to understand why they do certain things. And finally, we will
-change the build to “debug” mode demonstrating how easily you can modify the
-behavior of a package defined within a Nix flake without changing the original
-source code or the upstream flake directly.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/flakes/helix_flake_4.4.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Flake Examples</title><link>https://saylesss88.github.io/flakes/flake_examples_4.3.html</link><description><![CDATA[<p>This chapter provides practical examples to illustrate the concepts discussed in
-“Nix Flakes Explained.”</p><p>NixOS modules and configurations offer us a powerful and composable way to
-define and share system configurations. Imagine we have several independent
-“players,” each with their own unique set of configurations or modules. How do
-we combine these individual contributions into a single, cohesive system without
-directly altering each player’s original flake?</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/flakes/flake_examples_4.3.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Flake outputs</title><link>https://saylesss88.github.io/flakes/flake_outputs_4.2.html</link><description><![CDATA[<p>Flake outputs are what the flake produces when built. Flakes can have multiple
-outputs simultaneously such as:</p><p><strong>Packages</strong>: Self-contained bundles that are built using derivations and
-provide either some kind of software or dependencies of software.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/flakes/flake_outputs_4.2.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Flake Tips</title><link>https://saylesss88.github.io/extra/nix_flakes_tips.html</link><description><![CDATA[<pre><code class="language-nix"># flake.nix
+apply on top of the base system</p]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/flakes/specialisations_4.6.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Intro to JJ</title><link>https://saylesss88.github.io/extra/intro_to_jj.html</link><description><![CDATA[<p><img src="../images/jujutsu.png" alt="Jujutsu Logo" />–<a href="https://github.com/jj-vcs/jj/blob/main/docs/images/jj-logo.svg">jj repo</a></p><p>You can use jujutsu (jj) with existing Git repositories with one command.
+<code>jj git init --colocate</code> or <code>jj git init --git-repo /path/to/git_repository</code>.
+The native repository format for jj is still a work in progress so people
+typically use a <code>git</code> repository for backend.</p><p>Unlike <code>git</code>, <code>jj</code> has no index “staging area”. It treats the working copy as
+an actual commit. When you make changes to files, these changes are
+automatically recorded to the working commit. There’s no need to explicitly
+stage changes because they are already part of the commit that represents your
+current working s]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/extra/intro_to_jj.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Flake Tips</title><link>https://saylesss88.github.io/extra/nix_flakes_tips.html</link><description><![CDATA[<pre><code class="language-nix"># flake.nix
 inputs = {
     nixpkgs.url = "git+https://github.com/NixOS/nixpkgs?shallow=1&amp;ref=nixos-unstable";
 };
@@ -197,18 +259,42 @@ inputs = {
 <ul>
 <li>After adding the input I can access individual wallpapers by adding the
 <code>inputs</code> argument and something like
-<code>path = "${]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/extra/nix_flakes_tips.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Intro to JJ</title><link>https://saylesss88.github.io/extra/intro_to_jj.html</link><description><![CDATA[<p><img src="../images/jujutsu.png" alt="Jujutsu Logo" />–<a href="https://github.com/jj-vcs/jj/blob/main/docs/images/jj-logo.svg">jj repo</a></p><p>You can use jujutsu (jj) with existing Git repositories with one command.
-<code>jj git init --colocate</code> or <code>jj git init --git-repo /path/to/git_repository</code>.
-The native repository format for jj is still a work in progress so people
-typically use a <code>git</code> repository for backend.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/extra/intro_to_jj.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Intro to Nix</title><link>https://saylesss88.github.io/Getting_Started_with_Nix_1.html</link><description><![CDATA[<p><img src="images/trees1.cleaned.png" alt="trees" /></p><p>Welcome to <em>nix-book</em>, an introductory book about Nix. This book leans more
-towards using Flakes but will contrast traditional Nix where beneficial.
-Originally, this content started as a blog. I’m refining its flow to make it
-more cohesive.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Getting_Started_with_Nix_1.html</guid><pubDate>Fri, 21 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Top-Level Attributes</title><link>https://saylesss88.github.io/Understanding_Top-Level_Attributes_5.html</link><description><![CDATA[<p>This explanation is based on insights from Infinisil, a prominent figure in the
-Nix community, to help clarify the concept of top-level attributes within NixOS
-modules.</p><p>In a NixOS system, everything is built from a single “system derivation.” The
-command <code>nix-build '&lt;nixpkgs/nixos&gt;' -A system</code> initiates this build process.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Understanding_Top-Level_Attributes_5.html</guid><pubDate>Fri, 21 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Package Definitions Explained</title><link>https://saylesss88.github.io/Package_Definitions_Explained_6.html</link><description><![CDATA[<p><img src="images/coding2.png" alt="coding2" /></p><p>In Nix, the concept of a <strong>package</strong> can refer to two things:</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Package_Definitions_Explained_6.html</guid><pubDate>Fri, 21 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Intro to Nushell</title><link>https://saylesss88.github.io/intro_to_nushell_on_NixOS.html</link><description><![CDATA[<p><img src="images/nu.png" alt="Nu" /></p><p><strong>TL;DR</strong>:I recently switched default shells from zsh to nushell, this post is
-about some of the challenges and advantages of using nushell with NixOS.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/intro_to_nushell_on_NixOS.html</guid><pubDate>Fri, 21 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Intro to Derivations</title><link>https://saylesss88.github.io/Intro_to_Nix_Derivations_7.html</link><description><![CDATA[<p><img src="images/gruv10.png" alt="gruv10" /></p><p>Nix’s build instructions, known as <strong>derivations</strong>, are defined using the Nix
+<code>path = "${]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/extra/nix_flakes_tips.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Intro to Derivations</title><link>https://saylesss88.github.io/Intro_to_Nix_Derivations_7.html</link><description><![CDATA[<p><img src="images/gruv10.png" alt="gruv10" /></p><p>Nix’s build instructions, known as <strong>derivations</strong>, are defined using the Nix
 Language. These derivations can describe anything from individual software
 packages to complete system configurations. The Nix package manager then
 deterministically “realizes” (builds) these derivations, ensuring consistency
-because they rely solely on a predefined set of inputs.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Intro_to_Nix_Derivations_7.html</guid><pubDate>Fri, 21 Nov 2025 00:00:00 +0000</pubDate></item></channel></rss>
+because they rely solely on a predefined set of inputs.</p><p>Most things in NixOS are built around derivations. Your NixOS system is
+described by such a single system derivation. When you want to apply a new
+configuration, <code>nixos-rebuild</code> handles the process:</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Intro_to_Nix_Derivations_7.html</guid><pubDate>Fri, 21 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Intro to Nushell</title><link>https://saylesss88.github.io/intro_to_nushell_on_NixOS.html</link><description><![CDATA[<p><img src="images/nu.png" alt="Nu" /></p><p><strong>TL;DR</strong>:I recently switched default shells from zsh to nushell, this post is
+about some of the challenges and advantages of using nushell with NixOS.</p><p>While the average user might not immediately see significant advantages, those
+who frequently work with structured data formats like JSON, YAML, and CSV –
+such as developers interacting with APIs, system administrators managing
+configurations, and data professionals – will likely find Nushell’s native
+data handling and powerful pipeline capabilities a plus. Additionally, users
+who value a more consistent and safer scripting experience might appreciate
+Nushell’s language-first design and features like strong typing.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/intro_to_nushell_on_NixOS.html</guid><pubDate>Fri, 21 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Package Definitions Explained</title><link>https://saylesss88.github.io/Package_Definitions_Explained_6.html</link><description><![CDATA[<p><img src="images/coding2.png" alt="coding2" /></p><p>In Nix, the concept of a <strong>package</strong> can refer to two things:</p><p>A collection of files and data that constitute a piece of software or an
+artifact.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Package_Definitions_Explained_6.html</guid><pubDate>Fri, 21 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Top-Level Attributes</title><link>https://saylesss88.github.io/Understanding_Top-Level_Attributes_5.html</link><description><![CDATA[<p>This explanation is based on insights from Infinisil, a prominent figure in the
+Nix community, to help clarify the concept of top-level attributes within NixOS
+modules.</p><p>In a NixOS system, everything is built from a single “system derivation.” The
+command <code>nix-build '&lt;nixpkgs/nixos&gt;' -A system</code> initiates this build process.</p><p>The <code>-A system</code> part tells Nix to focus on the <code>system</code> attribute defined in the
+<code>'&lt;nixpkgs/nixos&gt;'</code> file (which is essentially <code>./default.nix</code> within the
+Nixpkgs repository).</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Understanding_Top-Level_Attributes_5.html</guid><pubDate>Fri, 21 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Flakes Explained</title><link>https://saylesss88.github.io/Nix_Flakes_Explained_4.html</link><description><![CDATA[<p><img src="images/trees3.cleaned.png" alt="trees3" /></p><p>If you’re completely new, take a look at
+<a href="https://nixos.wiki/wiki/flakes#Installing_flakes">this</a> to get flakes on your
+system.</p><p>For the Nix Flake man page type <code>man nix3 flake</code> and for a specific feature,
+type something like <code>man nix3 flake-lock</code>.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Nix_Flakes_Explained_4.html</guid><pubDate>Fri, 21 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Module System Explained</title><link>https://saylesss88.github.io/NixOS_Modules_Explained_3.html</link><description><![CDATA[<p><img src="images/buildings1.png" alt="buildings" /></p><p><strong>TL;DR</strong>: In this chapter, we will break down the Nix module system used by
+both NixOS and Home-Manager. We will discuss using home-manager as a module and
+the flexibility that modules give us. We will touch on options and break down
+the <code>vim</code> module from the Nixpkgs collection. Finally we will display how to
+test modules with the repl.</p><p>Your <code>configuration.nix</code> is a module. For the Nixpkgs collection most modules
+are in <code>nixos/modules</code>.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/NixOS_Modules_Explained_3.html</guid><pubDate>Fri, 21 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Understanding Nix Functions</title><link>https://saylesss88.github.io/Understanding_Nix_Functions_2.html</link><description><![CDATA[<p><img src="images/trees2.cleaned.png" alt="trees2" /></p><p><strong>Functions</strong> are the building blocks of Nix, appearing everywhere in Nix
+expressions and configurations. Mastering them is essential for writing
+effective Nix code and understanding tools like NixOS and Home Manager. This
+chapter explores how Nix functions work, focusing on their <strong>single-argument
+nature</strong>, <strong>currying</strong>, <strong>partial application</strong>, and their role in <strong>modules</strong>.</p><p>A <strong>Nix Function</strong> is a rule that takes an input (called an <strong>argument</strong>) and
+produces an <strong>output</strong> based on that input. Unlike many programming languages,
+Nix functions are designed to take exactly one argument at a time. This unique
+approach, co]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Understanding_Nix_Functions_2.html</guid><pubDate>Fri, 21 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Intro to Nix</title><link>https://saylesss88.github.io/Getting_Started_with_Nix_1.html</link><description><![CDATA[<p><img src="images/trees1.cleaned.png" alt="trees" /></p><p>Welcome to <em>nix-book</em>, an introductory book about Nix. This book leans more
+towards using Flakes but will contrast traditional Nix where beneficial.
+Originally, this content started as a blog. I’m refining its flow to make it
+more cohesive.</p><p>In this chapter, I will touch on the different parts of the Nix ecosystem, give
+a quick example of each and explain how they fit together.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Getting_Started_with_Nix_1.html</guid><pubDate>Fri, 21 Nov 2025 00:00:00 +0000</pubDate></item></channel></rss>
