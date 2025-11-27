@@ -24,5 +24,7 @@ additional-js = ["theme/extra.js", "theme/rss-button.js"]
 [output.html.code]
 hidelines = {nix = "~"}
 
+[preprocessor.content-collections]
+renderers = ["html"]
 #[output.html.print]
 # enable = true

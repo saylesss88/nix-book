@@ -32,15 +32,7 @@ to keep sensitive data safe. See the
 for details.</p><p>Jujutsu (jj) is a modern, Git-compatible version control system designed to
 simplify and improve the developer experience. It offers a new approach to
 distributed version control, focusing on a more intuitive workflow, powerful
-undo capabilities, and a branchless model that reduces common pitfalls of Git.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/vcs/jujutsu.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>JJ New</title><link>https://saylesss88.github.io/vcs/jj_new.html</link><description><![CDATA[<p><img src="../images/jujutsu.png" alt="JJ Logo" /></p><p>⚠️ <strong>Important</strong>: Never commit secrets (passwords, API keys, tokens, etc.) in
-plain text to your Git repository. If you plan to publish your NixOS
-configuration, always use a secrets management tool like sops-nix or agenix to
-keep sensitive data safe. See the
-<a href="https://saylesss88.github.io/installation/enc/sops-nix.html">Sops-Nix Guide</a>
-for details.</p><p>You may want to check
-<a href="https://steveklabnik.github.io/jujutsu-tutorial/">Steve’s Jujutsu Tutorial</a>, he
-does a great job of explaining how to use jj with practical examples. It is
-recommended in the official JJ docs as a more up to date intro.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/vcs/jj_new.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Local Nixpkgs</title><link>https://saylesss88.github.io/nixpkgs/local_package.html</link><description><![CDATA[<p>This chapter demonstrates the fundamental pattern for creating a package. Every
+undo capabilities, and a branchless model that reduces common pitfalls of Git.</p>]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/vcs/jujutsu.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Local Nixpkgs</title><link>https://saylesss88.github.io/nixpkgs/local_package.html</link><description><![CDATA[<p>This chapter demonstrates the fundamental pattern for creating a package. Every
 package recipe is a file that declares a function. This function takes the
 packages dependencies as argument.</p><p>In this example we’ll make a simple package with <code>coreutils</code> and build it.
 Demonstrating the process of building and testing a local package.</p><p>This chapter will assume you have already have a cloned fork of Nixpkgs. I
@@ -227,39 +219,7 @@ hardware-specific tweaks, or separating work and personal environments without
 maintaining multiple configuration files</p><p>Specialisations are defined as attributes under the <code>specialisation</code> option in
 your configuration. Each key (e.g., <code>niri-test</code>) represents a named
 specialisation, and its configuration attribute contains the NixOS options to
-apply on top of the base system</p]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/flakes/specialisations_4.6.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Intro to JJ</title><link>https://saylesss88.github.io/extra/intro_to_jj.html</link><description><![CDATA[<p><img src="../images/jujutsu.png" alt="Jujutsu Logo" />–<a href="https://github.com/jj-vcs/jj/blob/main/docs/images/jj-logo.svg">jj repo</a></p><p>You can use jujutsu (jj) with existing Git repositories with one command.
-<code>jj git init --colocate</code> or <code>jj git init --git-repo /path/to/git_repository</code>.
-The native repository format for jj is still a work in progress so people
-typically use a <code>git</code> repository for backend.</p><p>Unlike <code>git</code>, <code>jj</code> has no index “staging area”. It treats the working copy as
-an actual commit. When you make changes to files, these changes are
-automatically recorded to the working commit. There’s no need to explicitly
-stage changes because they are already part of the commit that represents your
-current working s]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/extra/intro_to_jj.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Flake Tips</title><link>https://saylesss88.github.io/extra/nix_flakes_tips.html</link><description><![CDATA[<pre><code class="language-nix"># flake.nix
-inputs = {
-    nixpkgs.url = "git+https://github.com/NixOS/nixpkgs?shallow=1&amp;ref=nixos-unstable";
-};
-</code></pre>
-<ul>
-<li>Some times when you might need a full clone are debugging, working with
-repository history, and for pull requests.</li>
-</ul>
-<h2>Import your Non-Flake Wallpaper Repo</h2>
-<ol start="2">
-<li>Importing your non-flake wallpapers repo, you can use this one there are a
-ton of wallpapers I’ve collected over time:</li>
-</ol>
-<pre><code class="language-nix"># flake.nix
-inputs = {
-    wallpapers = {
-      url = "github:saylesss88/wallpapers";
-      flake = false;
-    };
-}
-</code></pre>
-<ul>
-<li>After adding the input I can access individual wallpapers by adding the
-<code>inputs</code> argument and something like
-<code>path = "${]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/extra/nix_flakes_tips.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Intro to Derivations</title><link>https://saylesss88.github.io/Intro_to_Nix_Derivations_7.html</link><description><![CDATA[<p><img src="images/gruv10.png" alt="gruv10" /></p><p>Nix’s build instructions, known as <strong>derivations</strong>, are defined using the Nix
+apply on top of the base system</p]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/flakes/specialisations_4.6.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Intro to Derivations</title><link>https://saylesss88.github.io/Intro_to_Nix_Derivations_7.html</link><description><![CDATA[<p><img src="images/gruv10.png" alt="gruv10" /></p><p>Nix’s build instructions, known as <strong>derivations</strong>, are defined using the Nix
 Language. These derivations can describe anything from individual software
 packages to complete system configurations. The Nix package manager then
 deterministically “realizes” (builds) these derivations, ensuring consistency

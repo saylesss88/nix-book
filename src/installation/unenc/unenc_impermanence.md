@@ -2,6 +2,9 @@
 title: Unencrypted BTRFS Impermanence with Flakes
 date: 2025-11-24
 author: saylesss88
+collection: blog
+tags: ["nixos", "btrfs", "impermanence"]
+draft: false
 ---
 
 # Unencrypted BTRFS Impermanence with Flakes

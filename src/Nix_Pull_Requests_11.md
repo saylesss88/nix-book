@@ -1,7 +1,10 @@
 ---
 title: Nix Pull Requests
-date: 2025-11-22
+date: 2025-11-27
 author: saylesss88
+collection: blog
+tags: ["nixos", "nixpkgs"]
+draft: false
 ---
 
 # Chapter 11
