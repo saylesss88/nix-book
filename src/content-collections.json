@@ -3,6 +3,20 @@
     {
       "author": "saylesss88",
       "collection": "blog",
+      "date": "2025-11-27T00:00:00+00:00",
+      "description": null,
+      "draft": false,
+      "path": "Nix_Pull_Requests_11.md",
+      "preview_html": "<p><img src=\"images/gruv16.png\" alt=\"gruv16\" /></p><p><strong>Pull requests</strong> communicate changes to a branch in a repository. Once a pull\nrequest is opened, you can review changes with collaborators and add follow-up\ncommits.</p><p>A <strong>pull request</strong> is a proposal to merge a set of changes from one branch\ninto another. In a pull request, collaborators can review and discuss the\nproposed set of changes before they integrate the changes into the main\ncodebase.</p>",
+      "tags": [
+        "nixos",
+        "nixpkgs"
+      ],
+      "title": "Nix Pull Requests"
+    },
+    {
+      "author": "saylesss88",
+      "collection": "blog",
       "date": "2025-11-24T00:00:00+00:00",
       "description": null,
       "draft": false,
@@ -14,17 +28,6 @@
         "impermanence"
       ],
       "title": "Unencrypted BTRFS Impermanence with Flakes"
-    },
-    {
-      "author": "saylesss88",
-      "collection": null,
-      "date": "2025-11-22T00:00:00+00:00",
-      "description": null,
-      "draft": false,
-      "path": "Nix_Pull_Requests_11.md",
-      "preview_html": "<p><img src=\"images/gruv16.png\" alt=\"gruv16\" /></p><p><strong>Pull requests</strong> communicate changes to a branch in a repository. Once a pull\nrequest is opened, you can review changes with collaborators and add follow-up\ncommits.</p><p>A <strong>pull request</strong> is a proposal to merge a set of changes from one branch\ninto another. In a pull request, collaborators can review and discuss the\nproposed set of changes before they integrate the changes into the main\ncodebase.</p>",
-      "tags": [],
-      "title": "Nix Pull Requests"
     },
     {
       "author": "saylesss88",

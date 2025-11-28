@@ -28,3 +28,8 @@ hidelines = {nix = "~"}
 renderers = ["html"]
 #[output.html.print]
 # enable = true
+
+[preprocessor.content-loader]
+command = "mdbook-content-loader"
+renderers = ["html"]
+after = ["content-collections"]
