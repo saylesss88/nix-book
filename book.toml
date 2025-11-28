@@ -33,3 +33,8 @@ renderers = ["html"]
 command = "mdbook-content-loader"
 renderers = ["html"]
 after = ["content-collections"]
+# inject_all = true
+
+# [preprocessor.kanagawa-theme]
+# renderers = ["html"]
+# before = ["content-loader", "content-collections"]

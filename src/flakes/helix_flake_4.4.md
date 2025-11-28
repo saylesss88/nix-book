@@ -1,7 +1,10 @@
 ---
-title: Helix Flake
-date: 2025-11-22
+title: Understanding the Helix Flake
+date: 2025-11-28
 author: saylesss88
+collection: blog
+tags: ["nixos", "flakes", "helix"]
+draft: false
 ---
 
 # Chapter 4.4

@@ -1,7 +1,10 @@
 ---
 title: Flake Inputs
-date: 2025-11-22
+date: 2025-11-28
 author: saylesss88
+collection: blog
+tags: ["nixos", "flakes"]
+draft: false
 ---
 
 # Nix Flake Inputs

@@ -1,7 +1,10 @@
 ---
-title: Nix Flake Examples
-date: 2025-11-22
+title: Flake outputs
+date: 2025-11-28
 author: saylesss88
+collection: blog
+tags: ["nixos", "flakes"]
+draft: false
 ---
 
 # Nix Flake Examples

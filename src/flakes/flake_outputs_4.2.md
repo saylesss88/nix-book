@@ -1,7 +1,10 @@
 ---
 title: Flake outputs
-date: 2025-11-22
+date: 2025-11-28
 author: saylesss88
+collection: blog
+tags: ["nixos", "flakes", "outputs"]
+draft: false
 ---
 
 # Nix Flake Outputs
