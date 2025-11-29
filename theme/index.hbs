@@ -230,66 +230,6 @@
                             </a>
                         {{/if}}
 
-                        <div id="content-collections-list" class="content-collections-list">
-                      <!-- Populated by mdbook-content-loader -->
-                    </div>
-
-                    <script>
-                      (function () {
-                        if (!window.CONTENT_COLLECTIONS) {
-                          console.warn("mdbook-content-loader: CONTENT_COLLECTIONS not found");
-                          return;
-                        }
-
-                        var data = window.CONTENT_COLLECTIONS;
-                        var entries = (data.entries || [])
-                          .filter(function (e) {
-                            return !e.draft && (!e.collection || e.collection === "blog");
-                          })
-                          .slice(0, 10);
-
-                        var container = document.getElementById("content-collections-list");
-                        if (!container) return;
-
-                        if (entries.length === 0) {
-                          container.textContent = "No posts yet.";
-                          return;
-                        }
-
-                        var list = document.createElement("ul");
-                        list.className = "content-collections-items";
-
-                        entries.forEach(function (e) {
-                          var li = document.createElement("li");
-                          li.className = "content-collections-item";
-
-                          var link = document.createElement("a");
-                          var htmlPath = e.path.replace(/\.md(?:own|arkdown)?$/i, ".html");
-                          link.href = htmlPath;
-                          link.textContent = e.title || e.path;
-
-                          var meta = document.createElement("div");
-                          meta.className = "content-collections-meta";
-                          if (e.date) {
-                            var d = new Date(e.date);
-                            meta.textContent = d.toISOString().slice(0, 10);
-                          }
-
-                          var preview = document.createElement("div");
-                          preview.className = "content-collections-preview";
-                          preview.innerHTML = e.preview_html || "";
-
-                          li.appendChild(link);
-                          if (meta.textContent) li.appendChild(meta);
-                          li.appendChild(preview);
-                          list.appendChild(li);
-                        });
-
-                        container.innerHTML = "";
-                        container.appendChild(list);
-                      })();
-                    </script>
-
                         {{#if next}}
                             <a rel="next prefetch" href="{{ path_to_root }}{{next.link}}" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 {{#if (eq ../text_direction "rtl")}}
@@ -421,7 +361,6 @@
             });
         </script>
         {{/if}}
-
 
     </div>
     </body>

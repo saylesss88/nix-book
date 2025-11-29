@@ -50,7 +50,7 @@ jobs:
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
-          personal_token: ${{ secrets.PAT_TOKEN }}
+          personal_token: ${{ secrets.PAT_TOKEN_NEW }}
           publish_dir: ./book
           publish_branch: gh-pages
           external_repository: saylesss88/saylesss88.github.io
