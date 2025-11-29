@@ -42,3 +42,11 @@ after = ["content-collections"]
 [preprocessor.kanagawa-theme]
 renderers = ["html"]
 before = ["content-loader", "content-collections"]
+# Landing page text
+landing_title = "nix-book"
+landing_subtitle = "Notes, posts, and more"
+
+# Column headers
+header_latest = "Latest posts"
+header_notes = "Recent notes"
+header_tags = "Popular tags"
