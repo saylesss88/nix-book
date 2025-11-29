@@ -18,11 +18,7 @@ renderers = ["html"]
 # theme = "navy"
 # default-theme = "navy"
 site-url = "https://saylesss88.github.io/"
-additional-css = [
-	"theme/extra.css",
-	"theme/rss-button.css",
-	"theme/kanagawa.css",
-]
+additional-css = ["theme/extra.css", "theme/rss-button.css"]
 additional-js = ["theme/extra.js", "theme/rss-button.js"]
 
 [output.html.code]
