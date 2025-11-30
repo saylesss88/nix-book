@@ -2,6 +2,9 @@
 title: Specialisations
 date: 2025-11-22
 author: saylesss88
+collection: blog
+tags: ["nixos", "specialisations"]
+draft: true
 ---
 
 # NixOS Specialisations For Multiple Profiles

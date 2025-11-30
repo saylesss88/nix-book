@@ -2,6 +2,9 @@
 title: Practical Nix Functions
 date: 2025-11-22
 author: saylesss88
+collection: blog
+tags: ["nixos", "functions"]
+draft: false
 ---
 
 # Practical Nix Functions

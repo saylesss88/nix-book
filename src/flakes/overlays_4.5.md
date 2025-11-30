@@ -2,6 +2,9 @@
 title: Overlays
 date: 2025-11-22
 author: saylesss88
+collection: blog
+tags: ["nixos", "overlays", "outputs"]
+draft: false
 ---
 
 # Extending Flakes with Custom Packages using Overlays
