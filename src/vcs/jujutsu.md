@@ -1,8 +1,10 @@
 ---
-title: JJ
-date: 2025-11-22
+title: JJ VCS
+date: 2025-11-30
 author: saylesss88
-description: JJ
+description: JJ Version Control
+collection: notes
+tags: ["vcs", "jj"]
 ---
 
 # Version Control with JJ

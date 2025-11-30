@@ -1,0 +1,23 @@
+/* theme/dracula.css */
+
+html.navy,
+body.navy,
+.navy {
+  --bg: #282a36;
+  --bg-alt: #44475a;
+  --fg: #f8f8f2;
+  --fg-light: #cfcfd9;
+
+  --wave-1: #282a36;
+  --wave-2: #343746;
+  --wave-3: #44475a;
+
+  --accent: #bd93f9;
+  --red: #ff5555;
+  --blue: #8be9fd;
+}
+
+/* optional extra tweaks */
+.card {
+  box-shadow: 0 0 22px rgba(0, 0, 0, 0.45);
+}

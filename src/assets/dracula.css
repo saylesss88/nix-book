@@ -1,0 +1,37 @@
+/* src/assets/dracula.css */
+
+html.navy,
+body.navy,
+.navy {
+  /* Core page colors */
+  --bg: #282a36;
+  --bg-alt: #44475a;
+  --fg: #f8f8f2;
+  --fg-light: #cfcfd9;
+
+  /* Waves / accent palette */
+  --wave-1: #282a36;
+  --wave-2: #343746;
+  --wave-3: #44475a;
+
+  --accent: #bd93f9;
+  --red: #ff5555;
+  --blue: #8be9fd;
+
+  /* mdBook-specific navy vars */
+  --sidebar-bg: #282a36;
+  --sidebar-fg: #f8f8f2;
+  --sidebar-non-existant: #6272a4;
+  --sidebar-active: #bd93f9;
+  --sidebar-spacer: #44475a;
+
+  --links: #bd93f9;
+
+  --quote-bg: #343746;
+  --quote-border: #44475a;
+
+  --table-header-bg: #44475a;
+  --table-alternate-bg: #343746;
+
+  /* tweak others as you like */
+}

@@ -2,6 +2,8 @@
 title: Intro to Derivations
 date: 2025-11-21
 author: saylesss88
+collection: "notes"
+tags: ["notes", "derivations"]
 ---
 
 # Chapter 7

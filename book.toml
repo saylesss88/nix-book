@@ -15,8 +15,8 @@ command = "mdbook-toc"
 renderers = ["html"]
 
 [output.html]
-# theme = "navy"
-# default-theme = "navy"
+default-theme = "navy"
+preferred-dark-theme = "navy"
 site-url = "https://saylesss88.github.io/"
 additional-css = ["theme/extra.css", "theme/rss-button.css"]
 additional-js = ["theme/extra.js", "theme/rss-button.js"]
@@ -46,3 +46,6 @@ landing_subtitle = "Notes, posts, and more"
 header_latest = "Latest posts"
 header_notes = "Recent notes"
 header_tags = "Popular tags"
+
+css_import = "/assets/dracula.css"
+disable_builtin_css = false

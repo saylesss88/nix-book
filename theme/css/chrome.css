@@ -1,3 +1,51 @@
+@import url("/assets/dracula.css");
+
+:root.coal,
+.coal,
+html.coal,
+body.coal,
+:root.navy,
+.navy,
+html.navy,
+body.navy {
+  /* Dark Kanagawa Wave-like */
+  --bg: #1F1F28;        /* sumiInk1: default background */
+  --bg-alt: #2A2A37;    /* sumiInk2: lighter background (cards) */
+  --fg: #DCD7BA;        /* fujiWhite: main foreground */
+  --fg-light: #9CABCA;  /* springViolet2: softer text / subtitles */
+
+  /* Waves use blue-ish Kanagawa tones */
+  --wave-1: #1F1F28;    /* background */
+  --wave-2: #223249;    /* waveBlue1 */
+  --wave-3: #2D4F67;    /* waveBlue2 */
+
+  --accent: #7E9CD8;    /* crystalBlue: functions / titles */
+  --red: #E46876;       /* waveRed */
+  --blue: #7FB4CA;      /* springBlue */
+}
+
+:root.light,
+.light,
+html.light,
+body.light,
+:root.rust,
+.rust,
+html.rust,
+body.rust {
+  /* Simple light variant, slightly bluish */
+  --bg: #F5F5F5;
+  --bg-alt: #E8E8E8;
+  --fg: #283548;
+  --fg-light: #4C5A6E;
+  --wave-1: #E0E8F0;
+  --wave-2: #C8D8E8;
+  --wave-3: #A8C8E0;
+  --accent: #345E8F;
+  --red: #C4746E;
+  --blue: #7FB4CA;
+}
+
+
 /* CSS for UI elements (a.k.a. chrome) */
 
 html {
@@ -754,3 +802,119 @@ html:not(.js) .sidebar-resize-handle {
     /* mdbook's margin for h2 is way too large. */
     margin: 10px;
 }
+
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.wave-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.wave {
+  position: absolute;
+  bottom: 0;
+  left: -50%;
+  width: 200%;
+  height: 40vh;
+  background: var(--wave-1);
+  border-radius: 45%;
+  animation: wave 20s linear infinite;
+}
+
+.wave:nth-child(2) {
+  background: var(--wave-2);
+  animation-duration: 25s;
+  opacity: 0.7;
+}
+
+.wave:nth-child(3) {
+  background: var(--wave-3);
+  animation-duration: 30s;
+  opacity: 0.5;
+}
+
+@keyframes wave {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.landing {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 2rem;
+}
+
+.title {
+  font-size: 4.5rem;
+  font-weight: 300;
+  margin: 0 0 1rem;
+  color: var(--accent);
+  text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.subtitle {
+  font-size: 1.6rem;
+  max-width: 700px;
+  color: var(--fg-light);
+  margin-bottom: 4rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  width: 100%;
+}
+
+.card {
+  background: var(--bg-alt);
+  padding: 2rem;
+  border-radius: 16px;
+  border: 1px solid rgba(126,156,216,0.2);
+  backdrop-filter: blur(10px);
+}
+
+.card h2 {
+  margin-top: 0;
+  color: var(--accent);
+  border-bottom: 1px solid var(--accent);
+  padding-bottom: 0.5rem;
+}
+
+.tag-cloud .tag-pill {
+  display: inline-block;
+  background: rgba(126,156,216,0.15);
+  color: var(--accent);
+  padding: 0.5rem 1rem;
+  margin: 0.4rem;
+  border-radius: 2rem;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.tag-cloud .tag-pill:hover {
+  background: var(--accent);
+  color: var(--bg);
+}
+
