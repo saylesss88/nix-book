@@ -1,7 +1,10 @@
 ---
 title: Hardening NixOS
-date: 2025-11-22
+date: 2025-12-05
 author: saylesss88
+collection: "notes"
+tags: ["security", "privacy", "hardening"]
+draft: false
 ---
 
 # Hardening NixOS

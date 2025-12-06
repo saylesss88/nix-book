@@ -1,7 +1,10 @@
 ---
 title: Whonix KVM on NixOS
-date: 2025-11-22
+date: 2025-12-04
 author: saylesss88
+collection: "notes"
+tags: ["Virtual Machines", "KVM", "Whonix"]
+draft: false
 ---
 
 # Whonix KVM on NixOS

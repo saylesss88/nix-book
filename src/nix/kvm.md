@@ -2,6 +2,9 @@
 title: KVM
 date: 2025-12-06
 author: saylesss88
+collection: "notes"
+tags: ["KVM", "Virtual Machines", "secureblue"]
+draft: false
 ---
 
 # Running NixOS in a VM with Maximum Isolation (Beginner Guide)

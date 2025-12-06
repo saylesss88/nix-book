@@ -1,7 +1,10 @@
 ---
 title: Hardening Networking
-date: 2025-11-22
+date: 2025-12-05
 author: saylesss88
+collection: "notes"
+tags: ["hardening", "networking", "firewall"]
+draft: false
 ---
 
 # Hardening Networking

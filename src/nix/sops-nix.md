@@ -1,7 +1,10 @@
 ---
 title: Sops-Nix
-date: 2025-11-22
+date: 2025-12-04
 author: saylesss88
+collection: "notes"
+tags: ["secrets", "sops-nix", "hardening"]
+draft: false
 ---
 
 # Sops-Nix encrypted secrets
@@ -186,7 +189,7 @@ sops -d secrets/github-deploy-key.yaml
 Generate an encrypted password hash with:
 
 ```bash
-mkpasswd -m SHA-512 -s > /tmp/password-hash.txt
+mkpasswd --method=yescrypt > /tmp/password-hash.txt
 # Enter your chosen password and copy the encrypted hash it gives you back
 ```
 
