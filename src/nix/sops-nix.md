@@ -2,7 +2,7 @@
 title: Sops-Nix
 date: 2025-12-04
 author: saylesss88
-collection: "notes"
+collection: "blog"
 tags: ["secrets", "sops-nix", "hardening"]
 draft: false
 ---

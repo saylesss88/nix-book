@@ -2,7 +2,7 @@
 title: KVM
 date: 2025-12-06
 author: saylesss88
-collection: "notes"
+collection: "blog"
 tags: ["KVM", "Virtual Machines", "secureblue"]
 draft: false
 ---

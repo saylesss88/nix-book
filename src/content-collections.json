@@ -2,6 +2,51 @@
   "entries": [
     {
       "author": "saylesss88",
+      "collection": "notes",
+      "date": "2025-12-06T00:00:00+00:00",
+      "description": null,
+      "draft": false,
+      "path": "nix/kvm.md",
+      "preview_html": "<p><img src=\"images/steampunk5.cleaned.png\" alt=\"sp5\" /></p><p><strong>Host</strong> <code>secureblue</code> = Fedora Atomic with <strong>SELinux enforcing</strong>, <strong>sVirt</strong>,\n<strong>Secure Boot</strong>, and hardened defaults.</p><p><strong>Guest</strong>: NixOS in a VM → full declarative power, near zero risk to host.</p>",
+      "tags": [
+        "KVM",
+        "Virtual Machines",
+        "secureblue"
+      ],
+      "title": "KVM"
+    },
+    {
+      "author": "saylesss88",
+      "collection": "notes",
+      "date": "2025-12-05T00:00:00+00:00",
+      "description": null,
+      "draft": false,
+      "path": "nix/hardening_networking.md",
+      "preview_html": "<p>Since networks and systems vary, some adjustments may cause unexpected issues,\nespecially around critical components like DNS or firewalls. Always review and\ntest changes in a controlled environment before applying them broadly.</p><p>Understand the trade-offs and tailor the settings to your threat model and\nworkflow. Take what’s useful, adapt as needed, and seek expert guidance for\nmore advanced scenarios.</p><p>Every setup is unique, feel free to adapt or skip sections based on your needs.\nStart with the basics and build up as you gain confidence. The goal is\npractical, tested hardening tailored to you.</p>",
+      "tags": [
+        "hardening",
+        "networking",
+        "firewall"
+      ],
+      "title": "Hardening Networking"
+    },
+    {
+      "author": "saylesss88",
+      "collection": "notes",
+      "date": "2025-12-05T00:00:00+00:00",
+      "description": null,
+      "draft": false,
+      "path": "nix/hardening_NixOS.md",
+      "preview_html": "<p><img src=\"../images/guy_fawks.png\" alt=\"guy fawks hacker\" /></p><p>Securing your NixOS system begins with a philosophy of minimalism, explicit\nconfiguration, and proactive control. As desktop Linux attracts more novice\nusers, it has become an increasingly valuable target for attackers. This makes\nit crucial to adopt security best practices early to protect your desktop from\ncommon attack vectors and to avoid configuration mistakes that could expose\nvulnerabilities.</p><p>⚠️ Warning: I am not a security expert. This guide presents various options\nfor hardening NixOS, but it is your responsibility to evaluate whether each\nadjustment suits your specific needs and environment. Security hardening and\nprocess isolation can introduce stability challenges, compatibility issues, or\nunexpected be",
+      "tags": [
+        "security",
+        "privacy",
+        "hardening"
+      ],
+      "title": "Hardening NixOS"
+    },
+    {
+      "author": "saylesss88",
       "collection": "blog",
       "date": "2025-12-05T00:00:00+00:00",
       "description": null,
@@ -14,6 +59,36 @@
         "helix"
       ],
       "title": "Understanding the Helix Flake"
+    },
+    {
+      "author": "saylesss88",
+      "collection": "notes",
+      "date": "2025-12-04T00:00:00+00:00",
+      "description": null,
+      "draft": false,
+      "path": "nix/sops-nix.md",
+      "preview_html": "<p><a href=\"https://github.com/getsops/sops?ref=blog.gitguardian.com\">SOPS</a>, short for\n<strong>S</strong>ecrets<strong>OP</strong>eration<strong>S</strong>, is an editor of encrypted files that supports\nquite a few BINARY formats and encrypts with AWS KMS, GCP KMS, Azure Key Vault,\nage, and PGP.</p><p>Managing secrets—like API keys, SSH deploy keys, and password hashes is a\ncritical part of system configuration, but it’s also one of the trickiest to do\nsecurely and reproducibly. Traditionally, secrets might be stored in ad hoc\nlocations, referenced by absolute paths, or managed manually outside of version\ncontrol. This approach makes it hard to share, rebuild, or audit your\nconfiguration, and increases the risk of accidental leaks or inconsistencies\nbetween systems.</p><p><code>sops-nix",
+      "tags": [
+        "secrets",
+        "sops-nix",
+        "hardening"
+      ],
+      "title": "Sops-Nix"
+    },
+    {
+      "author": "saylesss88",
+      "collection": "notes",
+      "date": "2025-12-04T00:00:00+00:00",
+      "description": null,
+      "draft": false,
+      "path": "nix/whonix_kvm.md",
+      "preview_html": "<p><img src=\"../images/swappy-20250901-101339.cleaned.png\" alt=\"Whonix Logo\" /></p><p>⚠️ WARNING: There is no general software that can guarantee absolute anonymity\nor security; perfect security is a myth. Security is a continuous process, not\na one-time product. It also depends on time and resources: if an adversary has\nenough of either, eventual compromise is probable. However, by layering\ndefenses and following best practices, we can make attacks costly and\ntime-consuming, deterring all but highly targeted adversaries.</p><p>It is highly recommended to harden your Host Machine as Type 2 hypervisors are\nonly as secure as their host. KVM is actually a type 1 hypervisor but relies on\nQEMU for emulation which is a Type 2 hypervisor. This actually makes it a sort\nof hybrid in between Type 1 ",
+      "tags": [
+        "Virtual Machines",
+        "KVM",
+        "Whonix"
+      ],
+      "title": "Whonix KVM on NixOS"
     },
     {
       "author": "saylesss88",
@@ -325,61 +400,6 @@
       "preview_html": "<p>Using devour-flake to Cache All Your Flake Outputs to Cachix</p><p>When working with Nix flakes, it’s common to have many outputs—packages, apps,\ndev shells, NixOS or Darwin configurations, and more. Efficiently building and\ncaching all these outputs can be challenging, especially in CI or when\ncollaborating. This is where devour-flake and Cachix shine. Why Use\ndevour-flake?</p><p>By default, building all outputs of a flake with <code>nix build .#a .#b ... .#z</code> can\nbe slow and inefficient, as Nix will evaluate the flake multiple times—once for\neach output. devour-flake solves this by generating a “consumer” flake that\ndepends on all outputs, allowing you to build everything in one go with a single\nevaluation</p>",
       "tags": [],
       "title": "Cachix devour-flake"
-    },
-    {
-      "author": "saylesss88",
-      "collection": null,
-      "date": "2025-11-22T00:00:00+00:00",
-      "description": null,
-      "draft": false,
-      "path": "nix/whonix_kvm.md",
-      "preview_html": "<p><img src=\"../images/swappy-20250901-101339.cleaned.png\" alt=\"Whonix Logo\" /></p><p>⚠️ WARNING: There is no general software that can guarantee absolute anonymity\nor security; perfect security is a myth. Security is a continuous process, not\na one-time product. It also depends on time and resources: if an adversary has\nenough of either, eventual compromise is probable. However, by layering\ndefenses and following best practices, we can make attacks costly and\ntime-consuming, deterring all but highly targeted adversaries.</p><p>It is highly recommended to harden your Host Machine as Type 2 hypervisors are\nonly as secure as their host. KVM is actually a type 1 hypervisor but relies on\nQEMU for emulation which is a Type 2 hypervisor. This actually makes it a sort\nof hybrid in between Type 1 ",
-      "tags": [],
-      "title": "Whonix KVM on NixOS"
-    },
-    {
-      "author": "saylesss88",
-      "collection": null,
-      "date": "2025-11-22T00:00:00+00:00",
-      "description": null,
-      "draft": false,
-      "path": "nix/hardening_networking.md",
-      "preview_html": "<p>Since networks and systems vary, some adjustments may cause unexpected issues,\nespecially around critical components like DNS or firewalls. Always review and\ntest changes in a controlled environment before applying them broadly.</p><p>Understand the trade-offs and tailor the settings to your threat model and\nworkflow. Take what’s useful, adapt as needed, and seek expert guidance for\nmore advanced scenarios.</p><p>Every setup is unique, feel free to adapt or skip sections based on your needs.\nStart with the basics and build up as you gain confidence. The goal is\npractical, tested hardening tailored to you.</p>",
-      "tags": [],
-      "title": "Hardening Networking"
-    },
-    {
-      "author": "saylesss88",
-      "collection": null,
-      "date": "2025-11-22T00:00:00+00:00",
-      "description": null,
-      "draft": false,
-      "path": "nix/kvm.md",
-      "preview_html": "<p><img src=\"images/steampunk5.cleaned.png\" alt=\"sp5\" /></p><p><strong>Host</strong> <code>secureblue</code> = Fedora Atomic with <strong>SELinux enforcing</strong>, <strong>sVirt</strong>,\n<strong>Secure Boot</strong>, and hardened defaults.</p><p><strong>Guest</strong>: NixOS in a VM → full declarative power, near zero risk to host.</p>",
-      "tags": [],
-      "title": "KVM"
-    },
-    {
-      "author": "saylesss88",
-      "collection": null,
-      "date": "2025-11-22T00:00:00+00:00",
-      "description": null,
-      "draft": false,
-      "path": "nix/hardening_NixOS.md",
-      "preview_html": "<p><img src=\"../images/guy_fawks.png\" alt=\"guy fawks hacker\" /></p><p>Securing your NixOS system begins with a philosophy of minimalism, explicit\nconfiguration, and proactive control. As desktop Linux attracts more novice\nusers, it has become an increasingly valuable target for attackers. This makes\nit crucial to adopt security best practices early to protect your desktop from\ncommon attack vectors and to avoid configuration mistakes that could expose\nvulnerabilities.</p><p>⚠️ Warning: I am not a security expert. This guide presents various options\nfor hardening NixOS, but it is your responsibility to evaluate whether each\nadjustment suits your specific needs and environment. Security hardening and\nprocess isolation can introduce stability challenges, compatibility issues, or\nunexpected be",
-      "tags": [],
-      "title": "Hardening NixOS"
-    },
-    {
-      "author": "saylesss88",
-      "collection": null,
-      "date": "2025-11-22T00:00:00+00:00",
-      "description": null,
-      "draft": false,
-      "path": "nix/sops-nix.md",
-      "preview_html": "<p><a href=\"https://github.com/getsops/sops?ref=blog.gitguardian.com\">SOPS</a>, short for\n<strong>S</strong>ecrets<strong>OP</strong>eration<strong>S</strong>, is an editor of encrypted files that supports\nquite a few BINARY formats and encrypts with AWS KMS, GCP KMS, Azure Key Vault,\nage, and PGP.</p><p>Managing secrets—like API keys, SSH deploy keys, and password hashes is a\ncritical part of system configuration, but it’s also one of the trickiest to do\nsecurely and reproducibly. Traditionally, secrets might be stored in ad hoc\nlocations, referenced by absolute paths, or managed manually outside of version\ncontrol. This approach makes it hard to share, rebuild, or audit your\nconfiguration, and increases the risk of accidental leaks or inconsistencies\nbetween systems.</p><p><code>sops-nix",
-      "tags": [],
-      "title": "Sops-Nix"
     },
     {
       "author": "saylesss88",
