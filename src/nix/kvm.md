@@ -1,6 +1,6 @@
 ---
 title: KVM
-date: 2025-11-22
+date: 2025-12-06
 author: saylesss88
 ---
 
@@ -24,6 +24,56 @@ author: saylesss88
 
 - **Isolation**: Mandatory Access Control (MAC) via SELinux + KVM + no direct
   hardware access.
+
+### My Experience with Secureblue
+
+<details>
+<summary> ✔️ My Experience with Secureblue </summary>
+
+I have been using secureblue as the host OS while running NixOS in a VM, with no
+noticeable performance issues for my workload. When problems do occur, they have
+all been fixable via rollbacks or small configuration changes, so there has been
+no need to “nuke and reinstall.”
+
+**Software Installation and Management**
+
+Flatpak takes some adjustment, especially if you are used to running editors or
+other tools with full root access on a traditional Linux setup. Tools like
+Flatseal make it easy to inspect exactly which permissions each application has
+by default, and then gradually tighten them as you learn what is actually
+required for the app to keep working. On secureblue, you can also apply a very
+strict default with ujust flatpak-permissions-lockdown, which revokes almost
+everything so that you must explicitly grant each permission you want an
+application to have.
+
+To be honest, I have one editor that's setup with flatpak and one that is
+installed with `rpm-ostree` for the tight integration and default full root
+behavior that is much less secure. I ended up moving from flatpak yazi to
+`rpm-ostree` as well because in order to get it to function the way I wanted, I
+had to bypass much of the sandboxing anyways.
+
+If you use toolbx, it can be helpful to also install brew and flatpak within the
+toolbx so you can share more config files. Silverblue recommends using flatpak
+for most GUI apps and creating a toolbox for all of your cli apps, secureblue
+includes homebrew which makes installing cli apps outside of a container easy.
+
+On secureblue `/home` is just a symlink to `/var/home`, and that leaks into some
+development workflows in non‑obvious ways. Most tools work without issue, but
+some get confused by the symlink. If this happens, pointing the tool at
+`/var/home/username/` instead of `/home/username/` often fixes the issue.
+
+Most people will not need to add any extra GPU or display drivers inside the
+NixOS VM when running on secureblue. The host already provides the hardware
+stack, and adding additional drivers in the guest can actually make things less
+stable instead of better.
+
+For example, when extra drivers or compositor tweaks are added in the VM, it can
+cause flashing, freezes, or generally janky graphics because you are effectively
+fighting the host’s configuration. Keeping the VM’s graphics setup simple and
+close to the defaults avoids a whole class of hard‑to‑debug issues and usually
+gives smoother performance.
+
+</details>
 
 ---
 
