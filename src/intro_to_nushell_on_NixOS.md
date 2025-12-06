@@ -1,7 +1,10 @@
 ---
 title: Intro to Nushell
-date: 2025-11-21
+date: 2025-11-30
 author: saylesss88
+collection: "blog"
+tags: ["nushell", "shells"]
+draft: false
 ---
 
 # Chapter 12

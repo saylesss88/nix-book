@@ -8,6 +8,15 @@
 supporting the project by buying me a coffee ☕. Your support helps keep this
 content updated and freely available.
 
+Follow nix-book with your preferred feed format for automatic notifications of
+new content:
+
+- [nix-book RSS](https://saylesss88.github.io/rss.xml)
+
+- [nix-book Atom](https://saylesss88.github.io/atom.xml)
+
+- [nix-book JSON Feed](https://saylesss88.github.io/feed.json)
+
 Welcome to my personal journey and guide through the Nix ecosystem! This "book"
 aims to be a practical and understandable resource for anyone looking to dive
 into Nix, NixOS, and Home Manager. Whether you're just getting started or
@@ -75,7 +84,7 @@ or for a more comfortable reading experience, check out the dedicated website. I
 tried to write it in a way where you could jump to the chapter you're interested
 in and still be able to follow along:
 
-- [Link to Chapter 1](https://saylesss88.github.io/)
+- [Start Here](https://saylesss88.github.io/)
 
 - Browse the book chapters here on
   [GitHub](https://github.com/saylesss88/nix-book/tree/main/src).

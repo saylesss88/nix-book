@@ -3,7 +3,7 @@ title: JJ VCS
 date: 2025-11-30
 author: saylesss88
 description: JJ Version Control
-collection: notes
+collection: "notes"
 tags: ["vcs", "jj"]
 ---
 

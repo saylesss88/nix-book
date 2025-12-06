@@ -1,8 +1,8 @@
 ---
 title: Understanding the Helix Flake
-date: 2025-11-28
+date: 2025-12-05
 author: saylesss88
-collection: blog
+collection: "blog"
 tags: ["nixos", "flakes", "helix"]
 draft: false
 ---

@@ -4,8 +4,16 @@ authors = ["saylesss88"]
 language = "en"
 src = "src"
 
+[build]
+build-dir = "book"
+
 [preprocessor.rss-feed]
 renderers = ["html"]
+full-preview = true
+atom = true
+json-feed = true
+paginated = false    # enable pagination
+max-items = 0        # max items per page (0 = unlimited / single feed)
 
 [preprocessor.frontmatter-strip]
 renderers = ["html"]

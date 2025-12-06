@@ -1,8 +1,8 @@
 ---
 title: Functions and NixOS Modules
-date: 2025-11-30
-author: saylesss88
-collection: blog
+date: "2025-11-30"
+author: "saylesss88"
+collection: "blog"
 tags: ["nixos", "functions"]
 draft: false
 ---

@@ -3,7 +3,7 @@ title: Git
 date: 2025-11-30
 author: saylesss88
 description: Git
-collection: notes
+collection: "notes"
 tags: ["vcs", "git"]
 ---
 

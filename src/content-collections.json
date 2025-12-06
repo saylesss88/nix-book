@@ -3,6 +3,63 @@
     {
       "author": "saylesss88",
       "collection": "blog",
+      "date": "2025-12-05T00:00:00+00:00",
+      "description": null,
+      "draft": false,
+      "path": "flakes/helix_flake_4.4.md",
+      "preview_html": "<p><img src=\"../images/helix.png\" alt=\"Helix Logo\" />–<a href=\"https://helix-editor.com/\">helix-editor.com</a></p><p>As we’ve seen from previous examples, the helix editor repository includes a few\n<code>.nix</code> files including a <code>flake.nix</code>. Their flake uses a lot of idiomatic Nix\ncode and advanced features. First I will break down their <code>flake.nix</code> and\n<code>default.nix</code> to understand why they do certain things. And finally, we will\nchange the build to “debug” mode demonstrating how easily you can modify the\nbehavior of a package defined within a Nix flake without changing the original\nsource code or the upstream flake directly.</p><pre><code class=\"language-bash\">git clone https://github.com/helix-editor/helix.git\ncd helix\n</code></pre>\n<p>When you enter ",
+      "tags": [
+        "nixos",
+        "flakes",
+        "helix"
+      ],
+      "title": "Understanding the Helix Flake"
+    },
+    {
+      "author": "saylesss88",
+      "collection": "blog",
+      "date": "2025-11-30T00:00:00+00:00",
+      "description": null,
+      "draft": false,
+      "path": "intro_to_nushell_on_NixOS.md",
+      "preview_html": "<p><img src=\"images/nu.png\" alt=\"Nu\" /></p><p><strong>TL;DR</strong>:I recently switched default shells from zsh to nushell, this post is\nabout some of the challenges and advantages of using nushell with NixOS.</p><p>While the average user might not immediately see significant advantages, those\nwho frequently work with structured data formats like JSON, YAML, and CSV –\nsuch as developers interacting with APIs, system administrators managing\nconfigurations, and data professionals – will likely find Nushell’s native\ndata handling and powerful pipeline capabilities a plus. Additionally, users\nwho value a more consistent and safer scripting experience might appreciate\nNushell’s language-first design and features like strong typing.</p>",
+      "tags": [
+        "nushell",
+        "shells"
+      ],
+      "title": "Intro to Nushell"
+    },
+    {
+      "author": "saylesss88",
+      "collection": "notes",
+      "date": "2025-11-30T00:00:00+00:00",
+      "description": "Git",
+      "draft": false,
+      "path": "vcs/git.md",
+      "preview_html": "<p>⚠️ <strong>Important</strong>: Never commit secrets (passwords, API keys, tokens, etc.) in\nplain text to your Git repository. If you plan to publish your NixOS\nconfiguration, always use a secrets management tool like sops-nix or agenix to\nkeep sensitive data safe. See the\n<a href=\"https://saylesss88.github.io/installation/enc/sops-nix.html\">Sops-Nix Guide</a>\nfor details.</p><p>It’s also important to understand that <strong>all files in the <code>/nix/store</code> are\nworld-readable by default</strong> This has important security implications for anyone\nmanaging sensitive data on a NixOS system.</p><p>What Does “World-Readable” Mean?</p>",
+      "tags": [
+        "vcs",
+        "git"
+      ],
+      "title": "Git"
+    },
+    {
+      "author": "saylesss88",
+      "collection": "notes",
+      "date": "2025-11-30T00:00:00+00:00",
+      "description": "JJ Version Control",
+      "draft": false,
+      "path": "vcs/jujutsu.md",
+      "preview_html": "<p><img src=\"../images/jujutsu.png\" alt=\"JJ Logo\" /></p><p>⚠️ <strong>Security Reminder</strong>: Never commit secrets (passwords, API keys, tokens,\netc.) in plain text to your Git repository. If you plan to publish your NixOS\nconfiguration, always use a secrets management tool like <code>sops-nix</code> or <code>agenix</code>\nto keep sensitive data safe. See the\n<a href=\"https://saylesss88.github.io/installation/enc/sops-nix.html\">Sops-Nix Guide</a>\nfor details.</p><p>Jujutsu (jj) is a modern, Git-compatible version control system designed to\nsimplify and improve the developer experience. It offers a new approach to\ndistributed version control, focusing on a more intuitive workflow, powerful\nundo capabilities, and a branchless model that reduces common pitfalls of Git.</p>",
+      "tags": [
+        "vcs",
+        "jj"
+      ],
+      "title": "JJ VCS"
+    },
+    {
+      "author": "saylesss88",
+      "collection": "blog",
       "date": "2025-11-30T00:00:00+00:00",
       "description": null,
       "draft": false,
@@ -15,6 +72,20 @@
       "title": "Functions and NixOS Modules"
     },
     {
+      "author": "saylesss88",
+      "collection": "notes",
+      "date": "2025-11-29T00:00:00+00:00",
+      "description": null,
+      "draft": false,
+      "path": "Intro_to_Nix_Derivations_7.md",
+      "preview_html": "<p><img src=\"images/gruv10.png\" alt=\"gruv10\" /></p><p>Nix’s build instructions, known as <strong>derivations</strong>, are defined using the Nix\nLanguage. These derivations can describe anything from individual software\npackages to complete system configurations. The Nix package manager then\ndeterministically “realizes” (builds) these derivations, ensuring consistency\nbecause they rely solely on a predefined set of inputs.</p><p>Most things in NixOS are built around derivations. Your NixOS system is\ndescribed by such a single system derivation. When you want to apply a new\nconfiguration, <code>nixos-rebuild</code> handles the process:</p>",
+      "tags": [
+        "notes",
+        "derivations"
+      ],
+      "title": "Intro to Derivations"
+    },
+    {
       "author": null,
       "collection": null,
       "date": "2025-11-28T20:30:18.977545138+00:00",
@@ -24,21 +95,6 @@
       "preview_html": "",
       "tags": [],
       "title": "index"
-    },
-    {
-      "author": "saylesss88",
-      "collection": "blog",
-      "date": "2025-11-28T00:00:00+00:00",
-      "description": null,
-      "draft": false,
-      "path": "flakes/helix_flake_4.4.md",
-      "preview_html": "<p><img src=\"../images/helix.png\" alt=\"Helix Logo\" />–<a href=\"https://helix-editor.com/\">helix-editor.com</a></p><p>As we’ve seen from previous examples, the helix editor repository includes a few\n<code>.nix</code> files including a <code>flake.nix</code>. Their flake uses a lot of idiomatic Nix\ncode and advanced features. First I will break down their <code>flake.nix</code> and\n<code>default.nix</code> to understand why they do certain things. And finally, we will\nchange the build to “debug” mode demonstrating how easily you can modify the\nbehavior of a package defined within a Nix flake without changing the original\nsource code or the upstream flake directly.</p><pre><code class=\"language-bash\">git clone https://github.com/helix-editor/helix.git\ncd helix\n</code></pre>\n<p>When you enter ",
-      "tags": [
-        "nixos",
-        "flakes",
-        "helix"
-      ],
-      "title": "Understanding the Helix Flake"
     },
     {
       "author": "saylesss88",
@@ -158,25 +214,18 @@
     },
     {
       "author": "saylesss88",
-      "collection": null,
+      "collection": "notes",
       "date": "2025-11-22T00:00:00+00:00",
-      "description": "Git",
+      "description": null,
       "draft": false,
-      "path": "vcs/git.md",
-      "preview_html": "<p>⚠️ <strong>Important</strong>: Never commit secrets (passwords, API keys, tokens, etc.) in\nplain text to your Git repository. If you plan to publish your NixOS\nconfiguration, always use a secrets management tool like sops-nix or agenix to\nkeep sensitive data safe. See the\n<a href=\"https://saylesss88.github.io/installation/enc/sops-nix.html\">Sops-Nix Guide</a>\nfor details.</p><p>It’s also important to understand that <strong>all files in the <code>/nix/store</code> are\nworld-readable by default</strong> This has important security implications for anyone\nmanaging sensitive data on a NixOS system.</p><p>What Does “World-Readable” Mean?</p>",
-      "tags": [],
-      "title": "Git"
-    },
-    {
-      "author": "saylesss88",
-      "collection": null,
-      "date": "2025-11-22T00:00:00+00:00",
-      "description": "JJ",
-      "draft": false,
-      "path": "vcs/jujutsu.md",
-      "preview_html": "<p><img src=\"../images/jujutsu.png\" alt=\"JJ Logo\" /></p><p>⚠️ <strong>Security Reminder</strong>: Never commit secrets (passwords, API keys, tokens,\netc.) in plain text to your Git repository. If you plan to publish your NixOS\nconfiguration, always use a secrets management tool like <code>sops-nix</code> or <code>agenix</code>\nto keep sensitive data safe. See the\n<a href=\"https://saylesss88.github.io/installation/enc/sops-nix.html\">Sops-Nix Guide</a>\nfor details.</p><p>Jujutsu (jj) is a modern, Git-compatible version control system designed to\nsimplify and improve the developer experience. It offers a new approach to\ndistributed version control, focusing on a more intuitive workflow, powerful\nundo capabilities, and a branchless model that reduces common pitfalls of Git.</p>",
-      "tags": [],
-      "title": "JJ"
+      "path": "nixpkgs/fork_clone_contribute.md",
+      "preview_html": "<p>In the <a href=\"https://github.com/NixOS/nixpkgs\">Nixpkgs</a> Repository.</p><p>Click Fork, then Create a new Fork.</p><p>Uncheck the box “Only fork the <code>master</code> branch”, for development we will need\nmore branches.</p>",
+      "tags": [
+        "git",
+        "vcs",
+        "nixpkgs"
+      ],
+      "title": "Fork, Clone, Contribute"
     },
     {
       "author": "saylesss88",
@@ -199,17 +248,6 @@
       "preview_html": "<p>The following is done with a local clone of Nixpkgs located at <code>~/src/nixpkgs</code>.</p><p>In this example, we will create an overlay to override the version of\n<code>btrfs-progs</code>. In the root directory of our local clone of Nixpkgs\n(i.e.<code>~/src/nixpkgs</code>) we can run the following command to locate <code>btrfs-progs</code>\nwithin Nixpkgs:</p><pre><code class=\"language-bash\">fd 'btrfs-progs' .\n./pkgs/by-name/bt/btrfs-progs/\n</code></pre>\n<p>Open the <code>package.nix</code> in the above directory and copy the <code>src</code> block within\nthe <code>stdenv.mkDerivation</code> block like so:</p>",
       "tags": [],
       "title": "Nixpkgs Overlays"
-    },
-    {
-      "author": "saylesss88",
-      "collection": null,
-      "date": "2025-11-22T00:00:00+00:00",
-      "description": null,
-      "draft": false,
-      "path": "nixpkgs/fork_clone_contribute.md",
-      "preview_html": "<p>In the <a href=\"https://github.com/NixOS/nixpkgs\">Nixpkgs</a> Repository.</p><p>Click Fork, then Create a new Fork.</p><p>Uncheck the box “Only fork the <code>master</code> branch”, for development we will need\nmore branches.</p>",
-      "tags": [],
-      "title": "Fork, Clone, Contribute"
     },
     {
       "author": "saylesss88",
@@ -473,31 +511,6 @@
         "outputs"
       ],
       "title": "Overlays"
-    },
-    {
-      "author": "saylesss88",
-      "collection": "notes",
-      "date": "2025-11-21T00:00:00+00:00",
-      "description": null,
-      "draft": false,
-      "path": "Intro_to_Nix_Derivations_7.md",
-      "preview_html": "<p><img src=\"images/gruv10.png\" alt=\"gruv10\" /></p><p>Nix’s build instructions, known as <strong>derivations</strong>, are defined using the Nix\nLanguage. These derivations can describe anything from individual software\npackages to complete system configurations. The Nix package manager then\ndeterministically “realizes” (builds) these derivations, ensuring consistency\nbecause they rely solely on a predefined set of inputs.</p><p>Most things in NixOS are built around derivations. Your NixOS system is\ndescribed by such a single system derivation. When you want to apply a new\nconfiguration, <code>nixos-rebuild</code> handles the process:</p>",
-      "tags": [
-        "notes",
-        "derivations"
-      ],
-      "title": "Intro to Derivations"
-    },
-    {
-      "author": "saylesss88",
-      "collection": null,
-      "date": "2025-11-21T00:00:00+00:00",
-      "description": null,
-      "draft": false,
-      "path": "intro_to_nushell_on_NixOS.md",
-      "preview_html": "<p><img src=\"images/nu.png\" alt=\"Nu\" /></p><p><strong>TL;DR</strong>:I recently switched default shells from zsh to nushell, this post is\nabout some of the challenges and advantages of using nushell with NixOS.</p><p>While the average user might not immediately see significant advantages, those\nwho frequently work with structured data formats like JSON, YAML, and CSV –\nsuch as developers interacting with APIs, system administrators managing\nconfigurations, and data professionals – will likely find Nushell’s native\ndata handling and powerful pipeline capabilities a plus. Additionally, users\nwho value a more consistent and safer scripting experience might appreciate\nNushell’s language-first design and features like strong typing.</p>",
-      "tags": [],
-      "title": "Intro to Nushell"
     },
     {
       "author": "saylesss88",
