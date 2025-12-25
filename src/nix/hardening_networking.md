@@ -1,6 +1,6 @@
 ---
 title: Hardening Networking
-date: 2025-12-05
+date: 2025-12-25
 author: saylesss88
 collection: "blog"
 tags: ["hardening", "networking", "firewall"]
@@ -31,6 +31,9 @@ Start with the basics and build up as you gain confidence. The goal is
 practical, tested hardening tailored to you.
 
 ### Safe Browsing / Privacy Enhancing Habits
+
+I recently broke this chapter down and added another chapter:
+[Browser/Browsing Security](https://saylesss88.github.io/nix/browsing_security.html)
 
 **Adopt Encrypted DNS and HTTPS Everywhere**
 
@@ -270,8 +273,8 @@ Useful resources:
 
 </details>
 
-The following sets up dnscrypt-proxy using DoH (DNS over HTTPS) with an oisd
-blocklist, they both come directly from the Wiki:
+The following sets up dnscrypt-proxy using ODoH (Oblivious DNS over HTTPS) with
+an oisd blocklist:
 
 Add `oisd` to your flake inputs:
 
@@ -301,77 +304,87 @@ And the import the following into your `configuration.nix`:
   ...
 }: let
   blocklist_base = builtins.readFile inputs.oisd;
-  extraBlocklist = '''';
+  extraBlocklist = "";
   blocklist_txt = pkgs.writeText "blocklist.txt" ''
     ${extraBlocklist}
     ${blocklist_base}
   '';
   hasIPv6Internet = true;
-  StateDirectory = "dnscrypt-proxy";
+  StateDirName = "dnscrypt-proxy"; # Used for systemd StateDirectory
+  StatePath = "/var/lib/${StateDirName}";
 in {
   networking = {
-    # Set DNS nameservers to the local host addresses for iPv4 (`127.0.0.1`) & iPv6 (::1)
     nameservers = ["127.0.0.1" "::1"];
-    # If using dhcpcd
-    # dhcpcd.extraConfig = "nohook resolv.conf";
-    # If using NetworkManager
     networkmanager.dns = "none";
   };
+
   services.resolved.enable = lib.mkForce false;
-  # See https://wiki.nixos.org/wiki/Encrypted_DNS
-  services.dnscrypt-proxy2 = {
+
+  services.dnscrypt-proxy = {
     enable = true;
-    # See https://github.com/DNSCrypt/dnscrypt-proxy/blob/master/dnscrypt-proxy/example-dnscrypt-proxy.toml
     settings = {
-      # See https://github.com/DNSCrypt/dnscrypt-resolvers/blob/master/v3/public-resolvers.md
       sources.public-resolvers = {
         urls = [
           "https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/public-resolvers.md"
           "https://download.dnscrypt.info/resolvers-list/v3/public-resolvers.md"
         ];
         minisign_key = "RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3";
-        cache_file = "/var/lib/${StateDirectory}/public-resolvers.md";
+        cache_file = "${StatePath}/public-resolvers.md";
       };
-     # sources.quad9-resolvers = {
-     #   urls = [
-     #     "https://quad9.net/dnscrypt/quad9-resolvers.md"
-     #     "https://raw.githubusercontent.com/Quad9DNS/dnscrypt-settings/main/dnscrypt/quad9-resolvers.md"
-     #   ];
-     #   minisign_key = "RWTp2E4t64BrL651lEiDLNon+DqzPG4jhZ97pfdNkcq1VDdocLKvl5FW";
-     #   cache_file = "/var/cache/dnscrypt-proxy/quad9-resolvers.md";
-     # };
 
-      # Use servers reachable over IPv6 -- Do not enable if you don't have IPv6 connectivity
+      sources.quad9-resolvers = {
+        urls = [
+          "https://quad9.net/dnscrypt/quad9-resolvers.md"
+          "https://raw.githubusercontent.com/Quad9DNS/dnscrypt-settings/main/dnscrypt/quad9-resolvers.md"
+        ];
+        minisign_key = "RWTp2E4t64BrL651lEiDLNon+DqzPG4jhZ97pfdNkcq1VDdocLKvl5FW";
+        cache_file = "${StatePath}/quad9-resolvers.md";
+      };
+
+      sources.relays = {
+        urls = [
+          "https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/relays.md"
+          "https://download.dnscrypt.info/resolvers-list/v3/relays.md"
+        ];
+        cache_file = "${StatePath}/relays.md";
+        minisign_key = "RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3";
+      };
+
+      sources.odoh-servers = {
+        urls = [
+          "https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/odoh-servers.md"
+          "https://download.dnscrypt.info/resolvers-list/v3/odoh-servers.md"
+        ];
+        cache_file = "${StatePath}/odoh-servers.md";
+        minisign_key = "RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3";
+      };
+
+      sources.odoh-relays = {
+        urls = [
+          "https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/odoh-relays.md"
+          "https://download.dnscrypt.info/resolvers-list/v3/odoh-relays.md"
+        ];
+        cache_file = "${StatePath}/odoh-relays.md";
+        minisign_key = "RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3";
+      };
+
       ipv6_servers = hasIPv6Internet;
-      block_ipv6 = ! hasIPv6Internet;
-      blocked_names.blocked_names_file = blocklist_txt;
+      block_ipv6 = !hasIPv6Internet;
+      blocked_names.blocked_names_file = "${blocklist_txt}";
       require_dnssec = true;
-      # Logs can get large very quickly...
       require_nolog = false;
-      # This stops dns malware filtering, etc. if true
       require_nofilter = false;
-      dnscrypt_servers = true;
-
-      # If you want, choose a specific set of servers that come from your sources.
-      # Here it's from https://github.com/DNSCrypt/dnscrypt-resolvers/blob/master/v3/public-resolvers.md
-      # If you don't specify any, dnscrypt-proxy will automatically rank servers
-      # that match your criteria and choose the best one.
-      # server_names = [ ... ];
-      # server_names = ['quad9-dnscrypt-ip6-filter-pri', 'quad9-dnscrypt-ip4-filter-pri', 'mullvad-adblock-d'];
-
+      odoh_servers = true;
     };
   };
 
-  systemd.services.dnscrypt-proxy2.serviceConfig.StateDirectory = StateDirectory;
+  # This creates /var/lib/dnscrypt-proxy with correct permissions
+  systemd.services.dnscrypt-proxy2.serviceConfig.StateDirectory = StateDirName;
 }
 ```
 
-> ❗️ NOTE: Upon testing dnscrypt-proxy on Arch, it was able to route the browser
-> through the proxy, removing the need for Max Protection. I'm still currently
-> on Arch and plan to test this further ASAP. We test the above settings further
-> down, but I'm curious why the browser isn't routed correctly...
-
-- Above, we have a local DNS proxy that encrypts and forwards queries.
+This module follows a "Zero Trust" model for your internet traffic, ensuring no
+single entity can see both **who you are** and **where you are going**.
 
 ```bash
 # You should see that dnscrypt-proxy chooses the Server with the lowest initial latency
@@ -398,6 +411,9 @@ from connecting to unwanted or harmful domains.
 
 `dnscrypt-proxy2` then encrypts and forwards our DNS requests to third-party
 public DNSCrypt or DoH servers.
+
+- ODoH Relays: This is the "Oblivious" part. It breaks the link between your IP
+  address and your browsing history.
 
 ### Setting up Tailscale
 
