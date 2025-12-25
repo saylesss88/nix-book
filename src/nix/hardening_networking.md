@@ -303,6 +303,7 @@ And the import the following into your `configuration.nix`:
   inputs,
   ...
 }: let
+  # Use "" for simple strings, '' '' for multiline
   blocklist_base = builtins.readFile inputs.oisd;
   extraBlocklist = "";
   blocklist_txt = pkgs.writeText "blocklist.txt" ''
@@ -332,15 +333,6 @@ in {
         cache_file = "${StatePath}/public-resolvers.md";
       };
 
-      sources.quad9-resolvers = {
-        urls = [
-          "https://quad9.net/dnscrypt/quad9-resolvers.md"
-          "https://raw.githubusercontent.com/Quad9DNS/dnscrypt-settings/main/dnscrypt/quad9-resolvers.md"
-        ];
-        minisign_key = "RWTp2E4t64BrL651lEiDLNon+DqzPG4jhZ97pfdNkcq1VDdocLKvl5FW";
-        cache_file = "${StatePath}/quad9-resolvers.md";
-      };
-
       sources.relays = {
         urls = [
           "https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/relays.md"
@@ -368,6 +360,23 @@ in {
         minisign_key = "RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3";
       };
 
+      server_names = ["odoh-cloudflare" "odoh-snowstorm"];
+
+      # This creates the [anonymized_dns] section in dnscrypt-proxy.toml
+      anonymized_dns = {
+        skip_incompatible = true;
+        routes = [
+          {
+            server_name = "odoh-snowstorm";
+            via = ["odohrelay-crypto-sx"];
+          }
+          {
+            server_name = "odoh-cloudflare";
+            via = ["odohrelay-crypto-sx"];
+          }
+        ];
+      };
+
       ipv6_servers = hasIPv6Internet;
       block_ipv6 = !hasIPv6Internet;
       blocked_names.blocked_names_file = "${blocklist_txt}";
@@ -375,6 +384,7 @@ in {
       require_nolog = false;
       require_nofilter = false;
       odoh_servers = true;
+      dnscrypt_servers = true;
     };
   };
 
