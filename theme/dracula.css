@@ -1,10 +1,11 @@
 /* theme/dracula.css */
 
-html.navy,
-body.navy,
-.navy {
+:root.coal,
+.coal,
+html.coal,
+body.coal {
   --bg: #282a36;
-  --bg-alt: #44475a;
+  --bg-alt: #282a36;
   --fg: #f8f8f2;
   --fg-light: #cfcfd9;
 

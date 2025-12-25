@@ -2,12 +2,71 @@
   "entries": [
     {
       "author": "saylesss88",
-      "collection": "notes",
+      "collection": "blog",
+      "date": "2025-12-21T00:00:00+00:00",
+      "description": null,
+      "draft": false,
+      "path": "nix/browsing_security.md",
+      "preview_html": "<p>“The major problem with current systems is their inability to provide\neffective isolation between various programs running on one machine. E.g. if\nthe user’s Web browser gets compromised (due to a bug exploited by a malicious\nweb site), the OS is usually unable to protect other user’s applications and\ndata from also being compromised.” –Qubes arch-spec</p><p>The web browser is the most complex, most exposed, and most vulnerable\napplication on a hardened Linux system. It is your primary interface with the\ninternet and, consequently, the primary vector for exploitation and tracking.</p><p>The <strong>Three Pillars of Web Defense</strong> To secure your browsing, you must balance\nthree often-conflicting goals:</p>",
+      "tags": [
+        "hardening",
+        "privacy",
+        "browsers"
+      ],
+      "title": "Browsing Security"
+    },
+    {
+      "author": "saylesss88",
+      "collection": "blog",
+      "date": "2025-12-08T00:00:00+00:00",
+      "description": "JJ Version Control",
+      "draft": false,
+      "path": "vcs/jujutsu.md",
+      "preview_html": "<p><img src=\"../images/jujutsu.png\" alt=\"JJ Logo\" /></p><p>⚠️ <strong>Security Reminder</strong>: Never commit secrets (passwords, API keys, tokens,\netc.) in plain text to your Git repository. If you plan to publish your NixOS\nconfiguration, always use a secrets management tool like <code>sops-nix</code> or <code>agenix</code>\nto keep sensitive data safe. See the\n<a href=\"https://saylesss88.github.io/installation/enc/sops-nix.html\">Sops-Nix Guide</a>\nfor details.</p><p>Jujutsu (jj) is a modern, Git-compatible version control system designed to\nsimplify and improve the developer experience. It offers a new approach to\ndistributed version control, focusing on a more intuitive workflow, powerful\nundo capabilities, and a branchless model that reduces common pitfalls of Git.</p>",
+      "tags": [
+        "vcs",
+        "jj"
+      ],
+      "title": "JJ VCS"
+    },
+    {
+      "author": "saylesss88",
+      "collection": "blog",
+      "date": "2025-12-08T00:00:00+00:00",
+      "description": null,
+      "draft": false,
+      "path": "nix/hardening_NixOS.md",
+      "preview_html": "<p><img src=\"../images/guy_fawks.png\" alt=\"guy fawks hacker\" /></p><p>Securing your NixOS system begins with a philosophy of minimalism, explicit\nconfiguration, and proactive control. As desktop Linux attracts more novice\nusers, it has become an increasingly valuable target for attackers. This makes\nit crucial to adopt security best practices early to protect your desktop from\ncommon attack vectors and to avoid configuration mistakes that could expose\nvulnerabilities.</p><p>⚠️ Warning: I am not a security expert. This guide presents various options\nfor hardening NixOS, but it is your responsibility to evaluate whether each\nadjustment suits your specific needs and environment. Security hardening and\nprocess isolation can introduce stability challenges, compatibility issues, or\nunexpected be",
+      "tags": [
+        "security",
+        "privacy",
+        "hardening"
+      ],
+      "title": "Hardening NixOS"
+    },
+    {
+      "author": "saylesss88",
+      "collection": "blog",
+      "date": "2025-12-08T00:00:00+00:00",
+      "description": null,
+      "draft": false,
+      "path": "nix/gpg-agent.md",
+      "preview_html": "<p>⚠️ <strong>SECURITY WARNING</strong>: This guide involves sensitive cryptographic material.\n<strong>Never share your private key or passphrase</strong>. Backup your keys and handle\nthem with extreme care.</p><p><img src=\"../images/gnupg.png\" alt=\"GnuPG\" /></p><p><strong>GnuPG</strong> is a complete and free implementation of the OpenPGP standard. It\nallows you to encrypt and sign your data and communications, has a versatile key\nmanagement system, and access modules for many kinds of public key directories.\nGnuPG (GPG), is a command line tool for secure communication.</p>",
+      "tags": [
+        "Encryption",
+        "GnuPG",
+        "security"
+      ],
+      "title": "GnuPG gpg-agent"
+    },
+    {
+      "author": "saylesss88",
+      "collection": "blog",
       "date": "2025-12-06T00:00:00+00:00",
       "description": null,
       "draft": false,
       "path": "nix/kvm.md",
-      "preview_html": "<p><img src=\"images/steampunk5.cleaned.png\" alt=\"sp5\" /></p><p><strong>Host</strong> <code>secureblue</code> = Fedora Atomic with <strong>SELinux enforcing</strong>, <strong>sVirt</strong>,\n<strong>Secure Boot</strong>, and hardened defaults.</p><p><strong>Guest</strong>: NixOS in a VM → full declarative power, near zero risk to host.</p>",
+      "preview_html": "<p><img src=\"/images/steampunk5.cleaned.png\" alt=\"sp5\" /></p><p><strong>Host</strong> <code>secureblue</code> = Fedora Atomic with <strong>SELinux enforcing</strong>, <strong>sVirt</strong>,\n<strong>Secure Boot</strong>, and hardened defaults.</p><p><strong>Guest</strong>: NixOS in a VM → full declarative power, near zero risk to host.</p>",
       "tags": [
         "KVM",
         "Virtual Machines",
@@ -17,7 +76,21 @@
     },
     {
       "author": "saylesss88",
-      "collection": "notes",
+      "collection": "blog",
+      "date": "2025-12-06T00:00:00+00:00",
+      "description": null,
+      "draft": false,
+      "path": "nix/encrypted_impermanence.md",
+      "preview_html": "<p>❗ Important Note: This guide details a setup involving encrypted partitions\nand impermanent NixOS. While powerful, such configurations require careful\nattention to detail. Incorrect steps, especially concerning encryption keys or\npersistent data paths, can lead to <strong>permanent data loss</strong>. Please read all\ninstructions thoroughly before proceeding and consider backing up any critical\ndata beforehand. This has only been tested with the disk layout described in\n<a href=\"https://saylesss88.github.io/installation/encrypted_manual.html\">Encrypted Setups</a></p><pre><code class=\"language-nix\"># flake.nix\n{\n  description = \"NixOS configuration\";\n\n  inputs = {\n    nixpkgs.url = \"github:nixos/nixpkgs/nixos-unstable\";\n    disko.url = \"github:nix-community/disko/latest\";\n    disko.input",
+      "tags": [
+        "impermanence",
+        "security"
+      ],
+      "title": "Encrypted Impermanence"
+    },
+    {
+      "author": "saylesss88",
+      "collection": "blog",
       "date": "2025-12-05T00:00:00+00:00",
       "description": null,
       "draft": false,
@@ -36,14 +109,13 @@
       "date": "2025-12-05T00:00:00+00:00",
       "description": null,
       "draft": false,
-      "path": "nix/hardening_NixOS.md",
-      "preview_html": "<p><img src=\"../images/guy_fawks.png\" alt=\"guy fawks hacker\" /></p><p>Securing your NixOS system begins with a philosophy of minimalism, explicit\nconfiguration, and proactive control. As desktop Linux attracts more novice\nusers, it has become an increasingly valuable target for attackers. This makes\nit crucial to adopt security best practices early to protect your desktop from\ncommon attack vectors and to avoid configuration mistakes that could expose\nvulnerabilities.</p><p>⚠️ Warning: I am not a security expert. This guide presents various options\nfor hardening NixOS, but it is your responsibility to evaluate whether each\nadjustment suits your specific needs and environment. Security hardening and\nprocess isolation can introduce stability challenges, compatibility issues, or\nunexpected be",
+      "path": "nix/cachix_devour.md",
+      "preview_html": "<p>Using devour-flake to Cache All Your Flake Outputs to Cachix</p><p>When working with Nix flakes, it’s common to have many outputs: packages, apps,\ndev shells, NixOS or Darwin configurations, and more. Efficiently building and\ncaching all these outputs can be challenging, especially in CI or when\ncollaborating. This is where devour-flake and Cachix shine.</p><p><strong>Why Use the devour-flake?</strong></p>",
       "tags": [
-        "security",
-        "privacy",
-        "hardening"
+        "cache",
+        "flakes"
       ],
-      "title": "Hardening NixOS"
+      "title": "Cachix devour-flake"
     },
     {
       "author": "saylesss88",
@@ -66,21 +138,6 @@
       "date": "2025-12-04T00:00:00+00:00",
       "description": null,
       "draft": false,
-      "path": "nix/sops-nix.md",
-      "preview_html": "<p><a href=\"https://github.com/getsops/sops?ref=blog.gitguardian.com\">SOPS</a>, short for\n<strong>S</strong>ecrets<strong>OP</strong>eration<strong>S</strong>, is an editor of encrypted files that supports\nquite a few BINARY formats and encrypts with AWS KMS, GCP KMS, Azure Key Vault,\nage, and PGP.</p><p>Managing secrets—like API keys, SSH deploy keys, and password hashes is a\ncritical part of system configuration, but it’s also one of the trickiest to do\nsecurely and reproducibly. Traditionally, secrets might be stored in ad hoc\nlocations, referenced by absolute paths, or managed manually outside of version\ncontrol. This approach makes it hard to share, rebuild, or audit your\nconfiguration, and increases the risk of accidental leaks or inconsistencies\nbetween systems.</p><p><code>sops-nix",
-      "tags": [
-        "secrets",
-        "sops-nix",
-        "hardening"
-      ],
-      "title": "Sops-Nix"
-    },
-    {
-      "author": "saylesss88",
-      "collection": "notes",
-      "date": "2025-12-04T00:00:00+00:00",
-      "description": null,
-      "draft": false,
       "path": "nix/whonix_kvm.md",
       "preview_html": "<p><img src=\"../images/swappy-20250901-101339.cleaned.png\" alt=\"Whonix Logo\" /></p><p>⚠️ WARNING: There is no general software that can guarantee absolute anonymity\nor security; perfect security is a myth. Security is a continuous process, not\na one-time product. It also depends on time and resources: if an adversary has\nenough of either, eventual compromise is probable. However, by layering\ndefenses and following best practices, we can make attacks costly and\ntime-consuming, deterring all but highly targeted adversaries.</p><p>It is highly recommended to harden your Host Machine as Type 2 hypervisors are\nonly as secure as their host. KVM is actually a type 1 hypervisor but relies on\nQEMU for emulation which is a Type 2 hypervisor. This actually makes it a sort\nof hybrid in between Type 1 ",
       "tags": [
@@ -89,6 +146,21 @@
         "Whonix"
       ],
       "title": "Whonix KVM on NixOS"
+    },
+    {
+      "author": "saylesss88",
+      "collection": "blog",
+      "date": "2025-12-04T00:00:00+00:00",
+      "description": null,
+      "draft": false,
+      "path": "nix/sops-nix.md",
+      "preview_html": "<p><a href=\"https://github.com/getsops/sops?ref=blog.gitguardian.com\">SOPS</a>, short for\n<strong>S</strong>ecrets<strong>OP</strong>eration<strong>S</strong>, is an editor of encrypted files that supports\nquite a few BINARY formats and encrypts with AWS KMS, GCP KMS, Azure Key Vault,\nage, and PGP.</p><p>Managing secrets—like API keys, SSH deploy keys, and password hashes is a\ncritical part of system configuration, but it’s also one of the trickiest to do\nsecurely and reproducibly. Traditionally, secrets might be stored in ad hoc\nlocations, referenced by absolute paths, or managed manually outside of version\ncontrol. This approach makes it hard to share, rebuild, or audit your\nconfiguration, and increases the risk of accidental leaks or inconsistencies\nbetween systems.</p><p><code>sops-nix",
+      "tags": [
+        "secrets",
+        "sops-nix",
+        "hardening"
+      ],
+      "title": "Sops-Nix"
     },
     {
       "author": "saylesss88",
@@ -117,20 +189,6 @@
         "git"
       ],
       "title": "Git"
-    },
-    {
-      "author": "saylesss88",
-      "collection": "notes",
-      "date": "2025-11-30T00:00:00+00:00",
-      "description": "JJ Version Control",
-      "draft": false,
-      "path": "vcs/jujutsu.md",
-      "preview_html": "<p><img src=\"../images/jujutsu.png\" alt=\"JJ Logo\" /></p><p>⚠️ <strong>Security Reminder</strong>: Never commit secrets (passwords, API keys, tokens,\netc.) in plain text to your Git repository. If you plan to publish your NixOS\nconfiguration, always use a secrets management tool like <code>sops-nix</code> or <code>agenix</code>\nto keep sensitive data safe. See the\n<a href=\"https://saylesss88.github.io/installation/enc/sops-nix.html\">Sops-Nix Guide</a>\nfor details.</p><p>Jujutsu (jj) is a modern, Git-compatible version control system designed to\nsimplify and improve the developer experience. It offers a new approach to\ndistributed version control, focusing on a more intuitive workflow, powerful\nundo capabilities, and a branchless model that reduces common pitfalls of Git.</p>",
-      "tags": [
-        "vcs",
-        "jj"
-      ],
-      "title": "JJ VCS"
     },
     {
       "author": "saylesss88",
@@ -326,14 +384,17 @@
     },
     {
       "author": "saylesss88",
-      "collection": null,
+      "collection": "notes",
       "date": "2025-11-22T00:00:00+00:00",
       "description": null,
       "draft": false,
-      "path": "nix/encrypted_impermanence.md",
-      "preview_html": "<p>❗ Important Note: This guide details a setup involving encrypted partitions\nand impermanent NixOS. While powerful, such configurations require careful\nattention to detail. Incorrect steps, especially concerning encryption keys or\npersistent data paths, can lead to <strong>permanent data loss</strong>. Please read all\ninstructions thoroughly before proceeding and consider backing up any critical\ndata beforehand. This has only been tested with the disk layout described in\n<a href=\"https://saylesss88.github.io/installation/encrypted_manual.html\">Encrypted Setups</a></p><pre><code class=\"language-nix\"># flake.nix\n{\n  description = \"NixOS configuration\";\n\n  inputs = {\n    nixpkgs.url = \"github:nixos/nixpkgs/nixos-unstable\";\n    disko.url = \"github:nix-community/disko/latest\";\n    disko.input",
-      "tags": [],
-      "title": "Encrypted Impermanence"
+      "path": "nix/impermanence.md",
+      "preview_html": "<p>Figure 1: <strong>Impermanence Logo</strong>: Image of the Impermanence logo. Sourced from\nthe</p><p><a href=\"https://github.com/nix-community/impermanence\">Impermanence repo</a></p><p><img src=\"../images/Impermanence.png\" alt=\"Impermanence Logo\" /></p>",
+      "tags": [
+        "impermanence",
+        "security"
+      ],
+      "title": "Unencrypted Impermanence"
     },
     {
       "author": "saylesss88",
@@ -363,43 +424,10 @@
       "date": "2025-11-22T00:00:00+00:00",
       "description": null,
       "draft": false,
-      "path": "nix/gpg-agent.md",
-      "preview_html": "<p>⚠️ <strong>SECURITY WARNING</strong>: This guide involves sensitive cryptographic material.\n<strong>Never share your private key or passphrase</strong>. Backup your keys and handle\nthem with extreme care.</p><p><strong>GnuPG</strong> is a complete and free implementation of the OpenPGP standard. It\nallows you to encrypt and sign your data and communications, has a versatile key\nmanagement system, and access modules for many kinds of public key directories.\nGnuPG (GPG), is a command line tool for secure communication.</p><p><strong>PGP (Pretty Good Privacy)</strong> and <strong>GPG (GNU Privacy Guard)</strong>. While distinct,\nthey are deeply interconnected and, for the rest of this section, I’ll use the\nterms interchangeably.</p>",
-      "tags": [],
-      "title": "GnuPG gpg-agent"
-    },
-    {
-      "author": "saylesss88",
-      "collection": null,
-      "date": "2025-11-22T00:00:00+00:00",
-      "description": null,
-      "draft": false,
-      "path": "nix/impermanence.md",
-      "preview_html": "<p>Figure 1: <strong>Impermanence Logo</strong>: Image of the Impermanence logo. Sourced from\nthe</p><p><a href=\"https://github.com/nix-community/impermanence\">Impermanence repo</a></p><p><img src=\"../images/Impermanence.png\" alt=\"Impermanence Logo\" /></p>",
-      "tags": [],
-      "title": "Unencrypted Impermanence"
-    },
-    {
-      "author": "saylesss88",
-      "collection": null,
-      "date": "2025-11-22T00:00:00+00:00",
-      "description": null,
-      "draft": false,
       "path": "nix/nix_package_manager.md",
       "preview_html": "<p>Nix is a <em>purely functional package manager</em>. This means that it treats packages\nlike values in purely functional programming languages – they are built by\nfunctions that don’t have side-effects, and they never change after they have\nbeen built.</p><p>Nix stores packages in the <em>Nix store</em>, usually the directory <code>/nix/store</code>,\nwhere each package has its own unique subdirectory such as:</p><pre><code class=\"language-bash\">/nix/store/y53c0lamag5wpx7vsiv7wmnjdgq97yd6-yazi-25.5.14pre20250526_74a8ea9\n</code></pre>\n<p>You can use the Nix on most Linux distributions and Mac OS also has good support\nfor Nix. It should work on most platforms that support POSIX threads and have a\nC++11 compiler.</p>",
       "tags": [],
       "title": "Nix Package Manager"
-    },
-    {
-      "author": "saylesss88",
-      "collection": null,
-      "date": "2025-11-22T00:00:00+00:00",
-      "description": null,
-      "draft": false,
-      "path": "nix/cachix_devour.md",
-      "preview_html": "<p>Using devour-flake to Cache All Your Flake Outputs to Cachix</p><p>When working with Nix flakes, it’s common to have many outputs—packages, apps,\ndev shells, NixOS or Darwin configurations, and more. Efficiently building and\ncaching all these outputs can be challenging, especially in CI or when\ncollaborating. This is where devour-flake and Cachix shine. Why Use\ndevour-flake?</p><p>By default, building all outputs of a flake with <code>nix build .#a .#b ... .#z</code> can\nbe slow and inefficient, as Nix will evaluate the flake multiple times—once for\neach output. devour-flake solves this by generating a “consumer” flake that\ndepends on all outputs, allowing you to build everything in one go with a single\nevaluation</p>",
-      "tags": [],
-      "title": "Cachix devour-flake"
     },
     {
       "author": "saylesss88",
@@ -538,6 +566,28 @@
       "date": "2025-11-21T00:00:00+00:00",
       "description": null,
       "draft": false,
+      "path": "Getting_Started_with_Nix_1.md",
+      "preview_html": "<p><img src=\"images/trees1.cleaned.png\" alt=\"trees\" /></p><p>Welcome to <em>nix-book</em>, an introductory book about Nix. This book leans more\ntowards using Flakes but will contrast traditional Nix where beneficial.\nOriginally, this content started as a blog. I’m refining its flow to make it\nmore cohesive.</p><p>In this chapter, I will touch on the different parts of the Nix ecosystem, give\na quick example of each and explain how they fit together.</p>",
+      "tags": [],
+      "title": "Intro to Nix"
+    },
+    {
+      "author": "saylesss88",
+      "collection": null,
+      "date": "2025-11-21T00:00:00+00:00",
+      "description": null,
+      "draft": false,
+      "path": "Understanding_Nix_Functions_2.md",
+      "preview_html": "<p><img src=\"images/trees2.cleaned.png\" alt=\"trees2\" /></p><p><strong>Functions</strong> are the building blocks of Nix, appearing everywhere in Nix\nexpressions and configurations. Mastering them is essential for writing\neffective Nix code and understanding tools like NixOS and Home Manager. This\nchapter explores how Nix functions work, focusing on their <strong>single-argument\nnature</strong>, <strong>currying</strong>, <strong>partial application</strong>, and their role in <strong>modules</strong>.</p><p>A <strong>Nix Function</strong> is a rule that takes an input (called an <strong>argument</strong>) and\nproduces an <strong>output</strong> based on that input. Unlike many programming languages,\nNix functions are designed to take exactly one argument at a time. This unique\napproach, co",
+      "tags": [],
+      "title": "Understanding Nix Functions"
+    },
+    {
+      "author": "saylesss88",
+      "collection": null,
+      "date": "2025-11-21T00:00:00+00:00",
+      "description": null,
+      "draft": false,
       "path": "Package_Definitions_Explained_6.md",
       "preview_html": "<p><img src=\"images/coding2.png\" alt=\"coding2\" /></p><p>In Nix, the concept of a <strong>package</strong> can refer to two things:</p><p>A collection of files and data that constitute a piece of software or an\nartifact.</p>",
       "tags": [],
@@ -575,28 +625,6 @@
       "preview_html": "<p><img src=\"images/buildings1.png\" alt=\"buildings\" /></p><p><strong>TL;DR</strong>: In this chapter, we will break down the Nix module system used by\nboth NixOS and Home-Manager. We will discuss using home-manager as a module and\nthe flexibility that modules give us. We will touch on options and break down\nthe <code>vim</code> module from the Nixpkgs collection. Finally we will display how to\ntest modules with the repl.</p><p>Your <code>configuration.nix</code> is a module. For the Nixpkgs collection most modules\nare in <code>nixos/modules</code>.</p>",
       "tags": [],
       "title": "Nix Module System Explained"
-    },
-    {
-      "author": "saylesss88",
-      "collection": null,
-      "date": "2025-11-21T00:00:00+00:00",
-      "description": null,
-      "draft": false,
-      "path": "Understanding_Nix_Functions_2.md",
-      "preview_html": "<p><img src=\"images/trees2.cleaned.png\" alt=\"trees2\" /></p><p><strong>Functions</strong> are the building blocks of Nix, appearing everywhere in Nix\nexpressions and configurations. Mastering them is essential for writing\neffective Nix code and understanding tools like NixOS and Home Manager. This\nchapter explores how Nix functions work, focusing on their <strong>single-argument\nnature</strong>, <strong>currying</strong>, <strong>partial application</strong>, and their role in <strong>modules</strong>.</p><p>A <strong>Nix Function</strong> is a rule that takes an input (called an <strong>argument</strong>) and\nproduces an <strong>output</strong> based on that input. Unlike many programming languages,\nNix functions are designed to take exactly one argument at a time. This unique\napproach, co",
-      "tags": [],
-      "title": "Understanding Nix Functions"
-    },
-    {
-      "author": "saylesss88",
-      "collection": null,
-      "date": "2025-11-21T00:00:00+00:00",
-      "description": null,
-      "draft": false,
-      "path": "Getting_Started_with_Nix_1.md",
-      "preview_html": "<p><img src=\"images/trees1.cleaned.png\" alt=\"trees\" /></p><p>Welcome to <em>nix-book</em>, an introductory book about Nix. This book leans more\ntowards using Flakes but will contrast traditional Nix where beneficial.\nOriginally, this content started as a blog. I’m refining its flow to make it\nmore cohesive.</p><p>In this chapter, I will touch on the different parts of the Nix ecosystem, give\na quick example of each and explain how they fit together.</p>",
-      "tags": [],
-      "title": "Intro to Nix"
     }
   ]
 }

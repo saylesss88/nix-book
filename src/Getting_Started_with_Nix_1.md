@@ -104,9 +104,13 @@ The **Nix Language** is the foundation of the ecosystem and is used to write
 
 Example of a simple nix expression:
 
-```nix
+```nix repl
 { hello = "world"; }
+```
+
 # or
+
+```nix repl
 "foo" + "bar"
 ```
 

@@ -1,9 +1,9 @@
 ---
 title: JJ VCS
-date: 2025-11-30
+date: 2025-12-08
 author: saylesss88
 description: JJ Version Control
-collection: "notes"
+collection: "blog"
 tags: ["vcs", "jj"]
 ---
 

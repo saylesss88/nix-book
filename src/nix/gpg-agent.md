@@ -1,13 +1,16 @@
 ---
 title: GnuPG gpg-agent
-date: 2025-11-22
+date: 2025-12-08
 author: saylesss88
+collection: "blog"
+tags: ["Encryption", "GnuPG", "security"]
+draft: false
 ---
 
 # GnuPG & `gpg-agent` on NixOS
 
 <details>
-<summary> Click to Expand Table of Contents</summary>
+<summary> ✔️ Table of Contents</summary>
 
 <!-- toc -->
 
@@ -16,6 +19,8 @@ author: saylesss88
 > ⚠️ **SECURITY WARNING**: This guide involves sensitive cryptographic material.
 > **Never share your private key or passphrase**. Backup your keys and handle
 > them with extreme care.
+
+![GnuPG](../images/gnupg.png)
 
 ## 🔑 Key Concepts
 
@@ -156,7 +161,7 @@ Home Manager module with `gpg-agent`, `gnupg`, and `pinentry-gnome3`:
         enableZshIntegration = true;
         # pinentry is a collection of simple PIN or passphrase dialogs used for
         # password entry
-        pinentryPackage = pkgs.pinentry-gnome3;
+        pinentryPackage = pkgs.pinentry-qt;
       };
 
       ## We will put our keygrip here
@@ -164,8 +169,6 @@ Home Manager module with `gpg-agent`, `gnupg`, and `pinentry-gnome3`:
     };
     home.packages = [pkgs.gnupg];
     programs = {
-      # Gui for OpenPGP
-      seahorse.enable = true;
       gpg = {
         ## Enable GnuPG
         enable = true;
@@ -233,16 +236,18 @@ Home Manager module with `gpg-agent`, `gnupg`, and `pinentry-gnome3`:
   directory or elsewhere, uncomment the `homedir` line and change `userName` to
   your username.
 
-- I use hyprland so `pinentry-gnome3` works for me, there is also the following
-  options for this attribute:
+- I use sway so `pinentry-qt` works for me, there is also the following options
+  for this attribute:
 
 - `pinentry-tty`
 
-- `pinentry-qt`
+- `pinentry-gnome3`
 
 - `pinentry-gtk2`
 
 And more, research what you need and use the correct one.
+
+[search.nixos.org pinentry](https://search.nixos.org/packages?channel=unstable&query=pinentry)
 
 Enable in your `home.nix` or equivalent:
 

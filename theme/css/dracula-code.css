@@ -1,0 +1,50 @@
+/* Base code text colors only (no background here) */
+.hljs {
+  color: #f8f8f2 !important;
+}
+
+/* Tokens */
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-type {
+  color: #ff79c6 !important;
+}
+
+.hljs-string,
+.hljs-attribute,
+.hljs-attr {
+  color: #f1fa8c !important;
+}
+
+.hljs-number,
+.hljs-literal {
+  color: #bd93f9 !important;
+}
+
+.hljs-variable,
+.hljs-tag,
+.hljs-regexp,
+.hljs-symbol,
+.hljs-bullet {
+  color: #8be9fd !important;
+}
+
+.hljs-comment {
+  color: #6272a4 !important;
+  font-style: italic !important;
+}
+
+/* Block code only – distinct background + border */
+pre code.hljs {
+  background: #343748;            /* between bg and bg-alt, but not equal */
+  color: #f8f8f2;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  border-radius: 6px;
+}
+
+/* Inline highlighted code (no box) */
+:not(pre) > code.hljs {
+  background: transparent;
+  border: none;
+  padding: 0;
+}

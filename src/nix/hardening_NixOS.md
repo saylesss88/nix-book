@@ -1,6 +1,6 @@
 ---
 title: Hardening NixOS
-date: 2025-12-05
+date: 2025-12-08
 author: saylesss88
 collection: "blog"
 tags: ["security", "privacy", "hardening"]
@@ -10,7 +10,7 @@ draft: false
 # Hardening NixOS
 
 <details>
-<summary> Click to Expand Table of Contents</summary>
+<summary> ✔️ Table of Contents</summary>
 
 <!-- toc -->
 
@@ -47,7 +47,10 @@ vulnerabilities.
 > and actionable advice. For example, much of the original basis for hardening
 > for [nix-mineral](https://github.com/cynicsketch/nix-mineral) came from this
 > guide as well. This can be a starting point but shouldn't be blindly followed
-> either, always do your own research, things change frequently.
+> either, always do your own research, things change frequently. Madaidan is
+> also a contributor to both
+> [Kicksecure](https://www.kicksecure.com/wiki/Contributors) and
+> [Whonix](https://www.whonix.org/wiki/Contributors).
 
 For an article with apposing perspectives, see
 [debunking-madaidans-insecurities](https://chyrp.cgps.ch/en/debunking-madaidans-insecurities/).
@@ -132,7 +135,7 @@ xdg.portal.wlr.enable = false;
 ## Common Attack Vectors for Linux
 
 <details>
-<summary> ✔️ Click to Expand Common Attack Vectors in Linux </summary>
+<summary> ✔️ Common Attack Vectors in Linux </summary>
 
 **Privilege escalation**: The unauthorized act of gaining elevated permissions
 rather than legitimate, controlled privilege use. It's a very common tactic that
@@ -588,7 +591,7 @@ admin tasks for my daily user. That may be a better option for servers, etc.
 Create an admin user for administrative tasks and remove your daily user from
 the `wheel` group, and disable the `sudo`, `su`, and `pkexec` SUIDs:
 
-```users.nix
+```nix
 { config, pkgs, lib }:
 {
 users.users.admin = {
@@ -2081,7 +2084,7 @@ sudo hx aide.conf
 
 Add the following content to `/var/lib/aide/aide.conf`:
 
-```conf
+```text
 # aide.conf
 # Example configuration file for AIDE.
 

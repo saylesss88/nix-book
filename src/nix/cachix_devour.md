@@ -1,13 +1,16 @@
 ---
 title: Cachix devour-flake
-date: 2025-11-22
+date: 2025-12-05
 author: saylesss88
+collection: "notes"
+tags: ["cache", "flakes"]
+draft: false
 ---
 
 # Cachix and the devour-flake
 
 <details>
-<summary> Click to Expand Table of Contents</summary>
+<summary> ✔️ Table of Contents</summary>
 
 <!-- toc -->
 
@@ -15,14 +18,15 @@ author: saylesss88
 
 Using devour-flake to Cache All Your Flake Outputs to Cachix
 
-When working with Nix flakes, it’s common to have many outputs—packages, apps,
+When working with Nix flakes, it’s common to have many outputs: packages, apps,
 dev shells, NixOS or Darwin configurations, and more. Efficiently building and
 caching all these outputs can be challenging, especially in CI or when
-collaborating. This is where devour-flake and Cachix shine. Why Use
-devour-flake?
+collaborating. This is where devour-flake and Cachix shine.
+
+**Why Use the devour-flake?**
 
 By default, building all outputs of a flake with `nix build .#a .#b ... .#z` can
-be slow and inefficient, as Nix will evaluate the flake multiple times—once for
+be slow and inefficient, as Nix will evaluate the flake multiple times, once for
 each output. devour-flake solves this by generating a "consumer" flake that
 depends on all outputs, allowing you to build everything in one go with a single
 evaluation
@@ -32,6 +36,28 @@ evaluation
 There quite a few ways to do this, choose a method of installation from the
 [devour-flake](https://github.com/srid/devour-flake) repository and then
 continue with step 1.
+
+Nix will only download binaries from binary caches if they are cryptographically
+signed with any of the keys listed in `nix.settings.trusted-public-keys`.
+
+```nix
+# This is the default
+nix.settings.require-sigs = true;
+```
+
+Example:
+
+```nix
+nix.settings = {
+  builders-use-substitutes = true;
+  substituters = [
+    "https://cache.nixos.org"
+  ];
+  trusted-public-keys = [
+    "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+  ];
+};
+```
 
 You can even build it without installing with the following command:
 
@@ -52,11 +78,11 @@ How to Use devour-flake with Cachix
 
 1. Prerequisites
 
-- A Cachix cache: Create one on [Cachix](https://www.cachix.org/) and generate a
-  "Write + Read" auth token. You'll click the cache you just created and select
-  Settings, in the settings you'll find Auth Tokens. When in the Auth Tokens
-  section give your token a Description, Expiration date, and finally click
-  Generate.
+- **A Cachix cache**: Create one on [Cachix](https://www.cachix.org/) and
+  generate a "Write + Read" auth token. You'll click the cache you just created
+  and select Settings, in the settings you'll find Auth Tokens. When in the Auth
+  Tokens section give your token a Description, Expiration date, and finally
+  click Generate.
 
 (Optional) Configure your token locally, copy your auth token for the following
 command:
@@ -110,7 +136,7 @@ Pushing 637 paths (2702 are already present) using zstd to cache sayls8 ⏳
 > ❗ NOTE: The effectiveness of pushing the rest to cachix depend on your
 > network speed. I actually noticed a slow down after pushing the `nix/store`.
 > Pushing the `nix/store` is rarely necessary and can be very slow and
-> bandwidth-intensive. Most users will only need to push relevent outputs.
+> bandwidth-intensive. Most users will only need to push relevant outputs.
 
 **Push the Entire /nix/store**
 
@@ -177,7 +203,7 @@ in {
 }
 ```
 
-- The sayls88 entries are my custom cache. To find your trusted key go to the
+- The sayls8 entries are my custom cache. To find your trusted key go to the
   cachix website, click on your cache and it is listed near the top.
 
 - I enable this with `custom.cachix.enable = true;` in my `configuration.nix` or
@@ -214,6 +240,11 @@ in {
   };
 # ... snip
 ```
+
+> ❗️ WARNING: `trusted-users` is a list of users who are allowed to bypass many
+> of Nix's normal safety restrictions and change daemon-level settings. Keep
+> `trusted-users` as small as possible (often just `root` and maybe your own
+> user on a single-user box)
 
 2. Building and Caching All Outputs
 
@@ -329,7 +360,9 @@ What Gets Built and Cached?
 This ensures that everything your flake produces is available in your Cachix
 cache for fast, reproducible builds.
 
-References:
+---
+
+## References:
 
 [devour-flake documentation](https://github.com/srid/devour-flake)
 

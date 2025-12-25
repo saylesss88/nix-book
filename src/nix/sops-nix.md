@@ -10,7 +10,7 @@ draft: false
 # Sops-Nix encrypted secrets
 
 <details>
-<summary> ✔️ Click to Expand Table of Contents</summary>
+<summary> ✔️ Table of Contents</summary>
 
 <!-- toc -->
 

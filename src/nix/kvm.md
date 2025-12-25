@@ -16,7 +16,7 @@ draft: false
 
 </details>
 
-![sp5](images/steampunk5.cleaned.png)
+![sp5](/images/steampunk5.cleaned.png)
 
 ## Why This Setup?
 
@@ -27,60 +27,6 @@ draft: false
 
 - **Isolation**: Mandatory Access Control (MAC) via SELinux + KVM + no direct
   hardware access.
-
-### My Experience with Secureblue
-
-<details>
-<summary> ✔️ My Experience with Secureblue </summary>
-
-I have been using secureblue as the host OS while running NixOS in a VM, with no
-noticeable performance issues for my workload. When problems do occur, they have
-all been fixable via rollbacks or small configuration changes, so there has been
-no need to “nuke and reinstall.”
-
-**Software Installation and Management**
-
-Flatpak takes some adjustment, especially if you are used to running editors or
-other tools with full root access on a traditional Linux setup. Tools like
-Flatseal make it easy to inspect exactly which permissions each application has
-by default, and then gradually tighten them as you learn what is actually
-required for the app to keep working. On secureblue, you can also apply a very
-strict default with ujust flatpak-permissions-lockdown, which revokes almost
-everything so that you must explicitly grant each permission you want an
-application to have.
-
-To be honest, I have one editor that's setup with flatpak and one that is
-installed with `rpm-ostree` for the tight integration and default full root
-behavior that is much less secure. I ended up moving from flatpak yazi to
-`rpm-ostree` as well because in order to get it to function the way I wanted, I
-had to bypass much of the sandboxing anyways.
-
-If you use toolbx, it can be helpful to also install brew and flatpak within the
-toolbx so you can share more config files. Silverblue recommends using flatpak
-for most GUI apps and creating a toolbox for all of your cli apps, secureblue
-includes homebrew which makes installing cli apps outside of a container easy.
-
-On secureblue `/home` is just a symlink to `/var/home`, and that leaks into some
-development workflows in non‑obvious ways. Most tools work without issue, but
-some get confused by the symlink. If this happens, pointing the tool at
-`/var/home/username/` instead of `/home/username/` often fixes the issue.
-
-Most people will not need to add any extra GPU or display drivers inside the
-NixOS VM when running on secureblue. The host already provides the hardware
-stack, and adding additional drivers in the guest can actually make things less
-stable instead of better.
-
-For example, when extra drivers or compositor tweaks are added in the VM, it can
-cause flashing, freezes, or generally janky graphics because you are effectively
-fighting the host’s configuration. Keeping the VM’s graphics setup simple and
-close to the defaults avoids a whole class of hard‑to‑debug issues and usually
-gives smoother performance.
-
-</details>
-
----
-
-### 🔑 Key Terms
 
 > NOTE: Secureblue enables the `hardened_malloc` by default which causes
 > problems for many browsers and will cause screen flashing with Firefox and
@@ -127,14 +73,17 @@ ujust install-libvirt-packages
   an atomic fedora image.
 
 Secureblue recommends installing GUI apps with Flatpak, CLI apps with homebrew,
-and apps that require more system access to be layered with rpm-ostree. It takes
-some getting used to but is very stable.
+and apps that require more system access to be layered with `rpm-ostree`. It
+takes some getting used to but is very stable.
 
 - [secureblue how to install software](https://secureblue.dev/faq#software)
 
 ---
 
 ## Create NixOS VM (via virt-manager)
+
+Easiest way to get a working configuration IMO, I haven't personally had luck
+with custom NixOS disk layouts within a VM.
 
 1. Download: [NixOS Graphical ISO](https://nixos.org/download/)
 
@@ -188,89 +137,87 @@ grub menu, this way it is temporary and will revert back on next reboot.
 
 ## 🔒 How Host MAC Secures the NixOS VM
 
-The core security principle here is defense-in-depth, where the outer, hardened
-layer (the host) compensates for potential weaknesses in the inner layer (the
-guest).
+The host uses a classic defense-in-depth model: the hardened outer layer (the
+host) is treated as the real security boundary, and it is designed to remain
+safe even if the inner layer (the NixOS guest) is fully compromised.
 
-1. MAC Confinement via SELinux and sVirt sVirt (Secure Virtualization): This is
-   a critical component running on the secureblue host. It automatically assigns
-   unique SELinux labels to all virtualization components.
+1. **MAC confinement with SELinux and sVirt**
 
-**QEMU Process Confinement**: The entire QEMU process that runs the NixOS VM is
-confined by a specific SELinux type, typically `svirt_t`. This means:
+On the secureblue host, sVirt automatically applies SELinux labels to all
+VM-related processes and resources.
 
-The host's MAC policy strictly controls what the QEMU process can access and do
-on the host system.
+- **QEMU process confinement**: The QEMU process that runs the NixOS VM runs
+  under a dedicated SELinux type, typically `svirt_t`. The host’s MAC policy
+  tightly restricts what this process can access, so even a successful VM escape
+  is still trapped inside a very limited sandbox rather than gaining normal host
+  privileges.
 
-If an attacker were to achieve a "VM breakout" (a worst-case scenario where they
-escape the VM and try to interact with the host OS), their activity would still
-be confined by the extremely strict rules of the `svirt_t` label. They would not
-be able to arbitrarily read host files or compromise the host kernel.
+- **Disk image protection**: VM disk images are labeled (for example,
+  `virt_image_t`), which prevents unrelated host processes from reading or
+  modifying them and keeps the VM’s storage isolated from the rest of the
+  system.
 
-**Disk Image Confinement**: The VM's disk images are also labeled, typically as
-virt_image_t, preventing other processes on the host from accessing or tampering
-with them.
+2. **KVM and host hardening**
 
-2. **KVM and Host Hardening KVM**: KVM provides the low-level, hardware-assisted
-   virtualization. It is an extremely secure and audited hypervisor that creates
-   a strong barrier between the guest and the host kernel.
+KVM provides the hardware-assisted virtualization layer and forms a strong
+barrier between the guest and the host kernel. On top of that, the secureblue
+host is hardened with SELinux in enforcing mode, Secure Boot, a hardened kernel,
+and hardened_malloc by default. Together, these measures reduce the attack
+surface and help ensure the integrity of the platform that is actually running
+the VM.
 
-**Secureblue Hardening**: The secureblue host is designed with SELinux
-enforcing, Secure Boot, a hardened kernel, and hardened_malloc by default, which
-minimizes the attack surface and ensures the integrity of the base operating
-system that's running the VM.
+3. **Isolation and “zero host compromise”**
 
-3. **Isolation and Zero Host Risk Decoupling Security**: The security of the
-   host is completely decoupled from the security of the NixOS guest.
+The host and guest are deliberately decoupled from a security perspective. The
+assumption is that the NixOS VM can be misconfigured, vulnerable, or even fully
+compromised. If that happens, KVM plus the host MAC policy (SELinux + sVirt) are
+responsible for containing the damage. In other words, the security boundary is
+not the NixOS configuration inside the VM, but the hypervisor and the host’s
+mandatory access control rules that enforce strict isolation of the guest from
+the host.
 
-Any compromise within the NixOS VM (e.g., a service vulnerability,
-misconfiguration, or user error) will be contained by the host's isolation
-mechanisms (KVM + SELinux + sVirt). This containment means the host remains
-secure ("Zero host compromise"), regardless of the NixOS VM's internal security
-settings, including its lack of default MAC.
+## Hardening the NixOS Guest is Still Worth It
 
-In short, the security boundary isn't the guest OS's (NixOS) configuration, but
-the hypervisor and the host's MAC policy that enforces the complete isolation of
-the VM
+Even with a hardened host and MAC confinement, treating the NixOS VM as
+“untrusted but hardened” adds another independent safety layer. The goal is to
+minimize what an attacker can do inside the guest, even if they never manage a
+breakout.
 
-## It's still recommended to harden the Guest VM (NixOS)
+**Minimize VM device exposure**
 
-Hardening the NixOS guest VM adds an extra, independent layer of defense,
-helping to protect the system beyond what the host provides.
+- **Use snapshots aggressively**: Take a snapshot right after a fresh install
+  and initial configuration. That snapshot becomes your “known-good” state for
+  testing risky software or malware, so you can revert and wipe out any changes
+  afterward.
 
-**Best Practices for Minimizing VM Device Exposure**
+- **Avoid unnecessary passthrough**: Only pass through hardware (USB, GPU,
+  network interfaces, etc.) if the VM genuinely needs it. Every extra device is
+  another potential attack surface.
 
-Take a VM snapshot right after a fresh install. This snapshot acts as a clean
-restore point. Many people safely test malware or potentially dangerous software
-by running it within the VM, then reverting to the snapshot afterward to wipe
-out any changes or infections caused by the malware.
+- **Prefer simple virtual devices**: Use virtio and other paravirtualized
+  devices where possible, and avoid legacy or fully emulated devices unless
+  there is a specific need.
 
-Avoid unnecessary device passthrough: Only pass through hardware devices (like
-USB, GPU, or network interfaces) that are essential for your VM's operation. For
-example, if a device isn't needed within the VM, do not passthrough the device
-to reduce attack surface.​
+**Network isolation for guests**
 
-Use virtual network segmentation: Instead of bridging physical network devices,
-opt for virtual network configurations like isolated networks, VLANs, or
-internal networks that prevent VM-to-VM or VM-to-host communication unless
-explicitly allowed.​
+- **Keep networks virtual and segmented**: Favor isolated virtual networks,
+  VLANs, or internal-only networks over bridged physical interfaces, so VMs
+  cannot talk to the host or each other unless you explicitly design for it.
 
-Implement network filtering and firewall rules: Use libvirt nwfilter, iptables,
-or firewalld rules to restrict communications between VMs and external networks,
-or between guest VMs on the same host.​
+- **Filter traffic tightly**: Use libvirt nwfilter, firewall rules
+  (nftables/iptables/firewalld), and similar tools to restrict VM-to-VM and
+  VM-to-external traffic, especially for services exposed on multiple guests.
 
-- [libvirt Firewall and network filtering](https://libvirt.org/firewall.html)
+- **Be cautious with IPv6**: Full IPv6 inside the VM usually implies bridged
+  networking, which connects the VM more directly to the host’s LAN. That
+  improves connectivity but reduces isolation, so enable it only if you truly
+  need it.
 
-Use virtual device models with minimal capabilities: Prefer virtio or similar
-paravirtualized devices that have a smaller attack surface. Avoid emulated
-devices when not necessary.​
+**Guest-side hardening measures**
 
-Disable features like USB debugging, audio, or PnP devices: These can
-potentially be exploited or leak information if enabled unnecessarily.
-
-- It's still recommended to enable either the `graphene-hardened` or
-  `graphene-hardened-light` memory allocators on the NixOS guest machine as
-  well.
+- **Harden the allocator**: Enabling `graphene-hardened` or
+  `graphene-hardened-light` inside the guest improves memory safety for many
+  applications:
 
 ```nix
 # configuration.nix
@@ -279,36 +226,84 @@ environment.memoryAllocator.provider = "graphene-hardened";
 # environment.memoryAllocator.provider = "graphene-hardened-light";
 ```
 
-- Remember that certain programs won't run with the `hardened_malloc`. I have
-  read that you need to recompile Firefox for it to respect and work with the
-  `hardened_malloc`. I haven't attempted this as of yet and use Brave for now.
+Some software (notably certain browsers) can be finicky with hardened mallocs
+and may require rebuilding or alternatives; be prepared to switch to another
+browser or allocator profile when you hit incompatibilities.
 
-Continue
+- **Disable nonessential features**: Turn off USB redirection/debugging, audio
+  devices, and other “extras” you do not need in the VM. These often pull in
+  complex subsystems that are rarely worth the extra attack surface for a
+  security-focused guest.
+
+For deeper NixOS-specific hardening, see:
 [hardening NixOS](https://saylesss88.github.io/nix/hardening_NixOS.html)
 
-> ❗️ NOTE: It’s generally recommended not to enable GPU drivers inside the VM
-> unless you are specifically doing GPU passthrough, as this often causes
-> stability and compatibility issues. GPU passthrough itself requires careful
-> configuration and dedicated hardware, and introduces additional attack
-> surfaces.
+---
 
-> Regarding IPv6 networking, enabling it typically requires using a bridged
-> network setup rather than NAT, which connects the VM more directly to the
-> host's network. While bridged networking enables full IPv6 functionality, it
-> also reduces the network isolation between the VM and host, potentially
-> increasing security risks. For maximum isolation, consider carefully whether
-> you need IPv6 connectivity inside the VM and weigh that against your security
-> goals.
+### Real-world recovery example
 
-I have been able to recover from quite a few missteps with Secureblue. I run a
-mini PC and attempted running `ujust update-firmware`, some systems allow you to
-update the firmware of a booted system. On reboot I got a message "Something
-went seriously wrong MOK is full", it then forced a shutdown. I was familiar
-with resetting the NVRAM by disassembling the PC and moving the red jumper from
-prongs 1 & 2 to prongs 2 & 3 with the power off for 10 seconds. I then moved the
-jumper back to the default position and rebooted. The PC sounds like it's
-revving up a few times and does a few reboots and allowed me to sign right back
-in and re-enroll the secure boot key.
+Secureblue’s design and the underlying firmware safeguards also make certain
+failures recoverable. On a mini PC, running a firmware update command resulted
+in a boot error (“Something went seriously wrong, MOK is full”) and a forced
+shutdown. Resetting NVRAM by moving the jumper on the motherboard briefly, then
+restoring it to the original position, allowed the system to retrain and boot
+again, after which the Secure Boot key could be re-enrolled and the system
+returned to a known-good, secure state.
+
+<details>
+<summary> ✔️ My Experience with Secureblue </summary>
+
+Using secureblue as the host OS with NixOS in a VM has been surprisingly smooth
+for day‑to‑day work. Performance has been more than adequate for editing,
+development, and browsing, and every issue so far has been fixable with
+rollbacks or small config changes—no “nuke and reinstall” moments required.
+
+**Software installation and workflows**
+
+Flatpak takes a bit of relearning if you are used to installing everything with
+full root on a mutable distro. Tools like Flatseal help a lot: you can see
+exactly which permissions an app has, then selectively tighten them instead of
+blindly trusting defaults. On secureblue, running the
+`ujust flatpak-permissions-lockdown` helper gives you a very strict baseline,
+then you add back only what each app truly needs.
+
+In practice, a hybrid approach has worked best. One editor runs as a Flatpak,
+and another is installed via `rpm-ostree` for tighter system integration and the
+“traditional” root behavior when needed. The same thing happened with `yazi`: to
+get the exact workflow wanted, it was easier to install it via `rpm-ostree`
+rather than poking so many holes in the Flatpak sandbox that most isolation
+benefits disappeared.
+
+Toolbx also fits into this nicely. Putting Homebrew and Flatpak inside a toolbox
+lets more config be shared while keeping the host image clean. The general
+pattern on Silverblue/secureblue is: Flatpak for most GUI apps, toolbox (plus
+brew or distro packages) for CLI tooling, and only a small number of host‑layer
+`rpm-ostree` installs when deep integration is really warranted.
+
+One quirk worth knowing about: on secureblue, `/home` is a symlink to
+`/var/home`. Most tools don’t care, but a few development workflows get confused
+by the indirection. In those cases, pointing the tool directly at
+`/var/home/username` instead of `/home/username` usually clears things up.
+
+**Graphics and drivers in the NixOS VM**
+
+For GPU and display, the safest approach has been to let secureblue own the
+hardware stack and keep the NixOS guest as simple as possible. Extra GPU drivers
+or compositor tweaks inside the VM tended to make things less stable, showing up
+as flicker, random freezes, or generally janky graphics because the guest was
+effectively fighting the host’s configuration. Sticking close to the defaults in
+the VM has consistently produced smoother and more predictable graphics
+behavior.
+
+The main issue I've had is with the dns-selector occasionally causing networking
+problems. I configure global DNS with their `ujust` command and I'm assuming
+that updates were incompatible with my DNS setup. Running `ujust dns-selector`
+and pressing `1` (Reset to defaults), and a reboot typically fix the connection
+and within a few days the global DNS will work again.
+
+</details>
+
+---
 
 ### Resources
 

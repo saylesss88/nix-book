@@ -1,13 +1,16 @@
 ---
 title: Encrypted Impermanence
-date: 2025-11-22
+date: 2025-12-06
 author: saylesss88
+collection: "blog"
+tags: ["impermanence", "security"]
+draft: false
 ---
 
 # Encrypted Impermanence
 
 <details>
-<summary> ✔️ Click to Expand Table of Contents</summary>
+<summary> ✔️ Table of Contents</summary>
 
 <!-- toc -->
 

@@ -1,0 +1,62 @@
+
+/* Block code: slightly lifted off main bg/card */
+pre code.hljs {
+  background: #2a3146; /* pick a shade with clear contrast vs --bg and --bg-alt */
+  color: var(--fg);
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  border-radius: 6px;
+}
+
+/* Inline highlighted code (no box) */
+:not(pre) > code.hljs {
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+/* Keywords, control flow */
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-literal {
+  color: #E46876; /* waveRed */
+}
+
+/* Strings, attributes */
+.hljs-string,
+.hljs-attr,
+.hljs-template-tag {
+  color: #98BB6C; /* springGreen */
+}
+
+/* Numbers, builtins, types */
+.hljs-number,
+.hljs-built_in,
+.hljs-type {
+  color: #7E9CD8; /* crystalBlue */
+}
+
+/* Comments */
+.hljs-comment {
+  color: #727169;
+  font-style: italic;
+}
+
+/* Function names */
+.hljs-title,
+.hljs-title.function_ {
+  color: #7FB4CA; /* springBlue */
+}
+
+/* Constants, variables */
+.hljs-variable,
+.hljs-constant,
+.hljs-symbol {
+  color: #FFA066; /* surimiOrange */
+}
+
+/* Punctuation / operators */
+.hljs-operator,
+.hljs-punctuation {
+  color: var(--fg);
+}
+

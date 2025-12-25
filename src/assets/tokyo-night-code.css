@@ -1,0 +1,5 @@
+/* src/assets/tokyo-night-code.css */
+.hljs-keyword  { color: #bb9af7; }
+.hljs-string   { color: #9ece6a; }
+.hljs-number   { color: #ff9e64; }
+.hljs-comment  { color: #565f89; font-style: italic; }

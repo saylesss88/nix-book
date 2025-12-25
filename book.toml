@@ -26,8 +26,18 @@ renderers = ["html"]
 default-theme = "navy"
 preferred-dark-theme = "navy"
 site-url = "https://saylesss88.github.io/"
-additional-css = ["theme/extra.css", "theme/rss-button.css"]
-additional-js = ["theme/extra.js", "theme/rss-button.js"]
+additional-css = [
+	"theme/extra.css",
+	"theme/rss-button.css",
+	"theme/css/kanagawa-code.css",
+	# "theme/css/tokyo-night-code.css",
+	# "theme/css/dracula-code.css",
+	# "theme/css/catppuccin-mocha-code.css",
+]
+additional-js = ["theme/extra.js", "theme/rss-button.js", "theme/nix_http.js"]
+git-repository-url = "https://github.com/saylesss88/nix-book.git"
+git-repository-icon = "fab-github"
+
 
 [output.html.code]
 hidelines = {nix = "~"}
@@ -41,7 +51,7 @@ renderers = ["html"]
 command = "mdbook-content-loader"
 renderers = ["html"]
 after = ["content-collections"]
-# inject_all = true
+inject_all = true
 
 [preprocessor.kanagawa-theme]
 renderers = ["html"]
@@ -55,5 +65,12 @@ header_latest = "Latest posts"
 header_notes = "Recent notes"
 header_tags = "Popular tags"
 
-css_import = "/assets/dracula.css"
+# css_import = "/assets/dracula.css"
+# css_import = "/assets/tokyo-night.css"
+# css_import = "/assets/catppuccin-mocha.css"
 disable_builtin_css = false
+card_layout = "wide"        #"compact"
+support_footer = true
+
+[preprocessor.nix-repl]
+command = "mdbook-nix-repl"

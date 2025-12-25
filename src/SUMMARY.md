@@ -1,4 +1,4 @@
-[](index.md)
+[Introduction](index.md)
 
 - [Getting Started with the Nix Ecosystem](./Getting_Started_with_Nix_1.md)
   - [Nix Language](nix/nix_language.md)
@@ -9,6 +9,7 @@
     - [Hardening NixOS](nix/hardening_NixOS.md)
     - [GnuPG & gpg-agent on NixOS](nix/gpg-agent.md)
     - [Hardening Networking](nix/hardening_networking.md)
+    - [Browser/Browsing Security](nix/browsing_security.md)
     - [Whonix KVM on NixOS](nix/whonix_kvm.md)
     - [Running NixOS as a VM](nix/kvm.md)
   - [Version Control with Git](vcs/git.md)

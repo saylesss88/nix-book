@@ -1,0 +1,48 @@
+/* src/assets/catppuccin-mocha.css */
+
+:root.coal,
+.coal,
+html.coal,
+body.coal {
+  /* Core page colors (Catppuccin Mocha-inspired) */
+  --bg: #1e1e2e;       /* base */
+  --bg-alt: #313244;   /* surface0 */
+  --fg: #cdd6f4;       /* text */
+  --fg-light: #a6adc8; /* subtext1 */
+  --code-bg: #45475a; 
+
+  /* Waves / accent palette */
+  --wave-1: #1e1e2e;   /* base */
+  --wave-2: #313244;   /* surface0 */
+  --wave-3: #45475a;   /* surface1 */
+
+  --accent: #89b4fa;   /* blue */
+  --red: #f38ba8;      /* red */
+  --blue: #89b4fa;     /* blue */
+
+  /* Sidebar */
+  --sidebar-bg: #1e1e2e;       /* base */
+  --sidebar-fg: #cdd6f4;       /* text */
+  --sidebar-non-existant: #6c7086; /* overlay1 */
+  --sidebar-active: #89b4fa;   /* blue */
+  --sidebar-spacer: #313244;   /* surface0 */
+
+  /* Content links / headings / bold */
+  --links: #89b4fa;    /* blue links */
+  --heading: #cba6f7;  /* mauve headings */
+  --bold: #f9e2af;     /* yellow emphasis */
+
+  /* Optional extras */
+  --quote-bg: #313244;         /* surface0 */
+  --quote-border: #45475a;     /* surface1 */
+  --table-header-bg: #45475a;  /* surface1 */
+  --table-alternate-bg: #313244; /* surface0 */
+}
+
+.coal pre code.hljs,
+.coal code.hljs,
+.coal .hljs {
+  background: var(--code-bg) !important;
+  color: var(--fg) !important;
+}
+

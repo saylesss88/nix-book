@@ -2,12 +2,15 @@
 title: Unencrypted Impermanence
 date: 2025-11-22
 author: saylesss88
+collection: "notes"
+tags: ["impermanence", "security"]
+draft: false
 ---
 
 # Unencrypted BTRFS Impermanence with Flakes
 
 <details>
-<summary> ✔️ Click to Expand Table of Contents</summary>
+<summary> ✔️ Table of Contents</summary>
 
 <!-- toc -->
 
