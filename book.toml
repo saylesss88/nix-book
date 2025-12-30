@@ -37,7 +37,7 @@ additional-css = [
 additional-js = ["theme/extra.js", "theme/rss-button.js", "theme/nix_http.js"]
 git-repository-url = "https://github.com/saylesss88/nix-book.git"
 git-repository-icon = "fab-github"
-
+no-section-label = true
 
 [output.html.code]
 hidelines = {nix = "~"}

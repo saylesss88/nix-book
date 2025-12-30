@@ -43,6 +43,7 @@ jobs:
           cargo install mdbook-content-collections --locked
           cargo install mdbook-content-loader --locked
           cargo install mdbook-kanagawa-theme --locked
+          cargo install mdbook-nix-repl --locked
 
       - name: Add cargo bin to PATH
         run: echo "$HOME/.cargo/bin" >> $GITHUB_PATH

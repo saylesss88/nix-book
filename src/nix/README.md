@@ -19,11 +19,25 @@ author: saylesss88
 loss! Pause and research before enabling anything not listed above unless you
 understand the consequences.
 
-The guide is broken up into 2 chapters:
+**Hardening NixOS**:
+
+🔷 Start Here:
 
 - [Hardening NixOS](https://saylesss88.github.io/nix/hardening_NixOS.html)
 
 - [Hardening Networking](https://saylesss88.github.io/nix/hardening_networking.html)
+
+---
+
+**Additional security/hardening topics**
+
+- [Browser/Browsing Security/Privacy](https://saylesss88.github.io/nix/browsing_security.html)
+
+- [GnuPG gpg-agent](https://saylesss88.github.io/nix/gpg-agent.html)
+
+- [Whonix KVM on NixOS](https://saylesss88.github.io/nix/whonix_kvm.html)
+
+- [Running NixOS in a secureblue VM](https://saylesss88.github.io/nix/kvm.html)
 
 ## Getting Started
 

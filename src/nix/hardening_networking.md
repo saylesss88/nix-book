@@ -288,6 +288,54 @@ inputs = {
 };
 ```
 
+<details>
+<summary> ✔️ Add more blocklists: HaGeZi Multi PRO </summary>
+
+To use the Hagezi Multi PRO Blocklist either with oisd or alone you could do the
+following:
+
+```nix
+# flake.nix
+inputs = {
+    oisd = {
+      url = "https://big.oisd.nl/domainswild";
+      flake = false;
+    };
+    hagezi = {
+      url = "https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/pro-onlydomains.txt";
+      flake = false;
+    };
+};
+```
+
+add it to the `extraBlocklist` variable in the following `dnscrypt-proxy.nix`:
+
+```nix
+# dnscrypt-proxy.nix
+extraBlocklist = builtins.readFile inputs.hagezi;
+```
+
+More blocklist url's:
+
+```text
+# NextDNS CNAME cloaking list
+https://raw.githubusercontent.com/nextdns/cname-cloaking-blocklist/master/domains
+
+# AdGuard Simplified Domain Names filter
+https://adguardteam.github.io/AdGuardSDNSFilter/Filters/filter.txt
+
+# OISD Big list
+https://big.oisd.nl/domainswild
+
+# HaGeZi Multi PRO
+https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/pro-onlydomains.txt
+
+# HaGeZi Threat Intelligence Feeds
+https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/tif-onlydomains.txt
+```
+
+</details>
+
 > ❗ NOTE: The `oisd` blocklist is a plain text file that updates frequently.
 > This can cause `nh os switch` to fail with a `NarHash` mismatch error. To fix
 > this, you need to run `nix flake update` to refresh the blocklist and its hash
@@ -303,7 +351,6 @@ And the import the following into your `configuration.nix`:
   inputs,
   ...
 }: let
-  # Use "" for simple strings, '' '' for multiline
   blocklist_base = builtins.readFile inputs.oisd;
   extraBlocklist = "";
   blocklist_txt = pkgs.writeText "blocklist.txt" ''

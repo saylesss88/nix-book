@@ -16,12 +16,12 @@ secrets, `lanzaboote` for Secure Boot, or `impermanence` for a stateless system.
 ## 1. Unencrypted Disko Btrfs Subvol Installation
 
 - **Guide:**
-  [Minimal Btrfs-Subvol Install with Disko and Flakes](https://saylesss88.github.io/installation/unencrypted/unencrypted.html)
+  [Minimal Btrfs-Subvol Install with Disko and Flakes](https://saylesss88.github.io/installation/unenc/unencrypted_setups.html)
 
 - **Best for:**
   - Users who want a straightforward and quick setup.
 
-  - [Unencrypted Impermanence](https://saylesss88.github.io/installation/unencrypted/impermanence.html)
+  - [Unencrypted Impermanence](https://saylesss88.github.io/installation/unenc/unenc_impermanence.html)
 
   - You can still add Lanzaboote and sops secrets after the install for a more
     secure system. To get the full benefits of Lanzaboote it is recommended to
@@ -37,17 +37,17 @@ secrets, `lanzaboote` for Secure Boot, or `impermanence` for a stateless system.
 - [Encrypted Impermanence](https://saylesss88.github.io/installation/enc/encrypted_impermanence.html)
 
 - **Important Considerations:**
-  - [Secure Boot with Lanzaboote](https://saylesss88.github.io/enc/lanzaboote.html)
+  - [Secure Boot with Lanzaboote](https://saylesss88.github.io/installation/enc/lanzaboote.html)
     For the full benefit of Secure Boot (with Lanzaboote), it's highly
     recommended to have a second stage of protection, such as an encrypted disk.
 
-  - [Adding Sops](https://saylesss88.github.io/enc/sops-nix.html) You can easily
-    add `sops` (for managing encrypted secrets) to your configuration _after_
-    the initial encrypted installation and reboot. This can simplify the initial
-    setup process. However, always remember the core goal of using encrypted
-    secrets: **never commit unencrypted or even hashed sensitive data directly
-    into your Git repository.** With modern equipment brute force attacks are a
-    real threat.
+  - [Adding Sops](https://saylesss88.github.io/installation/enc/sops-nix.html)
+    You can easily add `sops` (for managing encrypted secrets) to your
+    configuration _after_ the initial encrypted installation and reboot. This
+    can simplify the initial setup process. However, always remember the core
+    goal of using encrypted secrets: **never commit unencrypted or even hashed
+    sensitive data directly into your Git repository.** With modern equipment
+    brute force attacks are a real threat.
 
 ---
 
