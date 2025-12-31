@@ -41,6 +41,7 @@
 - [Working with Nixpkgs Locally](./Working_with_Nixpkgs_Locally_10.md)
   - [Fork, Clone, Contribute](nixpkgs/fork_clone_contribute.md)
   - [Build a local package within a Nixpkgs Clone](nixpkgs/local_package.md)
+  - [Packaging a Rust crate for Nixpkgs](nixpkgs/rust_crate_to_nixpkgs.md)
   - [Nixpkgs Overlays to Override Version](nixpkgs/overlay.md)
 - [Nix Pull Requests](./Nix_Pull_Requests_11.md)
 - [Intro to Nushell on NixOS](./intro_to_nushell_on_NixOS.md)

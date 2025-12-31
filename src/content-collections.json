@@ -1,15 +1,19 @@
 {
   "entries": [
     {
-      "author": null,
-      "collection": null,
-      "date": "2025-12-31T15:01:59.359851501+00:00",
-      "description": "\n## Quick upstream sync check\n\nFrom the `mdbook-rss-feed` branch:\n\n```bash\n# Ensure you have upstream remote (NixOS/nixpkgs)\ngit remote -v   # should show 'upstream' -> https://github.com/NixOS/nixpkgs.git\n\n# if missing, add it:\n# git remote add upstream https://github.com/NixOS/nixpkgs.git\n\n# Fetch the latest upstream\ngit fetch upstream master\n\n# See if anything new happened since your branch base\ngit log --oneline upstream/master..mdbook-rss-feed  # our changes\ngit log --oneline mdbook-rss-feed..upstream/master  # upstream changes\n```\n\nIf `mdbook-rss-feed..upstream/master` shows commits, rebase to stay current:\n\n```bash\ngit rebase upstream/master\n# resolve any conflicts if they appear (unlikely for new packages)\ngit rebase --continue\n```\n\n**Then commit and push**\n\n```bash\ngit commit -m \"mdbook-rss-feed: init at 1.3.0\"\ngit push -u origin mdbook-rss-feed\n```\n\nThen:\n\n1. Go to GitHub -> your fork\n\n2. Click \"Compare & pull request\" on the `mdbook-rss-feed` branch\n\n3. Fill out the PR template (why useful, tested on x86_64-linux, etc.)\n\n4. Submit!\n\nThe package will go through CI checks, and once green + approved by a\nmaintainer, it'll land in nixpkgs.\n\n<details>\n<summary> ✔️ Example PR template filled out </summary>\n",
+      "author": "saylesss88",
+      "collection": "blog",
+      "date": "2025-12-31T00:00:00+00:00",
+      "description": null,
       "draft": false,
       "path": "nixpkgs/rust_crate_to_nixpkgs.md",
-      "preview_html": "<p>From the <code>mdbook-rss-feed</code> branch:</p><pre><code class=\"language-bash\"># Ensure you have upstream remote (NixOS/nixpkgs)\ngit remote -v   # should show 'upstream' -&gt; https://github.com/NixOS/nixpkgs.git\n\n# if missing, add it:\n# git remote add upstream https://github.com/NixOS/nixpkgs.git\n\n# Fetch the latest upstream\ngit fetch upstream master\n\n# See if anything new happened since your branch base\ngit log --oneline upstream/master..mdbook-rss-feed  # our changes\ngit log --oneline mdbook-rss-feed..upstream/master  # upstream changes\n</code></pre>\n<p>If <code>mdbook-rss-feed..upstream/master</code> shows commits, rebase to stay current:</p><pre><code class=\"language-bash\">git rebase upstream/master\n# resolve any conflicts if they appear (unlikely for new packages)\ngit rebase --",
-      "tags": [],
-      "title": "rust_crate_to_nixpkgs"
+      "preview_html": "<p>NOTE: This example assumes you’re packaging a crate that’s already on\ncrates.io, or you’re packaging an existing Rust project for nixpkgs.</p><p>Nixpkgs is a big repository, so it helps to start with a focused workflow:\ncreate a branch, add a package under <code>pkgs/by-name/</code>, build it, then open a PR.</p><p>NOTE: Maintainers prefer a single commit for your package with a separate\ncommit if you need to add yourself to <code>maintainers-list.nix</code></p>",
+      "tags": [
+        "packaging",
+        "rust",
+        "nixpkgs"
+      ],
+      "title": "Packaging a Rust crate for Nixpkgs"
     },
     {
       "author": "saylesss88",
