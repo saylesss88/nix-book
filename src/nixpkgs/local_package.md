@@ -4,6 +4,13 @@ date: 2025-11-22
 author: saylesss88
 ---
 
+<details>
+<summary> ✔️ Table of Contents</summary>
+
+<!-- toc -->
+
+</details>
+
 # Creating and Building a Local Package within a Nixpkgs Clone
 
 This chapter demonstrates the fundamental pattern for creating a package. Every

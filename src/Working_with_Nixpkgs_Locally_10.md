@@ -94,9 +94,6 @@ author: saylesss88
 
 ## III. Setting Up a Local Nixpkgs Repository Efficiently
 
-<details>
-<summary>Click To See How to set up Nixpkgs Locally</summary>
-
 - Cloning Nixpkgs requires careful consideration due to its size.
 
 ## A.a Initial Clone: Shallow Cloning
@@ -147,6 +144,8 @@ man nix3 registry
 
 The above command will open the `openssl/default.nix` in your `$EDITOR`.
 
+---
+
 ## A.1 Full Fork and Clone of Nixpkgs
 
 If you want to contribute to Nixpkgs, you need to set up a local version
@@ -161,7 +160,69 @@ You'll need to, this is directly from the `Contributing.md`:
 2. [Clone the forked repo](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo#cloning-your-forked-repository)
    into a local `nixpkgs` directory.
 
+```bash
+git clone git@github.com:your-user/nixpkgs.git
+```
+
 3. [Configure the upstream Nixpkgs repo](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo#configuring-git-to-sync-your-fork-with-the-upstream-repository)
+
+```bash
+git remote add upstream git@github.com:NixOS/nixpkgs.git
+# Check them out
+git remove -v
+```
+
+### The Three Master Branches
+
+1. **Upstream Master** (upstream/master):
+
+- **Where it is**: On the official NixOS servers.
+
+- **Role**: The absolute source of truth. Thousands of people are pushing to
+  this daily.
+
+2. **Local Master** (master):
+
+- **Where it is**: On your physical computer.
+
+- **Role**: Your working copy. This is the only one you can actually "rebase" or
+  "commit" to directly.
+
+3. **Origin Master** (origin/master):
+
+- **Where it is**: On your GitHub fork (github.com/your-user/nixpkgs).
+
+- **Role**: A personal backup and a place to host your code so you can open Pull
+  Requests.
+
+### Create a branch
+
+In the nixpkgs ecosystem, the "cleanest" way to work is to **never** add your
+own commits to your local master.
+
+- Keep your `master` as a "pure mirror" of `upstream/master`.
+
+- Whenever you want to fix a package or add something new, create a feature
+  branch:
+
+```bash
+git checkout -b fix-my-package master
+```
+
+This way, syncing is as simple as a reset:
+
+```bash
+# Total reset of your local master to match the official one
+git fetch upstream
+git checkout master
+git reset --hard upstream/master
+git push origin master --force
+```
+
+### Pushing a PR
+
+When you're ready to push changes you push to `origin/feature-branch`, visit
+your fork on github.com and submit the PR.
 
 ## B. Managing Branches with Worktrees
 
@@ -178,8 +239,6 @@ You'll need to, this is directly from the `Contributing.md`:
 
 - `git worktree add`: Creates a new working directory for the specified branch
   (`nixos-unstable` in this case).
-
-</details>
 
 # IV. Debugging Missing Dependencies: A Practical Example
 

@@ -7,6 +7,13 @@ tags: ["packaging", "rust", "nixpkgs"]
 draft: false
 ---
 
+<details>
+<summary> ✔️ Table of Contents</summary>
+
+<!-- toc -->
+
+</details>
+
 # Packaging a Rust crate for Nixpkgs
 
 > NOTE: This example assumes you’re packaging a crate that’s already on
@@ -14,6 +21,8 @@ draft: false
 
 Nixpkgs is a big repository, so it helps to start with a focused workflow:
 create a branch, add a package under `pkgs/by-name/`, build it, then open a PR.
+
+---
 
 ## Clone nixpkgs
 
@@ -33,6 +42,8 @@ git remote add upstream git@github.com:NixOS/nixpkgs.git
 git fetch --unshallow --tags
 ```
 
+---
+
 ## Create a branch and add package:
 
 1. Create a branch before changes preferably:
@@ -41,12 +52,16 @@ git fetch --unshallow --tags
 git switch -c mdbook-rss-feed
 ```
 
+---
+
 ## Add the package under pkgs/by-name
 
 New top-level packages should generally go under
 `pkgs/by-name/<2 letters>/<name>/package.nix` (e.g.
 `pkgs/by-name/md/mdbook-rss-feed/package.nix`). Packages in `pkgs/by-name` are
 picked up automatically and usually don’t require edits to `all-packages.nix`.
+
+---
 
 ## Write package.nix (Rust crate example)
 
@@ -56,7 +71,7 @@ Start with `rustPlatform.buildRustPackage` and `fetchCrate`:
 {
   lib,
   rustPlatform,
-  fetchCrate
+  fetchCrate,
   versionCheckHook,
 }:
 rustPlatform.buildRustPackage rec {
@@ -65,11 +80,10 @@ rustPlatform.buildRustPackage rec {
 
   src = fetchCrate {
     inherit pname version;
-    hash = "output of nix-prefetch-url above";
+    hash = "output of `nix hash convert` shown below";
   };
 
   cargoHash = lib.fakeHash;
-  # Or cargoHash = "sha256-AAAAAAAAAAAAAAAAAAAA="
 
   nativeInstallCheckInuts = [
     versionCheckHook
@@ -85,6 +99,8 @@ rustPlatform.buildRustPackage rec {
   };
 }
 ```
+
+---
 
 ## Prefetch the crate hash:
 
@@ -107,13 +123,24 @@ nix hash convert --hash-algo sha256 --from nix32 --to sri 0932843lknasdlfkm2lkdn
 
 The above commands output looks like: `sha256-...=`
 
-Put the resulting `sha256-...` into `src.hash`.
+Put the resulting `sha256-...` into `src.hash`:
+
+```nix
+  src = fetchCrate {
+    inherit pname version;
+    hash = "sha256-...";
+  };
+```
+
+---
 
 ## Get cargoHash via a failing build
 
-In the `nixpkgs` root, run:
+In the `nixpkgs` root (i.e., the `nixpkgs` directory), run:
 
 ```bash
+nix-build -A mdbook-rss-feed
+# OR nix3 format
 nix build .#mdbook-rss-feed
 ```
 
@@ -127,7 +154,7 @@ got: sha256-1...
 
 Copy the `got` value into `cargoHash`, rebuild, and it should succeed.
 
-Sanity check: from `nixpkgs` root (i.e., the `nixpkgs` directory):
+Sanity check: from `nixpkgs` root :
 
 ```bash
 ./result/bin/mdbook-rss-feed --version
@@ -163,7 +190,9 @@ git commit -m "maintainers: add <user>"
 
 ## Treefmt
 
-Run treefmt the nixpkgs way, from the repo root:
+Run treefmt the nixpkgs way, from the repo root. Run this right before you push,
+my editors formatter does something different with single entry lists than what
+Nixpkgs wants:
 
 ```bash
 nix develop --command treefmt

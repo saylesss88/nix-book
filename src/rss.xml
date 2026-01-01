@@ -1,17 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?><rss version="2.0"><channel><title>nix-book</title><link>https://saylesss88.github.io/</link><description>An mdBook-generated site</description><generator>mdbook-rss-feed 1.0.0</generator><item><title>Packaging a Rust crate for Nixpkgs</title><link>https://saylesss88.github.io/nixpkgs/rust_crate_to_nixpkgs.html</link><description><![CDATA[<h1>Packaging a Rust crate for Nixpkgs</h1>
+<?xml version="1.0" encoding="utf-8"?><rss version="2.0"><channel><title>nix-book</title><link>https://saylesss88.github.io/</link><description>An mdBook-generated site</description><generator>mdbook-rss-feed 1.0.0</generator><item><title>Packaging a Rust crate for Nixpkgs</title><link>https://saylesss88.github.io/nixpkgs/rust_crate_to_nixpkgs.html</link><description><![CDATA[<details>
+<summary> ✔️ Table of Contents</summary>
+<!-- toc -->
+</details>
+<h1>Packaging a Rust crate for Nixpkgs</h1>
 <blockquote>
 <p>NOTE: This example assumes you’re packaging a crate that’s already on
 crates.io, or you’re packaging an existing Rust project for nixpkgs.</p>
 </blockquote>
 <p>Nixpkgs is a big repository, so it helps to start with a focused workflow:
 create a branch, add a package under <code>pkgs/by-name/</code>, build it, then open a PR.</p>
-<blockquote>
-<p>NOTE: Maintainers prefer a single commit for your package with a separate
-commit if you need to add yourself to <code>maintainers-list.nix</code></p>
-</blockquote>
-<p>Since I’m building an mdbook preprocessor, I can check out the existing
-preprocessors within Nixpkgs to see their structure. They are located in
-<code>nixpkgs/pkgs/by-name/md/</code>, which is where I’ll place my package as well.</p>
+<hr />
 <h2>Clone nixpkgs</h2>
 <ol>
 <li>Fork and clone <code>NixOS/nixpkgs</code>:</li>
@@ -26,25 +24,26 @@ git remote add upstream git@github.com:NixOS/nixpkgs.git
 </ol>
 <pre><code class="language-bash">git fetch --unshallow --tags
 </code></pre>
+<hr />
 <h2>Create a branch and add package:</h2>
 <ol>
 <li>Create a branch before changes preferably:</li>
 </ol>
 <pre><code class="language-bash">git switch -c mdbook-rss-feed
 </code></pre>
+<hr />
 <h2>Add the package under pkgs/by-name</h2>
 <p>New top-level packages should generally go under
 <code>pkgs/by-name/&lt;2 letters&gt;/&lt;name&gt;/package.nix</code> (e.g.
 <code>pkgs/by-name/md/mdbook-rss-feed/package.nix</code>). Packages in <code>pkgs/by-name</code> are
-picked up automatically and usually don’t require edits to
-<code>all-packages.nix</code>. 2. Add the package under
-<code>pkgs/by-name/md/mdbook-rss-feed/package.nix</code></p>
+picked up automatically and usually don’t require edits to <code>all-packages.nix</code>.</p>
+<hr />
 <h2>Write package.nix (Rust crate example)</h2>
 <p>Start with <code>rustPlatform.buildRustPackage</code> and <code>fetchCrate</code>:</p>
 <pre><code class="language-nix">{
   lib,
   rustPlatform,
-  fetchCrate
+  fetchCrate,
   versionCheckHook,
 }:
 rustPlatform.buildRustPackage rec {
@@ -53,7 +52,7 @@ rustPlatform.buildRustPackage rec {
 
   src = fetchCrate {
     inherit pname version;
-    hash = "output of nix-prefetch-url above";
+    hash = "output of `nix hash convert` shown below";
   };
 
   cargoHash = lib.fakeHash;
@@ -73,6 +72,7 @@ rustPlatform.buildRustPackage rec {
   };
 }
 </code></pre>
+<hr />
 <h2>Prefetch the crate hash:</h2>
 <p>Use <code>fetchCrate</code> / <code>crate2nix</code> style workflow, or just prefetch the <code>crates.io</code>
 tarball:</p>
@@ -85,7 +85,13 @@ tarball:</p>
 <pre><code class="language-bash">nix hash convert --hash-algo sha256 --from nix32 --to sri 0932843lknasdlfkm2lkdnflaknldvdsvser
 </code></pre>
 <p>The above commands output looks like: <code>sha256-...=</code></p>
-<p>Put the resulting <code>sha256-...</code> into <code>src.hash</code>.</p>
+<p>Put the resulting <code>sha256-...</code> into <code>src.hash</code>:</p>
+<pre><code class="language-nix">  src = fetchCrate {
+    inherit pname version;
+    hash = "sha256-...";
+  };
+</code></pre>
+<hr />
 <h2>Get cargoHash via a failing build</h2>
 <p>In the <code>nixpkgs</code> root, run:</p>
 <pre><code class="language-bash">nix build .#mdbook-rss-feed
@@ -96,7 +102,7 @@ specified: sha256-....
 got: sha256-1...
 </code></pre>
 <p>Copy the <code>got</code> value into <code>cargoHash</code>, rebuild, and it should succeed.</p>
-<p>Sanity check from <code>nixpkgs</code> root (i.e., the <code>nixpkgs</code> directory):</p>
+<p>Sanity check: from <code>nixpkgs</code> root (i.e., the <code>nixpkgs</code> directory):</p>
 <pre><code class="language-bash">./result/bin/mdbook-rss-feed --version
 </code></pre>
 <hr />
@@ -160,49 +166,6 @@ git push -u origin mdbook-rss-feed
 </ol>
 <p>The package will go through CI checks, and once green + approved by a
 maintainer, it’ll land in nixpkgs.</p>
-<details>
-<summary> ✔️ Example PR template filled out </summary>
-<pre><code class="language-md">mdbook-rss-feed: init at 1.3.0
-
-mdBook preprocessor that generates RSS, Atom, and JSON feeds with rich HTML
-previews, optional full-content entries, and pagination support.
-
-https://crates.io/crates/mdbook-rss-feed
-
-## Things done
-
-- Built on platform(s)
-  - [x] x86_64-linux
-  - [ ] aarch64-linux
-  - [ ] x86_64-darwin
-  - [ ] aarch64-darwin
-- Tested, as applicable:
-  - [ ] [NixOS tests](https://nixos.org/manual/nixos/unstable/index.html#sec-nixos-tests)
-        in
-        [nixos/tests](https://github.com/NixOS/nixpkgs/blob/master/nixos/tests).
-  - [ ] [Package tests](https://github.com/NixOS/nixpkgs/blob/master/pkgs/README.md#package-tests)
-        at `passthru.tests`.
-  - [ ] Tests in
-        [lib/tests](https://github.com/NixOS/nixpkgs/blob/master/lib/tests) or
-        [pkgs/test](https://github.com/NixOS/nixpkgs/blob/master/pkgs/test) for
-        functions and "core" functionality.
-- [ ] Ran `nixpkgs-review` on this PR. See
-      [nixpkgs-review usage](https://github.com/Mic92/nixpkgs-review#usage).
-- [x] Tested basic functionality of all binary files, usually in
-      `./result/bin/`.
-  - `./result/bin/mdbook-rss-feed --version` reports `mdbook-rss-feed 1.3.0`
-- Nixpkgs Release Notes
-  - [ ] Package update: when the change is major or breaking.
-- NixOS Release Notes
-  - [ ] Module addition: when adding a new NixOS module.
-  - [ ] Module update: when the change is significant.
-- [x] Fits
-      [CONTRIBUTING.md](https://github.com/NixOS/nixpkgs/blob/master/CONTRIBUTING.md),
-      [pkgs/README.md](https://github.com/NixOS/nixpkgs/blob/master/pkgs/README.md),
-      [maintainers/README.md](https://github.com/NixOS/nixpkgs/blob/master/maintainers/README.md)
-      and other READMEs.
-</code></pre>
-</details>
 ]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nixpkgs/rust_crate_to_nixpkgs.html</guid><pubDate>Wed, 31 Dec 2025 00:00:00 +0000</pubDate></item><item><title>Hardening Networking</title><link>https://saylesss88.github.io/nix/hardening_networking.html</link><description><![CDATA[<h1>Hardening Networking</h1>
 <details>
 <summary> ✔️ Table of Contents</summary>
@@ -13176,7 +13139,388 @@ relevant).</p>
 <p><a href="https://github.com/nix-community/impermanence">nix-community impermanence module</a></p>
 </li>
 </ul>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/installation/unenc/unenc_impermanence.html</guid><pubDate>Mon, 24 Nov 2025 00:00:00 +0000</pubDate></item><item><title>NixOS Containers</title><link>https://saylesss88.github.io/nixos_containers.html</link><description><![CDATA[<h1>NixOS Containers</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/installation/unenc/unenc_impermanence.html</guid><pubDate>Mon, 24 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Local Nixpkgs</title><link>https://saylesss88.github.io/Working_with_Nixpkgs_Locally_10.html</link><description><![CDATA[<h1>Chapter 10</h1>
+<details>
+<summary> ✔️ Click to Expand Table of Contents</summary>
+<!-- toc -->
+</details>
+<p><img src="images/server_rack.cleaned.png" alt="server_rack" /></p>
+<!-- ![gruv18](images/gruv18.png) -->
+<h2>Working with Nixpkgs Locally: Benefits and Best Practices</h2>
+<ul>
+<li>
+<p>Nixpkgs, the package repository for NixOS, is a powerful resource for building
+and customizing software.</p>
+</li>
+<li>
+<p>Working with a local copy enhances development, debugging, and contribution
+workflows.</p>
+</li>
+<li>
+<p>This post covers setting up a local Nixpkgs repository, searching for
+dependencies, and leveraging its advantages, incorporating tips from the Nix
+community.</p>
+</li>
+</ul>
+<h1>I. Why Work with Nixpkgs Locally?</h1>
+<ul>
+<li>
+<p>A local Nixpkgs repository offers significant advantages for Nix developers:</p>
+<h2>A. Faster Development Cycle</h2>
+<ul>
+<li>
+<p>Local searches for packages and dependencies are significantly quicker than
+querying remote repositories or channels.</p>
+</li>
+<li>
+<p>This speedup is crucial for efficient debugging and rapid prototyping of Nix
+expressions.</p>
+</li>
+</ul>
+<h2>B. Enhanced Version Control</h2>
+<ul>
+<li>
+<p>By pinning your local repository to specific commits or branches (e.g.,
+<code>nixos-unstable</code>), you ensure build reproducibility.</p>
+</li>
+<li>
+<p>This prevents unexpected issues arising from upstream changes in Nixpkgs.</p>
+</li>
+</ul>
+<h2>C. Flexible Debugging Capabilities</h2>
+<ul>
+<li>
+<p>You can directly test and modify package derivations within your local copy.</p>
+</li>
+<li>
+<p>This allows for quick fixes to issues like missing dependencies without
+waiting for upstream updates or releases.</p>
+</li>
+</ul>
+<h2>D. Streamlined Contribution Workflow</h2>
+<ul>
+<li>
+<p>Developing and testing new packages or patches locally is essential before
+submitting them as pull requests to Nixpkgs.</p>
+</li>
+<li>
+<p>A local setup provides an isolated environment for experimentation.</p>
+</li>
+</ul>
+<h2>E. Up-to-Date Documentation Source</h2>
+<ul>
+<li>The source code and comments within the Nixpkgs repository often contain the
+most current information about packages.</li>
+<li>This can sometimes be more up-to-date than official, external documentation.</li>
+</ul>
+<h2>F. Optimized Storage and Performance</h2>
+<ul>
+<li>Employing efficient cloning strategies (e.g., shallow clones) and avoiding
+unnecessary practices (like directly using Nixpkgs as a flake for local
+development) minimizes disk usage and build times.</li>
+</ul>
+</li>
+</ul>
+<h1>II. Flake vs. Non-Flake Syntax for Local Nixpkgs</h1>
+<ul>
+<li>
+<p>When working with Nixpkgs locally, the choice between Flake and non-Flake
+syntax has implications for performance and storage:</p>
+<h2>A. Flake Syntax (<code>nix build .#&lt;package&gt;</code>)</h2>
+<ul>
+<li>
+<p>Treats the current directory as a flake, requiring evaluation of
+<code>flake.nix</code>.</p>
+</li>
+<li>
+<p>For local Nixpkgs, this evaluates the flake definition in the repository
+root.</p>
+</li>
+<li>
+<p><strong>Performance and Storage Overhead:</strong> Flakes copy the entire working
+directory (including Git history if present) to <code>/nix/store</code> for evaluation.
+This can be slow and storage-intensive for large repositories like Nixpkgs.</p>
+</li>
+</ul>
+<h2>B. Non-Flake Syntax (<code>nix-build -f . &lt;package&gt;</code> or <code>nix build -f . &lt;package&gt;</code>)</h2>
+<ul>
+<li>
+<p><code>-f .</code> specifies the Nix expression (e.g., <code>default.nix</code> or a specific file)
+in the current directory.</p>
+</li>
+<li>
+<p><strong>Efficiency:</strong> Evaluates the Nix expression directly <em>without</em> copying the
+entire worktree to <code>/nix/store</code>. This is significantly faster and more
+storage-efficient for local development on large repositories.</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2>III. Setting Up a Local Nixpkgs Repository Efficiently</h2>
+<ul>
+<li>Cloning Nixpkgs requires careful consideration due to its size.</li>
+</ul>
+<h2>A.a Initial Clone: Shallow Cloning</h2>
+<p>It is common to place your local clone in the <code>/src</code> directory:</p>
+<pre><code class="language-bash">mkdir src &amp;&amp; cd src
+</code></pre>
+<blockquote>
+<p>❗ Warning, A shallow clone (<code>--depth 1</code>) is not recommended for general
+development or contributing changes back to Nixpkgs via pull requests. It’s
+primarily suitable for:</p>
+<ul>
+<li>Quick checks or builds: If you only need to verify a package’s current state
+or build a specific version without needing historical context.</li>
+<li>CI/CD environments: Where disk space and clone time are critical, and only
+the latest commit is needed for automated tests or builds.</li>
+</ul>
+</blockquote>
+<p>With that said, to avoid downloading the entire history, perform a shallow
+clone:</p>
+<pre><code class="language-bash">git clone [https://github.com/NixOS/nixpkgs](https://github.com/NixOS/nixpkgs) --depth 1
+cd nixpkgs
+</code></pre>
+<h2>A.b A few Examples exploring Nixpkgs</h2>
+<p>While in the <code>nixpkgs</code> directory, you can check the version of a package:</p>
+<pre><code class="language-bash">nix-instantiate --eval -A openssl.version
+"3.4.1"
+</code></pre>
+<p>Or to directly edit the file you can use <code>nix edit</code>:</p>
+<pre><code class="language-bash">nix edit nixpkgs#openssl
+</code></pre>
+<p>It uses the nix registry and <code>openssl.meta.position</code> to locate the file.</p>
+<pre><code class="language-bash">man nix3 registry
+</code></pre>
+<p>The above command will open the <code>openssl/default.nix</code> in your <code>$EDITOR</code>.</p>
+<hr />
+<h2>A.1 Full Fork and Clone of Nixpkgs</h2>
+<p>If you want to contribute to Nixpkgs, you need to set up a local version
+following the
+<a href="https://github.com/NixOS/nixpkgs/blob/master/CONTRIBUTING.md">Contributing guide</a></p>
+<p>You’ll need to, this is directly from the <code>Contributing.md</code>:</p>
+<ol>
+<li>
+<p><a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo#forking-a-repository">Fork</a>
+the <a href="https://github.com/nixos/nixpkgs/">Nixpkgs repository</a></p>
+</li>
+<li>
+<p><a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo#cloning-your-forked-repository">Clone the forked repo</a>
+into a local <code>nixpkgs</code> directory.</p>
+</li>
+</ol>
+<pre><code class="language-bash">git clone git@github.com:your-user/nixpkgs.git
+</code></pre>
+<ol start="3">
+<li><a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo#configuring-git-to-sync-your-fork-with-the-upstream-repository">Configure the upstream Nixpkgs repo</a></li>
+</ol>
+<pre><code class="language-bash">git remote add upstream git@github.com:NixOS/nixpkgs.git
+# Check them out
+git remove -v
+</code></pre>
+<h3>The Three Master Branches</h3>
+<ol>
+<li><strong>Upstream Master</strong> (upstream/master):</li>
+</ol>
+<ul>
+<li>
+<p><strong>Where it is</strong>: On the official NixOS servers.</p>
+</li>
+<li>
+<p><strong>Role</strong>: The absolute source of truth. Thousands of people are pushing to
+this daily.</p>
+</li>
+</ul>
+<ol start="2">
+<li><strong>Local Master</strong> (master):</li>
+</ol>
+<ul>
+<li>
+<p><strong>Where it is</strong>: On your physical computer.</p>
+</li>
+<li>
+<p><strong>Role</strong>: Your working copy. This is the only one you can actually “rebase” or
+“commit” to directly.</p>
+</li>
+</ul>
+<ol start="3">
+<li><strong>Origin Master</strong> (origin/master):</li>
+</ol>
+<ul>
+<li>
+<p><strong>Where it is</strong>: On your GitHub fork (github.com/your-user/nixpkgs).</p>
+</li>
+<li>
+<p><strong>Role</strong>: A personal backup and a place to host your code so you can open Pull
+Requests.</p>
+</li>
+</ul>
+<h3>Create a branch</h3>
+<p>In the nixpkgs ecosystem, the “cleanest” way to work is to <strong>never</strong> add your
+own commits to your local master.</p>
+<ul>
+<li>
+<p>Keep your <code>master</code> as a “pure mirror” of <code>upstream/master</code>.</p>
+</li>
+<li>
+<p>Whenever you want to fix a package or add something new, create a feature
+branch:</p>
+</li>
+</ul>
+<pre><code class="language-bash">git checkout -b fix-my-package master
+</code></pre>
+<p>This way, syncing is as simple as a reset:</p>
+<pre><code class="language-bash"># Total reset of your local master to match the official one
+git fetch upstream
+git checkout master
+git reset --hard upstream/master
+git push origin master --force
+</code></pre>
+<h3>Pushing a PR</h3>
+<p>When you’re ready to push changes you push to <code>origin/feature-branch</code>, visit
+your fork on github.com and submit the PR.</p>
+<h2>B. Managing Branches with Worktrees</h2>
+<ul>
+<li>
+<p>Use Git worktrees to manage different branches efficiently:</p>
+<pre><code class="language-bash">git fetch --all --prune --depth=1
+git worktree add -b nixos-unstable nixos-unstable # For just unstable
+</code></pre>
+</li>
+<li>
+<p><strong>Explanation of <code>git worktree</code>:</strong> Allows multiple working directories
+attached to the same <code>.git</code> directory, sharing history and objects but with
+separate checked-out files.</p>
+</li>
+<li>
+<p><code>git worktree add</code>: Creates a new working directory for the specified branch
+(<code>nixos-unstable</code> in this case).</p>
+</li>
+</ul>
+<h1>IV. Debugging Missing Dependencies: A Practical Example</h1>
+<details>
+<summary> Click to see icat Example </summary>
+<ul>
+<li>Let’s say you’re trying to build <code>icat</code> locally and encounter a missing
+dependency error:</li>
+</ul>
+<pre><code class="language-nix">nix-build -A icat
+# ... (Error log showing "fatal error: X11/Xlib.h: No such file or directory")
+</code></pre>
+<ul>
+<li>The error <code>fatal error: X11/Xlib.h: No such file or directory</code> indicates a
+missing X11 dependency.</li>
+</ul>
+<h2>A. Online Search with <code>search.nixos.org</code></h2>
+<ul>
+<li>The Nixpkgs package search website
+(<a href="https://search.nixos.org/packages">https://search.nixos.org/packages</a>) is a
+valuable first step.</li>
+<li>However, broad terms like “x11” can yield many irrelevant results.</li>
+<li><strong>Tip:</strong> Utilize the left sidebar to filter by package sets (e.g., “xorg”).</li>
+</ul>
+<h2>B. Local Source Code Search with <code>rg</code> (ripgrep)</h2>
+<ul>
+<li>
+<p>Familiarity with searching the Nixpkgs source code is crucial for finding
+dependencies.</p>
+</li>
+<li>
+<p>Navigate to your local <code>nixpkgs/</code> directory and use <code>rg</code>:</p>
+<pre><code class="language-bash">rg "x11 =" pkgs # Case-sensitive search
+</code></pre>
+<p><strong>Output:</strong></p>
+<pre><code>pkgs/tools/X11/primus/default.nix
+21:  primus = if useNvidia then primusLib_ else primusLib_.override { nvidia_x11 = null; };
+22:  primus_i686 = if useNvidia then primusLib_i686_ else primusLib_i686_.override { nvidia_x11 = null; };
+
+pkgs/applications/graphics/imv/default.nix
+38:    x11 = [ libGLU xorg.libxcb xorg.libX11 ];
+</code></pre>
+</li>
+<li>
+<p>Refining the search (case-insensitive):</p>
+<pre><code class="language-bash">rg -i "libx11 =" pkgs
+</code></pre>
+<p><strong>Output:</strong></p>
+<pre><code># ... (Output showing "xorg.libX11")
+</code></pre>
+</li>
+<li>
+<p>The key result is <code>xorg.libX11</code>, which is likely the missing dependency.</p>
+</li>
+</ul>
+ </details>
+<h1>V. Local Derivation Search with <code>nix-locate</code></h1>
+<details>
+<summary> Click to Expand nix-locate command Example</summary>
+<ul>
+<li>
+<p><code>nix-locate</code> (from the <code>nix-index</code> package) allows searching for derivations
+on the command line.</p>
+<blockquote>
+<p><strong>Note:</strong> Install <code>nix-index</code> and run <code>nix-index</code> to create the initial
+index.</p>
+</blockquote>
+<pre><code class="language-bash">nix-locate libx11
+# ... (Output showing paths related to libx11)
+</code></pre>
+</li>
+<li>
+<p>Combining online and local search tools (<code>search.nixos.org</code>, <code>rg</code>,
+<code>nix-locate</code>) provides a comprehensive approach to finding dependencies.</p>
+</li>
+</ul>
+</details>
+<h1>VI. Key Benefits of Working with Nixpkgs Locally (Recap)</h1>
+<ul>
+<li>
+<p><strong>Speed:</strong> Faster searches and builds compared to remote operations.</p>
+</li>
+<li>
+<p><strong>Control:</strong> Full control over the Nixpkgs version.</p>
+</li>
+<li>
+<p><strong>Up-to-Date Information:</strong> Repository source often has the latest details.</p>
+</li>
+</ul>
+<h1>VII. Best Practices and Tips from the Community</h1>
+<details>
+<summary> ✔️ Click To Expand Best Practices and Tips from the community</summary>
+<ul>
+<li>
+<p><strong>Rebasing over Merging:</strong> Never merge upstream changes into your local
+branch. Always rebase your branch onto the upstream (e.g., <code>master</code> or
+<code>nixos-unstable</code>) to avoid accidental large-scale pings in pull requests (Tip
+from <code>soulsssx3</code> on Reddit).</p>
+</li>
+<li>
+<p><strong>Tip from <code>ElvishJErrico</code>:</strong> Avoid using Nixpkgs directly as a flake for
+local development due to slow copying to <code>/nix/store</code> and performance issues
+with garbage collection on large numbers of small files. Use
+<code>nix build -f . &lt;package&gt;</code> instead of <code>nix build .#&lt;package&gt;</code>.</p>
+</li>
+<li>
+<p><strong>Edge Cases for Flake Syntax:</strong> Flake syntax might be necessary in specific
+scenarios, such as NixOS installer tests where copying the Git history should
+be avoided.</p>
+</li>
+<li>
+<p><strong>Base Changes on <code>nixos-unstable</code>:</strong> For better binary cache hits, base your
+changes on the <code>nixos-unstable</code> branch instead of <code>master</code>. Consider the
+merge-base for staging branches as well.</p>
+</li>
+<li>
+<p><strong>Consider <code>jujutsu</code>:</strong> Explore <a href="https://github.com/jj-vcs/jj">jj-vcs</a>, a
+Git-compatible alternative that can offer a more intuitive workflow,
+especially for large monorepos like Nixpkgs. While it has a learning curve, it
+can significantly improve parallel work and branch management.</p>
+</li>
+<li>
+<p><a href="https://saylesss88.github.io/vcs/jujutsu.html">Intro-To-Jujutsu</a></p>
+</li>
+</ul>
+</details>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Working_with_Nixpkgs_Locally_10.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>NixOS Containers</title><link>https://saylesss88.github.io/nixos_containers.html</link><description><![CDATA[<h1>NixOS Containers</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -13735,323 +14079,7 @@ and tools that can help you understand the evaluation process, inspect the
 values of expressions, and trace the execution of your Nix code, enabling you to
 effectively troubleshoot and resolve issues in both Flake-based and traditional
 Nix projects.</p>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Comparing_Flakes_and_Traditional_Nix_8.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Local Nixpkgs</title><link>https://saylesss88.github.io/Working_with_Nixpkgs_Locally_10.html</link><description><![CDATA[<h1>Chapter 10</h1>
-<details>
-<summary> ✔️ Click to Expand Table of Contents</summary>
-<!-- toc -->
-</details>
-<p><img src="images/server_rack.cleaned.png" alt="server_rack" /></p>
-<!-- ![gruv18](images/gruv18.png) -->
-<h2>Working with Nixpkgs Locally: Benefits and Best Practices</h2>
-<ul>
-<li>
-<p>Nixpkgs, the package repository for NixOS, is a powerful resource for building
-and customizing software.</p>
-</li>
-<li>
-<p>Working with a local copy enhances development, debugging, and contribution
-workflows.</p>
-</li>
-<li>
-<p>This post covers setting up a local Nixpkgs repository, searching for
-dependencies, and leveraging its advantages, incorporating tips from the Nix
-community.</p>
-</li>
-</ul>
-<h1>I. Why Work with Nixpkgs Locally?</h1>
-<ul>
-<li>
-<p>A local Nixpkgs repository offers significant advantages for Nix developers:</p>
-<h2>A. Faster Development Cycle</h2>
-<ul>
-<li>
-<p>Local searches for packages and dependencies are significantly quicker than
-querying remote repositories or channels.</p>
-</li>
-<li>
-<p>This speedup is crucial for efficient debugging and rapid prototyping of Nix
-expressions.</p>
-</li>
-</ul>
-<h2>B. Enhanced Version Control</h2>
-<ul>
-<li>
-<p>By pinning your local repository to specific commits or branches (e.g.,
-<code>nixos-unstable</code>), you ensure build reproducibility.</p>
-</li>
-<li>
-<p>This prevents unexpected issues arising from upstream changes in Nixpkgs.</p>
-</li>
-</ul>
-<h2>C. Flexible Debugging Capabilities</h2>
-<ul>
-<li>
-<p>You can directly test and modify package derivations within your local copy.</p>
-</li>
-<li>
-<p>This allows for quick fixes to issues like missing dependencies without
-waiting for upstream updates or releases.</p>
-</li>
-</ul>
-<h2>D. Streamlined Contribution Workflow</h2>
-<ul>
-<li>
-<p>Developing and testing new packages or patches locally is essential before
-submitting them as pull requests to Nixpkgs.</p>
-</li>
-<li>
-<p>A local setup provides an isolated environment for experimentation.</p>
-</li>
-</ul>
-<h2>E. Up-to-Date Documentation Source</h2>
-<ul>
-<li>The source code and comments within the Nixpkgs repository often contain the
-most current information about packages.</li>
-<li>This can sometimes be more up-to-date than official, external documentation.</li>
-</ul>
-<h2>F. Optimized Storage and Performance</h2>
-<ul>
-<li>Employing efficient cloning strategies (e.g., shallow clones) and avoiding
-unnecessary practices (like directly using Nixpkgs as a flake for local
-development) minimizes disk usage and build times.</li>
-</ul>
-</li>
-</ul>
-<h1>II. Flake vs. Non-Flake Syntax for Local Nixpkgs</h1>
-<ul>
-<li>
-<p>When working with Nixpkgs locally, the choice between Flake and non-Flake
-syntax has implications for performance and storage:</p>
-<h2>A. Flake Syntax (<code>nix build .#&lt;package&gt;</code>)</h2>
-<ul>
-<li>
-<p>Treats the current directory as a flake, requiring evaluation of
-<code>flake.nix</code>.</p>
-</li>
-<li>
-<p>For local Nixpkgs, this evaluates the flake definition in the repository
-root.</p>
-</li>
-<li>
-<p><strong>Performance and Storage Overhead:</strong> Flakes copy the entire working
-directory (including Git history if present) to <code>/nix/store</code> for evaluation.
-This can be slow and storage-intensive for large repositories like Nixpkgs.</p>
-</li>
-</ul>
-<h2>B. Non-Flake Syntax (<code>nix-build -f . &lt;package&gt;</code> or <code>nix build -f . &lt;package&gt;</code>)</h2>
-<ul>
-<li>
-<p><code>-f .</code> specifies the Nix expression (e.g., <code>default.nix</code> or a specific file)
-in the current directory.</p>
-</li>
-<li>
-<p><strong>Efficiency:</strong> Evaluates the Nix expression directly <em>without</em> copying the
-entire worktree to <code>/nix/store</code>. This is significantly faster and more
-storage-efficient for local development on large repositories.</p>
-</li>
-</ul>
-</li>
-</ul>
-<h2>III. Setting Up a Local Nixpkgs Repository Efficiently</h2>
-<details>
-<summary>Click To See How to set up Nixpkgs Locally</summary>
-<ul>
-<li>Cloning Nixpkgs requires careful consideration due to its size.</li>
-</ul>
-<h2>A.a Initial Clone: Shallow Cloning</h2>
-<p>It is common to place your local clone in the <code>/src</code> directory:</p>
-<pre><code class="language-bash">mkdir src &amp;&amp; cd src
-</code></pre>
-<blockquote>
-<p>❗ Warning, A shallow clone (<code>--depth 1</code>) is not recommended for general
-development or contributing changes back to Nixpkgs via pull requests. It’s
-primarily suitable for:</p>
-<ul>
-<li>Quick checks or builds: If you only need to verify a package’s current state
-or build a specific version without needing historical context.</li>
-<li>CI/CD environments: Where disk space and clone time are critical, and only
-the latest commit is needed for automated tests or builds.</li>
-</ul>
-</blockquote>
-<p>With that said, to avoid downloading the entire history, perform a shallow
-clone:</p>
-<pre><code class="language-bash">git clone [https://github.com/NixOS/nixpkgs](https://github.com/NixOS/nixpkgs) --depth 1
-cd nixpkgs
-</code></pre>
-<h2>A.b A few Examples exploring Nixpkgs</h2>
-<p>While in the <code>nixpkgs</code> directory, you can check the version of a package:</p>
-<pre><code class="language-bash">nix-instantiate --eval -A openssl.version
-"3.4.1"
-</code></pre>
-<p>Or to directly edit the file you can use <code>nix edit</code>:</p>
-<pre><code class="language-bash">nix edit nixpkgs#openssl
-</code></pre>
-<p>It uses the nix registry and <code>openssl.meta.position</code> to locate the file.</p>
-<pre><code class="language-bash">man nix3 registry
-</code></pre>
-<p>The above command will open the <code>openssl/default.nix</code> in your <code>$EDITOR</code>.</p>
-<h2>A.1 Full Fork and Clone of Nixpkgs</h2>
-<p>If you want to contribute to Nixpkgs, you need to set up a local version
-following the
-<a href="https://github.com/NixOS/nixpkgs/blob/master/CONTRIBUTING.md">Contributing guide</a></p>
-<p>You’ll need to, this is directly from the <code>Contributing.md</code>:</p>
-<ol>
-<li>
-<p><a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo#forking-a-repository">Fork</a>
-the <a href="https://github.com/nixos/nixpkgs/">Nixpkgs repository</a></p>
-</li>
-<li>
-<p><a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo#cloning-your-forked-repository">Clone the forked repo</a>
-into a local <code>nixpkgs</code> directory.</p>
-</li>
-<li>
-<p><a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo#configuring-git-to-sync-your-fork-with-the-upstream-repository">Configure the upstream Nixpkgs repo</a></p>
-</li>
-</ol>
-<h2>B. Managing Branches with Worktrees</h2>
-<ul>
-<li>
-<p>Use Git worktrees to manage different branches efficiently:</p>
-<pre><code class="language-bash">git fetch --all --prune --depth=1
-git worktree add -b nixos-unstable nixos-unstable # For just unstable
-</code></pre>
-</li>
-<li>
-<p><strong>Explanation of <code>git worktree</code>:</strong> Allows multiple working directories
-attached to the same <code>.git</code> directory, sharing history and objects but with
-separate checked-out files.</p>
-</li>
-<li>
-<p><code>git worktree add</code>: Creates a new working directory for the specified branch
-(<code>nixos-unstable</code> in this case).</p>
-</li>
-</ul>
-</details>
-<h1>IV. Debugging Missing Dependencies: A Practical Example</h1>
-<details>
-<summary> Click to see icat Example </summary>
-<ul>
-<li>Let’s say you’re trying to build <code>icat</code> locally and encounter a missing
-dependency error:</li>
-</ul>
-<pre><code class="language-nix">nix-build -A icat
-# ... (Error log showing "fatal error: X11/Xlib.h: No such file or directory")
-</code></pre>
-<ul>
-<li>The error <code>fatal error: X11/Xlib.h: No such file or directory</code> indicates a
-missing X11 dependency.</li>
-</ul>
-<h2>A. Online Search with <code>search.nixos.org</code></h2>
-<ul>
-<li>The Nixpkgs package search website
-(<a href="https://search.nixos.org/packages">https://search.nixos.org/packages</a>) is a
-valuable first step.</li>
-<li>However, broad terms like “x11” can yield many irrelevant results.</li>
-<li><strong>Tip:</strong> Utilize the left sidebar to filter by package sets (e.g., “xorg”).</li>
-</ul>
-<h2>B. Local Source Code Search with <code>rg</code> (ripgrep)</h2>
-<ul>
-<li>
-<p>Familiarity with searching the Nixpkgs source code is crucial for finding
-dependencies.</p>
-</li>
-<li>
-<p>Navigate to your local <code>nixpkgs/</code> directory and use <code>rg</code>:</p>
-<pre><code class="language-bash">rg "x11 =" pkgs # Case-sensitive search
-</code></pre>
-<p><strong>Output:</strong></p>
-<pre><code>pkgs/tools/X11/primus/default.nix
-21:  primus = if useNvidia then primusLib_ else primusLib_.override { nvidia_x11 = null; };
-22:  primus_i686 = if useNvidia then primusLib_i686_ else primusLib_i686_.override { nvidia_x11 = null; };
-
-pkgs/applications/graphics/imv/default.nix
-38:    x11 = [ libGLU xorg.libxcb xorg.libX11 ];
-</code></pre>
-</li>
-<li>
-<p>Refining the search (case-insensitive):</p>
-<pre><code class="language-bash">rg -i "libx11 =" pkgs
-</code></pre>
-<p><strong>Output:</strong></p>
-<pre><code># ... (Output showing "xorg.libX11")
-</code></pre>
-</li>
-<li>
-<p>The key result is <code>xorg.libX11</code>, which is likely the missing dependency.</p>
-</li>
-</ul>
- </details>
-<h1>V. Local Derivation Search with <code>nix-locate</code></h1>
-<details>
-<summary> Click to Expand nix-locate command Example</summary>
-<ul>
-<li>
-<p><code>nix-locate</code> (from the <code>nix-index</code> package) allows searching for derivations
-on the command line.</p>
-<blockquote>
-<p><strong>Note:</strong> Install <code>nix-index</code> and run <code>nix-index</code> to create the initial
-index.</p>
-</blockquote>
-<pre><code class="language-bash">nix-locate libx11
-# ... (Output showing paths related to libx11)
-</code></pre>
-</li>
-<li>
-<p>Combining online and local search tools (<code>search.nixos.org</code>, <code>rg</code>,
-<code>nix-locate</code>) provides a comprehensive approach to finding dependencies.</p>
-</li>
-</ul>
-</details>
-<h1>VI. Key Benefits of Working with Nixpkgs Locally (Recap)</h1>
-<ul>
-<li>
-<p><strong>Speed:</strong> Faster searches and builds compared to remote operations.</p>
-</li>
-<li>
-<p><strong>Control:</strong> Full control over the Nixpkgs version.</p>
-</li>
-<li>
-<p><strong>Up-to-Date Information:</strong> Repository source often has the latest details.</p>
-</li>
-</ul>
-<h1>VII. Best Practices and Tips from the Community</h1>
-<details>
-<summary> ✔️ Click To Expand Best Practices and Tips from the community</summary>
-<ul>
-<li>
-<p><strong>Rebasing over Merging:</strong> Never merge upstream changes into your local
-branch. Always rebase your branch onto the upstream (e.g., <code>master</code> or
-<code>nixos-unstable</code>) to avoid accidental large-scale pings in pull requests (Tip
-from <code>soulsssx3</code> on Reddit).</p>
-</li>
-<li>
-<p><strong>Tip from <code>ElvishJErrico</code>:</strong> Avoid using Nixpkgs directly as a flake for
-local development due to slow copying to <code>/nix/store</code> and performance issues
-with garbage collection on large numbers of small files. Use
-<code>nix build -f . &lt;package&gt;</code> instead of <code>nix build .#&lt;package&gt;</code>.</p>
-</li>
-<li>
-<p><strong>Edge Cases for Flake Syntax:</strong> Flake syntax might be necessary in specific
-scenarios, such as NixOS installer tests where copying the Git history should
-be avoided.</p>
-</li>
-<li>
-<p><strong>Base Changes on <code>nixos-unstable</code>:</strong> For better binary cache hits, base your
-changes on the <code>nixos-unstable</code> branch instead of <code>master</code>. Consider the
-merge-base for staging branches as well.</p>
-</li>
-<li>
-<p><strong>Consider <code>jujutsu</code>:</strong> Explore <a href="https://github.com/jj-vcs/jj">jj-vcs</a>, a
-Git-compatible alternative that can offer a more intuitive workflow,
-especially for large monorepos like Nixpkgs. While it has a learning curve, it
-can significantly improve parallel work and branch management.</p>
-</li>
-<li>
-<p><a href="https://saylesss88.github.io/vcs/jujutsu.html">Intro-To-Jujutsu</a></p>
-</li>
-</ul>
-</details>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Working_with_Nixpkgs_Locally_10.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Debugging NixOS modules</title><link>https://saylesss88.github.io/Debugging_and_Tracing_NixOS_Modules_9.html</link><description><![CDATA[<h1>Chapter 11</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Comparing_Flakes_and_Traditional_Nix_8.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Debugging NixOS modules</title><link>https://saylesss88.github.io/Debugging_and_Tracing_NixOS_Modules_9.html</link><description><![CDATA[<h1>Chapter 11</h1>
 <p>This chapter covers debugging NixOS modules, focusing on tracing module options
 and evaluating merges.</p>
 <details>
@@ -15072,7 +15100,378 @@ clone Nixpkgs, how to make changes to package definitions, and how to test those
 changes locally before contributing them back upstream. This chapter will
 empower you to not just use existing Nix packages, but also to customize and
 extend them to fit your specific needs.</p>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Debugging_and_Tracing_NixOS_Modules_9.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Fork, Clone, Contribute</title><link>https://saylesss88.github.io/nixpkgs/fork_clone_contribute.html</link><description><![CDATA[<h1>Fork, Clone, Contribute</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Debugging_and_Tracing_NixOS_Modules_9.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nixpkgs Overlays</title><link>https://saylesss88.github.io/nixpkgs/overlay.html</link><description><![CDATA[<h1>Nixpkgs Overlays</h1>
+<p>The following is done with a local clone of Nixpkgs located at <code>~/src/nixpkgs</code>.</p>
+<p>In this example, we will create an overlay to override the version of
+<code>btrfs-progs</code>. In the root directory of our local clone of Nixpkgs
+(i.e.<code>~/src/nixpkgs</code>) we can run the following command to locate <code>btrfs-progs</code>
+within Nixpkgs:</p>
+<pre><code class="language-bash">fd 'btrfs-progs' .
+./pkgs/by-name/bt/btrfs-progs/
+</code></pre>
+<p>Open the <code>package.nix</code> in the above directory and copy the <code>src</code> block within
+the <code>stdenv.mkDerivation</code> block like so:</p>
+<pre><code class="language-nix"># package.nix
+  version = "6.14";
+
+  src = fetchurl {
+    url = "mirror://kernel/linux/kernel/people/kdave/btrfs-progs/btrfs-progs-v${version}.tar.xz";
+    hash = "sha256-31q4BPyzbikcQq2DYfgBrR4QJBtDvTBP5Qzj355+PaE=";
+  };
+</code></pre>
+<p>When we use the above <code>src</code> block in our overlay we’ll need to add
+<code>src = self.fetchurl</code> for our overlay to have access to <code>fetchurl</code>.</p>
+<p>We will replace the version with our desired version number. To find another
+version that actually exists we need to check their github repos
+<a href="https://github.com/kdave/btrfs-progs/releases">btrfs-progs Releases</a>. I can see
+that the previous version was <code>v6.13</code>, lets try that.</p>
+<pre><code class="language-bash">cd ~/src/nixpkgs
+hx overlay.nix
+</code></pre>
+<p>We will change the version to <code>6.13</code> for demonstration purposes. All that is
+really required is changing the version and 1 character in the <code>hash</code> which
+would cause a refetch and recalculation of the hash. We will use an empty string
+to follow convention:</p>
+<pre><code class="language-nix"># overlay.nix
+self: super: {
+  btrfs-progs = super.btrfs-progs.overrideAttrs (old: rec {
+      version = "6.13";
+
+      # Notice the `self` added here
+      src = self.fetchurl {
+        url = "mirror://kernel/linux/kernel/people/kdave/btrfs-progs/btrfs-progs-v${version}.tar.xz";
+        hash = "";
+      };
+    };
+  });
+}
+</code></pre>
+<p>To build this with the file right from the root of the local Nixpkgs (i.e.
+<code>~/src/nixpkgs</code>) you could run the following. Running the command this way
+avoids the impurity of looking it up in the <code>~/.config</code> directory:</p>
+<pre><code class="language-bash">nix-build -A btrfs-progs --arg overlays '[ (import ./overlay.nix) ]'
+</code></pre>
+<p>The compiler will give you back the correct <code>hash</code>:</p>
+<pre><code class="language-bash">specified: sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+got:    sha256-ZbPyERellPgAE7QyYg7sxqfisMBeq5cTb/UGx01z7po=
+</code></pre>
+<p>Replace the empty <code>hash</code> with the new hash value we just got from the compiler
+so the <code>overlay.nix</code> would look like this:</p>
+<pre><code class="language-nix">self: super: {
+  btrfs-progs = super.btrfs-progs.overrideAttrs (old: rec {
+    version = "6.13";
+
+    src = self.fetchurl {
+      url = "mirror://kernel/linux/kernel/people/kdave/btrfs-progs/btrfs-progs-v${version}.tar.xz";
+      hash = "sha256-ZbPyERellPgAE7QyYg7sxqfisMBeq5cTb/UGx01z7po=";
+    };
+  });
+}
+</code></pre>
+<p>Try building it again:</p>
+<pre><code class="language-bash">nix-build -A btrfs-progs --arg overlays '[ (import ./overlay.nix) ]'
+checking for references to /build/ in /nix/store/szd6lizahidjniz85a0g1wsrfknirhwb-btrfs-progs-6.13...
+gzipping man pages under /nix/store/szd6lizahidjniz85a0g1wsrfknirhwb-btrfs-progs-6.13/share/man/
+patching script interpreter paths in /nix/store/szd6lizahidjniz85a0g1wsrfknirhwb-btrfs-progs-6.13
+/nix/store/szd6lizahidjniz85a0g1wsrfknirhwb-btrfs-progs-6.13/bin/fsck.btrfs: interpreter directive changed from "#!/bin/sh -f" to "/nix/store/xy4jjgw87sbgwylm5kn047d9gkbhsr9x-bash-5.2p37/bin/sh -f"
+stripping (with command strip and flags -S -p) in  /nix/store/szd6lizahidjniz85a0g1wsrfknirhwb-btrfs-progs-6.13/lib /nix/store/szd6lizahidjniz85a0g1wsrfknirhwb-btrfs-progs-6.13/bin
+/nix/store/szd6lizahidjniz85a0g1wsrfknirhwb-btrfs-progs-6.13
+</code></pre>
+<p>We can inspect it with the repl:</p>
+<pre><code class="language-bash">cd ~/src/nixpkgs
+nix repl
+nix-repl&gt; :a import ./. { overlays = [ (import ./overlay.nix) ]; }
+nix-repl&gt; btrfs-progs
+«derivation /nix/store/6yxhj84cwcsnrd87rcxbd6w08l9ikc6p-btrfs-progs-6.13.drv»
+nix-repl&gt; btrfs-progs.drvAttrs.buildInputs
+[
+  «derivation /nix/store/yg4llzkcla5rppv8r1iikyamfxg3g4sg-acl-2.3.2.drv»
+  «derivation /nix/store/vqczbcwjnid6bs4cv3skl7kyd6kkzcfx-attr-2.5.2.drv»
+  «derivation /nix/store/xrvx0azszpdh2x0lnldakqx25vfxab19-e2fsprogs-1.47.2.drv»
+  «derivation /nix/store/iil4b8adk615zhp6wmzjx16z1v2f8f4j-util-linux-minimal-2.41.drv»
+  «derivation /nix/store/wwld8wp91m26wz69gp8vzh090sh5ygxd-lzo-2.10.drv»
+  «derivation /nix/store/w4ncw24gdfkbx9779xpgjli5sagi506m-systemd-minimal-libs-257.5.drv»
+  «derivation /nix/store/dmh4lvmq6n8hy56q93kplvnfnlwqzzv5-zlib-1.3.1.drv»
+  «derivation /nix/store/h8iwhnr636dwb72qqcyzp111ajjxgzr2-zstd-1.5.7.drv»
+]
+nix-repl&gt; btrfs-progs.drvAttrs.version
+"6.13"
+nix-repl&gt; btrfs-progs.drvAttrs.src
+«derivation /nix/store/y5nkz1xczxha4xl93qq3adndyc46dcvf-btrfs-progs-v6.13.tar.xz.drv»
+</code></pre>
+<p>Using <code>:a</code> adds the attributes from the resulting set into scope and avoids
+bringing the entire <code>nixpkgs</code> set into scope.</p>
+<p>To see whats available, you can for example type <code>btrfs-progs.drvAttrs.</code> then
+hit <code>TAB</code>.</p>
+<p>Another way to do this is to move our overlay to the
+<code>~/.config/nixpkgs/overlays</code> directory and rename the file like the following,
+agian this adds an impurity because it relies on your <code>~/.config</code> directory
+which is different from user to user:</p>
+<pre><code class="language-bash">mv overlay.nix ~/.config/nixpkgs/overlays/btrfs-progs.nix
+cd ~/src/nixpkgs
+nix-build -A btrfs-progs
+checking for references to /build/ in /nix/store/szd6lizahidjniz85a0g1wsrfknirhwb-btrfs-progs-6.13...
+gzipping man pages under /nix/store/szd6lizahidjniz85a0g1wsrfknirhwb-btrfs-progs-6.13/share/man/
+patching script interpreter paths in /nix/store/szd6lizahidjniz85a0g1wsrfknirhwb-btrfs-progs-6.13
+/nix/store/szd6lizahidjniz85a0g1wsrfknirhwb-btrfs-progs-6.13/bin/fsck.btrfs: interpreter directive changed from "#!/bin/sh -f" to "/nix/store/xy4jjgw87sbgwylm5kn047d9gkbhsr9x-bash-5.2p37/bin/sh -f"
+stripping (with command strip and flags -S -p) in  /nix/store/szd6lizahidjniz85a0g1wsrfknirhwb-btrfs-progs-6.13/lib /nix/store/szd6lizahidjniz85a0g1wsrfknirhwb-btrfs-progs-6.13/bin
+/nix/store/szd6lizahidjniz85a0g1wsrfknirhwb-btrfs-progs-6.13
+</code></pre>
+<h2>Overlays with Flakes</h2>
+<p>In a flake, overlays are defined in the <code>outputs.overlays</code> attribute set of the
+<code>flake.nix</code>.</p>
+<p>They are then applied to <code>nixpkgs</code> inputs using
+<code>inputs.nixpkgs.follows = "nixpkgs";</code> (or similar) and the overlays attribute on
+the input.</p>
+<p>Example of flake usage:</p>
+<pre><code class="language-nix"># flake.nix
+{
+  description = "My NixOS flake with custom overlays";
+
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+  };
+
+  outputs = { self, nixpkgs, ... }: {
+
+    overlays.myCustomOverlay = final: prev: {
+      btrfs-progs = prev.btrfs-progs.overrideAttrs (old: rec {
+        version = "6.13";
+        src = self.fetchurl {
+          url = "mirror://kernel/linux/kernel/people/kdave/btrfs-progs/btrfs-progs-v${version}.tar.xz";
+          hash = "sha256-ZbPyERellPgAE7QyYg7sxqfisMBeq5cTb/UGx01z7po=";
+        };
+      });
+    };
+
+    nixosConfigurations.my-system = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [
+        # Apply the overlay
+        { nixpkgs.overlays = [ self.overlays.myCustomOverlay ]; }
+        ./configuration.nix
+      ];
+    };
+  };
+}
+</code></pre>
+<pre><code class="language-bash">nix flake show
+path:/home/jr/btrfs-progs?lastModified=1749655369&amp;narHash=sha256-ln6dLiqo7TxStQSXgcIwfbdt7STGw4ZHftZRfWpY/JQ%3D
+├───nixosConfigurations
+│   └───my-system: NixOS configuration
+└───overlays
+    └───myCustomOverlay: Nixpkgs overlay
+</code></pre>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nixpkgs/overlay.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Local Nixpkgs</title><link>https://saylesss88.github.io/nixpkgs/local_package.html</link><description><![CDATA[<details>
+<summary> ✔️ Table of Contents</summary>
+<!-- toc -->
+</details>
+<h1>Creating and Building a Local Package within a Nixpkgs Clone</h1>
+<p>This chapter demonstrates the fundamental pattern for creating a package. Every
+package recipe is a file that declares a function. This function takes the
+packages dependencies as argument.</p>
+<p>In this example we’ll make a simple package with <code>coreutils</code> and build it.
+Demonstrating the process of building and testing a local package.</p>
+<p>This chapter will assume you have already have a cloned fork of Nixpkgs. I
+choose to clone mine to the <code>~/src/</code> directory.</p>
+<p>You can check out the <code>nixpkgs/pkgs/README.md</code>
+<a href="https://github.com/NixOS/nixpkgs/tree/master/pkgs">Here</a></p>
+<p>The Nixpkgs Contributing Guide can be found
+<a href="https://github.com/NixOS/nixpkgs/blob/master/CONTRIBUTING.md">Here</a></p>
+<h2>Create your Package directory and a <code>default.nix</code></h2>
+<p>For this example, we’ll create a package called <code>testPackage</code> and will place it
+in the <code>nixpkgs/pkgs/misc</code> directory.</p>
+<pre><code class="language-bash">cd ~/src/nixpkgs/pkgs/misc
+mkdir testPackage &amp;&amp; cd testPackage
+hx default.nix
+</code></pre>
+<pre><code class="language-nix"># default.nix
+{
+  runCommand,
+  coreutils,
+}:
+runCommand "testPackage" {
+  nativeBuildInputs = [
+    coreutils
+  ];
+} ''
+
+  echo 'This is a Test' &gt; $out
+''
+</code></pre>
+<p>Now we need to add our <code>testPackage</code> to <code>all-packages.nix</code></p>
+<pre><code class="language-bash">cd pkgs/top-level
+hx all-packages.nix
+</code></pre>
+<p><code>all-packages.nix</code> is a centralized module that defines all available package
+expressions.</p>
+<p>We’ll add our package in the list alphabetically:</p>
+<pre><code class="language-nix"># all-packages.nix
+# `/msc` # editor search inside file
+# Scroll down to t's
+# snip ...
+termusic = callPackage ../applications/autio/termusic { };
+
+# we add our package here
+testPackage = callPackage ../misc/testPackage { };
+
+tfk8s = callPackage ../applications/misc/tfk8s { };
+# snip ...
+</code></pre>
+<blockquote>
+<p><code>callPackage</code> is a core utility in Nixpkgs. It takes a Nix expression (like
+our <code>default.nix</code> file, which defines a function) and automatically provides
+the function with any arguments it declares, by looking them up within the
+<code>pkgs</code> set (or the scope where <code>callPackage</code> is invoked). This means you only
+need to list the dependencies your package needs in its <code>default.nix</code> function
+signature, and <code>callPackage</code> will “inject” the correct versions of those
+packages. This is what the <code>callPackage</code> Nix Pill demonstrates at a lower
+level.</p>
+</blockquote>
+<h2>Understanding <code>pkgs/by-name/</code> and other locations</h2>
+<p>Nixpkgs uses different conventions for package placement:</p>
+<ul>
+<li>
+<p><strong>Older categories (e.g., <code>pkgs/misc/</code>, <code>pkgs/applications/</code>):</strong> Packages
+within these directories typically use <code>default.nix</code> as their definition file
+(e.g., <code>pkgs/misc/testPackage/default.nix</code>). <strong>These packages are NOT
+automatically included</strong> in the top-level <code>pkgs</code> set; they <em>must</em> be This
+chapter will assume you have already have a cloned fork of Nixpkgs. explicitly
+added via a <code>callPackage</code> entry in <code>pkgs/top-level/all-packages.nix</code>. This is
+the method demonstrated in this chapter for our <code>testPackage</code>.</p>
+</li>
+<li>
+<p><strong>The new <code>pkgs/by-name/</code> convention:</strong> This is the <em>preferred location for
+new packages</em>.</p>
+<ul>
+<li>
+<p>Packages here are placed in a directory structure like
+<code>pkgs/by-name/&lt;first-two-letters&gt;/&lt;package-name&gt;/</code>.</p>
+</li>
+<li>
+<p>Crucially, their main definition file is named <code>package.nix</code> (e.g.,
+<code>pkgs/by-name/te/testPackage/package.nix</code>).</p>
+</li>
+<li>
+<p><strong>Packages placed within <code>pkgs/by-name/</code> are automatically discovered and
+exposed</strong> by Nixpkgs’ top-level <code>pkgs</code> set. They <strong>do not</strong> require a manual
+<code>callPackage</code> entry in <code>all-packages.nix</code>. This results in a more modular
+and scalable approach, reducing manual maintenance.</p>
+</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>❗ : While this example uses <code>pkgs/misc/</code> to demonstrate explicit
+<code>callPackage</code> usage, when contributing a <em>new</em> package to Nixpkgs, you should
+nearly always place it within <code>pkgs/by-name/</code> and name its definition file
+<code>package.nix</code>.</p>
+</blockquote>
+<ul>
+<li>
+<p><a href="https://github.com/NixOS/nixpkgs/blob/master/pkgs/by-name/README.md">pkgs/by-name/README</a></p>
+</li>
+<li>
+<p>There are some
+<a href="https://github.com/NixOS/nixpkgs/blob/master/pkgs/by-name/README.md#limitations">Limitations</a>
+to this approach.</p>
+</li>
+<li>
+<p><a href="https://github.com/NixOS/nixpkgs-vet">nixpkgs-vet</a></p>
+</li>
+</ul>
+<p>Previously, packages were manually added to <code>all-packages.nix</code>. While this is no
+longer needed in most cases, understanding the old method provides useful
+context for troubleshooting legacy configurations or custom integrations.</p>
+<h2>Try Building the Package</h2>
+<p>Move to the root directory of Nixpkgs:</p>
+<pre><code class="language-bash">cd ~/src/nixpkgs
+</code></pre>
+<p>Try building it:</p>
+<pre><code class="language-bash">nix-build -A testPackage
+this derivation will be built:
+this derivation will be built:
+  /nix/store/yrbjsxmgzkl24n75sqjfxbpv5cs3b9hc-testPackage.drv
+building '/nix/store/yrbjsxmgzkl24n75sqjfxbpv5cs3b9hc-testPackage.drv'...
+/nix/store/3012zlv30vn6ifihr1jxbg5z3ysw0hl3-testPackage
+</code></pre>
+<p><code>runCommand</code> is a simple builder, it takes 3 arguments. The first is the package
+name the second is the derivation attributes, and the third is the script to
+run.</p>
+<pre><code class="language-bash">cat ~/src/nixpkgs/result
+───────┬──────────────────────────────
+       │ File: result
+───────┼──────────────────────────────
+   1   │ This is a Test
+───────┴──────────────────────────────
+</code></pre>
+<pre><code class="language-bash">nix-instantiate --eval -A testPackage.meta.position
+"/home/jr/src/nixpkgs/pkgs/misc/testPackage/default.nix:6"
+</code></pre>
+<p>Tools like <code>nix search</code> and the Nixpkgs website use the <code>meta</code> information for
+documentation and discoverability. It can also be useful for debugging and helps
+to provide better error messages. The above command shows that the
+<code>meta.position</code> attribute points to the file and line where the package
+definition begins, which is very useful for debugging.</p>
+<p>Typically a file will have a <code>meta</code> attribute that looks similar to the
+following:</p>
+<pre><code class="language-nix">meta = with lib; {
+    homepage = "https://www.openssl.org/";
+    description = "A cryptographic library that implements the SSL and TLS protocols";
+    license = licenses.openssl;
+    platforms = platforms.all;
+} // extraMeta;
+</code></pre>
+<p>For example, the following shows how Nix is able to discover different parts of
+your configuration:</p>
+<p>Launch the <code>nix repl</code> and load your local flake:</p>
+<pre><code class="language-bash">cd /src
+nix repl
+nix-repl&gt; :lf nixpkgs
+nix-repl&gt; outputs.legacyPackages.x86_64-linux.openssl.meta.position
+"/nix/store/syvnmj3hhckkbncm94kfkbl76qsdqqj3-source/pkgs/development/libraries/openssl/default.nix:303"
+nix-repl&gt; builtins.unsafeGetAttrPos "description" outputs.legacyPackages.x86_64-linux.openssl.meta
+{
+  column = 9;
+  file = "/nix/store/syvnmj3hhckkbncm94kfkbl76qsdqqj3-source/pkgs/development/libraries/openssl/default.nix";
+  line = 303;
+}
+</code></pre>
+<p>Lets create just the <code>meta.description</code> for demonstration purposes.</p>
+<h2>Adding the meta attribute</h2>
+<p>Since we don’t have a <code>meta</code> attribute this points to a default value that’s
+incorrect.</p>
+<p>Let’s add the <code>meta</code> attribute and try it again:</p>
+<pre><code class="language-nix"># default.nix
+{
+  runCommand,
+  coreutils,
+}:
+runCommand "testPackage" {
+  nativeBuildInputs = [
+    coreutils
+  ];
+
+  meta = {
+    description = "test package";
+};
+} ''
+
+  echo 'This is a Test' &gt; $out
+''
+</code></pre>
+<pre><code class="language-nix">nix-instantiate --eval -A testPackage.meta.position
+"/home/jr/src/nixpkgs/pkgs/misc/testPackage/default.nix:11"
+</code></pre>
+<p>Now it points us to the 11’th line, right where our <code>meta.description</code> is.</p>
+<p>Let’s stage our package so nix recognises it:</p>
+<pre><code class="language-bash">cd ~/nixpkgs
+git add pkgs/misc/testPackage/
+nix edit .#testPackage
+</code></pre>
+<p>I used <code>nix edit</code> here to ensure it was picked up properly.</p>
+<p>The <code>default.nix</code> that we’ve been working on should open in your <code>$EDITOR</code></p>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nixpkgs/local_package.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Fork, Clone, Contribute</title><link>https://saylesss88.github.io/nixpkgs/fork_clone_contribute.html</link><description><![CDATA[<h1>Fork, Clone, Contribute</h1>
 <ul>
 <li>
 <p>In the <a href="https://github.com/NixOS/nixpkgs">Nixpkgs</a> Repository.</p>
@@ -15312,374 +15711,7 @@ required. Confirm latest stable: If you’re targeting a stable branch,
 via NixOS status.</p>
 </li>
 </ul>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nixpkgs/fork_clone_contribute.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Local Nixpkgs</title><link>https://saylesss88.github.io/nixpkgs/local_package.html</link><description><![CDATA[<h1>Creating and Building a Local Package within a Nixpkgs Clone</h1>
-<p>This chapter demonstrates the fundamental pattern for creating a package. Every
-package recipe is a file that declares a function. This function takes the
-packages dependencies as argument.</p>
-<p>In this example we’ll make a simple package with <code>coreutils</code> and build it.
-Demonstrating the process of building and testing a local package.</p>
-<p>This chapter will assume you have already have a cloned fork of Nixpkgs. I
-choose to clone mine to the <code>~/src/</code> directory.</p>
-<p>You can check out the <code>nixpkgs/pkgs/README.md</code>
-<a href="https://github.com/NixOS/nixpkgs/tree/master/pkgs">Here</a></p>
-<p>The Nixpkgs Contributing Guide can be found
-<a href="https://github.com/NixOS/nixpkgs/blob/master/CONTRIBUTING.md">Here</a></p>
-<h2>Create your Package directory and a <code>default.nix</code></h2>
-<p>For this example, we’ll create a package called <code>testPackage</code> and will place it
-in the <code>nixpkgs/pkgs/misc</code> directory.</p>
-<pre><code class="language-bash">cd ~/src/nixpkgs/pkgs/misc
-mkdir testPackage &amp;&amp; cd testPackage
-hx default.nix
-</code></pre>
-<pre><code class="language-nix"># default.nix
-{
-  runCommand,
-  coreutils,
-}:
-runCommand "testPackage" {
-  nativeBuildInputs = [
-    coreutils
-  ];
-} ''
-
-  echo 'This is a Test' &gt; $out
-''
-</code></pre>
-<p>Now we need to add our <code>testPackage</code> to <code>all-packages.nix</code></p>
-<pre><code class="language-bash">cd pkgs/top-level
-hx all-packages.nix
-</code></pre>
-<p><code>all-packages.nix</code> is a centralized module that defines all available package
-expressions.</p>
-<p>We’ll add our package in the list alphabetically:</p>
-<pre><code class="language-nix"># all-packages.nix
-# `/msc` # editor search inside file
-# Scroll down to t's
-# snip ...
-termusic = callPackage ../applications/autio/termusic { };
-
-# we add our package here
-testPackage = callPackage ../misc/testPackage { };
-
-tfk8s = callPackage ../applications/misc/tfk8s { };
-# snip ...
-</code></pre>
-<blockquote>
-<p><code>callPackage</code> is a core utility in Nixpkgs. It takes a Nix expression (like
-our <code>default.nix</code> file, which defines a function) and automatically provides
-the function with any arguments it declares, by looking them up within the
-<code>pkgs</code> set (or the scope where <code>callPackage</code> is invoked). This means you only
-need to list the dependencies your package needs in its <code>default.nix</code> function
-signature, and <code>callPackage</code> will “inject” the correct versions of those
-packages. This is what the <code>callPackage</code> Nix Pill demonstrates at a lower
-level.</p>
-</blockquote>
-<h2>Understanding <code>pkgs/by-name/</code> and other locations</h2>
-<p>Nixpkgs uses different conventions for package placement:</p>
-<ul>
-<li>
-<p><strong>Older categories (e.g., <code>pkgs/misc/</code>, <code>pkgs/applications/</code>):</strong> Packages
-within these directories typically use <code>default.nix</code> as their definition file
-(e.g., <code>pkgs/misc/testPackage/default.nix</code>). <strong>These packages are NOT
-automatically included</strong> in the top-level <code>pkgs</code> set; they <em>must</em> be This
-chapter will assume you have already have a cloned fork of Nixpkgs. explicitly
-added via a <code>callPackage</code> entry in <code>pkgs/top-level/all-packages.nix</code>. This is
-the method demonstrated in this chapter for our <code>testPackage</code>.</p>
-</li>
-<li>
-<p><strong>The new <code>pkgs/by-name/</code> convention:</strong> This is the <em>preferred location for
-new packages</em>.</p>
-<ul>
-<li>
-<p>Packages here are placed in a directory structure like
-<code>pkgs/by-name/&lt;first-two-letters&gt;/&lt;package-name&gt;/</code>.</p>
-</li>
-<li>
-<p>Crucially, their main definition file is named <code>package.nix</code> (e.g.,
-<code>pkgs/by-name/te/testPackage/package.nix</code>).</p>
-</li>
-<li>
-<p><strong>Packages placed within <code>pkgs/by-name/</code> are automatically discovered and
-exposed</strong> by Nixpkgs’ top-level <code>pkgs</code> set. They <strong>do not</strong> require a manual
-<code>callPackage</code> entry in <code>all-packages.nix</code>. This results in a more modular
-and scalable approach, reducing manual maintenance.</p>
-</li>
-</ul>
-</li>
-</ul>
-<blockquote>
-<p>❗ : While this example uses <code>pkgs/misc/</code> to demonstrate explicit
-<code>callPackage</code> usage, when contributing a <em>new</em> package to Nixpkgs, you should
-nearly always place it within <code>pkgs/by-name/</code> and name its definition file
-<code>package.nix</code>.</p>
-</blockquote>
-<ul>
-<li>
-<p><a href="https://github.com/NixOS/nixpkgs/blob/master/pkgs/by-name/README.md">pkgs/by-name/README</a></p>
-</li>
-<li>
-<p>There are some
-<a href="https://github.com/NixOS/nixpkgs/blob/master/pkgs/by-name/README.md#limitations">Limitations</a>
-to this approach.</p>
-</li>
-<li>
-<p><a href="https://github.com/NixOS/nixpkgs-vet">nixpkgs-vet</a></p>
-</li>
-</ul>
-<p>Previously, packages were manually added to <code>all-packages.nix</code>. While this is no
-longer needed in most cases, understanding the old method provides useful
-context for troubleshooting legacy configurations or custom integrations.</p>
-<h2>Try Building the Package</h2>
-<p>Move to the root directory of Nixpkgs:</p>
-<pre><code class="language-bash">cd ~/src/nixpkgs
-</code></pre>
-<p>Try building it:</p>
-<pre><code class="language-bash">nix-build -A testPackage
-this derivation will be built:
-this derivation will be built:
-  /nix/store/yrbjsxmgzkl24n75sqjfxbpv5cs3b9hc-testPackage.drv
-building '/nix/store/yrbjsxmgzkl24n75sqjfxbpv5cs3b9hc-testPackage.drv'...
-/nix/store/3012zlv30vn6ifihr1jxbg5z3ysw0hl3-testPackage
-</code></pre>
-<p><code>runCommand</code> is a simple builder, it takes 3 arguments. The first is the package
-name the second is the derivation attributes, and the third is the script to
-run.</p>
-<pre><code class="language-bash">cat ~/src/nixpkgs/result
-───────┬──────────────────────────────
-       │ File: result
-───────┼──────────────────────────────
-   1   │ This is a Test
-───────┴──────────────────────────────
-</code></pre>
-<pre><code class="language-bash">nix-instantiate --eval -A testPackage.meta.position
-"/home/jr/src/nixpkgs/pkgs/misc/testPackage/default.nix:6"
-</code></pre>
-<p>Tools like <code>nix search</code> and the Nixpkgs website use the <code>meta</code> information for
-documentation and discoverability. It can also be useful for debugging and helps
-to provide better error messages. The above command shows that the
-<code>meta.position</code> attribute points to the file and line where the package
-definition begins, which is very useful for debugging.</p>
-<p>Typically a file will have a <code>meta</code> attribute that looks similar to the
-following:</p>
-<pre><code class="language-nix">meta = with lib; {
-    homepage = "https://www.openssl.org/";
-    description = "A cryptographic library that implements the SSL and TLS protocols";
-    license = licenses.openssl;
-    platforms = platforms.all;
-} // extraMeta;
-</code></pre>
-<p>For example, the following shows how Nix is able to discover different parts of
-your configuration:</p>
-<p>Launch the <code>nix repl</code> and load your local flake:</p>
-<pre><code class="language-bash">cd /src
-nix repl
-nix-repl&gt; :lf nixpkgs
-nix-repl&gt; outputs.legacyPackages.x86_64-linux.openssl.meta.position
-"/nix/store/syvnmj3hhckkbncm94kfkbl76qsdqqj3-source/pkgs/development/libraries/openssl/default.nix:303"
-nix-repl&gt; builtins.unsafeGetAttrPos "description" outputs.legacyPackages.x86_64-linux.openssl.meta
-{
-  column = 9;
-  file = "/nix/store/syvnmj3hhckkbncm94kfkbl76qsdqqj3-source/pkgs/development/libraries/openssl/default.nix";
-  line = 303;
-}
-</code></pre>
-<p>Lets create just the <code>meta.description</code> for demonstration purposes.</p>
-<h2>Adding the meta attribute</h2>
-<p>Since we don’t have a <code>meta</code> attribute this points to a default value that’s
-incorrect.</p>
-<p>Let’s add the <code>meta</code> attribute and try it again:</p>
-<pre><code class="language-nix"># default.nix
-{
-  runCommand,
-  coreutils,
-}:
-runCommand "testPackage" {
-  nativeBuildInputs = [
-    coreutils
-  ];
-
-  meta = {
-    description = "test package";
-};
-} ''
-
-  echo 'This is a Test' &gt; $out
-''
-</code></pre>
-<pre><code class="language-nix">nix-instantiate --eval -A testPackage.meta.position
-"/home/jr/src/nixpkgs/pkgs/misc/testPackage/default.nix:11"
-</code></pre>
-<p>Now it points us to the 11’th line, right where our <code>meta.description</code> is.</p>
-<p>Let’s stage our package so nix recognises it:</p>
-<pre><code class="language-bash">cd ~/nixpkgs
-git add pkgs/misc/testPackage/
-nix edit .#testPackage
-</code></pre>
-<p>I used <code>nix edit</code> here to ensure it was picked up properly.</p>
-<p>The <code>default.nix</code> that we’ve been working on should open in your <code>$EDITOR</code></p>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nixpkgs/local_package.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nixpkgs Overlays</title><link>https://saylesss88.github.io/nixpkgs/overlay.html</link><description><![CDATA[<h1>Nixpkgs Overlays</h1>
-<p>The following is done with a local clone of Nixpkgs located at <code>~/src/nixpkgs</code>.</p>
-<p>In this example, we will create an overlay to override the version of
-<code>btrfs-progs</code>. In the root directory of our local clone of Nixpkgs
-(i.e.<code>~/src/nixpkgs</code>) we can run the following command to locate <code>btrfs-progs</code>
-within Nixpkgs:</p>
-<pre><code class="language-bash">fd 'btrfs-progs' .
-./pkgs/by-name/bt/btrfs-progs/
-</code></pre>
-<p>Open the <code>package.nix</code> in the above directory and copy the <code>src</code> block within
-the <code>stdenv.mkDerivation</code> block like so:</p>
-<pre><code class="language-nix"># package.nix
-  version = "6.14";
-
-  src = fetchurl {
-    url = "mirror://kernel/linux/kernel/people/kdave/btrfs-progs/btrfs-progs-v${version}.tar.xz";
-    hash = "sha256-31q4BPyzbikcQq2DYfgBrR4QJBtDvTBP5Qzj355+PaE=";
-  };
-</code></pre>
-<p>When we use the above <code>src</code> block in our overlay we’ll need to add
-<code>src = self.fetchurl</code> for our overlay to have access to <code>fetchurl</code>.</p>
-<p>We will replace the version with our desired version number. To find another
-version that actually exists we need to check their github repos
-<a href="https://github.com/kdave/btrfs-progs/releases">btrfs-progs Releases</a>. I can see
-that the previous version was <code>v6.13</code>, lets try that.</p>
-<pre><code class="language-bash">cd ~/src/nixpkgs
-hx overlay.nix
-</code></pre>
-<p>We will change the version to <code>6.13</code> for demonstration purposes. All that is
-really required is changing the version and 1 character in the <code>hash</code> which
-would cause a refetch and recalculation of the hash. We will use an empty string
-to follow convention:</p>
-<pre><code class="language-nix"># overlay.nix
-self: super: {
-  btrfs-progs = super.btrfs-progs.overrideAttrs (old: rec {
-      version = "6.13";
-
-      # Notice the `self` added here
-      src = self.fetchurl {
-        url = "mirror://kernel/linux/kernel/people/kdave/btrfs-progs/btrfs-progs-v${version}.tar.xz";
-        hash = "";
-      };
-    };
-  });
-}
-</code></pre>
-<p>To build this with the file right from the root of the local Nixpkgs (i.e.
-<code>~/src/nixpkgs</code>) you could run the following. Running the command this way
-avoids the impurity of looking it up in the <code>~/.config</code> directory:</p>
-<pre><code class="language-bash">nix-build -A btrfs-progs --arg overlays '[ (import ./overlay.nix) ]'
-</code></pre>
-<p>The compiler will give you back the correct <code>hash</code>:</p>
-<pre><code class="language-bash">specified: sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
-got:    sha256-ZbPyERellPgAE7QyYg7sxqfisMBeq5cTb/UGx01z7po=
-</code></pre>
-<p>Replace the empty <code>hash</code> with the new hash value we just got from the compiler
-so the <code>overlay.nix</code> would look like this:</p>
-<pre><code class="language-nix">self: super: {
-  btrfs-progs = super.btrfs-progs.overrideAttrs (old: rec {
-    version = "6.13";
-
-    src = self.fetchurl {
-      url = "mirror://kernel/linux/kernel/people/kdave/btrfs-progs/btrfs-progs-v${version}.tar.xz";
-      hash = "sha256-ZbPyERellPgAE7QyYg7sxqfisMBeq5cTb/UGx01z7po=";
-    };
-  });
-}
-</code></pre>
-<p>Try building it again:</p>
-<pre><code class="language-bash">nix-build -A btrfs-progs --arg overlays '[ (import ./overlay.nix) ]'
-checking for references to /build/ in /nix/store/szd6lizahidjniz85a0g1wsrfknirhwb-btrfs-progs-6.13...
-gzipping man pages under /nix/store/szd6lizahidjniz85a0g1wsrfknirhwb-btrfs-progs-6.13/share/man/
-patching script interpreter paths in /nix/store/szd6lizahidjniz85a0g1wsrfknirhwb-btrfs-progs-6.13
-/nix/store/szd6lizahidjniz85a0g1wsrfknirhwb-btrfs-progs-6.13/bin/fsck.btrfs: interpreter directive changed from "#!/bin/sh -f" to "/nix/store/xy4jjgw87sbgwylm5kn047d9gkbhsr9x-bash-5.2p37/bin/sh -f"
-stripping (with command strip and flags -S -p) in  /nix/store/szd6lizahidjniz85a0g1wsrfknirhwb-btrfs-progs-6.13/lib /nix/store/szd6lizahidjniz85a0g1wsrfknirhwb-btrfs-progs-6.13/bin
-/nix/store/szd6lizahidjniz85a0g1wsrfknirhwb-btrfs-progs-6.13
-</code></pre>
-<p>We can inspect it with the repl:</p>
-<pre><code class="language-bash">cd ~/src/nixpkgs
-nix repl
-nix-repl&gt; :a import ./. { overlays = [ (import ./overlay.nix) ]; }
-nix-repl&gt; btrfs-progs
-«derivation /nix/store/6yxhj84cwcsnrd87rcxbd6w08l9ikc6p-btrfs-progs-6.13.drv»
-nix-repl&gt; btrfs-progs.drvAttrs.buildInputs
-[
-  «derivation /nix/store/yg4llzkcla5rppv8r1iikyamfxg3g4sg-acl-2.3.2.drv»
-  «derivation /nix/store/vqczbcwjnid6bs4cv3skl7kyd6kkzcfx-attr-2.5.2.drv»
-  «derivation /nix/store/xrvx0azszpdh2x0lnldakqx25vfxab19-e2fsprogs-1.47.2.drv»
-  «derivation /nix/store/iil4b8adk615zhp6wmzjx16z1v2f8f4j-util-linux-minimal-2.41.drv»
-  «derivation /nix/store/wwld8wp91m26wz69gp8vzh090sh5ygxd-lzo-2.10.drv»
-  «derivation /nix/store/w4ncw24gdfkbx9779xpgjli5sagi506m-systemd-minimal-libs-257.5.drv»
-  «derivation /nix/store/dmh4lvmq6n8hy56q93kplvnfnlwqzzv5-zlib-1.3.1.drv»
-  «derivation /nix/store/h8iwhnr636dwb72qqcyzp111ajjxgzr2-zstd-1.5.7.drv»
-]
-nix-repl&gt; btrfs-progs.drvAttrs.version
-"6.13"
-nix-repl&gt; btrfs-progs.drvAttrs.src
-«derivation /nix/store/y5nkz1xczxha4xl93qq3adndyc46dcvf-btrfs-progs-v6.13.tar.xz.drv»
-</code></pre>
-<p>Using <code>:a</code> adds the attributes from the resulting set into scope and avoids
-bringing the entire <code>nixpkgs</code> set into scope.</p>
-<p>To see whats available, you can for example type <code>btrfs-progs.drvAttrs.</code> then
-hit <code>TAB</code>.</p>
-<p>Another way to do this is to move our overlay to the
-<code>~/.config/nixpkgs/overlays</code> directory and rename the file like the following,
-agian this adds an impurity because it relies on your <code>~/.config</code> directory
-which is different from user to user:</p>
-<pre><code class="language-bash">mv overlay.nix ~/.config/nixpkgs/overlays/btrfs-progs.nix
-cd ~/src/nixpkgs
-nix-build -A btrfs-progs
-checking for references to /build/ in /nix/store/szd6lizahidjniz85a0g1wsrfknirhwb-btrfs-progs-6.13...
-gzipping man pages under /nix/store/szd6lizahidjniz85a0g1wsrfknirhwb-btrfs-progs-6.13/share/man/
-patching script interpreter paths in /nix/store/szd6lizahidjniz85a0g1wsrfknirhwb-btrfs-progs-6.13
-/nix/store/szd6lizahidjniz85a0g1wsrfknirhwb-btrfs-progs-6.13/bin/fsck.btrfs: interpreter directive changed from "#!/bin/sh -f" to "/nix/store/xy4jjgw87sbgwylm5kn047d9gkbhsr9x-bash-5.2p37/bin/sh -f"
-stripping (with command strip and flags -S -p) in  /nix/store/szd6lizahidjniz85a0g1wsrfknirhwb-btrfs-progs-6.13/lib /nix/store/szd6lizahidjniz85a0g1wsrfknirhwb-btrfs-progs-6.13/bin
-/nix/store/szd6lizahidjniz85a0g1wsrfknirhwb-btrfs-progs-6.13
-</code></pre>
-<h2>Overlays with Flakes</h2>
-<p>In a flake, overlays are defined in the <code>outputs.overlays</code> attribute set of the
-<code>flake.nix</code>.</p>
-<p>They are then applied to <code>nixpkgs</code> inputs using
-<code>inputs.nixpkgs.follows = "nixpkgs";</code> (or similar) and the overlays attribute on
-the input.</p>
-<p>Example of flake usage:</p>
-<pre><code class="language-nix"># flake.nix
-{
-  description = "My NixOS flake with custom overlays";
-
-  inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-  };
-
-  outputs = { self, nixpkgs, ... }: {
-
-    overlays.myCustomOverlay = final: prev: {
-      btrfs-progs = prev.btrfs-progs.overrideAttrs (old: rec {
-        version = "6.13";
-        src = self.fetchurl {
-          url = "mirror://kernel/linux/kernel/people/kdave/btrfs-progs/btrfs-progs-v${version}.tar.xz";
-          hash = "sha256-ZbPyERellPgAE7QyYg7sxqfisMBeq5cTb/UGx01z7po=";
-        };
-      });
-    };
-
-    nixosConfigurations.my-system = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      modules = [
-        # Apply the overlay
-        { nixpkgs.overlays = [ self.overlays.myCustomOverlay ]; }
-        ./configuration.nix
-      ];
-    };
-  };
-}
-</code></pre>
-<pre><code class="language-bash">nix flake show
-path:/home/jr/btrfs-progs?lastModified=1749655369&amp;narHash=sha256-ln6dLiqo7TxStQSXgcIwfbdt7STGw4ZHftZRfWpY/JQ%3D
-├───nixosConfigurations
-│   └───my-system: NixOS configuration
-└───overlays
-    └───myCustomOverlay: Nixpkgs overlay
-</code></pre>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nixpkgs/overlay.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Readme1</title><link>https://saylesss88.github.io/nix/index.html</link><description><![CDATA[<h1>Hardening README</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nixpkgs/fork_clone_contribute.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Readme1</title><link>https://saylesss88.github.io/nix/index.html</link><description><![CDATA[<h1>Hardening README</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->

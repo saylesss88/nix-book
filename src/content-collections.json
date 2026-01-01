@@ -7,7 +7,7 @@
       "description": null,
       "draft": false,
       "path": "nixpkgs/rust_crate_to_nixpkgs.md",
-      "preview_html": "<p>NOTE: This example assumes you’re packaging a crate that’s already on\ncrates.io, or you’re packaging an existing Rust project for nixpkgs.</p><p>Nixpkgs is a big repository, so it helps to start with a focused workflow:\ncreate a branch, add a package under <code>pkgs/by-name/</code>, build it, then open a PR.</p><p>NOTE: Maintainers prefer a single commit for your package with a separate\ncommit if you need to add yourself to <code>maintainers-list.nix</code></p>",
+      "preview_html": "<p>NOTE: This example assumes you’re packaging a crate that’s already on\ncrates.io, or you’re packaging an existing Rust project for nixpkgs.</p><p>Nixpkgs is a big repository, so it helps to start with a focused workflow:\ncreate a branch, add a package under <code>pkgs/by-name/</code>, build it, then open a PR.</p><pre><code class=\"language-bash\">git clone git@github.com:your-user/nixpkgs.git\ncd nixpkgs\ngit remote add upstream git@github.com:NixOS/nixpkgs.git\n</code></pre>\n<p>(SSH avoids HTTPS helper issues)</p>",
       "tags": [
         "packaging",
         "rust",
@@ -322,6 +322,17 @@
       "date": "2025-11-22T00:00:00+00:00",
       "description": null,
       "draft": false,
+      "path": "Working_with_Nixpkgs_Locally_10.md",
+      "preview_html": "<p><img src=\"images/server_rack.cleaned.png\" alt=\"server_rack\" /></p><p>Nixpkgs, the package repository for NixOS, is a powerful resource for building\nand customizing software.</p><p>Working with a local copy enhances development, debugging, and contribution\nworkflows.</p>",
+      "tags": [],
+      "title": "Local Nixpkgs"
+    },
+    {
+      "author": "saylesss88",
+      "collection": null,
+      "date": "2025-11-22T00:00:00+00:00",
+      "description": null,
+      "draft": false,
       "path": "nixos_containers.md",
       "preview_html": "<p><img src=\"images/boxes.cleaned.png\" alt=\"boxes\" /></p><p>NixOS containers are lightweight <code>systemd-nspawn</code> containers managed\ndeclaratively through your NixOS configuration. They allow you to run separate,\nminimal NixOS instances on the same machine, each with its own services,\npackages, and (optionally) network stack.</p><p>❗ NixOS’ containers do not provide full security out of the box (just like\ndocker). They do give you a separate chroot, but a privileged user (root) in a\ncontainer can escape the container and become root on the host system.\n–<a href=\"https://blog.beardhatcode.be/2020/12/Declarative-Nixos-Containers.html\">beardhatcode Declarative-Nixos-Containers</a></p>",
       "tags": [],
@@ -344,10 +355,10 @@
       "date": "2025-11-22T00:00:00+00:00",
       "description": null,
       "draft": false,
-      "path": "Working_with_Nixpkgs_Locally_10.md",
-      "preview_html": "<p><img src=\"images/server_rack.cleaned.png\" alt=\"server_rack\" /></p><p>Nixpkgs, the package repository for NixOS, is a powerful resource for building\nand customizing software.</p><p>Working with a local copy enhances development, debugging, and contribution\nworkflows.</p>",
+      "path": "Debugging_and_Tracing_NixOS_Modules_9.md",
+      "preview_html": "<p>This chapter covers debugging NixOS modules, focusing on tracing module options\nand evaluating merges.</p><p><img src=\"images/coding4.png\" alt=\"404\" /></p><p><a href=\"https://saylesss88.github.io/posts/nix_modules_explained/\">nix-modules-explained</a></p>",
       "tags": [],
-      "title": "Local Nixpkgs"
+      "title": "Debugging NixOS modules"
     },
     {
       "author": "saylesss88",
@@ -355,10 +366,21 @@
       "date": "2025-11-22T00:00:00+00:00",
       "description": null,
       "draft": false,
-      "path": "Debugging_and_Tracing_NixOS_Modules_9.md",
-      "preview_html": "<p>This chapter covers debugging NixOS modules, focusing on tracing module options\nand evaluating merges.</p><p><img src=\"images/coding4.png\" alt=\"404\" /></p><p><a href=\"https://saylesss88.github.io/posts/nix_modules_explained/\">nix-modules-explained</a></p>",
+      "path": "nixpkgs/overlay.md",
+      "preview_html": "<p>The following is done with a local clone of Nixpkgs located at <code>~/src/nixpkgs</code>.</p><p>In this example, we will create an overlay to override the version of\n<code>btrfs-progs</code>. In the root directory of our local clone of Nixpkgs\n(i.e.<code>~/src/nixpkgs</code>) we can run the following command to locate <code>btrfs-progs</code>\nwithin Nixpkgs:</p><pre><code class=\"language-bash\">fd 'btrfs-progs' .\n./pkgs/by-name/bt/btrfs-progs/\n</code></pre>\n<p>Open the <code>package.nix</code> in the above directory and copy the <code>src</code> block within\nthe <code>stdenv.mkDerivation</code> block like so:</p>",
       "tags": [],
-      "title": "Debugging NixOS modules"
+      "title": "Nixpkgs Overlays"
+    },
+    {
+      "author": "saylesss88",
+      "collection": null,
+      "date": "2025-11-22T00:00:00+00:00",
+      "description": null,
+      "draft": false,
+      "path": "nixpkgs/local_package.md",
+      "preview_html": "<p>This chapter demonstrates the fundamental pattern for creating a package. Every\npackage recipe is a file that declares a function. This function takes the\npackages dependencies as argument.</p><p>In this example we’ll make a simple package with <code>coreutils</code> and build it.\nDemonstrating the process of building and testing a local package.</p><p>This chapter will assume you have already have a cloned fork of Nixpkgs. I\nchoose to clone mine to the <code>~/src/</code> directory.</p>",
+      "tags": [],
+      "title": "Local Nixpkgs"
     },
     {
       "author": "saylesss88",
@@ -374,28 +396,6 @@
         "nixpkgs"
       ],
       "title": "Fork, Clone, Contribute"
-    },
-    {
-      "author": "saylesss88",
-      "collection": null,
-      "date": "2025-11-22T00:00:00+00:00",
-      "description": null,
-      "draft": false,
-      "path": "nixpkgs/local_package.md",
-      "preview_html": "<p>This chapter demonstrates the fundamental pattern for creating a package. Every\npackage recipe is a file that declares a function. This function takes the\npackages dependencies as argument.</p><p>In this example we’ll make a simple package with <code>coreutils</code> and build it.\nDemonstrating the process of building and testing a local package.</p><p>This chapter will assume you have already have a cloned fork of Nixpkgs. I\nchoose to clone mine to the <code>~/src/</code> directory.</p>",
-      "tags": [],
-      "title": "Local Nixpkgs"
-    },
-    {
-      "author": "saylesss88",
-      "collection": null,
-      "date": "2025-11-22T00:00:00+00:00",
-      "description": null,
-      "draft": false,
-      "path": "nixpkgs/overlay.md",
-      "preview_html": "<p>The following is done with a local clone of Nixpkgs located at <code>~/src/nixpkgs</code>.</p><p>In this example, we will create an overlay to override the version of\n<code>btrfs-progs</code>. In the root directory of our local clone of Nixpkgs\n(i.e.<code>~/src/nixpkgs</code>) we can run the following command to locate <code>btrfs-progs</code>\nwithin Nixpkgs:</p><pre><code class=\"language-bash\">fd 'btrfs-progs' .\n./pkgs/by-name/bt/btrfs-progs/\n</code></pre>\n<p>Open the <code>package.nix</code> in the above directory and copy the <code>src</code> block within\nthe <code>stdenv.mkDerivation</code> block like so:</p>",
-      "tags": [],
-      "title": "Nixpkgs Overlays"
     },
     {
       "author": "saylesss88",
