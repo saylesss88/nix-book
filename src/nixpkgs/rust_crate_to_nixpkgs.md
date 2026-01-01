@@ -246,3 +246,95 @@ Then:
 
 The package will go through CI checks, and once green + approved by a
 maintainer, it'll land in nixpkgs.
+
+---
+
+## Recovering from Mistakes
+
+You're bound to make mistakes, if you learn some Git basics it will help you
+quite a bit.
+
+You should avoid adding new commits for small fixes like typos, formatting, or
+minor adjustments requested in review. For substantial changes that add
+functionality, a new commit may be more appropriate.
+
+Say that we pushed our PR and one of the maintainers gave us a suggested change,
+(they want us to follow conventions and remove a trailing period from our
+packages description for this example).
+
+1. Make the edit locally (remove the trailing period in the file)
+
+2. Stage the change: `git add pkgs/by-name/xx/your-package/package.nix` (avoid
+   `git add -A` as it stages everything, which can accidentally include
+   unrelated files)
+
+3. Amend the commit: `git commit --amend --no-edit`(this preserves your original
+   commit message, if you want to change the commit message use
+   `git commit --amend`)
+
+4. Force push: `git push --force-with-lease` (This is safer than just using
+   `--force` because it will fail if someone else has pushed commits to your
+   branch that you don't have locally)
+
+**Alternative for Multiple Commits**
+
+Interactive rebase is useful when your PR has several “WIP” commits (or you
+added a small review fix as a separate commit) and you want to present a cleaner
+history before merge.
+
+You can use interactive rebase to squash all your would be small fix commits
+into a single commit they belong to.
+
+Avoid squashing if the commits represent distinct, reviewable changes that stand
+on their own.
+
+**Basic Workflow (squash/fixup)**
+
+1. Decide how many commits back you want to edit (example: last 3 commits):
+
+```bash
+git rebase -i HEAD~3
+```
+
+2. Your editor opens with a "todo" list (oldest at top). Change later commits
+   from `pick` to `fixup` or `squash`:
+
+- `fixup` = combine into the previous commit, discard this commit message.
+
+- `squash` = combine, but keep/edit commit messages.
+
+Example todo:
+
+```text
+pick 1111111 mdbook-rss-feed: init at 0.1.0
+pick 2222222 mdbook-rss-feed: fix trailing period
+pick 3333333 mdbook-rss-feed: formatting
+```
+
+Change to:
+
+```text
+pick 1111111 mdbook-rss-feed: init at 0.1.0
+fixup 2222222 mdbook-rss-feed: fix trailing period
+fixup 3333333 mdbook-rss-feed: formatting
+```
+
+3. Save/close: if you squashed, Git will prompt you to edit the final combined
+   message.
+
+**Push updated history**
+
+You have to force-push because `rebase` rewrites commit SHAs:
+
+```bash
+git push --force-with-lease
+# If something goes wrong
+# git rebase --abort
+# If you hit conflicts, fix the files, then:
+# git add <files>
+# git rebase --continue
+```
+
+If you have an unrelated change accidentally included (for example: you staged
+an extra file), it’s usually better to fix it via rebase/splitting before
+reviewers spend time re-reviewing noise.
