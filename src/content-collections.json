@@ -403,6 +403,17 @@
       "date": "2025-11-22T00:00:00+00:00",
       "description": null,
       "draft": false,
+      "path": "nix/nix_language.md",
+      "preview_html": "<p>The Nix language is designed for conveniently creating and composing\n<em>derivations</em> precise descriptions of how contents of files are used to derive\nnew files. –<a href=\"https://nix.dev/manual/nix/2.28/language/\">Nix Reference Manual</a></p><p>Nix is often described as “JSON with functions.” It’s a declarative language\nwhere you define outcomes, not step-by-step instructions. Instead of writing\nsequential code, you create expressions that describe data structures,\nfunctions, and dependencies. These expressions are evaluated lazily, meaning Nix\ncomputes values only when needed, making it efficient for managing large\nsystems.</p><p>You can plug most of the following into the <code>nix repl</code> I’m showing it in a\nsingle code block here for brevity:</p>",
+      "tags": [],
+      "title": "Nix Lang"
+    },
+    {
+      "author": "saylesss88",
+      "collection": null,
+      "date": "2025-11-22T00:00:00+00:00",
+      "description": null,
+      "draft": false,
       "path": "nix/README.md",
       "preview_html": "<p>📌 <strong>How to Use This Guide</strong></p><p><strong>Read warnings</strong>: Advanced hardening can break compatibility or cause data\nloss! Pause and research before enabling anything not listed above unless you\nunderstand the consequences.</p><p><strong>Hardening NixOS</strong>:</p>",
       "tags": [],
@@ -421,17 +432,6 @@
         "security"
       ],
       "title": "Unencrypted Impermanence"
-    },
-    {
-      "author": "saylesss88",
-      "collection": null,
-      "date": "2025-11-22T00:00:00+00:00",
-      "description": null,
-      "draft": false,
-      "path": "nix/nix_language.md",
-      "preview_html": "<p>The Nix language is designed for conveniently creating and composing\n<em>derivations</em> precise descriptions of how contents of files are used to derive\nnew files. –<a href=\"https://nix.dev/manual/nix/2.28/language/\">Nix Reference Manual</a></p><p>Nix is often described as “JSON with functions.” It’s a declarative language\nwhere you define outcomes, not step-by-step instructions. Instead of writing\nsequential code, you create expressions that describe data structures,\nfunctions, and dependencies. These expressions are evaluated lazily, meaning Nix\ncomputes values only when needed, making it efficient for managing large\nsystems.</p><p>You can plug most of the following into the <code>nix repl</code> I’m showing it in a\nsingle code block here for brevity:</p>",
-      "tags": [],
-      "title": "Nix Lang"
     },
     {
       "author": "saylesss88",

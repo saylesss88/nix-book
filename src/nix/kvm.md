@@ -240,6 +240,52 @@ For deeper NixOS-specific hardening, see:
 
 ---
 
+### Nix Toolbox
+
+Secureblue enforces restrictive container image policies by default, blocking
+unsigned or unverified images from registries like GitHub Container Registry.
+This requires explicit trust configuration for each container source.
+
+```bash
+ujust set-container-userns on
+```
+
+Without this setting, containers will fail with `OCI permission denied` errors.
+
+**Allow the Nix-Toolbox Image**
+
+```bash
+# For system-wide configuration (affects all users)
+run0 podman image trust set -t accept ghcr.io/thrix/nix-toolbox
+
+# For user-specific configuration (recommended for development)
+podman image trust set -t accept ghcr.io/thrix/nix-toolbox
+```
+
+The `-t accept` flag allows images from this registry without requiring
+signature verification.
+
+```bash
+# Check that the policy has been updated correctly:
+podman image trust show
+```
+
+Create the `nix-toolbox` container:
+
+```bash
+toolbox create --image ghcr.io/thrix/nix-toolbox:42
+```
+
+You will be prompted whether you want Home Manager installed or not as well.
+
+Enter the toolbox:
+
+```bash
+toolbox enter nix-toolbox-42
+```
+
+---
+
 ### Real-world recovery example
 
 Secureblue’s design and the underlying firmware safeguards also make certain

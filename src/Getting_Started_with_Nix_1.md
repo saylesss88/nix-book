@@ -420,3 +420,8 @@ Here are some resources that are helpful for getting started:
   actively update the information.
 
 </details>
+
+    `````nix repl
+    (let a = "2"; in                   # Let expressions are a way to create variables
+    a + a + builtins.toString "4")
+    `````

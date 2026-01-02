@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><rss version="2.0"><channel><title>nix-book</title><link>https://saylesss88.github.io/</link><description>An mdBook-generated site</description><generator>mdbook-rss-feed 1.0.0</generator><item><title>Packaging a Rust crate for Nixpkgs</title><link>https://saylesss88.github.io/nixpkgs/rust_crate_to_nixpkgs.html</link><description><![CDATA[<details>
+<?xml version="1.0" encoding="utf-8"?><rss version="2.0"><channel><title>nix-book</title><link>/</link><description>An mdBook-generated site</description><generator>mdbook-rss-feed 1.0.0</generator><item><title>Packaging a Rust crate for Nixpkgs</title><link>/nixpkgs/rust_crate_to_nixpkgs.html</link><description><![CDATA[<details>
 <summary> ✔️ Table of Contents</summary>
 <!-- toc -->
 </details>
@@ -56,7 +56,6 @@ rustPlatform.buildRustPackage rec {
   };
 
   cargoHash = lib.fakeHash;
-  # Or cargoHash = "sha256-AAAAAAAAAAAAAAAAAAAA="
 
   nativeInstallCheckInuts = [
     versionCheckHook
@@ -93,8 +92,10 @@ tarball:</p>
 </code></pre>
 <hr />
 <h2>Get cargoHash via a failing build</h2>
-<p>In the <code>nixpkgs</code> root, run:</p>
-<pre><code class="language-bash">nix build .#mdbook-rss-feed
+<p>In the <code>nixpkgs</code> root (i.e., the <code>nixpkgs</code> directory), run:</p>
+<pre><code class="language-bash">nix-build -A mdbook-rss-feed
+# OR nix3 format
+nix build .#mdbook-rss-feed
 </code></pre>
 <p>Nix will fail with a message like:</p>
 <pre><code class="language-text">hash mismatch
@@ -102,7 +103,7 @@ specified: sha256-....
 got: sha256-1...
 </code></pre>
 <p>Copy the <code>got</code> value into <code>cargoHash</code>, rebuild, and it should succeed.</p>
-<p>Sanity check: from <code>nixpkgs</code> root (i.e., the <code>nixpkgs</code> directory):</p>
+<p>Sanity check: from <code>nixpkgs</code> root :</p>
 <pre><code class="language-bash">./result/bin/mdbook-rss-feed --version
 </code></pre>
 <hr />
@@ -124,7 +125,9 @@ separate commit.</p>
 </code></pre>
 <hr />
 <h2>Treefmt</h2>
-<p>Run treefmt the nixpkgs way, from the repo root:</p>
+<p>Run treefmt the nixpkgs way, from the repo root. Run this right before you push,
+my editors formatter does something different with single entry lists than what
+Nixpkgs wants:</p>
 <pre><code class="language-bash">nix develop --command treefmt
 nix fmt
 </code></pre>
@@ -166,7 +169,89 @@ git push -u origin mdbook-rss-feed
 </ol>
 <p>The package will go through CI checks, and once green + approved by a
 maintainer, it’ll land in nixpkgs.</p>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nixpkgs/rust_crate_to_nixpkgs.html</guid><pubDate>Wed, 31 Dec 2025 00:00:00 +0000</pubDate></item><item><title>Hardening Networking</title><link>https://saylesss88.github.io/nix/hardening_networking.html</link><description><![CDATA[<h1>Hardening Networking</h1>
+<hr />
+<h2>Recovering from Mistakes</h2>
+<p>You’re bound to make mistakes, if you learn some Git basics it will help you
+quite a bit.</p>
+<p>You should avoid adding new commits for small fixes like typos, formatting, or
+minor adjustments requested in review. For substantial changes that add
+functionality, a new commit may be more appropriate.</p>
+<p>Say that we pushed our PR and one of the maintainers gave us a suggested change,
+(they want us to follow conventions and remove a trailing period from our
+packages description for this example).</p>
+<ol>
+<li>
+<p>Make the edit locally (remove the trailing period in the file)</p>
+</li>
+<li>
+<p>Stage the change: <code>git add pkgs/by-name/xx/your-package/package.nix</code> (avoid
+<code>git add -A</code> as it stages everything, which can accidentally include
+unrelated files)</p>
+</li>
+<li>
+<p>Amend the commit: <code>git commit --amend --no-edit</code>(this preserves your original
+commit message, if you want to change the commit message use
+<code>git commit --amend</code>)</p>
+</li>
+<li>
+<p>Force push: <code>git push --force-with-lease</code> (This is safer than just using
+<code>--force</code> because it will fail if someone else has pushed commits to your
+branch that you don’t have locally)</p>
+</li>
+</ol>
+<p><strong>Alternative for Multiple Commits</strong></p>
+<p>Interactive rebase is useful when your PR has several “WIP” commits (or you
+added a small review fix as a separate commit) and you want to present a cleaner
+history before merge.</p>
+<p>You can use interactive rebase to squash all your would be small fix commits
+into a single commit they belong to.</p>
+<p>Avoid squashing if the commits represent distinct, reviewable changes that stand
+on their own.</p>
+<p><strong>Basic Workflow (squash/fixup)</strong></p>
+<ol>
+<li>Decide how many commits back you want to edit (example: last 3 commits):</li>
+</ol>
+<pre><code class="language-bash">git rebase -i HEAD~3
+</code></pre>
+<ol start="2">
+<li>Your editor opens with a “todo” list (oldest at top). Change later commits
+from <code>pick</code> to <code>fixup</code> or <code>squash</code>:</li>
+</ol>
+<ul>
+<li>
+<p><code>fixup</code> = combine into the previous commit, discard this commit message.</p>
+</li>
+<li>
+<p><code>squash</code> = combine, but keep/edit commit messages.</p>
+</li>
+</ul>
+<p>Example todo:</p>
+<pre><code class="language-text">pick 1111111 mdbook-rss-feed: init at 0.1.0
+pick 2222222 mdbook-rss-feed: fix trailing period
+pick 3333333 mdbook-rss-feed: formatting
+</code></pre>
+<p>Change to:</p>
+<pre><code class="language-text">pick 1111111 mdbook-rss-feed: init at 0.1.0
+fixup 2222222 mdbook-rss-feed: fix trailing period
+fixup 3333333 mdbook-rss-feed: formatting
+</code></pre>
+<ol start="3">
+<li>Save/close: if you squashed, Git will prompt you to edit the final combined
+message.</li>
+</ol>
+<p><strong>Push updated history</strong></p>
+<p>You have to force-push because <code>rebase</code> rewrites commit SHAs:</p>
+<pre><code class="language-bash">git push --force-with-lease
+# If something goes wrong
+# git rebase --abort
+# If you hit conflicts, fix the files, then:
+# git add &lt;files&gt;
+# git rebase --continue
+</code></pre>
+<p>If you have an unrelated change accidentally included (for example: you staged
+an extra file), it’s usually better to fix it via rebase/splitting before
+reviewers spend time re-reviewing noise.</p>
+]]></description><author>saylesss88</author><guid>/nixpkgs/rust_crate_to_nixpkgs.html</guid><pubDate>Wed, 31 Dec 2025 00:00:00 +0000</pubDate></item><item><title>Hardening Networking</title><link>/nix/hardening_networking.html</link><description><![CDATA[<h1>Hardening Networking</h1>
 <details>
 <summary> ✔️ Table of Contents</summary>
 <!-- toc -->
@@ -978,7 +1063,7 @@ also lets you create phone number aliases that forward to your phone number.</p>
 </li>
 </ul>
 </details>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/hardening_networking.html</guid><pubDate>Thu, 25 Dec 2025 00:00:00 +0000</pubDate></item><item><title>Browsing Security</title><link>https://saylesss88.github.io/nix/browsing_security.html</link><description><![CDATA[<details>
+]]></description><author>saylesss88</author><guid>/nix/hardening_networking.html</guid><pubDate>Thu, 25 Dec 2025 00:00:00 +0000</pubDate></item><item><title>Browsing Security</title><link>/nix/browsing_security.html</link><description><![CDATA[<details>
 <summary> ✔️ Table of Contents</summary>
 <!-- toc -->
 </details>
@@ -1799,7 +1884,7 @@ protocol, but also a VPN provider on NixOS.</p>
 full-featured VPN provider on NixOS.</p>
 </li>
 </ul>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/browsing_security.html</guid><pubDate>Sun, 21 Dec 2025 00:00:00 +0000</pubDate></item><item><title>JJ VCS</title><link>https://saylesss88.github.io/vcs/jujutsu.html</link><description><![CDATA[<h1>Version Control with JJ</h1>
+]]></description><author>saylesss88</author><guid>/nix/browsing_security.html</guid><pubDate>Sun, 21 Dec 2025 00:00:00 +0000</pubDate></item><item><title>JJ VCS</title><link>/vcs/jujutsu.html</link><description><![CDATA[<h1>Version Control with JJ</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -2784,7 +2869,7 @@ compelling alternative for both new and experienced developers.</p>
 <p><a href="https://v5.chriskrycho.com/essays/jj-init/">jj_init</a></p>
 </li>
 </ul>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/vcs/jujutsu.html</guid><pubDate>Mon, 8 Dec 2025 00:00:00 +0000</pubDate></item><item><title>Hardening NixOS</title><link>https://saylesss88.github.io/nix/hardening_NixOS.html</link><description><![CDATA[<h1>Hardening NixOS</h1>
+]]></description><author>saylesss88</author><guid>/vcs/jujutsu.html</guid><pubDate>Mon, 8 Dec 2025 00:00:00 +0000</pubDate></item><item><title>Hardening NixOS</title><link>/nix/hardening_NixOS.html</link><description><![CDATA[<h1>Hardening NixOS</h1>
 <details>
 <summary> ✔️ Table of Contents</summary>
 <!-- toc -->
@@ -5709,7 +5794,7 @@ hardening.There are recommendations for hardening all kinds of software in the
 </li>
 </ul>
 </details>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/hardening_NixOS.html</guid><pubDate>Mon, 8 Dec 2025 00:00:00 +0000</pubDate></item><item><title>GnuPG gpg-agent</title><link>https://saylesss88.github.io/nix/gpg-agent.html</link><description><![CDATA[<h1>GnuPG &amp; <code>gpg-agent</code> on NixOS</h1>
+]]></description><author>saylesss88</author><guid>/nix/hardening_NixOS.html</guid><pubDate>Mon, 8 Dec 2025 00:00:00 +0000</pubDate></item><item><title>GnuPG gpg-agent</title><link>/nix/gpg-agent.html</link><description><![CDATA[<h1>GnuPG &amp; <code>gpg-agent</code> on NixOS</h1>
 <details>
 <summary> ✔️ Table of Contents</summary>
 <!-- toc -->
@@ -6534,7 +6619,7 @@ pub  ed25519/0x76A5EF9054449A5C
 </code></pre>
 <p>You can see that the trust is <code>marginal</code> and validity is <code>full</code>.</p>
 </details>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/gpg-agent.html</guid><pubDate>Mon, 8 Dec 2025 00:00:00 +0000</pubDate></item><item><title>KVM</title><link>https://saylesss88.github.io/nix/kvm.html</link><description><![CDATA[<h1>Running NixOS in a VM with Maximum Isolation (Beginner Guide)</h1>
+]]></description><author>saylesss88</author><guid>/nix/gpg-agent.html</guid><pubDate>Mon, 8 Dec 2025 00:00:00 +0000</pubDate></item><item><title>KVM</title><link>/nix/kvm.html</link><description><![CDATA[<h1>Running NixOS in a VM with Maximum Isolation (Beginner Guide)</h1>
 <details>
 <summary> Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -6854,7 +6939,7 @@ and within a few days the global DNS will work again.</p>
 <p><a href="https://bitgrounds.tech/posts/kvm-qemu-libvirt-virtualization/">Virtualization on Linux using the KVM/QEMU/Libvirt stack</a></p>
 </li>
 </ul>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/kvm.html</guid><pubDate>Sat, 6 Dec 2025 00:00:00 +0000</pubDate></item><item><title>Encrypted Impermanence</title><link>https://saylesss88.github.io/nix/encrypted_impermanence.html</link><description><![CDATA[<h1>Encrypted Impermanence</h1>
+]]></description><author>saylesss88</author><guid>/nix/kvm.html</guid><pubDate>Sat, 6 Dec 2025 00:00:00 +0000</pubDate></item><item><title>Encrypted Impermanence</title><link>/nix/encrypted_impermanence.html</link><description><![CDATA[<h1>Encrypted Impermanence</h1>
 <details>
 <summary> ✔️ Table of Contents</summary>
 <!-- toc -->
@@ -7080,7 +7165,7 @@ indicating your impermanence setup is working correctly!</p>
 <p>Your system should now come up with a fresh root filesystem, and only the data
 specified in your <code>environment.persistence."/persist"</code> configuration will be
 persistent.</p>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/encrypted_impermanence.html</guid><pubDate>Sat, 6 Dec 2025 00:00:00 +0000</pubDate></item><item><title>Cachix devour-flake</title><link>https://saylesss88.github.io/nix/cachix_devour.html</link><description><![CDATA[<h1>Cachix and the devour-flake</h1>
+]]></description><author>saylesss88</author><guid>/nix/encrypted_impermanence.html</guid><pubDate>Sat, 6 Dec 2025 00:00:00 +0000</pubDate></item><item><title>Cachix devour-flake</title><link>/nix/cachix_devour.html</link><description><![CDATA[<h1>Cachix and the devour-flake</h1>
 <details>
 <summary> ✔️ Table of Contents</summary>
 <!-- toc -->
@@ -7404,7 +7489,7 @@ cache for fast, reproducible builds.</p>
 <p><a href="https://docs.cachix.org/installation#flakes">Cachix docs: Flakes</a></p>
 <p><a href="https://www.tweag.io/blog/2020-06-25-eval-cache/#:~:text=The%20overhead%20for%20creating%20the,nixpkgs%20blender%20takes%204.9%20seconds.">Tweag Evaluation Caching</a></p>
 <p><a href="https://scrive.github.io/nix-workshop/06-infrastructure/01-caching-nix.html">Scrive Caching</a></p>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/cachix_devour.html</guid><pubDate>Fri, 5 Dec 2025 00:00:00 +0000</pubDate></item><item><title>Understanding the Helix Flake</title><link>https://saylesss88.github.io/flakes/helix_flake_4.4.html</link><description><![CDATA[<h1>Chapter 4.4</h1>
+]]></description><author>saylesss88</author><guid>/nix/cachix_devour.html</guid><pubDate>Fri, 5 Dec 2025 00:00:00 +0000</pubDate></item><item><title>Understanding the Helix Flake</title><link>/flakes/helix_flake_4.4.html</link><description><![CDATA[<h1>Chapter 4.4</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -8163,7 +8248,7 @@ now forward or extend Helix’s <code>devShells</code> like this:</p>
     };
   };
 </code></pre>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/flakes/helix_flake_4.4.html</guid><pubDate>Fri, 5 Dec 2025 00:00:00 +0000</pubDate></item><item><title>Whonix KVM on NixOS</title><link>https://saylesss88.github.io/nix/whonix_kvm.html</link><description><![CDATA[<h1>Whonix KVM on NixOS</h1>
+]]></description><author>saylesss88</author><guid>/flakes/helix_flake_4.4.html</guid><pubDate>Fri, 5 Dec 2025 00:00:00 +0000</pubDate></item><item><title>Whonix KVM on NixOS</title><link>/nix/whonix_kvm.html</link><description><![CDATA[<h1>Whonix KVM on NixOS</h1>
 <details>
 <summary> ✔️ Table of Contents</summary>
 <!-- toc -->
@@ -8692,7 +8777,7 @@ Primary key fingerprint: 916B 8D99 C38E AF5E 8ADC  7A2A 8D66 066A 2EEA CCDA
 </ul>
 <p>k
 <a href="https://www.kicksecure.com/wiki/System_Hardening_Checklist">System Hardening Checklist</a></p>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/whonix_kvm.html</guid><pubDate>Thu, 4 Dec 2025 00:00:00 +0000</pubDate></item><item><title>Sops-Nix</title><link>https://saylesss88.github.io/nix/sops-nix.html</link><description><![CDATA[<h1>Sops-Nix encrypted secrets</h1>
+]]></description><author>saylesss88</author><guid>/nix/whonix_kvm.html</guid><pubDate>Thu, 4 Dec 2025 00:00:00 +0000</pubDate></item><item><title>Sops-Nix</title><link>/nix/sops-nix.html</link><description><![CDATA[<h1>Sops-Nix encrypted secrets</h1>
 <details>
 <summary> ✔️ Table of Contents</summary>
 <!-- toc -->
@@ -8955,7 +9040,7 @@ and reproducible way to manage sensitive secrets. Unlike traditional
 approaches—where secrets are often scattered in ad hoc locations, referenced by
 absolute paths, or managed outside version control—sops-nix keeps your secrets
 encrypted, declarative, and version-control friendly.</p>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/sops-nix.html</guid><pubDate>Thu, 4 Dec 2025 00:00:00 +0000</pubDate></item><item><title>Intro to Nushell</title><link>https://saylesss88.github.io/intro_to_nushell_on_NixOS.html</link><description><![CDATA[<h1>Chapter 12</h1>
+]]></description><author>saylesss88</author><guid>/nix/sops-nix.html</guid><pubDate>Thu, 4 Dec 2025 00:00:00 +0000</pubDate></item><item><title>Intro to Nushell</title><link>/intro_to_nushell_on_NixOS.html</link><description><![CDATA[<h1>Chapter 12</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -9688,7 +9773,7 @@ configurations, etc here.</p>
 </li>
 </ul>
 </details>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/intro_to_nushell_on_NixOS.html</guid><pubDate>Sun, 30 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Git</title><link>https://saylesss88.github.io/vcs/git.html</link><description><![CDATA[<h1>Version Control with Git</h1>
+]]></description><author>saylesss88</author><guid>/intro_to_nushell_on_NixOS.html</guid><pubDate>Sun, 30 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Git</title><link>/vcs/git.html</link><description><![CDATA[<h1>Version Control with Git</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -10534,7 +10619,7 @@ equivalent.</p>
 <p><a href="https://ohshitgit.com/">Oh shit Git</a></p>
 </li>
 </ul>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/vcs/git.html</guid><pubDate>Sun, 30 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Functions and NixOS Modules</title><link>https://saylesss88.github.io/functions/functions_and_modules_2.2.html</link><description><![CDATA[<h1>Functions and NixOS Modules</h1>
+]]></description><author>saylesss88</author><guid>/vcs/git.html</guid><pubDate>Sun, 30 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Functions and NixOS Modules</title><link>/functions/functions_and_modules_2.2.html</link><description><![CDATA[<h1>Functions and NixOS Modules</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -10731,7 +10816,7 @@ home-manager module:</p>
 <tr><td style="text-align: left"><strong>Boilerplate</strong></td><td style="text-align: left">Often needs <code>pkgs = import &lt;nixpkgs&gt; {};</code> if not explicitly passed.</td><td style="text-align: left"><code>pkgs</code> and <code>lib</code> are always available automatically.</td></tr>
 <tr><td style="text-align: left"><strong>Purpose</strong></td><td style="text-align: left">Defines a package, a utility, or a single value.</td><td style="text-align: left">Defines a reusable part of a declarative system configuration.</td></tr>
 </tbody></table>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/functions/functions_and_modules_2.2.html</guid><pubDate>Sun, 30 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Intro to Derivations</title><link>https://saylesss88.github.io/Intro_to_Nix_Derivations_7.html</link><description><![CDATA[<h1>Chapter 7</h1>
+]]></description><author>saylesss88</author><guid>/functions/functions_and_modules_2.2.html</guid><pubDate>Sun, 30 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Intro to Derivations</title><link>/Intro_to_Nix_Derivations_7.html</link><description><![CDATA[<h1>Chapter 7</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -11514,7 +11599,7 @@ How to learn Nix</p>
 </li>
 </ul>
 </details>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Intro_to_Nix_Derivations_7.html</guid><pubDate>Sat, 29 Nov 2025 00:00:00 +0000</pubDate></item><item><title>index</title><link>https://saylesss88.github.io/index.html</link><description><![CDATA[]]></description><guid>https://saylesss88.github.io/index.html</guid><pubDate>Fri, 28 Nov 2025 20:30:18 +0000</pubDate></item><item><title>Flake outputs</title><link>https://saylesss88.github.io/flakes/flake_examples_4.3.html</link><description><![CDATA[<h1>Nix Flake Examples</h1>
+]]></description><author>saylesss88</author><guid>/Intro_to_Nix_Derivations_7.html</guid><pubDate>Sat, 29 Nov 2025 00:00:00 +0000</pubDate></item><item><title>index</title><link>/index.html</link><description><![CDATA[]]></description><guid>/index.html</guid><pubDate>Fri, 28 Nov 2025 20:30:18 +0000</pubDate></item><item><title>Flake outputs</title><link>/flakes/flake_examples_4.3.html</link><description><![CDATA[<h1>Nix Flake Examples</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -11708,7 +11793,7 @@ and the base system options) and the settings from second (like
 <code>/etc/second-file</code>), all without directly altering the first or second flakes.
 This demonstrates the incredible power of flake extensibility for building
 complex, modular, and composable systems.</p>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/flakes/flake_examples_4.3.html</guid><pubDate>Fri, 28 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Flake Inputs</title><link>https://saylesss88.github.io/flakes/flake_inputs_4.1.html</link><description><![CDATA[<h1>Nix Flake Inputs</h1>
+]]></description><author>saylesss88</author><guid>/flakes/flake_examples_4.3.html</guid><pubDate>Fri, 28 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Flake Inputs</title><link>/flakes/flake_inputs_4.1.html</link><description><![CDATA[<h1>Nix Flake Inputs</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -11989,7 +12074,7 @@ common flake convention, making the flake easier for users to consume without
 needing to dive into its internal structure.</p>
 </li>
 </ul>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/flakes/flake_inputs_4.1.html</guid><pubDate>Fri, 28 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Flake outputs</title><link>https://saylesss88.github.io/flakes/flake_outputs_4.2.html</link><description><![CDATA[<h1>Nix Flake Outputs</h1>
+]]></description><author>saylesss88</author><guid>/flakes/flake_inputs_4.1.html</guid><pubDate>Fri, 28 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Flake outputs</title><link>/flakes/flake_outputs_4.2.html</link><description><![CDATA[<h1>Nix Flake Outputs</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -12430,7 +12515,7 @@ in
 <p>Now you can run <code>nix develop</code> in the flake directory and if successfull, you’ll
 see the <code>echo</code> commands above and you will have all the tools available in your
 environment without having to explicitly install them.</p>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/flakes/flake_outputs_4.2.html</guid><pubDate>Fri, 28 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Pull Requests</title><link>https://saylesss88.github.io/Nix_Pull_Requests_11.html</link><description><![CDATA[<h1>Chapter 11</h1>
+]]></description><author>saylesss88</author><guid>/flakes/flake_outputs_4.2.html</guid><pubDate>Fri, 28 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Pull Requests</title><link>/Nix_Pull_Requests_11.html</link><description><![CDATA[<h1>Chapter 11</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -12727,7 +12812,7 @@ reliable Nix ecosystem. By following these steps, you can help ensure that
 changes are well-vetted before being merged, ultimately benefiting all Nix
 users. Your efforts in testing contribute significantly to the quality and
 stability of Nixpkgs.</p>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Nix_Pull_Requests_11.html</guid><pubDate>Thu, 27 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Unencrypted BTRFS Impermanence with Flakes</title><link>https://saylesss88.github.io/installation/unenc/unenc_impermanence.html</link><description><![CDATA[<h1>Unencrypted BTRFS Impermanence with Flakes</h1>
+]]></description><author>saylesss88</author><guid>/Nix_Pull_Requests_11.html</guid><pubDate>Thu, 27 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Unencrypted BTRFS Impermanence with Flakes</title><link>/installation/unenc/unenc_impermanence.html</link><description><![CDATA[<h1>Unencrypted BTRFS Impermanence with Flakes</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -13139,7 +13224,7 @@ relevant).</p>
 <p><a href="https://github.com/nix-community/impermanence">nix-community impermanence module</a></p>
 </li>
 </ul>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/installation/unenc/unenc_impermanence.html</guid><pubDate>Mon, 24 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Local Nixpkgs</title><link>https://saylesss88.github.io/Working_with_Nixpkgs_Locally_10.html</link><description><![CDATA[<h1>Chapter 10</h1>
+]]></description><author>saylesss88</author><guid>/installation/unenc/unenc_impermanence.html</guid><pubDate>Mon, 24 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Local Nixpkgs</title><link>/Working_with_Nixpkgs_Locally_10.html</link><description><![CDATA[<h1>Chapter 10</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -13520,7 +13605,7 @@ can significantly improve parallel work and branch management.</p>
 </li>
 </ul>
 </details>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Working_with_Nixpkgs_Locally_10.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>NixOS Containers</title><link>https://saylesss88.github.io/nixos_containers.html</link><description><![CDATA[<h1>NixOS Containers</h1>
+]]></description><author>saylesss88</author><guid>/Working_with_Nixpkgs_Locally_10.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>NixOS Containers</title><link>/nixos_containers.html</link><description><![CDATA[<h1>NixOS Containers</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -13734,7 +13819,7 @@ the immutable sticky bits that prevent deletion.</p>
 sudo chattr -R -i mdbook-host/
 sudo rm -rf mdbook-host/
 </code></pre>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nixos_containers.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Comparing Flakes and Traditional Nix</title><link>https://saylesss88.github.io/Comparing_Flakes_and_Traditional_Nix_8.html</link><description><![CDATA[<h1>Chapter 8</h1>
+]]></description><author>saylesss88</author><guid>/nixos_containers.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Comparing Flakes and Traditional Nix</title><link>/Comparing_Flakes_and_Traditional_Nix_8.html</link><description><![CDATA[<h1>Chapter 8</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -14079,7 +14164,7 @@ and tools that can help you understand the evaluation process, inspect the
 values of expressions, and trace the execution of your Nix code, enabling you to
 effectively troubleshoot and resolve issues in both Flake-based and traditional
 Nix projects.</p>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Comparing_Flakes_and_Traditional_Nix_8.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Debugging NixOS modules</title><link>https://saylesss88.github.io/Debugging_and_Tracing_NixOS_Modules_9.html</link><description><![CDATA[<h1>Chapter 11</h1>
+]]></description><author>saylesss88</author><guid>/Comparing_Flakes_and_Traditional_Nix_8.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Debugging NixOS modules</title><link>/Debugging_and_Tracing_NixOS_Modules_9.html</link><description><![CDATA[<h1>Chapter 11</h1>
 <p>This chapter covers debugging NixOS modules, focusing on tracing module options
 and evaluating merges.</p>
 <details>
@@ -15100,7 +15185,7 @@ clone Nixpkgs, how to make changes to package definitions, and how to test those
 changes locally before contributing them back upstream. This chapter will
 empower you to not just use existing Nix packages, but also to customize and
 extend them to fit your specific needs.</p>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Debugging_and_Tracing_NixOS_Modules_9.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nixpkgs Overlays</title><link>https://saylesss88.github.io/nixpkgs/overlay.html</link><description><![CDATA[<h1>Nixpkgs Overlays</h1>
+]]></description><author>saylesss88</author><guid>/Debugging_and_Tracing_NixOS_Modules_9.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nixpkgs Overlays</title><link>/nixpkgs/overlay.html</link><description><![CDATA[<h1>Nixpkgs Overlays</h1>
 <p>The following is done with a local clone of Nixpkgs located at <code>~/src/nixpkgs</code>.</p>
 <p>In this example, we will create an overlay to override the version of
 <code>btrfs-progs</code>. In the root directory of our local clone of Nixpkgs
@@ -15262,7 +15347,7 @@ path:/home/jr/btrfs-progs?lastModified=1749655369&amp;narHash=sha256-ln6dLiqo7Tx
 └───overlays
     └───myCustomOverlay: Nixpkgs overlay
 </code></pre>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nixpkgs/overlay.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Local Nixpkgs</title><link>https://saylesss88.github.io/nixpkgs/local_package.html</link><description><![CDATA[<details>
+]]></description><author>saylesss88</author><guid>/nixpkgs/overlay.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Local Nixpkgs</title><link>/nixpkgs/local_package.html</link><description><![CDATA[<details>
 <summary> ✔️ Table of Contents</summary>
 <!-- toc -->
 </details>
@@ -15471,7 +15556,7 @@ nix edit .#testPackage
 </code></pre>
 <p>I used <code>nix edit</code> here to ensure it was picked up properly.</p>
 <p>The <code>default.nix</code> that we’ve been working on should open in your <code>$EDITOR</code></p>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nixpkgs/local_package.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Fork, Clone, Contribute</title><link>https://saylesss88.github.io/nixpkgs/fork_clone_contribute.html</link><description><![CDATA[<h1>Fork, Clone, Contribute</h1>
+]]></description><author>saylesss88</author><guid>/nixpkgs/local_package.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Fork, Clone, Contribute</title><link>/nixpkgs/fork_clone_contribute.html</link><description><![CDATA[<h1>Fork, Clone, Contribute</h1>
 <ul>
 <li>
 <p>In the <a href="https://github.com/NixOS/nixpkgs">Nixpkgs</a> Repository.</p>
@@ -15711,667 +15796,7 @@ required. Confirm latest stable: If you’re targeting a stable branch,
 via NixOS status.</p>
 </li>
 </ul>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nixpkgs/fork_clone_contribute.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Readme1</title><link>https://saylesss88.github.io/nix/index.html</link><description><![CDATA[<h1>Hardening README</h1>
-<details>
-<summary> ✔️ Click to Expand Table of Contents</summary>
-<!-- toc -->
-</details>
-<p>📌 <strong>How to Use This Guide</strong></p>
-<p><strong>Read warnings</strong>: Advanced hardening can break compatibility or cause data
-loss! Pause and research before enabling anything not listed above unless you
-understand the consequences.</p>
-<p><strong>Hardening NixOS</strong>:</p>
-<p>🔷 Start Here:</p>
-<ul>
-<li>
-<p><a href="https://saylesss88.github.io/nix/hardening_NixOS.html">Hardening NixOS</a></p>
-</li>
-<li>
-<p><a href="https://saylesss88.github.io/nix/hardening_networking.html">Hardening Networking</a></p>
-</li>
-</ul>
-<hr />
-<p><strong>Additional security/hardening topics</strong></p>
-<ul>
-<li>
-<p><a href="https://saylesss88.github.io/nix/browsing_security.html">Browser/Browsing Security/Privacy</a></p>
-</li>
-<li>
-<p><a href="https://saylesss88.github.io/nix/gpg-agent.html">GnuPG gpg-agent</a></p>
-</li>
-<li>
-<p><a href="https://saylesss88.github.io/nix/whonix_kvm.html">Whonix KVM on NixOS</a></p>
-</li>
-<li>
-<p><a href="https://saylesss88.github.io/nix/kvm.html">Running NixOS in a secureblue VM</a></p>
-</li>
-</ul>
-<h2>Getting Started</h2>
-<p>There is a lot covered in this guide which can get overwhelming when trying to
-decide what is worth implementing. Here, I will list some common recommendations
-that most users should follow to harden their stance.</p>
-<blockquote>
-<p>“The major problem with current systems is their inability to provide
-effective isolation between various programs running on one machine. E.g. if
-the user’s Web browser gets compromised (due to a bug exploited by a malicious
-web site), the OS is usually unable to protect other user’s applications and
-data from also being compromised.”–Qubes arch-spec</p>
-</blockquote>
-<h2>Threat Modeling</h2>
-<p>You should always start by conducting a personal threat assesment to identify
-potential threats and vulnerabilities that you need to develop strategies to
-defend against.</p>
-<p>Threat modeling in computing involves evaluating the security risks to your
-computer or network. It helps uncover possible threats and weaknesses so you can
-create plans to safeguard your systems and data effectively. By examining
-various attack scenarios, you can anticipate potential cyber threats and better
-protect your digital resources.</p>
-<p>It’s not possible to protect yourself against every attack(er), focus on the
-most probable threats to your specific situation.</p>
-<ul>
-<li>
-<p><a href="https://ssd.eff.org/playlist/want-security-starter-pack">EFF Security Starter Pack</a></p>
-</li>
-<li>
-<p><a href="https://ssd.eff.org/module/your-security-plan">EFF Your Security Plan</a></p>
-</li>
-<li>
-<p><a href="https://www.kicksecure.com/wiki/Threat_Modeling">Kicksecure Computer Security Threat Modeling</a></p>
-</li>
-</ul>
-<h3>Baseline Hardening</h3>
-<p>Before diving into advanced or specialized hardening, apply these baseline
-security measures suitable for all NixOS users. These settings help protect your
-system with minimal risk of breaking workflows or causing admin headaches.</p>
-<p>There is something to be said about the window manager you use. GNOME, KDE
-Plasma, and Sway secure privileged Wayland protocols like screencopy. This means
-that on environments outside of GNOME, KDE, and Sway, applications can access
-screen content of the entire desktop. This implicitly includes the content of
-other applications. It’s primarily for this reason that Silverblue, Kinoite, and
-Sericea images are recommended. COSMIC has plans to fix this.
-–<a href="https://secureblue.dev/images">secureblue Images</a></p>
-<p>Secureblue recommends disabling Xwayland and finding alternatives for those apps
-as well as disabling <code>xdg-desktop-portal-wlr</code>, this is because the wlroots
-desktop portal reintroduces the screencopy vulnerability.</p>
-<ul>
-<li>
-<p>Use Disk Encryption (LUKS) to protect your data at rest.</p>
-</li>
-<li>
-<p>Keep your system up to date (update regularly).</p>
-</li>
-<li>
-<p>Use strong, unique passwords. To generate one from the command-line, there is
-<code>pkgs.diceware</code>. Generate a password with: <code>diceware -n 12 -w en_eff</code>, add
-spaces between the words for higher entropy.</p>
-<ul>
-<li><a href="https://www.kicksecure.com/wiki/Passwords#Password_Generation">Kicksecure Password_Generation</a></li>
-</ul>
-</li>
-<li>
-<p>Avoid reusing passwords, use a password manager.</p>
-</li>
-<li>
-<p>Avoid storing files directly in the root home folder (i.e., <code>/home/user</code>),
-create sub-folders instead.(i.e., Instead of creating <code>~/notes.txt</code>, create
-<code>~/my-notes/notes.txt</code> or <code>~/Documents/notes.txt</code>).</p>
-<ul>
-<li>
-<p>If you are able to implement a Mandatory Access Control framework, there are
-more sub-folders that should be avoided such as <code>~/Downloads</code>. Another
-reason to use non-default sub-dirs is to avoid typos deleting important
-files.</p>
-</li>
-<li>
-<p>Home-Manager has an option <code>xdg.userDirs.enable</code></p>
-</li>
-</ul>
-</li>
-</ul>
-<pre><code class="language-nix"># home.nix or equivalent
-{
-  xdg.userDirs.enable = true;
-  xdg.userDirs.createDirectories = true;
-  # Optionally create non-default sub-dirs
-  # xdg.userDirs.documents = "/home/jr/my-documents";
-  # xdg.userDirs.download = "/home/jr/my-downloads";
-}
-</code></pre>
-<ul>
-<li>
-<p>The XDG Base Directory Specification defines a consistent way for apps and
-desktops to store and find files. It helps prevent “dotfile clutter” by
-directing application files into clear, organized locations.</p>
-</li>
-<li>
-<p>Only enable what you use, and actively disable what’s no longer in use.</p>
-</li>
-<li>
-<p>Enable at least a basic firewall, a more complex firewall example that
-utilizes nftables is shared in the
-<a href="https://saylesss88.github.io/nix/hardening_networking.html">Hardening Networking Chapter</a></p>
-</li>
-</ul>
-<p>Although the firewall is enabled by default on NixOS, let’s be explicit about
-it, add the following to your <code>configuration.nix</code> or equivalent:</p>
-<pre><code class="language-nix"># configuration.nix
-# this denies incoming connections but allows outgoing and established connections
-networking.firewall.enable = true;
-</code></pre>
-<p>Many services provide an option to open the required firewall ports
-automatically. For example:</p>
-<pre><code class="language-nix">services.tor.openFirewall = true;
-</code></pre>
-<p>This prevents you from having to manually open ports</p>
-<p><strong>Audit and remove local user accounts that are no longer needed</strong>: Regularly
-review and remove unused or outdated accounts to reduce your system’s attack
-surface, improve compliance, and ensure only authorized users have access. The
-following setting ensures that user (and group) management is fully declarative:</p>
-<pre><code class="language-nix"># configuration.nix
-# All users must be declared
-users.mutableUsers = false;
-</code></pre>
-<p>With <code>users.mutableUsers = false;</code>, all non-declaratively managed (imperative)
-user management including creation, modification, or password changes will fail
-or be reset on rebuild. User and group definitions become entirely controlled by
-your system configuration for maximum reproducibility and security. If you need
-to add, remove, or modify users, you must do so in your <code>configuration.nix</code> and
-rebuild the system.</p>
-<p>Don’t log in as <code>root</code>, it’s unnecessary.</p>
-<p>Commands that require <code>root</code> permissions should be run individually using <code>sudo</code>
-in all cases. Avoid logging in as <code>root</code> &amp; using <code>sudo su</code>.</p>
-<p>Never run GUI applications as <code>root</code>. If there is a legitimate reason for doing
-this, use <code>lxsudo</code> instead.</p>
-<hr />
-<blockquote>
-<p>NOTE: There is mention of making
-<a href="https://github.com/nikstur/userborn">userborn</a> the default for NixOS in the
-future. It can be more secure by prohibiting UID/GID re-use and giving
-warnings about insecure password hashing schemes.</p>
-</blockquote>
-<p>I have personally had nothing but problems with <code>userborn</code> and find the docs
-extremely lacking, you need to read the source code to figure anything out which
-is ridiculous. I don’t personally use this but if you figure it out, more power
-to ya.</p>
-<p>To enable <code>userborn</code>, just add the following to your <code>configuration.nix</code> or
-equivalent:</p>
-<pre><code class="language-nix"># users.nix
-{pkgs,...}:{
-services.userborn = {
-    enable = true;
-    # Only needed if `/etc` is immutable
-    # passwordFilesLocation = "/var/lib/nixos/userborn"
-};
-    users.users = {
-       "newuser" = {
-         homeMode = "755";
-         uid = 1000;
-         isNormalUser = true;
-         description = "New user account";
-         extraGroups = [ "networkmanager" "wheel" "libvirtd" ];
-         shell = pkgs.bash;
-         ignoreShellProgramCheck = true;
-         packages = with pkgs; [];
-       };
-    };
-    }
-</code></pre>
-<p>With <code>userborn</code>, you configure your users as you normally would declaratively
-with NixOS with <code>users.users</code>, change <code>"newuser"</code> to your desired username.</p>
-<p>Explicitly setting <code>uid = 1000;</code> is a best practice for compatibility and
-predictability.</p>
-<hr />
-<p><strong>Only install, enable, and run what is needed</strong>: Disable or uninstall
-unnecessary software and services to minimize potential vulnerabilities. Take
-advantage of NixOS’s easy package management and minimalism to keep your system
-lean and secure.</p>
-<p><strong>Avoid permanently installing temporary tools</strong>: Use tools like <code>nix-shell</code>,
-<code>comma</code>, <code>devShells</code> and <code>nix-direnv</code> to test or run software temporarily. This
-prevents clutter and reduces potential risks from unused software lingering on
-the system.</p>
-<p><strong>Update regularly</strong>: Keep your system and software up to date to receive the
-latest security patches. Delaying updates leaves known vulnerabilities open to
-exploitation.</p>
-<p><strong>Apply the Principle of Least Privilege</strong>: Never run tools or services as root
-unless absolutely necessary. Create dedicated users and groups with the minimum
-required permissions to limit potential damage if compromised.</p>
-<p><strong>Use strong passwords and passphrases</strong>: Aim for at least 14–16 characters by
-combining several unrelated words, symbols, and numbers. For example:
-<code>sunset-CoffeeHorse$guitar!</code>. Strong passphrases are both memorable and secure.</p>
-<p><strong>Use a password manager and enable multi-factor authentication (MFA)</strong>: Manage
-unique, strong passwords effectively with a trusted manager and protect accounts
-with MFA wherever possible for a second layer of defense.</p>
-<p><strong>Check logs regularly</strong>: Reviewing your system logs helps you spot unusual
-activity, errors, or failed login attempts that could indicate a security
-problem. NixOS uses <code>journald</code> by default, which makes this easy. For example,
-to see the logs for your current boot session:</p>
-<pre><code class="language-bash">journalctl -b
-# for the previous session
-journalctl -b -1
-</code></pre>
-<p>After establishing some standard best practices and a hardened base, it’s time
-to dive deeper into system hardening, the process of adding layered safeguards
-throughout your NixOS setup. This next section guides you through concrete steps
-and options for hardening critical areas of your system: from encryption and
-secure boot to managing secrets, tightening kernel security, and leveraging
-platform-specific tools.
-<a href="https://saylesss88.github.io/nix/hardening_NixOS.html">Hardening NixOS</a></p>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/index.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Unencrypted Impermanence</title><link>https://saylesss88.github.io/nix/impermanence.html</link><description><![CDATA[<h1>Unencrypted BTRFS Impermanence with Flakes</h1>
-<details>
-<summary> ✔️ Table of Contents</summary>
-<!-- toc -->
-</details>
-<p>Figure 1: <strong>Impermanence Logo</strong>: Image of the Impermanence logo. Sourced from
-the</p>
-<p><a href="https://github.com/nix-community/impermanence">Impermanence repo</a></p>
-<p><img src="../images/Impermanence.png" alt="Impermanence Logo" /></p>
-<p>This guide is for an unencrypted setup, there are a few links at the end for
-encrypted setups. This guide follows the previous
-<a href="https://saylesss88.github.io/nix/impermanence.html">minimal install guide</a> but
-you should be able to adjust it carefully to meet your needs.</p>
-<p>This section details how to set up impermanence on your NixOS system using BTRFS
-subvolumes. With impermanence, your operating system’s root filesystem will
-reset to a pristine state on each reboot, while designated directories and files
-remain persistent. This provides a highly reliable and rollback-friendly system.</p>
-<p>In NixOS, “state” is any data or condition of the system that isn’t defined in
-your declarative configuration. The impermanence approach aims to make this
-state temporary (ephemeral) or easily resettable, so your system always matches
-your configuration and can recover from unwanted changes or corruption.</p>
-<h2>Impermanence: The Concept and Its BTRFS Implementation</h2>
-<p>In a traditional Linux system, most of this state is stored on the disk and
-persists indefinitely unless manually deleted or modified. However, this can
-lead to configuration drift, where the system accumulates changes (e.g., log
-files, temporary files, or unintended configuration tweaks) that make it harder
-to reproduce or maintain.</p>
-<p>Impermanence, in the context of operating systems, refers to a setup where the
-majority of the system’s root filesystem (<code>/</code>) is reset to a pristine state on
-every reboot. This means any changes made to the system (e.g., installing new
-packages, modifying system files outside of configuration management, creating
-temporary files) are discarded upon shutdown or reboot.</p>
-<h3>What Does Impermanence Do?</h3>
-<p>Impermanence is a NixOS approach that makes the system stateless (or nearly
-stateless) by wiping the root filesystem (<code>/</code>) on each boot, ensuring a clean,
-predictable starting point. Only explicitly designated data (persistent state)
-is preserved across reboots, typically stored in specific locations like the
-<code>/nix/persist</code> subvolume. This is possible because NixOS can boot with only the
-<code>/boot</code>, and <code>/nix</code> directories. This achieves:</p>
-<ol>
-<li>Clean Root Filesystem:</li>
-</ol>
-<ul>
-<li>
-<p>The root subvolume is deleted and recreated on each boot, erasing transient
-state (e.g., temporary files, runtime data).</p>
-</li>
-<li>
-<p>This ensures the system starts fresh, reducing clutter and making it behave
-closer to a declarative system defined by your NixOS configuration.</p>
-</li>
-</ul>
-<ol start="2">
-<li>Selective Persistence:</li>
-</ol>
-<ul>
-<li>
-<p>Critical state (e.g., user files, logs, system configuration) is preserved in
-designated persistent subvolumes (e.g., <code>/nix/persist</code>, <code>/var/log</code>,
-<code>/var/lib</code>) or files.</p>
-</li>
-<li>
-<p>You control exactly what state persists by configuring
-<code>environment.persistence."/nix/persist"</code> or other mechanisms.</p>
-</li>
-<li>
-<p>❗ The understanding around persisting <code>/var/lib/nixos</code> seems to be evolving.
-See,<a href="https://github.com/nix-community/impermanence/issues/178">The importance of persisting <code>/var/lib/nixos</code></a>
-See also
-<a href="https://github.com/NixOS/nixpkgs/pull/273384">necessary system state</a></p>
-</li>
-</ul>
-<ol start="3">
-<li>Reproducibility and Security:</li>
-</ol>
-<ul>
-<li>
-<p>By wiping transient state, impermanence prevents unintended changes from
-accumulating, making the system more reproducible.</p>
-</li>
-<li>
-<p>It enhances security by ensuring sensitive temporary data (e.g., <code>/tmp</code>,
-runtime credentials) is erased on reboot.</p>
-</li>
-</ul>
-<h3>Getting Started</h3>
-<ol>
-<li>Add impermanence to your <code>flake.nix</code>. You will change the <code>hostname</code> in the
-flake to match your <code>networking.hostName</code>.</li>
-</ol>
-<pre><code class="language-nix"># flake.nix
-{
-  description = "NixOS configuration";
-
-  inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    disko.url = "github:nix-community/disko/latest";
-    disko.inputs.nixpkgs.follows = "nixpkgs";
-    impermanence.url = "github:nix-community/impermanence";
-  };
-
-  outputs = inputs@{ nixpkgs, ... }: {
-    nixosConfigurations = {
-      hostname = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = [
-          ./configuration.nix
-          inputs.disko.nixosModules.disko
-          inputs.impermanence.nixosModules.impermanence
-        ];
-      };
-    };
-  };
-}
-</code></pre>
-<ol start="2">
-<li>Discover where your root subvolume is located with <code>findmnt</code>:</li>
-</ol>
-<p>Before configuring impermanence, it’s crucial to know the device path and
-subvolume path of your main BTRFS partition where the root filesystem (<code>/</code>) is
-located. This information is needed for the mount command within the
-impermanence script.</p>
-<pre><code class="language-bash">findmnt /
-TARGET   SOURCE         FSTYPE OPTIONS
-/        /dev/disk/by-partlabel/disk-main-root[/root]
-                        btrfs  rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=275,sub
-</code></pre>
-<p>From the SOURCE column, note the full path, including the device (e.g.,
-<code>/dev/disk/by-partlabel/disk-main-root</code>) and the subvolume in brackets (e.g.,
-<code>[/root]</code>). You will use the device path in the next step</p>
-<p><code>/dev/disk/by-partlabel/disk-main-root</code> is a symlink to the actual device path
-(e.g. <code>/dev/nvme0n1p2</code>), but using the partlabel is generally more robust for
-scripts.</p>
-<ol start="3">
-<li>Create an <code>impermanence.nix</code>:</li>
-</ol>
-<p>Now, create a new file named <code>impermanence.nix</code> in your configuration directory
-(i.e. your flake directory). This file will contain all the specific settings
-for your impermanent setup, including BTRFS subvolume management and persistent
-data locations. Since this file is right next to your <code>configuration.nix</code>,
-you’ll just add an <code>imports = [ ./impermanence.nix ]</code> to your
-<code>configuration.nix</code> apply it to your configuration.</p>
-<pre><code class="language-nix">{lib, ...}: {
-  #  Reset root subvolume on boot
-  boot.initrd.postResumeCommands = lib.mkAfter ''
-    mkdir /btrfs_tmp
-      mount /dev/disk/by-partlabel/disk-main-root /btrfs_tmp # CONFIRM THIS IS CORRECT FROM findmnt
-      if [[ -e /btrfs_tmp/root ]]; then
-        mkdir -p /btrfs_tmp/old_roots
-        timestamp=$(date --date="@$(stat -c %Y /btrfs_tmp/root)" "+%Y-%m-%-d_%H:%M:%S")
-        mv /btrfs_tmp/root "/btrfs_tmp/old_roots/$timestamp"
-      fi
-
-      delete_subvolume_recursively() {
-        IFS=$'\n'
-        for i in $(btrfs subvolume list -o "$1" | cut -f 9- -d ' '); do
-          delete_subvolume_recursively "/btrfs_tmp/$i"
-        done
-        btrfs subvolume delete "$1"
-      }
-
-      for i in $(find /btrfs_tmp/old_roots/ -maxdepth 1 -mtime +30); do
-        delete_subvolume_recursively "$i"
-      done
-
-      btrfs subvolume create /btrfs_tmp/root
-      umount /btrfs_tmp
-  '';
-
-  # Use /persist as the persistence root, matching Disko's mountpoint
-  environment.persistence."/nix/persist" = {
-    hideMounts = true;
-    directories = [
-      "/etc" # System configuration (Keep this here for persistence via bind-mount)
-      "/var/spool" # Mail queues, cron jobs
-      "/srv" # Web server data, etc.
-      "/root"
-    ];
-    files = [
-    ];
-  };
-}
-</code></pre>
-<p>With btrfs subvolumes since each directory is its own subvolume, when the root
-is wiped on reboot the subvolumes are untouched.</p>
-<h3>Applying Your Impermanence Configuration</h3>
-<p>Once you have completed all the steps and created or modified the necessary
-files (<code>flake.nix</code>, <code>impermanence.nix</code>), you need to apply these changes to your
-NixOS system.</p>
-<ol>
-<li>Navigate to your NixOS configuration directory (where your <code>flake.nix</code> is
-located).</li>
-</ol>
-<pre><code class="language-bash">cd /path/to/your/flake
-</code></pre>
-<ol start="2">
-<li>Rebuild and Switch: Execute the <code>nixos-rebuild switch</code> command. This command
-will:</li>
-</ol>
-<ul>
-<li>
-<p>Evaluate your <code>flake.nix</code> and the modules it imports (including your new
-<code>impermanence.nix</code>).</p>
-</li>
-<li>
-<p>Build a new NixOS system closure based on your updated configuration.</p>
-</li>
-<li>
-<p>Activate the new system configuration, making it the current running system.</p>
-</li>
-</ul>
-<blockquote>
-<p>❗ <strong>NOTE:</strong> On the first rebuild after setting up impermanence, you may find
-that you’re not in the password database or cannot log in/sudo. This occurs
-because the initial state of your new ephemeral root filesystem, including
-<code>/etc</code> (where user passwords are stored), is fresh. It has to do with the
-timing of when <code>environment.persistence</code> takes effect during the first boot.</p>
-<p>To avoid this password issue, <strong>before</strong> your first <code>nixos-rebuild switch</code> for
-impermanence, run:</p>
-<pre><code class="language-bash">sudo mkdir -p /nix/persist/etc # Ensure the target directory exists
-sudo cp -a /etc/* /nix/persist/etc
-</code></pre>
-<ul>
-<li>This copies your <em>current</em> <code>/etc</code> directory contents (including existing
-user passwords) into your persistent storage.</li>
-<li><strong>Crucially:</strong> You must also ensure that <code>/etc</code> is explicitly included in
-your <code>environment.persistence."/nix/persist".directories</code> list in your
-<code>impermanence.nix</code> like we did above, (or main configuration). This
-configures NixOS to persistently bind-mount <code>/nix/persist/etc</code> over <code>/etc</code>
-on every subsequent boot.</li>
-</ul>
-<p>Once these steps are done and you reboot, your user passwords should function
-correctly, and future rebuilds will not present this problem.</p>
-</blockquote>
-<pre><code class="language-bash">sudo nixos-rebuild switch --flake .#hostname # Replace 'hostname' with your actual system hostname
-</code></pre>
-<ol start="3">
-<li>Perform an Impermanence Test (Before Reboot):</li>
-</ol>
-<ul>
-<li>Before you reboot, create a temporary directory and file in a non-persistent
-location. Since you haven’t explicitly added <code>/imperm_test</code> to your
-<code>environment.persistence."/nix/persist"</code> directories, this file should not
-survive a reboot.</li>
-</ul>
-<pre><code class="language-bash">mkdir /imperm_test
-echo "This should be Gone after Reboot" | sudo tee /imperm_test/testfile
-ls -l /imperm_test/testfile # Verify the file exists
-cat /imperm_test/testfile # Verify content
-</code></pre>
-<ol start="4">
-<li>Reboot Your System: For the impermanence setup to take full effect and for
-your root filesystem to be reset for the first time, you must reboot your
-machine.</li>
-</ol>
-<pre><code class="language-bash">sudo reboot
-</code></pre>
-<ol start="5">
-<li>Verify Impermanence (After Reboot):</li>
-</ol>
-<ul>
-<li>After the system has rebooted, check if the test directory and file still
-exist:</li>
-</ul>
-<pre><code class="language-bash">ls -l /imperm_test/testfile
-</code></pre>
-<p>You should see an output like <code>ls: cannot access '/imperm_test/testfile'</code>: No
-such file or directory. This confirms that the <code>/imperm_test</code> directory and its
-contents were indeed ephemeral and were removed during the reboot process,
-indicating your impermanence setup is working correctly!</p>
-<p>Your system should now come up with a fresh root filesystem, and only the data
-specified in your <code>environment.persistence."/nix/persist"</code> configuration will be
-persistent.</p>
-<h2>Recovery with <code>nixos-enter</code> and chroot</h2>
-<p>This is if you followed the minimal_install guide, it will need to be changed
-for a different disk layout.</p>
-<p><a href="https://en.wikipedia.org/wiki/Chroot">Chroot</a> is an operation that changes the
-apparent root directory for the current running process and their children. A
-program that is run in such a modified environment cannot access files and
-commands outside that environmental directory tree. This modified environment is
-called a chroot jail. –NixOS wiki</p>
-<p><code>nixos-enter</code> allows you to access a NixOS installation from a NixOS rescue
-system. To use, setup <code>/mnt</code> as described in the
-<a href="https://nixos.org/manual/nixos/stable/#sec-installation">installation manual</a></p>
-<p>🛠️ Recovery: Chroot into Your NixOS Btrfs+Impermanence System</p>
-<p>Take note of your layout from commands like:</p>
-<pre><code class="language-bash">sudo fdisk -l
-lsblk
-sudo btrfs subvol list /
-</code></pre>
-<p>Also inspect your <code>disk-config.nix</code> to ensure you refer to the correct <code>subvol=</code>
-names.</p>
-<p>If you need to repair your system (e.g., forgot root password, fix a broken
-config, etc.), follow these steps to chroot into your NixOS install:</p>
-<ol>
-<li>
-<p>Boot a Live ISO</p>
-<p>Boot from a NixOS (or any recent Linux) live USB.</p>
-<p>Open a terminal and become root:</p>
-</li>
-</ol>
-<pre><code class="language-bash">sudo -i
-</code></pre>
-<ol start="2">
-<li>Identify Your Devices</li>
-</ol>
-<p>Your main disk is <code>/dev/nvme0n1</code></p>
-<ul>
-<li>
-<p>EFI partition: <code>/dev/nvme0n1p1</code> (mounted at /boot)</p>
-</li>
-<li>
-<p>Root partition: <code>/dev/nvme0n1p2</code> (Btrfs, with subvolumes)</p>
-</li>
-</ul>
-<ol start="3">
-<li>Mount the Btrfs Root Subvolume</li>
-</ol>
-<p>First, mount the Btrfs partition somewhere temporary (not as / yet):</p>
-<pre><code class="language-bash">mount -o subvol=root,compress=zstd,noatime /dev/nvme0n1p2 /mnt
-</code></pre>
-<ol start="4">
-<li>Mount Other Subvolumes</li>
-</ol>
-<p>Now mount your other subvolumes as defined in your <code>disko.nix</code>:</p>
-<pre><code class="language-bash"># Mount Other Subvolumes
-# (Ensure /mnt directories are created for each *mountpoint*)
-
-# Home
-mkdir -p /mnt/home
-mount -o subvol=home,compress=zstd,noatime /dev/nvme0n1p2 /mnt/home
-
-# IMPORTANT: No separate mount for /mnt/home/user, as it's a nested subvolume
-# and handled by the /home mount.
-
-# Nix store
-mkdir -p /mnt/nix
-mount -o subvol=nix,compress=zstd,noatime /dev/nvme0n1p2 /mnt/nix
-
-# Nix persist
-mkdir -p /mnt/nix/persist
-# CRITICAL: Based our disko.nix, the subvolume name is 'persist', not 'nix/persist'
-mount -o subvol=persist,compress=zstd,noatime /dev/nvme0n1p2 /mnt/nix/persist
-
-# /var/log
-mkdir -p /mnt/var/log
-mount -o subvol=log,compress=zstd,noatime /dev/nvme0n1p2 /mnt/var/log
-
-# /var/lib
-mkdir -p /mnt/var/lib
-# Confirmed: The subvolume named 'lib' is mounted to /var/lib
-mount -o subvol=lib,compress=zstd,noatime /dev/nvme0n1p2 /mnt/var/lib
-</code></pre>
-<p>Note: If you get “subvolume not found,” check the subvolume names with
-<code>btrfs subvol list /mnt</code>.</p>
-<ol start="5">
-<li>Mount the EFI Partition</li>
-</ol>
-<pre><code class="language-bash">mkdir -p /mnt/boot mount /dev/nvme0n1p1 /mnt/boot
-</code></pre>
-<ol start="6">
-<li>(Optional) Mount Virtual Filesystems</li>
-</ol>
-<pre><code class="language-bash">mount --bind /dev /mnt/dev mount --bind /proc /mnt/proc mount --bind /sys
-/mnt/sys mount --bind /run /mnt/run
-</code></pre>
-<ol start="7">
-<li>Chroot</li>
-</ol>
-<pre><code class="language-bash">chroot /mnt /run/current-system/sw/bin/bash
-</code></pre>
-<p>or, if using a non-NixOS live system:</p>
-<pre><code class="language-bash">nixos-enter
-</code></pre>
-<p>(You may need to install nixos-enter with nix-shell -p nixos-enter.) 8. You’re
-In!</p>
-<p>You can now run <code>nixos-rebuild</code>, reset passwords, or fix configs as needed. 🔎</p>
-<p>📓 Notes</p>
-<ul>
-<li>
-<p>Adjust <code>compress=zstd,noatime</code> if your config uses different mount options.</p>
-</li>
-<li>
-<p>For impermanence, make sure to mount all persistent subvolumes you need.</p>
-</li>
-<li>
-<p>If you use swap, you may want to enable it too (e.g., <code>swapon /dev/zram0</code> if
-relevant).</p>
-</li>
-</ul>
-<p>You can now recover, repair, or maintain your NixOS system as needed!</p>
-<h4>Related Material</h4>
-<ul>
-<li>
-<p><a href="https://wiki.nixos.org/wiki/Change_root">Change root (chroot)</a></p>
-</li>
-<li>
-<p><a href="https://www.mankier.com/8/nixos-enter">nixos-enter</a></p>
-</li>
-<li>
-<p><a href="https://grahamc.com/blog/erase-your-darlings/">erase your darlings</a></p>
-</li>
-<li>
-<p><a href="https://haseebmajid.dev/posts/2024-07-30-how-i-setup-btrfs-and-luks-on-nixos-using-disko/">Guide for Btrfs with LUKS</a></p>
-</li>
-<li>
-<p><a href="https://notashelf.dev/posts/impermanence">notashelf impermanence</a></p>
-</li>
-<li>
-<p><a href="https://wiki.nixos.org/wiki/Impermanence">NixOS wiki Impermanence</a></p>
-</li>
-<li>
-<p><a href="https://github.com/nix-community/impermanence">nix-community impermanence module</a></p>
-</li>
-</ul>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/impermanence.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Lang</title><link>https://saylesss88.github.io/nix/nix_language.html</link><description><![CDATA[<h1>Nix Language</h1>
+]]></description><author>saylesss88</author><guid>/nixpkgs/fork_clone_contribute.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Lang</title><link>/nix/nix_language.html</link><description><![CDATA[<h1>Nix Language</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -16986,7 +16411,669 @@ grown to love the language. I find it fairly simple but powerful!</p>
 </li>
 </ul>
 </details>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/nix_language.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Package Manager</title><link>https://saylesss88.github.io/nix/nix_package_manager.html</link><description><![CDATA[<h1>Nix Package Manager</h1>
+<pre><code class="language-nix">builtins.head[ 5 6 7 ]
+</code></pre>
+]]></description><author>saylesss88</author><guid>/nix/nix_language.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Readme1</title><link>/nix/index.html</link><description><![CDATA[<h1>Hardening README</h1>
+<details>
+<summary> ✔️ Click to Expand Table of Contents</summary>
+<!-- toc -->
+</details>
+<p>📌 <strong>How to Use This Guide</strong></p>
+<p><strong>Read warnings</strong>: Advanced hardening can break compatibility or cause data
+loss! Pause and research before enabling anything not listed above unless you
+understand the consequences.</p>
+<p><strong>Hardening NixOS</strong>:</p>
+<p>🔷 Start Here:</p>
+<ul>
+<li>
+<p><a href="https://saylesss88.github.io/nix/hardening_NixOS.html">Hardening NixOS</a></p>
+</li>
+<li>
+<p><a href="https://saylesss88.github.io/nix/hardening_networking.html">Hardening Networking</a></p>
+</li>
+</ul>
+<hr />
+<p><strong>Additional security/hardening topics</strong></p>
+<ul>
+<li>
+<p><a href="https://saylesss88.github.io/nix/browsing_security.html">Browser/Browsing Security/Privacy</a></p>
+</li>
+<li>
+<p><a href="https://saylesss88.github.io/nix/gpg-agent.html">GnuPG gpg-agent</a></p>
+</li>
+<li>
+<p><a href="https://saylesss88.github.io/nix/whonix_kvm.html">Whonix KVM on NixOS</a></p>
+</li>
+<li>
+<p><a href="https://saylesss88.github.io/nix/kvm.html">Running NixOS in a secureblue VM</a></p>
+</li>
+</ul>
+<h2>Getting Started</h2>
+<p>There is a lot covered in this guide which can get overwhelming when trying to
+decide what is worth implementing. Here, I will list some common recommendations
+that most users should follow to harden their stance.</p>
+<blockquote>
+<p>“The major problem with current systems is their inability to provide
+effective isolation between various programs running on one machine. E.g. if
+the user’s Web browser gets compromised (due to a bug exploited by a malicious
+web site), the OS is usually unable to protect other user’s applications and
+data from also being compromised.”–Qubes arch-spec</p>
+</blockquote>
+<h2>Threat Modeling</h2>
+<p>You should always start by conducting a personal threat assesment to identify
+potential threats and vulnerabilities that you need to develop strategies to
+defend against.</p>
+<p>Threat modeling in computing involves evaluating the security risks to your
+computer or network. It helps uncover possible threats and weaknesses so you can
+create plans to safeguard your systems and data effectively. By examining
+various attack scenarios, you can anticipate potential cyber threats and better
+protect your digital resources.</p>
+<p>It’s not possible to protect yourself against every attack(er), focus on the
+most probable threats to your specific situation.</p>
+<ul>
+<li>
+<p><a href="https://ssd.eff.org/playlist/want-security-starter-pack">EFF Security Starter Pack</a></p>
+</li>
+<li>
+<p><a href="https://ssd.eff.org/module/your-security-plan">EFF Your Security Plan</a></p>
+</li>
+<li>
+<p><a href="https://www.kicksecure.com/wiki/Threat_Modeling">Kicksecure Computer Security Threat Modeling</a></p>
+</li>
+</ul>
+<h3>Baseline Hardening</h3>
+<p>Before diving into advanced or specialized hardening, apply these baseline
+security measures suitable for all NixOS users. These settings help protect your
+system with minimal risk of breaking workflows or causing admin headaches.</p>
+<p>There is something to be said about the window manager you use. GNOME, KDE
+Plasma, and Sway secure privileged Wayland protocols like screencopy. This means
+that on environments outside of GNOME, KDE, and Sway, applications can access
+screen content of the entire desktop. This implicitly includes the content of
+other applications. It’s primarily for this reason that Silverblue, Kinoite, and
+Sericea images are recommended. COSMIC has plans to fix this.
+–<a href="https://secureblue.dev/images">secureblue Images</a></p>
+<p>Secureblue recommends disabling Xwayland and finding alternatives for those apps
+as well as disabling <code>xdg-desktop-portal-wlr</code>, this is because the wlroots
+desktop portal reintroduces the screencopy vulnerability.</p>
+<ul>
+<li>
+<p>Use Disk Encryption (LUKS) to protect your data at rest.</p>
+</li>
+<li>
+<p>Keep your system up to date (update regularly).</p>
+</li>
+<li>
+<p>Use strong, unique passwords. To generate one from the command-line, there is
+<code>pkgs.diceware</code>. Generate a password with: <code>diceware -n 12 -w en_eff</code>, add
+spaces between the words for higher entropy.</p>
+<ul>
+<li><a href="https://www.kicksecure.com/wiki/Passwords#Password_Generation">Kicksecure Password_Generation</a></li>
+</ul>
+</li>
+<li>
+<p>Avoid reusing passwords, use a password manager.</p>
+</li>
+<li>
+<p>Avoid storing files directly in the root home folder (i.e., <code>/home/user</code>),
+create sub-folders instead.(i.e., Instead of creating <code>~/notes.txt</code>, create
+<code>~/my-notes/notes.txt</code> or <code>~/Documents/notes.txt</code>).</p>
+<ul>
+<li>
+<p>If you are able to implement a Mandatory Access Control framework, there are
+more sub-folders that should be avoided such as <code>~/Downloads</code>. Another
+reason to use non-default sub-dirs is to avoid typos deleting important
+files.</p>
+</li>
+<li>
+<p>Home-Manager has an option <code>xdg.userDirs.enable</code></p>
+</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-nix"># home.nix or equivalent
+{
+  xdg.userDirs.enable = true;
+  xdg.userDirs.createDirectories = true;
+  # Optionally create non-default sub-dirs
+  # xdg.userDirs.documents = "/home/jr/my-documents";
+  # xdg.userDirs.download = "/home/jr/my-downloads";
+}
+</code></pre>
+<ul>
+<li>
+<p>The XDG Base Directory Specification defines a consistent way for apps and
+desktops to store and find files. It helps prevent “dotfile clutter” by
+directing application files into clear, organized locations.</p>
+</li>
+<li>
+<p>Only enable what you use, and actively disable what’s no longer in use.</p>
+</li>
+<li>
+<p>Enable at least a basic firewall, a more complex firewall example that
+utilizes nftables is shared in the
+<a href="https://saylesss88.github.io/nix/hardening_networking.html">Hardening Networking Chapter</a></p>
+</li>
+</ul>
+<p>Although the firewall is enabled by default on NixOS, let’s be explicit about
+it, add the following to your <code>configuration.nix</code> or equivalent:</p>
+<pre><code class="language-nix"># configuration.nix
+# this denies incoming connections but allows outgoing and established connections
+networking.firewall.enable = true;
+</code></pre>
+<p>Many services provide an option to open the required firewall ports
+automatically. For example:</p>
+<pre><code class="language-nix">services.tor.openFirewall = true;
+</code></pre>
+<p>This prevents you from having to manually open ports</p>
+<p><strong>Audit and remove local user accounts that are no longer needed</strong>: Regularly
+review and remove unused or outdated accounts to reduce your system’s attack
+surface, improve compliance, and ensure only authorized users have access. The
+following setting ensures that user (and group) management is fully declarative:</p>
+<pre><code class="language-nix"># configuration.nix
+# All users must be declared
+users.mutableUsers = false;
+</code></pre>
+<p>With <code>users.mutableUsers = false;</code>, all non-declaratively managed (imperative)
+user management including creation, modification, or password changes will fail
+or be reset on rebuild. User and group definitions become entirely controlled by
+your system configuration for maximum reproducibility and security. If you need
+to add, remove, or modify users, you must do so in your <code>configuration.nix</code> and
+rebuild the system.</p>
+<p>Don’t log in as <code>root</code>, it’s unnecessary.</p>
+<p>Commands that require <code>root</code> permissions should be run individually using <code>sudo</code>
+in all cases. Avoid logging in as <code>root</code> &amp; using <code>sudo su</code>.</p>
+<p>Never run GUI applications as <code>root</code>. If there is a legitimate reason for doing
+this, use <code>lxsudo</code> instead.</p>
+<hr />
+<blockquote>
+<p>NOTE: There is mention of making
+<a href="https://github.com/nikstur/userborn">userborn</a> the default for NixOS in the
+future. It can be more secure by prohibiting UID/GID re-use and giving
+warnings about insecure password hashing schemes.</p>
+</blockquote>
+<p>I have personally had nothing but problems with <code>userborn</code> and find the docs
+extremely lacking, you need to read the source code to figure anything out which
+is ridiculous. I don’t personally use this but if you figure it out, more power
+to ya.</p>
+<p>To enable <code>userborn</code>, just add the following to your <code>configuration.nix</code> or
+equivalent:</p>
+<pre><code class="language-nix"># users.nix
+{pkgs,...}:{
+services.userborn = {
+    enable = true;
+    # Only needed if `/etc` is immutable
+    # passwordFilesLocation = "/var/lib/nixos/userborn"
+};
+    users.users = {
+       "newuser" = {
+         homeMode = "755";
+         uid = 1000;
+         isNormalUser = true;
+         description = "New user account";
+         extraGroups = [ "networkmanager" "wheel" "libvirtd" ];
+         shell = pkgs.bash;
+         ignoreShellProgramCheck = true;
+         packages = with pkgs; [];
+       };
+    };
+    }
+</code></pre>
+<p>With <code>userborn</code>, you configure your users as you normally would declaratively
+with NixOS with <code>users.users</code>, change <code>"newuser"</code> to your desired username.</p>
+<p>Explicitly setting <code>uid = 1000;</code> is a best practice for compatibility and
+predictability.</p>
+<hr />
+<p><strong>Only install, enable, and run what is needed</strong>: Disable or uninstall
+unnecessary software and services to minimize potential vulnerabilities. Take
+advantage of NixOS’s easy package management and minimalism to keep your system
+lean and secure.</p>
+<p><strong>Avoid permanently installing temporary tools</strong>: Use tools like <code>nix-shell</code>,
+<code>comma</code>, <code>devShells</code> and <code>nix-direnv</code> to test or run software temporarily. This
+prevents clutter and reduces potential risks from unused software lingering on
+the system.</p>
+<p><strong>Update regularly</strong>: Keep your system and software up to date to receive the
+latest security patches. Delaying updates leaves known vulnerabilities open to
+exploitation.</p>
+<p><strong>Apply the Principle of Least Privilege</strong>: Never run tools or services as root
+unless absolutely necessary. Create dedicated users and groups with the minimum
+required permissions to limit potential damage if compromised.</p>
+<p><strong>Use strong passwords and passphrases</strong>: Aim for at least 14–16 characters by
+combining several unrelated words, symbols, and numbers. For example:
+<code>sunset-CoffeeHorse$guitar!</code>. Strong passphrases are both memorable and secure.</p>
+<p><strong>Use a password manager and enable multi-factor authentication (MFA)</strong>: Manage
+unique, strong passwords effectively with a trusted manager and protect accounts
+with MFA wherever possible for a second layer of defense.</p>
+<p><strong>Check logs regularly</strong>: Reviewing your system logs helps you spot unusual
+activity, errors, or failed login attempts that could indicate a security
+problem. NixOS uses <code>journald</code> by default, which makes this easy. For example,
+to see the logs for your current boot session:</p>
+<pre><code class="language-bash">journalctl -b
+# for the previous session
+journalctl -b -1
+</code></pre>
+<p>After establishing some standard best practices and a hardened base, it’s time
+to dive deeper into system hardening, the process of adding layered safeguards
+throughout your NixOS setup. This next section guides you through concrete steps
+and options for hardening critical areas of your system: from encryption and
+secure boot to managing secrets, tightening kernel security, and leveraging
+platform-specific tools.
+<a href="https://saylesss88.github.io/nix/hardening_NixOS.html">Hardening NixOS</a></p>
+]]></description><author>saylesss88</author><guid>/nix/index.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Unencrypted Impermanence</title><link>/nix/impermanence.html</link><description><![CDATA[<h1>Unencrypted BTRFS Impermanence with Flakes</h1>
+<details>
+<summary> ✔️ Table of Contents</summary>
+<!-- toc -->
+</details>
+<p>Figure 1: <strong>Impermanence Logo</strong>: Image of the Impermanence logo. Sourced from
+the</p>
+<p><a href="https://github.com/nix-community/impermanence">Impermanence repo</a></p>
+<p><img src="../images/Impermanence.png" alt="Impermanence Logo" /></p>
+<p>This guide is for an unencrypted setup, there are a few links at the end for
+encrypted setups. This guide follows the previous
+<a href="https://saylesss88.github.io/nix/impermanence.html">minimal install guide</a> but
+you should be able to adjust it carefully to meet your needs.</p>
+<p>This section details how to set up impermanence on your NixOS system using BTRFS
+subvolumes. With impermanence, your operating system’s root filesystem will
+reset to a pristine state on each reboot, while designated directories and files
+remain persistent. This provides a highly reliable and rollback-friendly system.</p>
+<p>In NixOS, “state” is any data or condition of the system that isn’t defined in
+your declarative configuration. The impermanence approach aims to make this
+state temporary (ephemeral) or easily resettable, so your system always matches
+your configuration and can recover from unwanted changes or corruption.</p>
+<h2>Impermanence: The Concept and Its BTRFS Implementation</h2>
+<p>In a traditional Linux system, most of this state is stored on the disk and
+persists indefinitely unless manually deleted or modified. However, this can
+lead to configuration drift, where the system accumulates changes (e.g., log
+files, temporary files, or unintended configuration tweaks) that make it harder
+to reproduce or maintain.</p>
+<p>Impermanence, in the context of operating systems, refers to a setup where the
+majority of the system’s root filesystem (<code>/</code>) is reset to a pristine state on
+every reboot. This means any changes made to the system (e.g., installing new
+packages, modifying system files outside of configuration management, creating
+temporary files) are discarded upon shutdown or reboot.</p>
+<h3>What Does Impermanence Do?</h3>
+<p>Impermanence is a NixOS approach that makes the system stateless (or nearly
+stateless) by wiping the root filesystem (<code>/</code>) on each boot, ensuring a clean,
+predictable starting point. Only explicitly designated data (persistent state)
+is preserved across reboots, typically stored in specific locations like the
+<code>/nix/persist</code> subvolume. This is possible because NixOS can boot with only the
+<code>/boot</code>, and <code>/nix</code> directories. This achieves:</p>
+<ol>
+<li>Clean Root Filesystem:</li>
+</ol>
+<ul>
+<li>
+<p>The root subvolume is deleted and recreated on each boot, erasing transient
+state (e.g., temporary files, runtime data).</p>
+</li>
+<li>
+<p>This ensures the system starts fresh, reducing clutter and making it behave
+closer to a declarative system defined by your NixOS configuration.</p>
+</li>
+</ul>
+<ol start="2">
+<li>Selective Persistence:</li>
+</ol>
+<ul>
+<li>
+<p>Critical state (e.g., user files, logs, system configuration) is preserved in
+designated persistent subvolumes (e.g., <code>/nix/persist</code>, <code>/var/log</code>,
+<code>/var/lib</code>) or files.</p>
+</li>
+<li>
+<p>You control exactly what state persists by configuring
+<code>environment.persistence."/nix/persist"</code> or other mechanisms.</p>
+</li>
+<li>
+<p>❗ The understanding around persisting <code>/var/lib/nixos</code> seems to be evolving.
+See,<a href="https://github.com/nix-community/impermanence/issues/178">The importance of persisting <code>/var/lib/nixos</code></a>
+See also
+<a href="https://github.com/NixOS/nixpkgs/pull/273384">necessary system state</a></p>
+</li>
+</ul>
+<ol start="3">
+<li>Reproducibility and Security:</li>
+</ol>
+<ul>
+<li>
+<p>By wiping transient state, impermanence prevents unintended changes from
+accumulating, making the system more reproducible.</p>
+</li>
+<li>
+<p>It enhances security by ensuring sensitive temporary data (e.g., <code>/tmp</code>,
+runtime credentials) is erased on reboot.</p>
+</li>
+</ul>
+<h3>Getting Started</h3>
+<ol>
+<li>Add impermanence to your <code>flake.nix</code>. You will change the <code>hostname</code> in the
+flake to match your <code>networking.hostName</code>.</li>
+</ol>
+<pre><code class="language-nix"># flake.nix
+{
+  description = "NixOS configuration";
+
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    disko.url = "github:nix-community/disko/latest";
+    disko.inputs.nixpkgs.follows = "nixpkgs";
+    impermanence.url = "github:nix-community/impermanence";
+  };
+
+  outputs = inputs@{ nixpkgs, ... }: {
+    nixosConfigurations = {
+      hostname = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          ./configuration.nix
+          inputs.disko.nixosModules.disko
+          inputs.impermanence.nixosModules.impermanence
+        ];
+      };
+    };
+  };
+}
+</code></pre>
+<ol start="2">
+<li>Discover where your root subvolume is located with <code>findmnt</code>:</li>
+</ol>
+<p>Before configuring impermanence, it’s crucial to know the device path and
+subvolume path of your main BTRFS partition where the root filesystem (<code>/</code>) is
+located. This information is needed for the mount command within the
+impermanence script.</p>
+<pre><code class="language-bash">findmnt /
+TARGET   SOURCE         FSTYPE OPTIONS
+/        /dev/disk/by-partlabel/disk-main-root[/root]
+                        btrfs  rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=275,sub
+</code></pre>
+<p>From the SOURCE column, note the full path, including the device (e.g.,
+<code>/dev/disk/by-partlabel/disk-main-root</code>) and the subvolume in brackets (e.g.,
+<code>[/root]</code>). You will use the device path in the next step</p>
+<p><code>/dev/disk/by-partlabel/disk-main-root</code> is a symlink to the actual device path
+(e.g. <code>/dev/nvme0n1p2</code>), but using the partlabel is generally more robust for
+scripts.</p>
+<ol start="3">
+<li>Create an <code>impermanence.nix</code>:</li>
+</ol>
+<p>Now, create a new file named <code>impermanence.nix</code> in your configuration directory
+(i.e. your flake directory). This file will contain all the specific settings
+for your impermanent setup, including BTRFS subvolume management and persistent
+data locations. Since this file is right next to your <code>configuration.nix</code>,
+you’ll just add an <code>imports = [ ./impermanence.nix ]</code> to your
+<code>configuration.nix</code> apply it to your configuration.</p>
+<pre><code class="language-nix">{lib, ...}: {
+  #  Reset root subvolume on boot
+  boot.initrd.postResumeCommands = lib.mkAfter ''
+    mkdir /btrfs_tmp
+      mount /dev/disk/by-partlabel/disk-main-root /btrfs_tmp # CONFIRM THIS IS CORRECT FROM findmnt
+      if [[ -e /btrfs_tmp/root ]]; then
+        mkdir -p /btrfs_tmp/old_roots
+        timestamp=$(date --date="@$(stat -c %Y /btrfs_tmp/root)" "+%Y-%m-%-d_%H:%M:%S")
+        mv /btrfs_tmp/root "/btrfs_tmp/old_roots/$timestamp"
+      fi
+
+      delete_subvolume_recursively() {
+        IFS=$'\n'
+        for i in $(btrfs subvolume list -o "$1" | cut -f 9- -d ' '); do
+          delete_subvolume_recursively "/btrfs_tmp/$i"
+        done
+        btrfs subvolume delete "$1"
+      }
+
+      for i in $(find /btrfs_tmp/old_roots/ -maxdepth 1 -mtime +30); do
+        delete_subvolume_recursively "$i"
+      done
+
+      btrfs subvolume create /btrfs_tmp/root
+      umount /btrfs_tmp
+  '';
+
+  # Use /persist as the persistence root, matching Disko's mountpoint
+  environment.persistence."/nix/persist" = {
+    hideMounts = true;
+    directories = [
+      "/etc" # System configuration (Keep this here for persistence via bind-mount)
+      "/var/spool" # Mail queues, cron jobs
+      "/srv" # Web server data, etc.
+      "/root"
+    ];
+    files = [
+    ];
+  };
+}
+</code></pre>
+<p>With btrfs subvolumes since each directory is its own subvolume, when the root
+is wiped on reboot the subvolumes are untouched.</p>
+<h3>Applying Your Impermanence Configuration</h3>
+<p>Once you have completed all the steps and created or modified the necessary
+files (<code>flake.nix</code>, <code>impermanence.nix</code>), you need to apply these changes to your
+NixOS system.</p>
+<ol>
+<li>Navigate to your NixOS configuration directory (where your <code>flake.nix</code> is
+located).</li>
+</ol>
+<pre><code class="language-bash">cd /path/to/your/flake
+</code></pre>
+<ol start="2">
+<li>Rebuild and Switch: Execute the <code>nixos-rebuild switch</code> command. This command
+will:</li>
+</ol>
+<ul>
+<li>
+<p>Evaluate your <code>flake.nix</code> and the modules it imports (including your new
+<code>impermanence.nix</code>).</p>
+</li>
+<li>
+<p>Build a new NixOS system closure based on your updated configuration.</p>
+</li>
+<li>
+<p>Activate the new system configuration, making it the current running system.</p>
+</li>
+</ul>
+<blockquote>
+<p>❗ <strong>NOTE:</strong> On the first rebuild after setting up impermanence, you may find
+that you’re not in the password database or cannot log in/sudo. This occurs
+because the initial state of your new ephemeral root filesystem, including
+<code>/etc</code> (where user passwords are stored), is fresh. It has to do with the
+timing of when <code>environment.persistence</code> takes effect during the first boot.</p>
+<p>To avoid this password issue, <strong>before</strong> your first <code>nixos-rebuild switch</code> for
+impermanence, run:</p>
+<pre><code class="language-bash">sudo mkdir -p /nix/persist/etc # Ensure the target directory exists
+sudo cp -a /etc/* /nix/persist/etc
+</code></pre>
+<ul>
+<li>This copies your <em>current</em> <code>/etc</code> directory contents (including existing
+user passwords) into your persistent storage.</li>
+<li><strong>Crucially:</strong> You must also ensure that <code>/etc</code> is explicitly included in
+your <code>environment.persistence."/nix/persist".directories</code> list in your
+<code>impermanence.nix</code> like we did above, (or main configuration). This
+configures NixOS to persistently bind-mount <code>/nix/persist/etc</code> over <code>/etc</code>
+on every subsequent boot.</li>
+</ul>
+<p>Once these steps are done and you reboot, your user passwords should function
+correctly, and future rebuilds will not present this problem.</p>
+</blockquote>
+<pre><code class="language-bash">sudo nixos-rebuild switch --flake .#hostname # Replace 'hostname' with your actual system hostname
+</code></pre>
+<ol start="3">
+<li>Perform an Impermanence Test (Before Reboot):</li>
+</ol>
+<ul>
+<li>Before you reboot, create a temporary directory and file in a non-persistent
+location. Since you haven’t explicitly added <code>/imperm_test</code> to your
+<code>environment.persistence."/nix/persist"</code> directories, this file should not
+survive a reboot.</li>
+</ul>
+<pre><code class="language-bash">mkdir /imperm_test
+echo "This should be Gone after Reboot" | sudo tee /imperm_test/testfile
+ls -l /imperm_test/testfile # Verify the file exists
+cat /imperm_test/testfile # Verify content
+</code></pre>
+<ol start="4">
+<li>Reboot Your System: For the impermanence setup to take full effect and for
+your root filesystem to be reset for the first time, you must reboot your
+machine.</li>
+</ol>
+<pre><code class="language-bash">sudo reboot
+</code></pre>
+<ol start="5">
+<li>Verify Impermanence (After Reboot):</li>
+</ol>
+<ul>
+<li>After the system has rebooted, check if the test directory and file still
+exist:</li>
+</ul>
+<pre><code class="language-bash">ls -l /imperm_test/testfile
+</code></pre>
+<p>You should see an output like <code>ls: cannot access '/imperm_test/testfile'</code>: No
+such file or directory. This confirms that the <code>/imperm_test</code> directory and its
+contents were indeed ephemeral and were removed during the reboot process,
+indicating your impermanence setup is working correctly!</p>
+<p>Your system should now come up with a fresh root filesystem, and only the data
+specified in your <code>environment.persistence."/nix/persist"</code> configuration will be
+persistent.</p>
+<h2>Recovery with <code>nixos-enter</code> and chroot</h2>
+<p>This is if you followed the minimal_install guide, it will need to be changed
+for a different disk layout.</p>
+<p><a href="https://en.wikipedia.org/wiki/Chroot">Chroot</a> is an operation that changes the
+apparent root directory for the current running process and their children. A
+program that is run in such a modified environment cannot access files and
+commands outside that environmental directory tree. This modified environment is
+called a chroot jail. –NixOS wiki</p>
+<p><code>nixos-enter</code> allows you to access a NixOS installation from a NixOS rescue
+system. To use, setup <code>/mnt</code> as described in the
+<a href="https://nixos.org/manual/nixos/stable/#sec-installation">installation manual</a></p>
+<p>🛠️ Recovery: Chroot into Your NixOS Btrfs+Impermanence System</p>
+<p>Take note of your layout from commands like:</p>
+<pre><code class="language-bash">sudo fdisk -l
+lsblk
+sudo btrfs subvol list /
+</code></pre>
+<p>Also inspect your <code>disk-config.nix</code> to ensure you refer to the correct <code>subvol=</code>
+names.</p>
+<p>If you need to repair your system (e.g., forgot root password, fix a broken
+config, etc.), follow these steps to chroot into your NixOS install:</p>
+<ol>
+<li>
+<p>Boot a Live ISO</p>
+<p>Boot from a NixOS (or any recent Linux) live USB.</p>
+<p>Open a terminal and become root:</p>
+</li>
+</ol>
+<pre><code class="language-bash">sudo -i
+</code></pre>
+<ol start="2">
+<li>Identify Your Devices</li>
+</ol>
+<p>Your main disk is <code>/dev/nvme0n1</code></p>
+<ul>
+<li>
+<p>EFI partition: <code>/dev/nvme0n1p1</code> (mounted at /boot)</p>
+</li>
+<li>
+<p>Root partition: <code>/dev/nvme0n1p2</code> (Btrfs, with subvolumes)</p>
+</li>
+</ul>
+<ol start="3">
+<li>Mount the Btrfs Root Subvolume</li>
+</ol>
+<p>First, mount the Btrfs partition somewhere temporary (not as / yet):</p>
+<pre><code class="language-bash">mount -o subvol=root,compress=zstd,noatime /dev/nvme0n1p2 /mnt
+</code></pre>
+<ol start="4">
+<li>Mount Other Subvolumes</li>
+</ol>
+<p>Now mount your other subvolumes as defined in your <code>disko.nix</code>:</p>
+<pre><code class="language-bash"># Mount Other Subvolumes
+# (Ensure /mnt directories are created for each *mountpoint*)
+
+# Home
+mkdir -p /mnt/home
+mount -o subvol=home,compress=zstd,noatime /dev/nvme0n1p2 /mnt/home
+
+# IMPORTANT: No separate mount for /mnt/home/user, as it's a nested subvolume
+# and handled by the /home mount.
+
+# Nix store
+mkdir -p /mnt/nix
+mount -o subvol=nix,compress=zstd,noatime /dev/nvme0n1p2 /mnt/nix
+
+# Nix persist
+mkdir -p /mnt/nix/persist
+# CRITICAL: Based our disko.nix, the subvolume name is 'persist', not 'nix/persist'
+mount -o subvol=persist,compress=zstd,noatime /dev/nvme0n1p2 /mnt/nix/persist
+
+# /var/log
+mkdir -p /mnt/var/log
+mount -o subvol=log,compress=zstd,noatime /dev/nvme0n1p2 /mnt/var/log
+
+# /var/lib
+mkdir -p /mnt/var/lib
+# Confirmed: The subvolume named 'lib' is mounted to /var/lib
+mount -o subvol=lib,compress=zstd,noatime /dev/nvme0n1p2 /mnt/var/lib
+</code></pre>
+<p>Note: If you get “subvolume not found,” check the subvolume names with
+<code>btrfs subvol list /mnt</code>.</p>
+<ol start="5">
+<li>Mount the EFI Partition</li>
+</ol>
+<pre><code class="language-bash">mkdir -p /mnt/boot mount /dev/nvme0n1p1 /mnt/boot
+</code></pre>
+<ol start="6">
+<li>(Optional) Mount Virtual Filesystems</li>
+</ol>
+<pre><code class="language-bash">mount --bind /dev /mnt/dev mount --bind /proc /mnt/proc mount --bind /sys
+/mnt/sys mount --bind /run /mnt/run
+</code></pre>
+<ol start="7">
+<li>Chroot</li>
+</ol>
+<pre><code class="language-bash">chroot /mnt /run/current-system/sw/bin/bash
+</code></pre>
+<p>or, if using a non-NixOS live system:</p>
+<pre><code class="language-bash">nixos-enter
+</code></pre>
+<p>(You may need to install nixos-enter with nix-shell -p nixos-enter.) 8. You’re
+In!</p>
+<p>You can now run <code>nixos-rebuild</code>, reset passwords, or fix configs as needed. 🔎</p>
+<p>📓 Notes</p>
+<ul>
+<li>
+<p>Adjust <code>compress=zstd,noatime</code> if your config uses different mount options.</p>
+</li>
+<li>
+<p>For impermanence, make sure to mount all persistent subvolumes you need.</p>
+</li>
+<li>
+<p>If you use swap, you may want to enable it too (e.g., <code>swapon /dev/zram0</code> if
+relevant).</p>
+</li>
+</ul>
+<p>You can now recover, repair, or maintain your NixOS system as needed!</p>
+<h4>Related Material</h4>
+<ul>
+<li>
+<p><a href="https://wiki.nixos.org/wiki/Change_root">Change root (chroot)</a></p>
+</li>
+<li>
+<p><a href="https://www.mankier.com/8/nixos-enter">nixos-enter</a></p>
+</li>
+<li>
+<p><a href="https://grahamc.com/blog/erase-your-darlings/">erase your darlings</a></p>
+</li>
+<li>
+<p><a href="https://haseebmajid.dev/posts/2024-07-30-how-i-setup-btrfs-and-luks-on-nixos-using-disko/">Guide for Btrfs with LUKS</a></p>
+</li>
+<li>
+<p><a href="https://notashelf.dev/posts/impermanence">notashelf impermanence</a></p>
+</li>
+<li>
+<p><a href="https://wiki.nixos.org/wiki/Impermanence">NixOS wiki Impermanence</a></p>
+</li>
+<li>
+<p><a href="https://github.com/nix-community/impermanence">nix-community impermanence module</a></p>
+</li>
+</ul>
+]]></description><author>saylesss88</author><guid>/nix/impermanence.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Package Manager</title><link>/nix/nix_package_manager.html</link><description><![CDATA[<h1>Nix Package Manager</h1>
 <details>
 <summary> Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -17274,7 +17361,7 @@ something like <code>/nix/store/your-hash-hello-world</code>).</p>
 <code>"Hello, World!"</code>.</li>
 </ul>
 </details>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/nix_package_manager.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Paths</title><link>https://saylesss88.github.io/nix/nixLang/nix_paths.html</link><description><![CDATA[<h1>Nix Paths</h1>
+]]></description><author>saylesss88</author><guid>/nix/nix_package_manager.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Paths</title><link>/nix/nixLang/nix_paths.html</link><description><![CDATA[<h1>Nix Paths</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -17685,7 +17772,7 @@ nix-repl&gt; :p builtins.getContext (builtins.unsafeDiscardOutputDependency open
 </code></pre>
 <p>Relying on paths outside of the nix store is generally not recommended because
 of garbage collection and it’s considered unsafe.</p>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/nixLang/nix_paths.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>My Chapter</title><link>https://saylesss88.github.io/installation/index.html</link><description><![CDATA[<h1>Installation Guides</h1>
+]]></description><author>saylesss88</author><guid>/nix/nixLang/nix_paths.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>My Chapter</title><link>/installation/index.html</link><description><![CDATA[<h1>Installation Guides</h1>
 <p>This section provides detailed guides for installing NixOS. You’ll choose
 between an <strong>unencrypted</strong> or <strong>encrypted</strong> base setup. After your core
 installation, you can explore adding optional features like <code>sops</code> for encrypted
@@ -17761,7 +17848,7 @@ boot chain (requires UEFI and custom keys).</p>
 filesystem reverts to a clean state on every reboot.</p>
 </li>
 </ul>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/installation/index.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Unencrypted Install</title><link>https://saylesss88.github.io/installation/unenc/unencrypted_setups.html</link><description><![CDATA[<h1>Minimal BTRFS-Subvol Install with Disko and Flakes</h1>
+]]></description><author>saylesss88</author><guid>/installation/index.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Unencrypted Install</title><link>/installation/unenc/unencrypted_setups.html</link><description><![CDATA[<h1>Minimal BTRFS-Subvol Install with Disko and Flakes</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -18232,7 +18319,7 @@ can be deleted or rolled back as needed.</li>
 <p><a href="https://btrfs.readthedocs.io/en/latest/Subvolumes.html">BTRFS Subvolumes</a></p>
 <p>To continue following along and set up impermanence
 <a href="https://saylesss88.github.io/installation/unencrypted/impermanence.html">Click Here</a></p>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/installation/unenc/unencrypted_setups.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>USB Keyfile</title><link>https://saylesss88.github.io/installation/enc/USB_keyfile.html</link><description><![CDATA[<h1>USB Stick Keyfile</h1>
+]]></description><author>saylesss88</author><guid>/installation/unenc/unencrypted_setups.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>USB Keyfile</title><link>/installation/enc/USB_keyfile.html</link><description><![CDATA[<h1>USB Stick Keyfile</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -18626,7 +18713,7 @@ boot.initrd.luks.devices.cryptroot = {
   allowDiscards = true;
 };
 </code></pre>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/installation/enc/USB_keyfile.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Encrypted Impermanence</title><link>https://saylesss88.github.io/installation/enc/encrypted_impermanence.html</link><description><![CDATA[<h1>Encrypted Impermanence</h1>
+]]></description><author>saylesss88</author><guid>/installation/enc/USB_keyfile.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Encrypted Impermanence</title><link>/installation/enc/encrypted_impermanence.html</link><description><![CDATA[<h1>Encrypted Impermanence</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -18873,7 +18960,7 @@ indicating your impermanence setup is working correctly!</p>
 <p>Your system should now come up with a fresh root filesystem, and only the data
 specified in your <code>environment.persistence."/persist"</code> configuration will be
 persistent.</p>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/installation/enc/encrypted_impermanence.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Lanzaboote</title><link>https://saylesss88.github.io/installation/enc/lanzaboote.html</link><description><![CDATA[<h1>Secure Boot with Lanzaboote</h1>
+]]></description><author>saylesss88</author><guid>/installation/enc/encrypted_impermanence.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Lanzaboote</title><link>/installation/enc/lanzaboote.html</link><description><![CDATA[<h1>Secure Boot with Lanzaboote</h1>
 <details>
 <summary> Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -19148,7 +19235,7 @@ bypasses Secure Boot, they cannot read or modify your files without your
 passphrase</p>
 </li>
 </ol>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/installation/enc/lanzaboote.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Encrypted Install</title><link>https://saylesss88.github.io/installation/enc/enc_install.html</link><description><![CDATA[<h1>Encrypted Setups</h1>
+]]></description><author>saylesss88</author><guid>/installation/enc/lanzaboote.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Encrypted Install</title><link>/installation/enc/enc_install.html</link><description><![CDATA[<h1>Encrypted Setups</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -19797,7 +19884,7 @@ and
 <p><a href="https://oddlama.org/blog/bypassing-disk-encryption-with-tpm2-unlock/">Bypassing FDE with TPM2</a></p>
 </li>
 </ul>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/installation/enc/enc_install.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Sops-Nix</title><link>https://saylesss88.github.io/installation/enc/sops-nix.html</link><description><![CDATA[<h1>Sops-Nix encrypted secrets</h1>
+]]></description><author>saylesss88</author><guid>/installation/enc/enc_install.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Sops-Nix</title><link>/installation/enc/sops-nix.html</link><description><![CDATA[<h1>Sops-Nix encrypted secrets</h1>
 <details>
 <summary> Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -20056,7 +20143,7 @@ and reproducible way to manage sensitive secrets. Unlike traditional approaches
 where secrets are often scattered in ad hoc locations, referenced by absolute
 paths, or managed outside version control, <code>sops-nix</code> keeps your secrets
 encrypted, declarative, and version-control friendly.</p>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/installation/enc/sops-nix.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Practical Nix Functions</title><link>https://saylesss88.github.io/functions/practical_functions_2.1.html</link><description><![CDATA[<h1>Practical Nix Functions</h1>
+]]></description><author>saylesss88</author><guid>/installation/enc/sops-nix.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Practical Nix Functions</title><link>/functions/practical_functions_2.1.html</link><description><![CDATA[<h1>Practical Nix Functions</h1>
 <details>
 <summary>
 ✔️
@@ -20266,7 +20353,7 @@ nix-build -A graphviz
 </code></pre>
 <p>This example showed us how to turn expressions into functions. We saw how
 functions are passed around and shared between Nix expressions and derivations.</p>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/functions/practical_functions_2.1.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Specialisations</title><link>https://saylesss88.github.io/flakes/specialisations_4.6.html</link><description><![CDATA[<h1>NixOS Specialisations For Multiple Profiles</h1>
+]]></description><author>saylesss88</author><guid>/functions/practical_functions_2.1.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Specialisations</title><link>/flakes/specialisations_4.6.html</link><description><![CDATA[<h1>NixOS Specialisations For Multiple Profiles</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -20600,7 +20687,7 @@ hardware, user, and service configs in separate files for easier management</p>
 <p><a href="https://www.tweag.io/blog/2022-11-01-hard-user-separation-with-nixos/">Tweag Hard User Separation with NixOS</a></p>
 </li>
 </ul>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/flakes/specialisations_4.6.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Overlays</title><link>https://saylesss88.github.io/flakes/overlays_4.5.html</link><description><![CDATA[<h1>Extending Flakes with Custom Packages using Overlays</h1>
+]]></description><author>saylesss88</author><guid>/flakes/specialisations_4.6.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Overlays</title><link>/flakes/overlays_4.5.html</link><description><![CDATA[<h1>Extending Flakes with Custom Packages using Overlays</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -20986,7 +21073,7 @@ nix flake’s overlay, instead of the version that comes with the base <code>nix
 input. This technique is highly useful for ensuring a consistent environment or
 testing specific package versions without affecting the entire system’s
 <code>nixpkgs</code> set.</p>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/flakes/overlays_4.5.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Intro to Nix</title><link>https://saylesss88.github.io/Getting_Started_with_Nix_1.html</link><description><![CDATA[<h1>Chapter1</h1>
+]]></description><author>saylesss88</author><guid>/flakes/overlays_4.5.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Intro to Nix</title><link>/Getting_Started_with_Nix_1.html</link><description><![CDATA[<h1>Chapter1</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -21374,7 +21461,12 @@ actively update the information.</p>
 </li>
 </ul>
 </details>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Getting_Started_with_Nix_1.html</guid><pubDate>Fri, 21 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Understanding Nix Functions</title><link>https://saylesss88.github.io/Understanding_Nix_Functions_2.html</link><description><![CDATA[<h1>Chapter 2</h1>
+<pre><code>`````nix repl
+(let a = "2"; in                   # Let expressions are a way to create variables
+a + a + builtins.toString "4")
+`````
+</code></pre>
+]]></description><author>saylesss88</author><guid>/Getting_Started_with_Nix_1.html</guid><pubDate>Fri, 21 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Understanding Nix Functions</title><link>/Understanding_Nix_Functions_2.html</link><description><![CDATA[<h1>Chapter 2</h1>
 <details>
 <summary> ✔️ Table of Contents</summary>
 <!-- toc -->
@@ -21986,7 +22078,7 @@ time.</p>
 </li>
 </ul>
 </details>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Understanding_Nix_Functions_2.html</guid><pubDate>Fri, 21 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Package Definitions Explained</title><link>https://saylesss88.github.io/Package_Definitions_Explained_6.html</link><description><![CDATA[<h1>Chapter 8</h1>
+]]></description><author>saylesss88</author><guid>/Understanding_Nix_Functions_2.html</guid><pubDate>Fri, 21 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Package Definitions Explained</title><link>/Package_Definitions_Explained_6.html</link><description><![CDATA[<h1>Chapter 8</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -22345,7 +22437,7 @@ isolation of your software builds through this fundamental concept.</p>
 <ul>
 <li><a href="https://nix.dev/tutorials/packaging-existing-software.html">Packaging Existing Software</a></li>
 </ul>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Package_Definitions_Explained_6.html</guid><pubDate>Fri, 21 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Top-Level Attributes</title><link>https://saylesss88.github.io/Understanding_Top-Level_Attributes_5.html</link><description><![CDATA[<h1>Chapter 5</h1>
+]]></description><author>saylesss88</author><guid>/Package_Definitions_Explained_6.html</guid><pubDate>Fri, 21 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Top-Level Attributes</title><link>/Understanding_Top-Level_Attributes_5.html</link><description><![CDATA[<h1>Chapter 5</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -22582,7 +22674,7 @@ packages. We will learn how Nix uses <em>package definitions</em> to create
 <em>derivations</em>, which are the actual build plans that produce the software we use
 on our NixOS systems. This will bridge the gap between configuring your system
 and understanding how the software within it is managed.</p>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Understanding_Top-Level_Attributes_5.html</guid><pubDate>Fri, 21 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Flakes Explained</title><link>https://saylesss88.github.io/Nix_Flakes_Explained_4.html</link><description><![CDATA[<h1>Chapter 4</h1>
+]]></description><author>saylesss88</author><guid>/Understanding_Top-Level_Attributes_5.html</guid><pubDate>Fri, 21 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Flakes Explained</title><link>/Nix_Flakes_Explained_4.html</link><description><![CDATA[<h1>Chapter 4</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -23236,7 +23328,7 @@ effectively leveraging the full potential of Nix Flakes.</p>
 </ul>
 <p><img src="images/nixosnix.png" alt="FlakeHub" /></p>
 </details>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Nix_Flakes_Explained_4.html</guid><pubDate>Fri, 21 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Module System Explained</title><link>https://saylesss88.github.io/NixOS_Modules_Explained_3.html</link><description><![CDATA[<h1>Chapter 3</h1>
+]]></description><author>saylesss88</author><guid>/Nix_Flakes_Explained_4.html</guid><pubDate>Fri, 21 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Module System Explained</title><link>/NixOS_Modules_Explained_3.html</link><description><![CDATA[<h1>Chapter 3</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -24017,4 +24109,4 @@ valuable insights and information.</p>
 <a href="https://infinisil.com/modules.mp4">infinisilModules</a></p>
 <p><a href="https://www.youtube.com/watch?v=cZjOzOHb2ow">tweagModuleSystemRecursion</a></p>
 </details>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/NixOS_Modules_Explained_3.html</guid><pubDate>Fri, 21 Nov 2025 00:00:00 +0000</pubDate></item></channel></rss>
+]]></description><author>saylesss88</author><guid>/NixOS_Modules_Explained_3.html</guid><pubDate>Fri, 21 Nov 2025 00:00:00 +0000</pubDate></item></channel></rss>

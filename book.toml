@@ -73,4 +73,4 @@ card_layout = "wide"        #"compact"
 support_footer = true
 
 [preprocessor.nix-repl]
-command = "mdbook-nix-repl"
+# command = "mdbook-nix-repl"

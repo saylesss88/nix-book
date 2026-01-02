@@ -789,3 +789,7 @@ grown to love the language. I find it fairly simple but powerful!
 - [Basics of the Language Pill](https://nixos.org/guides/nix-pills/04-basics-of-language)
 
 </details>
+
+```nix repl
+builtins.head[ 5 6 7 ]
+```

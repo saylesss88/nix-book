@@ -1,14 +1,15 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const menuBar = document.querySelector('.menu-bar .right-buttons') 
-               || document.querySelector('.menu-bar');
+document.addEventListener("DOMContentLoaded", () => {
+  const menuBar =
+    document.querySelector(".menu-bar .right-buttons") ||
+    document.querySelector(".menu-bar");
   if (!menuBar) return;
 
-  const rssLink = document.createElement('a');
-  rssLink.href = 'https://your-user.github.io/rss.xml'; // set to your feed URL
-  rssLink.target = '_blank';
-  rssLink.rel = 'noopener';
-  rssLink.title = 'Subscribe to RSS feed';
-  rssLink.className = 'rss-btn';
+  const rssLink = document.createElement("a");
+  rssLink.href = "https://your-user.github.io/rss.xml"; // set to your feed URL
+  rssLink.target = "_blank";
+  rssLink.rel = "noopener";
+  rssLink.title = "Subscribe to RSS feed";
+  rssLink.className = "rss-btn";
 
   rssLink.innerHTML = `
     <svg xmlns="http://www.w3.org/2000/svg"
@@ -22,11 +23,10 @@ document.addEventListener('DOMContentLoaded', () => {
     </svg>
   `;
 
-  const printButton = menuBar.querySelector('.print-btn, #print-button');
+  const printButton = menuBar.querySelector(".print-btn, #print-button");
   if (printButton && printButton.parentNode === menuBar) {
     printButton.before(rssLink);
   } else {
     menuBar.appendChild(rssLink);
   }
 });
-
