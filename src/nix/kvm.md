@@ -242,6 +242,14 @@ For deeper NixOS-specific hardening, see:
 
 ### Nix Toolbox
 
+> ⚠️ Warning: toolbx containers are integrated with the host system, don't do
+> things you wouldn't do on your host. Toolbx containers are not fully isolated
+> environments like VMs.
+
+That said, they are a fast and convenient way to spin up a Nix development
+environment. Know the limitations and benefits, and when you need more
+isolation, just spin up a VM instead.
+
 Secureblue enforces restrictive container image policies by default, blocking
 unsigned or unverified images from registries like GitHub Container Registry.
 This requires explicit trust configuration for each container source.
@@ -283,6 +291,9 @@ Enter the toolbox:
 ```bash
 toolbox enter nix-toolbox-42
 ```
+
+You can then use nix and home-manager to setup a fully declarative
+dev-environment.
 
 ---
 
