@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><rss version="2.0"><channel><title>nix-book</title><link>/</link><description>An mdBook-generated site</description><generator>mdbook-rss-feed 1.0.0</generator><item><title>Packaging a Rust crate for Nixpkgs</title><link>/nixpkgs/rust_crate_to_nixpkgs.html</link><description><![CDATA[<details>
+<?xml version="1.0" encoding="utf-8"?><rss version="2.0"><channel><title>nix-book</title><link>https://saylesss88.github.io/</link><description>An mdBook-generated site</description><generator>mdbook-rss-feed 1.0.0</generator><item><title>Packaging a Rust crate for Nixpkgs</title><link>https://saylesss88.github.io/nixpkgs/rust_crate_to_nixpkgs.html</link><description><![CDATA[<details>
 <summary> ✔️ Table of Contents</summary>
 <!-- toc -->
 </details>
@@ -251,7 +251,7 @@ message.</li>
 <p>If you have an unrelated change accidentally included (for example: you staged
 an extra file), it’s usually better to fix it via rebase/splitting before
 reviewers spend time re-reviewing noise.</p>
-]]></description><author>saylesss88</author><guid>/nixpkgs/rust_crate_to_nixpkgs.html</guid><pubDate>Wed, 31 Dec 2025 00:00:00 +0000</pubDate></item><item><title>Hardening Networking</title><link>/nix/hardening_networking.html</link><description><![CDATA[<h1>Hardening Networking</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nixpkgs/rust_crate_to_nixpkgs.html</guid><pubDate>Wed, 31 Dec 2025 00:00:00 +0000</pubDate></item><item><title>Hardening Networking</title><link>https://saylesss88.github.io/nix/hardening_networking.html</link><description><![CDATA[<h1>Hardening Networking</h1>
 <details>
 <summary> ✔️ Table of Contents</summary>
 <!-- toc -->
@@ -1063,7 +1063,7 @@ also lets you create phone number aliases that forward to your phone number.</p>
 </li>
 </ul>
 </details>
-]]></description><author>saylesss88</author><guid>/nix/hardening_networking.html</guid><pubDate>Thu, 25 Dec 2025 00:00:00 +0000</pubDate></item><item><title>Browsing Security</title><link>/nix/browsing_security.html</link><description><![CDATA[<details>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/hardening_networking.html</guid><pubDate>Thu, 25 Dec 2025 00:00:00 +0000</pubDate></item><item><title>Browsing Security</title><link>https://saylesss88.github.io/nix/browsing_security.html</link><description><![CDATA[<details>
 <summary> ✔️ Table of Contents</summary>
 <!-- toc -->
 </details>
@@ -1884,7 +1884,7 @@ protocol, but also a VPN provider on NixOS.</p>
 full-featured VPN provider on NixOS.</p>
 </li>
 </ul>
-]]></description><author>saylesss88</author><guid>/nix/browsing_security.html</guid><pubDate>Sun, 21 Dec 2025 00:00:00 +0000</pubDate></item><item><title>JJ VCS</title><link>/vcs/jujutsu.html</link><description><![CDATA[<h1>Version Control with JJ</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/browsing_security.html</guid><pubDate>Sun, 21 Dec 2025 00:00:00 +0000</pubDate></item><item><title>JJ VCS</title><link>https://saylesss88.github.io/vcs/jujutsu.html</link><description><![CDATA[<h1>Version Control with JJ</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -2869,7 +2869,7 @@ compelling alternative for both new and experienced developers.</p>
 <p><a href="https://v5.chriskrycho.com/essays/jj-init/">jj_init</a></p>
 </li>
 </ul>
-]]></description><author>saylesss88</author><guid>/vcs/jujutsu.html</guid><pubDate>Mon, 8 Dec 2025 00:00:00 +0000</pubDate></item><item><title>Hardening NixOS</title><link>/nix/hardening_NixOS.html</link><description><![CDATA[<h1>Hardening NixOS</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/vcs/jujutsu.html</guid><pubDate>Mon, 8 Dec 2025 00:00:00 +0000</pubDate></item><item><title>Hardening NixOS</title><link>https://saylesss88.github.io/nix/hardening_NixOS.html</link><description><![CDATA[<h1>Hardening NixOS</h1>
 <details>
 <summary> ✔️ Table of Contents</summary>
 <!-- toc -->
@@ -5794,7 +5794,7 @@ hardening.There are recommendations for hardening all kinds of software in the
 </li>
 </ul>
 </details>
-]]></description><author>saylesss88</author><guid>/nix/hardening_NixOS.html</guid><pubDate>Mon, 8 Dec 2025 00:00:00 +0000</pubDate></item><item><title>GnuPG gpg-agent</title><link>/nix/gpg-agent.html</link><description><![CDATA[<h1>GnuPG &amp; <code>gpg-agent</code> on NixOS</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/hardening_NixOS.html</guid><pubDate>Mon, 8 Dec 2025 00:00:00 +0000</pubDate></item><item><title>GnuPG gpg-agent</title><link>https://saylesss88.github.io/nix/gpg-agent.html</link><description><![CDATA[<h1>GnuPG &amp; <code>gpg-agent</code> on NixOS</h1>
 <details>
 <summary> ✔️ Table of Contents</summary>
 <!-- toc -->
@@ -6619,7 +6619,7 @@ pub  ed25519/0x76A5EF9054449A5C
 </code></pre>
 <p>You can see that the trust is <code>marginal</code> and validity is <code>full</code>.</p>
 </details>
-]]></description><author>saylesss88</author><guid>/nix/gpg-agent.html</guid><pubDate>Mon, 8 Dec 2025 00:00:00 +0000</pubDate></item><item><title>KVM</title><link>/nix/kvm.html</link><description><![CDATA[<h1>Running NixOS in a VM with Maximum Isolation (Beginner Guide)</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/gpg-agent.html</guid><pubDate>Mon, 8 Dec 2025 00:00:00 +0000</pubDate></item><item><title>KVM</title><link>https://saylesss88.github.io/nix/kvm.html</link><description><![CDATA[<h1>Running NixOS in a VM with Maximum Isolation (Beginner Guide)</h1>
 <details>
 <summary> Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -6876,6 +6876,43 @@ security-focused guest.</li>
 <p>For deeper NixOS-specific hardening, see:
 <a href="https://saylesss88.github.io/nix/hardening_NixOS.html">hardening NixOS</a></p>
 <hr />
+<h3>Nix Toolbox</h3>
+<blockquote>
+<p>⚠️ Warning: toolbx containers are integrated with the host system, don’t do
+things you wouldn’t do on your host. Toolbx containers are not fully isolated
+environments like VMs.</p>
+</blockquote>
+<p>That said, they are a fast and convenient way to spin up a Nix development
+environment. Know the limitations and benefits, and when you need more
+isolation, just spin up a VM instead.</p>
+<p>Secureblue enforces restrictive container image policies by default, blocking
+unsigned or unverified images from registries like GitHub Container Registry.
+This requires explicit trust configuration for each container source.</p>
+<pre><code class="language-bash">ujust set-container-userns on
+</code></pre>
+<p>Without this setting, containers will fail with <code>OCI permission denied</code> errors.</p>
+<p><strong>Allow the Nix-Toolbox Image</strong></p>
+<pre><code class="language-bash"># For system-wide configuration (affects all users)
+run0 podman image trust set -t accept ghcr.io/thrix/nix-toolbox
+
+# For user-specific configuration (recommended for development)
+podman image trust set -t accept ghcr.io/thrix/nix-toolbox
+</code></pre>
+<p>The <code>-t accept</code> flag allows images from this registry without requiring
+signature verification.</p>
+<pre><code class="language-bash"># Check that the policy has been updated correctly:
+podman image trust show
+</code></pre>
+<p>Create the <code>nix-toolbox</code> container:</p>
+<pre><code class="language-bash">toolbox create --image ghcr.io/thrix/nix-toolbox:42
+</code></pre>
+<p>You will be prompted whether you want Home Manager installed or not as well.</p>
+<p>Enter the toolbox:</p>
+<pre><code class="language-bash">toolbox enter nix-toolbox-42
+</code></pre>
+<p>You can then use nix and home-manager to setup a fully declarative
+dev-environment.</p>
+<hr />
 <h3>Real-world recovery example</h3>
 <p>Secureblue’s design and the underlying firmware safeguards also make certain
 failures recoverable. On a mini PC, running a firmware update command resulted
@@ -6939,7 +6976,7 @@ and within a few days the global DNS will work again.</p>
 <p><a href="https://bitgrounds.tech/posts/kvm-qemu-libvirt-virtualization/">Virtualization on Linux using the KVM/QEMU/Libvirt stack</a></p>
 </li>
 </ul>
-]]></description><author>saylesss88</author><guid>/nix/kvm.html</guid><pubDate>Sat, 6 Dec 2025 00:00:00 +0000</pubDate></item><item><title>Encrypted Impermanence</title><link>/nix/encrypted_impermanence.html</link><description><![CDATA[<h1>Encrypted Impermanence</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/kvm.html</guid><pubDate>Sat, 6 Dec 2025 00:00:00 +0000</pubDate></item><item><title>Encrypted Impermanence</title><link>https://saylesss88.github.io/nix/encrypted_impermanence.html</link><description><![CDATA[<h1>Encrypted Impermanence</h1>
 <details>
 <summary> ✔️ Table of Contents</summary>
 <!-- toc -->
@@ -7165,7 +7202,7 @@ indicating your impermanence setup is working correctly!</p>
 <p>Your system should now come up with a fresh root filesystem, and only the data
 specified in your <code>environment.persistence."/persist"</code> configuration will be
 persistent.</p>
-]]></description><author>saylesss88</author><guid>/nix/encrypted_impermanence.html</guid><pubDate>Sat, 6 Dec 2025 00:00:00 +0000</pubDate></item><item><title>Cachix devour-flake</title><link>/nix/cachix_devour.html</link><description><![CDATA[<h1>Cachix and the devour-flake</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/encrypted_impermanence.html</guid><pubDate>Sat, 6 Dec 2025 00:00:00 +0000</pubDate></item><item><title>Cachix devour-flake</title><link>https://saylesss88.github.io/nix/cachix_devour.html</link><description><![CDATA[<h1>Cachix and the devour-flake</h1>
 <details>
 <summary> ✔️ Table of Contents</summary>
 <!-- toc -->
@@ -7489,7 +7526,7 @@ cache for fast, reproducible builds.</p>
 <p><a href="https://docs.cachix.org/installation#flakes">Cachix docs: Flakes</a></p>
 <p><a href="https://www.tweag.io/blog/2020-06-25-eval-cache/#:~:text=The%20overhead%20for%20creating%20the,nixpkgs%20blender%20takes%204.9%20seconds.">Tweag Evaluation Caching</a></p>
 <p><a href="https://scrive.github.io/nix-workshop/06-infrastructure/01-caching-nix.html">Scrive Caching</a></p>
-]]></description><author>saylesss88</author><guid>/nix/cachix_devour.html</guid><pubDate>Fri, 5 Dec 2025 00:00:00 +0000</pubDate></item><item><title>Understanding the Helix Flake</title><link>/flakes/helix_flake_4.4.html</link><description><![CDATA[<h1>Chapter 4.4</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/cachix_devour.html</guid><pubDate>Fri, 5 Dec 2025 00:00:00 +0000</pubDate></item><item><title>Understanding the Helix Flake</title><link>https://saylesss88.github.io/flakes/helix_flake_4.4.html</link><description><![CDATA[<h1>Chapter 4.4</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -8248,7 +8285,7 @@ now forward or extend Helix’s <code>devShells</code> like this:</p>
     };
   };
 </code></pre>
-]]></description><author>saylesss88</author><guid>/flakes/helix_flake_4.4.html</guid><pubDate>Fri, 5 Dec 2025 00:00:00 +0000</pubDate></item><item><title>Whonix KVM on NixOS</title><link>/nix/whonix_kvm.html</link><description><![CDATA[<h1>Whonix KVM on NixOS</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/flakes/helix_flake_4.4.html</guid><pubDate>Fri, 5 Dec 2025 00:00:00 +0000</pubDate></item><item><title>Whonix KVM on NixOS</title><link>https://saylesss88.github.io/nix/whonix_kvm.html</link><description><![CDATA[<h1>Whonix KVM on NixOS</h1>
 <details>
 <summary> ✔️ Table of Contents</summary>
 <!-- toc -->
@@ -8777,7 +8814,7 @@ Primary key fingerprint: 916B 8D99 C38E AF5E 8ADC  7A2A 8D66 066A 2EEA CCDA
 </ul>
 <p>k
 <a href="https://www.kicksecure.com/wiki/System_Hardening_Checklist">System Hardening Checklist</a></p>
-]]></description><author>saylesss88</author><guid>/nix/whonix_kvm.html</guid><pubDate>Thu, 4 Dec 2025 00:00:00 +0000</pubDate></item><item><title>Sops-Nix</title><link>/nix/sops-nix.html</link><description><![CDATA[<h1>Sops-Nix encrypted secrets</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/whonix_kvm.html</guid><pubDate>Thu, 4 Dec 2025 00:00:00 +0000</pubDate></item><item><title>Sops-Nix</title><link>https://saylesss88.github.io/nix/sops-nix.html</link><description><![CDATA[<h1>Sops-Nix encrypted secrets</h1>
 <details>
 <summary> ✔️ Table of Contents</summary>
 <!-- toc -->
@@ -9040,7 +9077,7 @@ and reproducible way to manage sensitive secrets. Unlike traditional
 approaches—where secrets are often scattered in ad hoc locations, referenced by
 absolute paths, or managed outside version control—sops-nix keeps your secrets
 encrypted, declarative, and version-control friendly.</p>
-]]></description><author>saylesss88</author><guid>/nix/sops-nix.html</guid><pubDate>Thu, 4 Dec 2025 00:00:00 +0000</pubDate></item><item><title>Intro to Nushell</title><link>/intro_to_nushell_on_NixOS.html</link><description><![CDATA[<h1>Chapter 12</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/sops-nix.html</guid><pubDate>Thu, 4 Dec 2025 00:00:00 +0000</pubDate></item><item><title>Intro to Nushell</title><link>https://saylesss88.github.io/intro_to_nushell_on_NixOS.html</link><description><![CDATA[<h1>Chapter 12</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -9773,7 +9810,7 @@ configurations, etc here.</p>
 </li>
 </ul>
 </details>
-]]></description><author>saylesss88</author><guid>/intro_to_nushell_on_NixOS.html</guid><pubDate>Sun, 30 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Git</title><link>/vcs/git.html</link><description><![CDATA[<h1>Version Control with Git</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/intro_to_nushell_on_NixOS.html</guid><pubDate>Sun, 30 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Git</title><link>https://saylesss88.github.io/vcs/git.html</link><description><![CDATA[<h1>Version Control with Git</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -10619,7 +10656,7 @@ equivalent.</p>
 <p><a href="https://ohshitgit.com/">Oh shit Git</a></p>
 </li>
 </ul>
-]]></description><author>saylesss88</author><guid>/vcs/git.html</guid><pubDate>Sun, 30 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Functions and NixOS Modules</title><link>/functions/functions_and_modules_2.2.html</link><description><![CDATA[<h1>Functions and NixOS Modules</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/vcs/git.html</guid><pubDate>Sun, 30 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Functions and NixOS Modules</title><link>https://saylesss88.github.io/functions/functions_and_modules_2.2.html</link><description><![CDATA[<h1>Functions and NixOS Modules</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -10816,7 +10853,7 @@ home-manager module:</p>
 <tr><td style="text-align: left"><strong>Boilerplate</strong></td><td style="text-align: left">Often needs <code>pkgs = import &lt;nixpkgs&gt; {};</code> if not explicitly passed.</td><td style="text-align: left"><code>pkgs</code> and <code>lib</code> are always available automatically.</td></tr>
 <tr><td style="text-align: left"><strong>Purpose</strong></td><td style="text-align: left">Defines a package, a utility, or a single value.</td><td style="text-align: left">Defines a reusable part of a declarative system configuration.</td></tr>
 </tbody></table>
-]]></description><author>saylesss88</author><guid>/functions/functions_and_modules_2.2.html</guid><pubDate>Sun, 30 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Intro to Derivations</title><link>/Intro_to_Nix_Derivations_7.html</link><description><![CDATA[<h1>Chapter 7</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/functions/functions_and_modules_2.2.html</guid><pubDate>Sun, 30 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Intro to Derivations</title><link>https://saylesss88.github.io/Intro_to_Nix_Derivations_7.html</link><description><![CDATA[<h1>Chapter 7</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -11599,7 +11636,7 @@ How to learn Nix</p>
 </li>
 </ul>
 </details>
-]]></description><author>saylesss88</author><guid>/Intro_to_Nix_Derivations_7.html</guid><pubDate>Sat, 29 Nov 2025 00:00:00 +0000</pubDate></item><item><title>index</title><link>/index.html</link><description><![CDATA[]]></description><guid>/index.html</guid><pubDate>Fri, 28 Nov 2025 20:30:18 +0000</pubDate></item><item><title>Flake outputs</title><link>/flakes/flake_examples_4.3.html</link><description><![CDATA[<h1>Nix Flake Examples</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Intro_to_Nix_Derivations_7.html</guid><pubDate>Sat, 29 Nov 2025 00:00:00 +0000</pubDate></item><item><title>index</title><link>https://saylesss88.github.io/index.html</link><description><![CDATA[]]></description><guid>https://saylesss88.github.io/index.html</guid><pubDate>Fri, 28 Nov 2025 20:30:18 +0000</pubDate></item><item><title>Flake outputs</title><link>https://saylesss88.github.io/flakes/flake_examples_4.3.html</link><description><![CDATA[<h1>Nix Flake Examples</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -11793,7 +11830,7 @@ and the base system options) and the settings from second (like
 <code>/etc/second-file</code>), all without directly altering the first or second flakes.
 This demonstrates the incredible power of flake extensibility for building
 complex, modular, and composable systems.</p>
-]]></description><author>saylesss88</author><guid>/flakes/flake_examples_4.3.html</guid><pubDate>Fri, 28 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Flake Inputs</title><link>/flakes/flake_inputs_4.1.html</link><description><![CDATA[<h1>Nix Flake Inputs</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/flakes/flake_examples_4.3.html</guid><pubDate>Fri, 28 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Flake Inputs</title><link>https://saylesss88.github.io/flakes/flake_inputs_4.1.html</link><description><![CDATA[<h1>Nix Flake Inputs</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -12074,7 +12111,7 @@ common flake convention, making the flake easier for users to consume without
 needing to dive into its internal structure.</p>
 </li>
 </ul>
-]]></description><author>saylesss88</author><guid>/flakes/flake_inputs_4.1.html</guid><pubDate>Fri, 28 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Flake outputs</title><link>/flakes/flake_outputs_4.2.html</link><description><![CDATA[<h1>Nix Flake Outputs</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/flakes/flake_inputs_4.1.html</guid><pubDate>Fri, 28 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Flake outputs</title><link>https://saylesss88.github.io/flakes/flake_outputs_4.2.html</link><description><![CDATA[<h1>Nix Flake Outputs</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -12515,7 +12552,7 @@ in
 <p>Now you can run <code>nix develop</code> in the flake directory and if successfull, you’ll
 see the <code>echo</code> commands above and you will have all the tools available in your
 environment without having to explicitly install them.</p>
-]]></description><author>saylesss88</author><guid>/flakes/flake_outputs_4.2.html</guid><pubDate>Fri, 28 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Pull Requests</title><link>/Nix_Pull_Requests_11.html</link><description><![CDATA[<h1>Chapter 11</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/flakes/flake_outputs_4.2.html</guid><pubDate>Fri, 28 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Pull Requests</title><link>https://saylesss88.github.io/Nix_Pull_Requests_11.html</link><description><![CDATA[<h1>Chapter 11</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -12812,7 +12849,7 @@ reliable Nix ecosystem. By following these steps, you can help ensure that
 changes are well-vetted before being merged, ultimately benefiting all Nix
 users. Your efforts in testing contribute significantly to the quality and
 stability of Nixpkgs.</p>
-]]></description><author>saylesss88</author><guid>/Nix_Pull_Requests_11.html</guid><pubDate>Thu, 27 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Unencrypted BTRFS Impermanence with Flakes</title><link>/installation/unenc/unenc_impermanence.html</link><description><![CDATA[<h1>Unencrypted BTRFS Impermanence with Flakes</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Nix_Pull_Requests_11.html</guid><pubDate>Thu, 27 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Unencrypted BTRFS Impermanence with Flakes</title><link>https://saylesss88.github.io/installation/unenc/unenc_impermanence.html</link><description><![CDATA[<h1>Unencrypted BTRFS Impermanence with Flakes</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -13224,7 +13261,7 @@ relevant).</p>
 <p><a href="https://github.com/nix-community/impermanence">nix-community impermanence module</a></p>
 </li>
 </ul>
-]]></description><author>saylesss88</author><guid>/installation/unenc/unenc_impermanence.html</guid><pubDate>Mon, 24 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Local Nixpkgs</title><link>/Working_with_Nixpkgs_Locally_10.html</link><description><![CDATA[<h1>Chapter 10</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/installation/unenc/unenc_impermanence.html</guid><pubDate>Mon, 24 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Local Nixpkgs</title><link>https://saylesss88.github.io/Working_with_Nixpkgs_Locally_10.html</link><description><![CDATA[<h1>Chapter 10</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -13605,7 +13642,7 @@ can significantly improve parallel work and branch management.</p>
 </li>
 </ul>
 </details>
-]]></description><author>saylesss88</author><guid>/Working_with_Nixpkgs_Locally_10.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>NixOS Containers</title><link>/nixos_containers.html</link><description><![CDATA[<h1>NixOS Containers</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Working_with_Nixpkgs_Locally_10.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>NixOS Containers</title><link>https://saylesss88.github.io/nixos_containers.html</link><description><![CDATA[<h1>NixOS Containers</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -13819,7 +13856,7 @@ the immutable sticky bits that prevent deletion.</p>
 sudo chattr -R -i mdbook-host/
 sudo rm -rf mdbook-host/
 </code></pre>
-]]></description><author>saylesss88</author><guid>/nixos_containers.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Comparing Flakes and Traditional Nix</title><link>/Comparing_Flakes_and_Traditional_Nix_8.html</link><description><![CDATA[<h1>Chapter 8</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nixos_containers.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Comparing Flakes and Traditional Nix</title><link>https://saylesss88.github.io/Comparing_Flakes_and_Traditional_Nix_8.html</link><description><![CDATA[<h1>Chapter 8</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -14164,7 +14201,7 @@ and tools that can help you understand the evaluation process, inspect the
 values of expressions, and trace the execution of your Nix code, enabling you to
 effectively troubleshoot and resolve issues in both Flake-based and traditional
 Nix projects.</p>
-]]></description><author>saylesss88</author><guid>/Comparing_Flakes_and_Traditional_Nix_8.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Debugging NixOS modules</title><link>/Debugging_and_Tracing_NixOS_Modules_9.html</link><description><![CDATA[<h1>Chapter 11</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Comparing_Flakes_and_Traditional_Nix_8.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Debugging NixOS modules</title><link>https://saylesss88.github.io/Debugging_and_Tracing_NixOS_Modules_9.html</link><description><![CDATA[<h1>Chapter 11</h1>
 <p>This chapter covers debugging NixOS modules, focusing on tracing module options
 and evaluating merges.</p>
 <details>
@@ -15185,7 +15222,7 @@ clone Nixpkgs, how to make changes to package definitions, and how to test those
 changes locally before contributing them back upstream. This chapter will
 empower you to not just use existing Nix packages, but also to customize and
 extend them to fit your specific needs.</p>
-]]></description><author>saylesss88</author><guid>/Debugging_and_Tracing_NixOS_Modules_9.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nixpkgs Overlays</title><link>/nixpkgs/overlay.html</link><description><![CDATA[<h1>Nixpkgs Overlays</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Debugging_and_Tracing_NixOS_Modules_9.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nixpkgs Overlays</title><link>https://saylesss88.github.io/nixpkgs/overlay.html</link><description><![CDATA[<h1>Nixpkgs Overlays</h1>
 <p>The following is done with a local clone of Nixpkgs located at <code>~/src/nixpkgs</code>.</p>
 <p>In this example, we will create an overlay to override the version of
 <code>btrfs-progs</code>. In the root directory of our local clone of Nixpkgs
@@ -15347,7 +15384,7 @@ path:/home/jr/btrfs-progs?lastModified=1749655369&amp;narHash=sha256-ln6dLiqo7Tx
 └───overlays
     └───myCustomOverlay: Nixpkgs overlay
 </code></pre>
-]]></description><author>saylesss88</author><guid>/nixpkgs/overlay.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Local Nixpkgs</title><link>/nixpkgs/local_package.html</link><description><![CDATA[<details>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nixpkgs/overlay.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Local Nixpkgs</title><link>https://saylesss88.github.io/nixpkgs/local_package.html</link><description><![CDATA[<details>
 <summary> ✔️ Table of Contents</summary>
 <!-- toc -->
 </details>
@@ -15556,7 +15593,7 @@ nix edit .#testPackage
 </code></pre>
 <p>I used <code>nix edit</code> here to ensure it was picked up properly.</p>
 <p>The <code>default.nix</code> that we’ve been working on should open in your <code>$EDITOR</code></p>
-]]></description><author>saylesss88</author><guid>/nixpkgs/local_package.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Fork, Clone, Contribute</title><link>/nixpkgs/fork_clone_contribute.html</link><description><![CDATA[<h1>Fork, Clone, Contribute</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nixpkgs/local_package.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Fork, Clone, Contribute</title><link>https://saylesss88.github.io/nixpkgs/fork_clone_contribute.html</link><description><![CDATA[<h1>Fork, Clone, Contribute</h1>
 <ul>
 <li>
 <p>In the <a href="https://github.com/NixOS/nixpkgs">Nixpkgs</a> Repository.</p>
@@ -15796,7 +15833,7 @@ required. Confirm latest stable: If you’re targeting a stable branch,
 via NixOS status.</p>
 </li>
 </ul>
-]]></description><author>saylesss88</author><guid>/nixpkgs/fork_clone_contribute.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Lang</title><link>/nix/nix_language.html</link><description><![CDATA[<h1>Nix Language</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nixpkgs/fork_clone_contribute.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Lang</title><link>https://saylesss88.github.io/nix/nix_language.html</link><description><![CDATA[<h1>Nix Language</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -16413,7 +16450,7 @@ grown to love the language. I find it fairly simple but powerful!</p>
 </details>
 <pre><code class="language-nix">builtins.head[ 5 6 7 ]
 </code></pre>
-]]></description><author>saylesss88</author><guid>/nix/nix_language.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Readme1</title><link>/nix/index.html</link><description><![CDATA[<h1>Hardening README</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/nix_language.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Readme1</title><link>https://saylesss88.github.io/nix/index.html</link><description><![CDATA[<h1>Hardening README</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -16658,7 +16695,7 @@ and options for hardening critical areas of your system: from encryption and
 secure boot to managing secrets, tightening kernel security, and leveraging
 platform-specific tools.
 <a href="https://saylesss88.github.io/nix/hardening_NixOS.html">Hardening NixOS</a></p>
-]]></description><author>saylesss88</author><guid>/nix/index.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Unencrypted Impermanence</title><link>/nix/impermanence.html</link><description><![CDATA[<h1>Unencrypted BTRFS Impermanence with Flakes</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/index.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Unencrypted Impermanence</title><link>https://saylesss88.github.io/nix/impermanence.html</link><description><![CDATA[<h1>Unencrypted BTRFS Impermanence with Flakes</h1>
 <details>
 <summary> ✔️ Table of Contents</summary>
 <!-- toc -->
@@ -17073,7 +17110,7 @@ relevant).</p>
 <p><a href="https://github.com/nix-community/impermanence">nix-community impermanence module</a></p>
 </li>
 </ul>
-]]></description><author>saylesss88</author><guid>/nix/impermanence.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Package Manager</title><link>/nix/nix_package_manager.html</link><description><![CDATA[<h1>Nix Package Manager</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/impermanence.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Package Manager</title><link>https://saylesss88.github.io/nix/nix_package_manager.html</link><description><![CDATA[<h1>Nix Package Manager</h1>
 <details>
 <summary> Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -17361,7 +17398,7 @@ something like <code>/nix/store/your-hash-hello-world</code>).</p>
 <code>"Hello, World!"</code>.</li>
 </ul>
 </details>
-]]></description><author>saylesss88</author><guid>/nix/nix_package_manager.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Paths</title><link>/nix/nixLang/nix_paths.html</link><description><![CDATA[<h1>Nix Paths</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/nix_package_manager.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Paths</title><link>https://saylesss88.github.io/nix/nixLang/nix_paths.html</link><description><![CDATA[<h1>Nix Paths</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -17772,7 +17809,7 @@ nix-repl&gt; :p builtins.getContext (builtins.unsafeDiscardOutputDependency open
 </code></pre>
 <p>Relying on paths outside of the nix store is generally not recommended because
 of garbage collection and it’s considered unsafe.</p>
-]]></description><author>saylesss88</author><guid>/nix/nixLang/nix_paths.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>My Chapter</title><link>/installation/index.html</link><description><![CDATA[<h1>Installation Guides</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/nixLang/nix_paths.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>My Chapter</title><link>https://saylesss88.github.io/installation/index.html</link><description><![CDATA[<h1>Installation Guides</h1>
 <p>This section provides detailed guides for installing NixOS. You’ll choose
 between an <strong>unencrypted</strong> or <strong>encrypted</strong> base setup. After your core
 installation, you can explore adding optional features like <code>sops</code> for encrypted
@@ -17848,7 +17885,7 @@ boot chain (requires UEFI and custom keys).</p>
 filesystem reverts to a clean state on every reboot.</p>
 </li>
 </ul>
-]]></description><author>saylesss88</author><guid>/installation/index.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Unencrypted Install</title><link>/installation/unenc/unencrypted_setups.html</link><description><![CDATA[<h1>Minimal BTRFS-Subvol Install with Disko and Flakes</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/installation/index.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Unencrypted Install</title><link>https://saylesss88.github.io/installation/unenc/unencrypted_setups.html</link><description><![CDATA[<h1>Minimal BTRFS-Subvol Install with Disko and Flakes</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -18319,7 +18356,7 @@ can be deleted or rolled back as needed.</li>
 <p><a href="https://btrfs.readthedocs.io/en/latest/Subvolumes.html">BTRFS Subvolumes</a></p>
 <p>To continue following along and set up impermanence
 <a href="https://saylesss88.github.io/installation/unencrypted/impermanence.html">Click Here</a></p>
-]]></description><author>saylesss88</author><guid>/installation/unenc/unencrypted_setups.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>USB Keyfile</title><link>/installation/enc/USB_keyfile.html</link><description><![CDATA[<h1>USB Stick Keyfile</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/installation/unenc/unencrypted_setups.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>USB Keyfile</title><link>https://saylesss88.github.io/installation/enc/USB_keyfile.html</link><description><![CDATA[<h1>USB Stick Keyfile</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -18713,7 +18750,7 @@ boot.initrd.luks.devices.cryptroot = {
   allowDiscards = true;
 };
 </code></pre>
-]]></description><author>saylesss88</author><guid>/installation/enc/USB_keyfile.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Encrypted Impermanence</title><link>/installation/enc/encrypted_impermanence.html</link><description><![CDATA[<h1>Encrypted Impermanence</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/installation/enc/USB_keyfile.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Encrypted Impermanence</title><link>https://saylesss88.github.io/installation/enc/encrypted_impermanence.html</link><description><![CDATA[<h1>Encrypted Impermanence</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -18960,7 +18997,7 @@ indicating your impermanence setup is working correctly!</p>
 <p>Your system should now come up with a fresh root filesystem, and only the data
 specified in your <code>environment.persistence."/persist"</code> configuration will be
 persistent.</p>
-]]></description><author>saylesss88</author><guid>/installation/enc/encrypted_impermanence.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Lanzaboote</title><link>/installation/enc/lanzaboote.html</link><description><![CDATA[<h1>Secure Boot with Lanzaboote</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/installation/enc/encrypted_impermanence.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Lanzaboote</title><link>https://saylesss88.github.io/installation/enc/lanzaboote.html</link><description><![CDATA[<h1>Secure Boot with Lanzaboote</h1>
 <details>
 <summary> Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -19235,7 +19272,7 @@ bypasses Secure Boot, they cannot read or modify your files without your
 passphrase</p>
 </li>
 </ol>
-]]></description><author>saylesss88</author><guid>/installation/enc/lanzaboote.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Encrypted Install</title><link>/installation/enc/enc_install.html</link><description><![CDATA[<h1>Encrypted Setups</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/installation/enc/lanzaboote.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Encrypted Install</title><link>https://saylesss88.github.io/installation/enc/enc_install.html</link><description><![CDATA[<h1>Encrypted Setups</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -19884,7 +19921,7 @@ and
 <p><a href="https://oddlama.org/blog/bypassing-disk-encryption-with-tpm2-unlock/">Bypassing FDE with TPM2</a></p>
 </li>
 </ul>
-]]></description><author>saylesss88</author><guid>/installation/enc/enc_install.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Sops-Nix</title><link>/installation/enc/sops-nix.html</link><description><![CDATA[<h1>Sops-Nix encrypted secrets</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/installation/enc/enc_install.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Sops-Nix</title><link>https://saylesss88.github.io/installation/enc/sops-nix.html</link><description><![CDATA[<h1>Sops-Nix encrypted secrets</h1>
 <details>
 <summary> Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -20143,7 +20180,7 @@ and reproducible way to manage sensitive secrets. Unlike traditional approaches
 where secrets are often scattered in ad hoc locations, referenced by absolute
 paths, or managed outside version control, <code>sops-nix</code> keeps your secrets
 encrypted, declarative, and version-control friendly.</p>
-]]></description><author>saylesss88</author><guid>/installation/enc/sops-nix.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Practical Nix Functions</title><link>/functions/practical_functions_2.1.html</link><description><![CDATA[<h1>Practical Nix Functions</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/installation/enc/sops-nix.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Practical Nix Functions</title><link>https://saylesss88.github.io/functions/practical_functions_2.1.html</link><description><![CDATA[<h1>Practical Nix Functions</h1>
 <details>
 <summary>
 ✔️
@@ -20353,7 +20390,7 @@ nix-build -A graphviz
 </code></pre>
 <p>This example showed us how to turn expressions into functions. We saw how
 functions are passed around and shared between Nix expressions and derivations.</p>
-]]></description><author>saylesss88</author><guid>/functions/practical_functions_2.1.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Specialisations</title><link>/flakes/specialisations_4.6.html</link><description><![CDATA[<h1>NixOS Specialisations For Multiple Profiles</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/functions/practical_functions_2.1.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Specialisations</title><link>https://saylesss88.github.io/flakes/specialisations_4.6.html</link><description><![CDATA[<h1>NixOS Specialisations For Multiple Profiles</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -20687,7 +20724,7 @@ hardware, user, and service configs in separate files for easier management</p>
 <p><a href="https://www.tweag.io/blog/2022-11-01-hard-user-separation-with-nixos/">Tweag Hard User Separation with NixOS</a></p>
 </li>
 </ul>
-]]></description><author>saylesss88</author><guid>/flakes/specialisations_4.6.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Overlays</title><link>/flakes/overlays_4.5.html</link><description><![CDATA[<h1>Extending Flakes with Custom Packages using Overlays</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/flakes/specialisations_4.6.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Overlays</title><link>https://saylesss88.github.io/flakes/overlays_4.5.html</link><description><![CDATA[<h1>Extending Flakes with Custom Packages using Overlays</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -21073,7 +21110,7 @@ nix flake’s overlay, instead of the version that comes with the base <code>nix
 input. This technique is highly useful for ensuring a consistent environment or
 testing specific package versions without affecting the entire system’s
 <code>nixpkgs</code> set.</p>
-]]></description><author>saylesss88</author><guid>/flakes/overlays_4.5.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Intro to Nix</title><link>/Getting_Started_with_Nix_1.html</link><description><![CDATA[<h1>Chapter1</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/flakes/overlays_4.5.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Intro to Nix</title><link>https://saylesss88.github.io/Getting_Started_with_Nix_1.html</link><description><![CDATA[<h1>Chapter1</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -21466,7 +21503,7 @@ actively update the information.</p>
 a + a + builtins.toString "4")
 `````
 </code></pre>
-]]></description><author>saylesss88</author><guid>/Getting_Started_with_Nix_1.html</guid><pubDate>Fri, 21 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Understanding Nix Functions</title><link>/Understanding_Nix_Functions_2.html</link><description><![CDATA[<h1>Chapter 2</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Getting_Started_with_Nix_1.html</guid><pubDate>Fri, 21 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Understanding Nix Functions</title><link>https://saylesss88.github.io/Understanding_Nix_Functions_2.html</link><description><![CDATA[<h1>Chapter 2</h1>
 <details>
 <summary> ✔️ Table of Contents</summary>
 <!-- toc -->
@@ -22078,7 +22115,7 @@ time.</p>
 </li>
 </ul>
 </details>
-]]></description><author>saylesss88</author><guid>/Understanding_Nix_Functions_2.html</guid><pubDate>Fri, 21 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Package Definitions Explained</title><link>/Package_Definitions_Explained_6.html</link><description><![CDATA[<h1>Chapter 8</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Understanding_Nix_Functions_2.html</guid><pubDate>Fri, 21 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Package Definitions Explained</title><link>https://saylesss88.github.io/Package_Definitions_Explained_6.html</link><description><![CDATA[<h1>Chapter 8</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -22437,7 +22474,7 @@ isolation of your software builds through this fundamental concept.</p>
 <ul>
 <li><a href="https://nix.dev/tutorials/packaging-existing-software.html">Packaging Existing Software</a></li>
 </ul>
-]]></description><author>saylesss88</author><guid>/Package_Definitions_Explained_6.html</guid><pubDate>Fri, 21 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Top-Level Attributes</title><link>/Understanding_Top-Level_Attributes_5.html</link><description><![CDATA[<h1>Chapter 5</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Package_Definitions_Explained_6.html</guid><pubDate>Fri, 21 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Top-Level Attributes</title><link>https://saylesss88.github.io/Understanding_Top-Level_Attributes_5.html</link><description><![CDATA[<h1>Chapter 5</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -22674,7 +22711,7 @@ packages. We will learn how Nix uses <em>package definitions</em> to create
 <em>derivations</em>, which are the actual build plans that produce the software we use
 on our NixOS systems. This will bridge the gap between configuring your system
 and understanding how the software within it is managed.</p>
-]]></description><author>saylesss88</author><guid>/Understanding_Top-Level_Attributes_5.html</guid><pubDate>Fri, 21 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Flakes Explained</title><link>/Nix_Flakes_Explained_4.html</link><description><![CDATA[<h1>Chapter 4</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Understanding_Top-Level_Attributes_5.html</guid><pubDate>Fri, 21 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Flakes Explained</title><link>https://saylesss88.github.io/Nix_Flakes_Explained_4.html</link><description><![CDATA[<h1>Chapter 4</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -23328,7 +23365,7 @@ effectively leveraging the full potential of Nix Flakes.</p>
 </ul>
 <p><img src="images/nixosnix.png" alt="FlakeHub" /></p>
 </details>
-]]></description><author>saylesss88</author><guid>/Nix_Flakes_Explained_4.html</guid><pubDate>Fri, 21 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Module System Explained</title><link>/NixOS_Modules_Explained_3.html</link><description><![CDATA[<h1>Chapter 3</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Nix_Flakes_Explained_4.html</guid><pubDate>Fri, 21 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Nix Module System Explained</title><link>https://saylesss88.github.io/NixOS_Modules_Explained_3.html</link><description><![CDATA[<h1>Chapter 3</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -24109,4 +24146,4 @@ valuable insights and information.</p>
 <a href="https://infinisil.com/modules.mp4">infinisilModules</a></p>
 <p><a href="https://www.youtube.com/watch?v=cZjOzOHb2ow">tweagModuleSystemRecursion</a></p>
 </details>
-]]></description><author>saylesss88</author><guid>/NixOS_Modules_Explained_3.html</guid><pubDate>Fri, 21 Nov 2025 00:00:00 +0000</pubDate></item></channel></rss>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/NixOS_Modules_Explained_3.html</guid><pubDate>Fri, 21 Nov 2025 00:00:00 +0000</pubDate></item></channel></rss>

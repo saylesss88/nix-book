@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>nix-book</title><id>/atom.xml</id><updated>1970-01-01T00:00:00+00:00</updated><link href="/atom.xml" rel="self"/><subtitle>An mdBook-generated site</subtitle><entry><title>Packaging a Rust crate for Nixpkgs</title><id>/nixpkgs/rust_crate_to_nixpkgs.html</id><updated>2025-12-31T00:00:00+00:00</updated><link href="/nixpkgs/rust_crate_to_nixpkgs.html" rel="alternate"/><content type="html">&lt;details&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>nix-book</title><id>https://saylesss88.github.io/atom.xml</id><updated>1970-01-01T00:00:00+00:00</updated><link href="https://saylesss88.github.io/atom.xml" rel="self"/><subtitle>An mdBook-generated site</subtitle><entry><title>Packaging a Rust crate for Nixpkgs</title><id>https://saylesss88.github.io/nixpkgs/rust_crate_to_nixpkgs.html</id><updated>2025-12-31T00:00:00+00:00</updated><link href="https://saylesss88.github.io/nixpkgs/rust_crate_to_nixpkgs.html" rel="alternate"/><content type="html">&lt;details&gt;
 &lt;summary&gt; ✔️ Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
 &lt;/details&gt;
@@ -252,7 +252,7 @@ message.&lt;/li&gt;
 &lt;p&gt;If you have an unrelated change accidentally included (for example: you staged
 an extra file), it’s usually better to fix it via rebase/splitting before
 reviewers spend time re-reviewing noise.&lt;/p&gt;
-</content></entry><entry><title>Hardening Networking</title><id>/nix/hardening_networking.html</id><updated>2025-12-25T00:00:00+00:00</updated><link href="/nix/hardening_networking.html" rel="alternate"/><content type="html">&lt;h1&gt;Hardening Networking&lt;/h1&gt;
+</content></entry><entry><title>Hardening Networking</title><id>https://saylesss88.github.io/nix/hardening_networking.html</id><updated>2025-12-25T00:00:00+00:00</updated><link href="https://saylesss88.github.io/nix/hardening_networking.html" rel="alternate"/><content type="html">&lt;h1&gt;Hardening Networking&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -1064,7 +1064,7 @@ also lets you create phone number aliases that forward to your phone number.&lt;
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;/details&gt;
-</content></entry><entry><title>Browsing Security</title><id>/nix/browsing_security.html</id><updated>2025-12-21T00:00:00+00:00</updated><link href="/nix/browsing_security.html" rel="alternate"/><content type="html">&lt;details&gt;
+</content></entry><entry><title>Browsing Security</title><id>https://saylesss88.github.io/nix/browsing_security.html</id><updated>2025-12-21T00:00:00+00:00</updated><link href="https://saylesss88.github.io/nix/browsing_security.html" rel="alternate"/><content type="html">&lt;details&gt;
 &lt;summary&gt; ✔️ Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
 &lt;/details&gt;
@@ -1885,7 +1885,7 @@ protocol, but also a VPN provider on NixOS.&lt;/p&gt;
 full-featured VPN provider on NixOS.&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-</content></entry><entry><title>JJ VCS</title><id>/vcs/jujutsu.html</id><updated>2025-12-08T00:00:00+00:00</updated><link href="/vcs/jujutsu.html" rel="alternate"/><content type="html">&lt;h1&gt;Version Control with JJ&lt;/h1&gt;
+</content></entry><entry><title>JJ VCS</title><id>https://saylesss88.github.io/vcs/jujutsu.html</id><updated>2025-12-08T00:00:00+00:00</updated><link href="https://saylesss88.github.io/vcs/jujutsu.html" rel="alternate"/><content type="html">&lt;h1&gt;Version Control with JJ&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Click to Expand Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -2870,7 +2870,7 @@ compelling alternative for both new and experienced developers.&lt;/p&gt;
 &lt;p&gt;&lt;a href=&quot;https://v5.chriskrycho.com/essays/jj-init/&quot;&gt;jj_init&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-</content></entry><entry><title>Hardening NixOS</title><id>/nix/hardening_NixOS.html</id><updated>2025-12-08T00:00:00+00:00</updated><link href="/nix/hardening_NixOS.html" rel="alternate"/><content type="html">&lt;h1&gt;Hardening NixOS&lt;/h1&gt;
+</content></entry><entry><title>Hardening NixOS</title><id>https://saylesss88.github.io/nix/hardening_NixOS.html</id><updated>2025-12-08T00:00:00+00:00</updated><link href="https://saylesss88.github.io/nix/hardening_NixOS.html" rel="alternate"/><content type="html">&lt;h1&gt;Hardening NixOS&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -5795,7 +5795,7 @@ hardening.There are recommendations for hardening all kinds of software in the
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;/details&gt;
-</content></entry><entry><title>GnuPG gpg-agent</title><id>/nix/gpg-agent.html</id><updated>2025-12-08T00:00:00+00:00</updated><link href="/nix/gpg-agent.html" rel="alternate"/><content type="html">&lt;h1&gt;GnuPG &amp;amp; &lt;code&gt;gpg-agent&lt;/code&gt; on NixOS&lt;/h1&gt;
+</content></entry><entry><title>GnuPG gpg-agent</title><id>https://saylesss88.github.io/nix/gpg-agent.html</id><updated>2025-12-08T00:00:00+00:00</updated><link href="https://saylesss88.github.io/nix/gpg-agent.html" rel="alternate"/><content type="html">&lt;h1&gt;GnuPG &amp;amp; &lt;code&gt;gpg-agent&lt;/code&gt; on NixOS&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -6620,7 +6620,7 @@ pub  ed25519/0x76A5EF9054449A5C
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;You can see that the trust is &lt;code&gt;marginal&lt;/code&gt; and validity is &lt;code&gt;full&lt;/code&gt;.&lt;/p&gt;
 &lt;/details&gt;
-</content></entry><entry><title>KVM</title><id>/nix/kvm.html</id><updated>2025-12-06T00:00:00+00:00</updated><link href="/nix/kvm.html" rel="alternate"/><content type="html">&lt;h1&gt;Running NixOS in a VM with Maximum Isolation (Beginner Guide)&lt;/h1&gt;
+</content></entry><entry><title>KVM</title><id>https://saylesss88.github.io/nix/kvm.html</id><updated>2025-12-06T00:00:00+00:00</updated><link href="https://saylesss88.github.io/nix/kvm.html" rel="alternate"/><content type="html">&lt;h1&gt;Running NixOS in a VM with Maximum Isolation (Beginner Guide)&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; Click to Expand Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -6877,6 +6877,43 @@ security-focused guest.&lt;/li&gt;
 &lt;p&gt;For deeper NixOS-specific hardening, see:
 &lt;a href=&quot;https://saylesss88.github.io/nix/hardening_NixOS.html&quot;&gt;hardening NixOS&lt;/a&gt;&lt;/p&gt;
 &lt;hr /&gt;
+&lt;h3&gt;Nix Toolbox&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;⚠️ Warning: toolbx containers are integrated with the host system, don’t do
+things you wouldn’t do on your host. Toolbx containers are not fully isolated
+environments like VMs.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;That said, they are a fast and convenient way to spin up a Nix development
+environment. Know the limitations and benefits, and when you need more
+isolation, just spin up a VM instead.&lt;/p&gt;
+&lt;p&gt;Secureblue enforces restrictive container image policies by default, blocking
+unsigned or unverified images from registries like GitHub Container Registry.
+This requires explicit trust configuration for each container source.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;ujust set-container-userns on
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Without this setting, containers will fail with &lt;code&gt;OCI permission denied&lt;/code&gt; errors.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Allow the Nix-Toolbox Image&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;# For system-wide configuration (affects all users)
+run0 podman image trust set -t accept ghcr.io/thrix/nix-toolbox
+
+# For user-specific configuration (recommended for development)
+podman image trust set -t accept ghcr.io/thrix/nix-toolbox
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The &lt;code&gt;-t accept&lt;/code&gt; flag allows images from this registry without requiring
+signature verification.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;# Check that the policy has been updated correctly:
+podman image trust show
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Create the &lt;code&gt;nix-toolbox&lt;/code&gt; container:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;toolbox create --image ghcr.io/thrix/nix-toolbox:42
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You will be prompted whether you want Home Manager installed or not as well.&lt;/p&gt;
+&lt;p&gt;Enter the toolbox:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;toolbox enter nix-toolbox-42
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You can then use nix and home-manager to setup a fully declarative
+dev-environment.&lt;/p&gt;
+&lt;hr /&gt;
 &lt;h3&gt;Real-world recovery example&lt;/h3&gt;
 &lt;p&gt;Secureblue’s design and the underlying firmware safeguards also make certain
 failures recoverable. On a mini PC, running a firmware update command resulted
@@ -6940,7 +6977,7 @@ and within a few days the global DNS will work again.&lt;/p&gt;
 &lt;p&gt;&lt;a href=&quot;https://bitgrounds.tech/posts/kvm-qemu-libvirt-virtualization/&quot;&gt;Virtualization on Linux using the KVM/QEMU/Libvirt stack&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-</content></entry><entry><title>Encrypted Impermanence</title><id>/nix/encrypted_impermanence.html</id><updated>2025-12-06T00:00:00+00:00</updated><link href="/nix/encrypted_impermanence.html" rel="alternate"/><content type="html">&lt;h1&gt;Encrypted Impermanence&lt;/h1&gt;
+</content></entry><entry><title>Encrypted Impermanence</title><id>https://saylesss88.github.io/nix/encrypted_impermanence.html</id><updated>2025-12-06T00:00:00+00:00</updated><link href="https://saylesss88.github.io/nix/encrypted_impermanence.html" rel="alternate"/><content type="html">&lt;h1&gt;Encrypted Impermanence&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -7166,7 +7203,7 @@ indicating your impermanence setup is working correctly!&lt;/p&gt;
 &lt;p&gt;Your system should now come up with a fresh root filesystem, and only the data
 specified in your &lt;code&gt;environment.persistence.&quot;/persist&quot;&lt;/code&gt; configuration will be
 persistent.&lt;/p&gt;
-</content></entry><entry><title>Cachix devour-flake</title><id>/nix/cachix_devour.html</id><updated>2025-12-05T00:00:00+00:00</updated><link href="/nix/cachix_devour.html" rel="alternate"/><content type="html">&lt;h1&gt;Cachix and the devour-flake&lt;/h1&gt;
+</content></entry><entry><title>Cachix devour-flake</title><id>https://saylesss88.github.io/nix/cachix_devour.html</id><updated>2025-12-05T00:00:00+00:00</updated><link href="https://saylesss88.github.io/nix/cachix_devour.html" rel="alternate"/><content type="html">&lt;h1&gt;Cachix and the devour-flake&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -7490,7 +7527,7 @@ cache for fast, reproducible builds.&lt;/p&gt;
 &lt;p&gt;&lt;a href=&quot;https://docs.cachix.org/installation#flakes&quot;&gt;Cachix docs: Flakes&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;&lt;a href=&quot;https://www.tweag.io/blog/2020-06-25-eval-cache/#:~:text=The%20overhead%20for%20creating%20the,nixpkgs%20blender%20takes%204.9%20seconds.&quot;&gt;Tweag Evaluation Caching&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;&lt;a href=&quot;https://scrive.github.io/nix-workshop/06-infrastructure/01-caching-nix.html&quot;&gt;Scrive Caching&lt;/a&gt;&lt;/p&gt;
-</content></entry><entry><title>Understanding the Helix Flake</title><id>/flakes/helix_flake_4.4.html</id><updated>2025-12-05T00:00:00+00:00</updated><link href="/flakes/helix_flake_4.4.html" rel="alternate"/><content type="html">&lt;h1&gt;Chapter 4.4&lt;/h1&gt;
+</content></entry><entry><title>Understanding the Helix Flake</title><id>https://saylesss88.github.io/flakes/helix_flake_4.4.html</id><updated>2025-12-05T00:00:00+00:00</updated><link href="https://saylesss88.github.io/flakes/helix_flake_4.4.html" rel="alternate"/><content type="html">&lt;h1&gt;Chapter 4.4&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Click to Expand Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -8249,7 +8286,7 @@ now forward or extend Helix’s &lt;code&gt;devShells&lt;/code&gt; like this:&lt
     };
   };
 &lt;/code&gt;&lt;/pre&gt;
-</content></entry><entry><title>Whonix KVM on NixOS</title><id>/nix/whonix_kvm.html</id><updated>2025-12-04T00:00:00+00:00</updated><link href="/nix/whonix_kvm.html" rel="alternate"/><content type="html">&lt;h1&gt;Whonix KVM on NixOS&lt;/h1&gt;
+</content></entry><entry><title>Whonix KVM on NixOS</title><id>https://saylesss88.github.io/nix/whonix_kvm.html</id><updated>2025-12-04T00:00:00+00:00</updated><link href="https://saylesss88.github.io/nix/whonix_kvm.html" rel="alternate"/><content type="html">&lt;h1&gt;Whonix KVM on NixOS&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -8778,7 +8815,7 @@ Primary key fingerprint: 916B 8D99 C38E AF5E 8ADC  7A2A 8D66 066A 2EEA CCDA
 &lt;/ul&gt;
 &lt;p&gt;k
 &lt;a href=&quot;https://www.kicksecure.com/wiki/System_Hardening_Checklist&quot;&gt;System Hardening Checklist&lt;/a&gt;&lt;/p&gt;
-</content></entry><entry><title>Sops-Nix</title><id>/nix/sops-nix.html</id><updated>2025-12-04T00:00:00+00:00</updated><link href="/nix/sops-nix.html" rel="alternate"/><content type="html">&lt;h1&gt;Sops-Nix encrypted secrets&lt;/h1&gt;
+</content></entry><entry><title>Sops-Nix</title><id>https://saylesss88.github.io/nix/sops-nix.html</id><updated>2025-12-04T00:00:00+00:00</updated><link href="https://saylesss88.github.io/nix/sops-nix.html" rel="alternate"/><content type="html">&lt;h1&gt;Sops-Nix encrypted secrets&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -9041,7 +9078,7 @@ and reproducible way to manage sensitive secrets. Unlike traditional
 approaches—where secrets are often scattered in ad hoc locations, referenced by
 absolute paths, or managed outside version control—sops-nix keeps your secrets
 encrypted, declarative, and version-control friendly.&lt;/p&gt;
-</content></entry><entry><title>Intro to Nushell</title><id>/intro_to_nushell_on_NixOS.html</id><updated>2025-11-30T00:00:00+00:00</updated><link href="/intro_to_nushell_on_NixOS.html" rel="alternate"/><content type="html">&lt;h1&gt;Chapter 12&lt;/h1&gt;
+</content></entry><entry><title>Intro to Nushell</title><id>https://saylesss88.github.io/intro_to_nushell_on_NixOS.html</id><updated>2025-11-30T00:00:00+00:00</updated><link href="https://saylesss88.github.io/intro_to_nushell_on_NixOS.html" rel="alternate"/><content type="html">&lt;h1&gt;Chapter 12&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Click to Expand Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -9774,7 +9811,7 @@ configurations, etc here.&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;/details&gt;
-</content></entry><entry><title>Git</title><id>/vcs/git.html</id><updated>2025-11-30T00:00:00+00:00</updated><link href="/vcs/git.html" rel="alternate"/><content type="html">&lt;h1&gt;Version Control with Git&lt;/h1&gt;
+</content></entry><entry><title>Git</title><id>https://saylesss88.github.io/vcs/git.html</id><updated>2025-11-30T00:00:00+00:00</updated><link href="https://saylesss88.github.io/vcs/git.html" rel="alternate"/><content type="html">&lt;h1&gt;Version Control with Git&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Click to Expand Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -10620,7 +10657,7 @@ equivalent.&lt;/p&gt;
 &lt;p&gt;&lt;a href=&quot;https://ohshitgit.com/&quot;&gt;Oh shit Git&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-</content></entry><entry><title>Functions and NixOS Modules</title><id>/functions/functions_and_modules_2.2.html</id><updated>2025-11-30T00:00:00+00:00</updated><link href="/functions/functions_and_modules_2.2.html" rel="alternate"/><content type="html">&lt;h1&gt;Functions and NixOS Modules&lt;/h1&gt;
+</content></entry><entry><title>Functions and NixOS Modules</title><id>https://saylesss88.github.io/functions/functions_and_modules_2.2.html</id><updated>2025-11-30T00:00:00+00:00</updated><link href="https://saylesss88.github.io/functions/functions_and_modules_2.2.html" rel="alternate"/><content type="html">&lt;h1&gt;Functions and NixOS Modules&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Click to Expand Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -10817,7 +10854,7 @@ home-manager module:&lt;/p&gt;
 &lt;tr&gt;&lt;td style=&quot;text-align: left&quot;&gt;&lt;strong&gt;Boilerplate&lt;/strong&gt;&lt;/td&gt;&lt;td style=&quot;text-align: left&quot;&gt;Often needs &lt;code&gt;pkgs = import &amp;lt;nixpkgs&amp;gt; {};&lt;/code&gt; if not explicitly passed.&lt;/td&gt;&lt;td style=&quot;text-align: left&quot;&gt;&lt;code&gt;pkgs&lt;/code&gt; and &lt;code&gt;lib&lt;/code&gt; are always available automatically.&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td style=&quot;text-align: left&quot;&gt;&lt;strong&gt;Purpose&lt;/strong&gt;&lt;/td&gt;&lt;td style=&quot;text-align: left&quot;&gt;Defines a package, a utility, or a single value.&lt;/td&gt;&lt;td style=&quot;text-align: left&quot;&gt;Defines a reusable part of a declarative system configuration.&lt;/td&gt;&lt;/tr&gt;
 &lt;/tbody&gt;&lt;/table&gt;
-</content></entry><entry><title>Intro to Derivations</title><id>/Intro_to_Nix_Derivations_7.html</id><updated>2025-11-29T00:00:00+00:00</updated><link href="/Intro_to_Nix_Derivations_7.html" rel="alternate"/><content type="html">&lt;h1&gt;Chapter 7&lt;/h1&gt;
+</content></entry><entry><title>Intro to Derivations</title><id>https://saylesss88.github.io/Intro_to_Nix_Derivations_7.html</id><updated>2025-11-29T00:00:00+00:00</updated><link href="https://saylesss88.github.io/Intro_to_Nix_Derivations_7.html" rel="alternate"/><content type="html">&lt;h1&gt;Chapter 7&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Click to Expand Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -11600,7 +11637,7 @@ How to learn Nix&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;/details&gt;
-</content></entry><entry><title>index</title><id>/index.html</id><updated>2025-11-28T20:30:18+00:00</updated><link href="/index.html" rel="alternate"/><content type="html"></content></entry><entry><title>Flake outputs</title><id>/flakes/flake_examples_4.3.html</id><updated>2025-11-28T00:00:00+00:00</updated><link href="/flakes/flake_examples_4.3.html" rel="alternate"/><content type="html">&lt;h1&gt;Nix Flake Examples&lt;/h1&gt;
+</content></entry><entry><title>index</title><id>https://saylesss88.github.io/index.html</id><updated>2025-11-28T20:30:18+00:00</updated><link href="https://saylesss88.github.io/index.html" rel="alternate"/><content type="html"></content></entry><entry><title>Flake outputs</title><id>https://saylesss88.github.io/flakes/flake_examples_4.3.html</id><updated>2025-11-28T00:00:00+00:00</updated><link href="https://saylesss88.github.io/flakes/flake_examples_4.3.html" rel="alternate"/><content type="html">&lt;h1&gt;Nix Flake Examples&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Click to Expand Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -11794,7 +11831,7 @@ and the base system options) and the settings from second (like
 &lt;code&gt;/etc/second-file&lt;/code&gt;), all without directly altering the first or second flakes.
 This demonstrates the incredible power of flake extensibility for building
 complex, modular, and composable systems.&lt;/p&gt;
-</content></entry><entry><title>Flake Inputs</title><id>/flakes/flake_inputs_4.1.html</id><updated>2025-11-28T00:00:00+00:00</updated><link href="/flakes/flake_inputs_4.1.html" rel="alternate"/><content type="html">&lt;h1&gt;Nix Flake Inputs&lt;/h1&gt;
+</content></entry><entry><title>Flake Inputs</title><id>https://saylesss88.github.io/flakes/flake_inputs_4.1.html</id><updated>2025-11-28T00:00:00+00:00</updated><link href="https://saylesss88.github.io/flakes/flake_inputs_4.1.html" rel="alternate"/><content type="html">&lt;h1&gt;Nix Flake Inputs&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Click to Expand Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -12075,7 +12112,7 @@ common flake convention, making the flake easier for users to consume without
 needing to dive into its internal structure.&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-</content></entry><entry><title>Flake outputs</title><id>/flakes/flake_outputs_4.2.html</id><updated>2025-11-28T00:00:00+00:00</updated><link href="/flakes/flake_outputs_4.2.html" rel="alternate"/><content type="html">&lt;h1&gt;Nix Flake Outputs&lt;/h1&gt;
+</content></entry><entry><title>Flake outputs</title><id>https://saylesss88.github.io/flakes/flake_outputs_4.2.html</id><updated>2025-11-28T00:00:00+00:00</updated><link href="https://saylesss88.github.io/flakes/flake_outputs_4.2.html" rel="alternate"/><content type="html">&lt;h1&gt;Nix Flake Outputs&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Click to Expand Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -12516,7 +12553,7 @@ in
 &lt;p&gt;Now you can run &lt;code&gt;nix develop&lt;/code&gt; in the flake directory and if successfull, you’ll
 see the &lt;code&gt;echo&lt;/code&gt; commands above and you will have all the tools available in your
 environment without having to explicitly install them.&lt;/p&gt;
-</content></entry><entry><title>Nix Pull Requests</title><id>/Nix_Pull_Requests_11.html</id><updated>2025-11-27T00:00:00+00:00</updated><link href="/Nix_Pull_Requests_11.html" rel="alternate"/><content type="html">&lt;h1&gt;Chapter 11&lt;/h1&gt;
+</content></entry><entry><title>Nix Pull Requests</title><id>https://saylesss88.github.io/Nix_Pull_Requests_11.html</id><updated>2025-11-27T00:00:00+00:00</updated><link href="https://saylesss88.github.io/Nix_Pull_Requests_11.html" rel="alternate"/><content type="html">&lt;h1&gt;Chapter 11&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Click to Expand Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -12813,7 +12850,7 @@ reliable Nix ecosystem. By following these steps, you can help ensure that
 changes are well-vetted before being merged, ultimately benefiting all Nix
 users. Your efforts in testing contribute significantly to the quality and
 stability of Nixpkgs.&lt;/p&gt;
-</content></entry><entry><title>Unencrypted BTRFS Impermanence with Flakes</title><id>/installation/unenc/unenc_impermanence.html</id><updated>2025-11-24T00:00:00+00:00</updated><link href="/installation/unenc/unenc_impermanence.html" rel="alternate"/><content type="html">&lt;h1&gt;Unencrypted BTRFS Impermanence with Flakes&lt;/h1&gt;
+</content></entry><entry><title>Unencrypted BTRFS Impermanence with Flakes</title><id>https://saylesss88.github.io/installation/unenc/unenc_impermanence.html</id><updated>2025-11-24T00:00:00+00:00</updated><link href="https://saylesss88.github.io/installation/unenc/unenc_impermanence.html" rel="alternate"/><content type="html">&lt;h1&gt;Unencrypted BTRFS Impermanence with Flakes&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Click to Expand Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -13225,7 +13262,7 @@ relevant).&lt;/p&gt;
 &lt;p&gt;&lt;a href=&quot;https://github.com/nix-community/impermanence&quot;&gt;nix-community impermanence module&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-</content></entry><entry><title>Local Nixpkgs</title><id>/Working_with_Nixpkgs_Locally_10.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="/Working_with_Nixpkgs_Locally_10.html" rel="alternate"/><content type="html">&lt;h1&gt;Chapter 10&lt;/h1&gt;
+</content></entry><entry><title>Local Nixpkgs</title><id>https://saylesss88.github.io/Working_with_Nixpkgs_Locally_10.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="https://saylesss88.github.io/Working_with_Nixpkgs_Locally_10.html" rel="alternate"/><content type="html">&lt;h1&gt;Chapter 10&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Click to Expand Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -13606,7 +13643,7 @@ can significantly improve parallel work and branch management.&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;/details&gt;
-</content></entry><entry><title>NixOS Containers</title><id>/nixos_containers.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="/nixos_containers.html" rel="alternate"/><content type="html">&lt;h1&gt;NixOS Containers&lt;/h1&gt;
+</content></entry><entry><title>NixOS Containers</title><id>https://saylesss88.github.io/nixos_containers.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="https://saylesss88.github.io/nixos_containers.html" rel="alternate"/><content type="html">&lt;h1&gt;NixOS Containers&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Click to Expand Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -13820,7 +13857,7 @@ the immutable sticky bits that prevent deletion.&lt;/p&gt;
 sudo chattr -R -i mdbook-host/
 sudo rm -rf mdbook-host/
 &lt;/code&gt;&lt;/pre&gt;
-</content></entry><entry><title>Comparing Flakes and Traditional Nix</title><id>/Comparing_Flakes_and_Traditional_Nix_8.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="/Comparing_Flakes_and_Traditional_Nix_8.html" rel="alternate"/><content type="html">&lt;h1&gt;Chapter 8&lt;/h1&gt;
+</content></entry><entry><title>Comparing Flakes and Traditional Nix</title><id>https://saylesss88.github.io/Comparing_Flakes_and_Traditional_Nix_8.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="https://saylesss88.github.io/Comparing_Flakes_and_Traditional_Nix_8.html" rel="alternate"/><content type="html">&lt;h1&gt;Chapter 8&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Click to Expand Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -14165,7 +14202,7 @@ and tools that can help you understand the evaluation process, inspect the
 values of expressions, and trace the execution of your Nix code, enabling you to
 effectively troubleshoot and resolve issues in both Flake-based and traditional
 Nix projects.&lt;/p&gt;
-</content></entry><entry><title>Debugging NixOS modules</title><id>/Debugging_and_Tracing_NixOS_Modules_9.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="/Debugging_and_Tracing_NixOS_Modules_9.html" rel="alternate"/><content type="html">&lt;h1&gt;Chapter 11&lt;/h1&gt;
+</content></entry><entry><title>Debugging NixOS modules</title><id>https://saylesss88.github.io/Debugging_and_Tracing_NixOS_Modules_9.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="https://saylesss88.github.io/Debugging_and_Tracing_NixOS_Modules_9.html" rel="alternate"/><content type="html">&lt;h1&gt;Chapter 11&lt;/h1&gt;
 &lt;p&gt;This chapter covers debugging NixOS modules, focusing on tracing module options
 and evaluating merges.&lt;/p&gt;
 &lt;details&gt;
@@ -15186,7 +15223,7 @@ clone Nixpkgs, how to make changes to package definitions, and how to test those
 changes locally before contributing them back upstream. This chapter will
 empower you to not just use existing Nix packages, but also to customize and
 extend them to fit your specific needs.&lt;/p&gt;
-</content></entry><entry><title>Nixpkgs Overlays</title><id>/nixpkgs/overlay.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="/nixpkgs/overlay.html" rel="alternate"/><content type="html">&lt;h1&gt;Nixpkgs Overlays&lt;/h1&gt;
+</content></entry><entry><title>Nixpkgs Overlays</title><id>https://saylesss88.github.io/nixpkgs/overlay.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="https://saylesss88.github.io/nixpkgs/overlay.html" rel="alternate"/><content type="html">&lt;h1&gt;Nixpkgs Overlays&lt;/h1&gt;
 &lt;p&gt;The following is done with a local clone of Nixpkgs located at &lt;code&gt;~/src/nixpkgs&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;In this example, we will create an overlay to override the version of
 &lt;code&gt;btrfs-progs&lt;/code&gt;. In the root directory of our local clone of Nixpkgs
@@ -15348,7 +15385,7 @@ path:/home/jr/btrfs-progs?lastModified=1749655369&amp;amp;narHash=sha256-ln6dLiq
 └───overlays
     └───myCustomOverlay: Nixpkgs overlay
 &lt;/code&gt;&lt;/pre&gt;
-</content></entry><entry><title>Local Nixpkgs</title><id>/nixpkgs/local_package.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="/nixpkgs/local_package.html" rel="alternate"/><content type="html">&lt;details&gt;
+</content></entry><entry><title>Local Nixpkgs</title><id>https://saylesss88.github.io/nixpkgs/local_package.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="https://saylesss88.github.io/nixpkgs/local_package.html" rel="alternate"/><content type="html">&lt;details&gt;
 &lt;summary&gt; ✔️ Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
 &lt;/details&gt;
@@ -15557,7 +15594,7 @@ nix edit .#testPackage
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;I used &lt;code&gt;nix edit&lt;/code&gt; here to ensure it was picked up properly.&lt;/p&gt;
 &lt;p&gt;The &lt;code&gt;default.nix&lt;/code&gt; that we’ve been working on should open in your &lt;code&gt;$EDITOR&lt;/code&gt;&lt;/p&gt;
-</content></entry><entry><title>Fork, Clone, Contribute</title><id>/nixpkgs/fork_clone_contribute.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="/nixpkgs/fork_clone_contribute.html" rel="alternate"/><content type="html">&lt;h1&gt;Fork, Clone, Contribute&lt;/h1&gt;
+</content></entry><entry><title>Fork, Clone, Contribute</title><id>https://saylesss88.github.io/nixpkgs/fork_clone_contribute.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="https://saylesss88.github.io/nixpkgs/fork_clone_contribute.html" rel="alternate"/><content type="html">&lt;h1&gt;Fork, Clone, Contribute&lt;/h1&gt;
 &lt;ul&gt;
 &lt;li&gt;
 &lt;p&gt;In the &lt;a href=&quot;https://github.com/NixOS/nixpkgs&quot;&gt;Nixpkgs&lt;/a&gt; Repository.&lt;/p&gt;
@@ -15797,7 +15834,7 @@ required. Confirm latest stable: If you’re targeting a stable branch,
 via NixOS status.&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-</content></entry><entry><title>Nix Lang</title><id>/nix/nix_language.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="/nix/nix_language.html" rel="alternate"/><content type="html">&lt;h1&gt;Nix Language&lt;/h1&gt;
+</content></entry><entry><title>Nix Lang</title><id>https://saylesss88.github.io/nix/nix_language.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="https://saylesss88.github.io/nix/nix_language.html" rel="alternate"/><content type="html">&lt;h1&gt;Nix Language&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Click to Expand Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -16414,7 +16451,7 @@ grown to love the language. I find it fairly simple but powerful!&lt;/p&gt;
 &lt;/details&gt;
 &lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;builtins.head[ 5 6 7 ]
 &lt;/code&gt;&lt;/pre&gt;
-</content></entry><entry><title>Readme1</title><id>/nix/index.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="/nix/index.html" rel="alternate"/><content type="html">&lt;h1&gt;Hardening README&lt;/h1&gt;
+</content></entry><entry><title>Readme1</title><id>https://saylesss88.github.io/nix/index.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="https://saylesss88.github.io/nix/index.html" rel="alternate"/><content type="html">&lt;h1&gt;Hardening README&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Click to Expand Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -16659,7 +16696,7 @@ and options for hardening critical areas of your system: from encryption and
 secure boot to managing secrets, tightening kernel security, and leveraging
 platform-specific tools.
 &lt;a href=&quot;https://saylesss88.github.io/nix/hardening_NixOS.html&quot;&gt;Hardening NixOS&lt;/a&gt;&lt;/p&gt;
-</content></entry><entry><title>Unencrypted Impermanence</title><id>/nix/impermanence.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="/nix/impermanence.html" rel="alternate"/><content type="html">&lt;h1&gt;Unencrypted BTRFS Impermanence with Flakes&lt;/h1&gt;
+</content></entry><entry><title>Unencrypted Impermanence</title><id>https://saylesss88.github.io/nix/impermanence.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="https://saylesss88.github.io/nix/impermanence.html" rel="alternate"/><content type="html">&lt;h1&gt;Unencrypted BTRFS Impermanence with Flakes&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -17074,7 +17111,7 @@ relevant).&lt;/p&gt;
 &lt;p&gt;&lt;a href=&quot;https://github.com/nix-community/impermanence&quot;&gt;nix-community impermanence module&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-</content></entry><entry><title>Nix Package Manager</title><id>/nix/nix_package_manager.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="/nix/nix_package_manager.html" rel="alternate"/><content type="html">&lt;h1&gt;Nix Package Manager&lt;/h1&gt;
+</content></entry><entry><title>Nix Package Manager</title><id>https://saylesss88.github.io/nix/nix_package_manager.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="https://saylesss88.github.io/nix/nix_package_manager.html" rel="alternate"/><content type="html">&lt;h1&gt;Nix Package Manager&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; Click to Expand Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -17362,7 +17399,7 @@ something like &lt;code&gt;/nix/store/your-hash-hello-world&lt;/code&gt;).&lt;/p
 &lt;code&gt;&quot;Hello, World!&quot;&lt;/code&gt;.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/details&gt;
-</content></entry><entry><title>Nix Paths</title><id>/nix/nixLang/nix_paths.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="/nix/nixLang/nix_paths.html" rel="alternate"/><content type="html">&lt;h1&gt;Nix Paths&lt;/h1&gt;
+</content></entry><entry><title>Nix Paths</title><id>https://saylesss88.github.io/nix/nixLang/nix_paths.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="https://saylesss88.github.io/nix/nixLang/nix_paths.html" rel="alternate"/><content type="html">&lt;h1&gt;Nix Paths&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Click to Expand Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -17773,7 +17810,7 @@ nix-repl&amp;gt; :p builtins.getContext (builtins.unsafeDiscardOutputDependency 
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Relying on paths outside of the nix store is generally not recommended because
 of garbage collection and it’s considered unsafe.&lt;/p&gt;
-</content></entry><entry><title>My Chapter</title><id>/installation/index.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="/installation/index.html" rel="alternate"/><content type="html">&lt;h1&gt;Installation Guides&lt;/h1&gt;
+</content></entry><entry><title>My Chapter</title><id>https://saylesss88.github.io/installation/index.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="https://saylesss88.github.io/installation/index.html" rel="alternate"/><content type="html">&lt;h1&gt;Installation Guides&lt;/h1&gt;
 &lt;p&gt;This section provides detailed guides for installing NixOS. You’ll choose
 between an &lt;strong&gt;unencrypted&lt;/strong&gt; or &lt;strong&gt;encrypted&lt;/strong&gt; base setup. After your core
 installation, you can explore adding optional features like &lt;code&gt;sops&lt;/code&gt; for encrypted
@@ -17849,7 +17886,7 @@ boot chain (requires UEFI and custom keys).&lt;/p&gt;
 filesystem reverts to a clean state on every reboot.&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-</content></entry><entry><title>Unencrypted Install</title><id>/installation/unenc/unencrypted_setups.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="/installation/unenc/unencrypted_setups.html" rel="alternate"/><content type="html">&lt;h1&gt;Minimal BTRFS-Subvol Install with Disko and Flakes&lt;/h1&gt;
+</content></entry><entry><title>Unencrypted Install</title><id>https://saylesss88.github.io/installation/unenc/unencrypted_setups.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="https://saylesss88.github.io/installation/unenc/unencrypted_setups.html" rel="alternate"/><content type="html">&lt;h1&gt;Minimal BTRFS-Subvol Install with Disko and Flakes&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Click to Expand Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -18320,7 +18357,7 @@ can be deleted or rolled back as needed.&lt;/li&gt;
 &lt;p&gt;&lt;a href=&quot;https://btrfs.readthedocs.io/en/latest/Subvolumes.html&quot;&gt;BTRFS Subvolumes&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;To continue following along and set up impermanence
 &lt;a href=&quot;https://saylesss88.github.io/installation/unencrypted/impermanence.html&quot;&gt;Click Here&lt;/a&gt;&lt;/p&gt;
-</content></entry><entry><title>USB Keyfile</title><id>/installation/enc/USB_keyfile.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="/installation/enc/USB_keyfile.html" rel="alternate"/><content type="html">&lt;h1&gt;USB Stick Keyfile&lt;/h1&gt;
+</content></entry><entry><title>USB Keyfile</title><id>https://saylesss88.github.io/installation/enc/USB_keyfile.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="https://saylesss88.github.io/installation/enc/USB_keyfile.html" rel="alternate"/><content type="html">&lt;h1&gt;USB Stick Keyfile&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Click to Expand Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -18714,7 +18751,7 @@ boot.initrd.luks.devices.cryptroot = {
   allowDiscards = true;
 };
 &lt;/code&gt;&lt;/pre&gt;
-</content></entry><entry><title>Encrypted Impermanence</title><id>/installation/enc/encrypted_impermanence.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="/installation/enc/encrypted_impermanence.html" rel="alternate"/><content type="html">&lt;h1&gt;Encrypted Impermanence&lt;/h1&gt;
+</content></entry><entry><title>Encrypted Impermanence</title><id>https://saylesss88.github.io/installation/enc/encrypted_impermanence.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="https://saylesss88.github.io/installation/enc/encrypted_impermanence.html" rel="alternate"/><content type="html">&lt;h1&gt;Encrypted Impermanence&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Click to Expand Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -18961,7 +18998,7 @@ indicating your impermanence setup is working correctly!&lt;/p&gt;
 &lt;p&gt;Your system should now come up with a fresh root filesystem, and only the data
 specified in your &lt;code&gt;environment.persistence.&quot;/persist&quot;&lt;/code&gt; configuration will be
 persistent.&lt;/p&gt;
-</content></entry><entry><title>Lanzaboote</title><id>/installation/enc/lanzaboote.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="/installation/enc/lanzaboote.html" rel="alternate"/><content type="html">&lt;h1&gt;Secure Boot with Lanzaboote&lt;/h1&gt;
+</content></entry><entry><title>Lanzaboote</title><id>https://saylesss88.github.io/installation/enc/lanzaboote.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="https://saylesss88.github.io/installation/enc/lanzaboote.html" rel="alternate"/><content type="html">&lt;h1&gt;Secure Boot with Lanzaboote&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; Click to Expand Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -19236,7 +19273,7 @@ bypasses Secure Boot, they cannot read or modify your files without your
 passphrase&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
-</content></entry><entry><title>Encrypted Install</title><id>/installation/enc/enc_install.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="/installation/enc/enc_install.html" rel="alternate"/><content type="html">&lt;h1&gt;Encrypted Setups&lt;/h1&gt;
+</content></entry><entry><title>Encrypted Install</title><id>https://saylesss88.github.io/installation/enc/enc_install.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="https://saylesss88.github.io/installation/enc/enc_install.html" rel="alternate"/><content type="html">&lt;h1&gt;Encrypted Setups&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Click to Expand Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -19885,7 +19922,7 @@ and
 &lt;p&gt;&lt;a href=&quot;https://oddlama.org/blog/bypassing-disk-encryption-with-tpm2-unlock/&quot;&gt;Bypassing FDE with TPM2&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-</content></entry><entry><title>Sops-Nix</title><id>/installation/enc/sops-nix.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="/installation/enc/sops-nix.html" rel="alternate"/><content type="html">&lt;h1&gt;Sops-Nix encrypted secrets&lt;/h1&gt;
+</content></entry><entry><title>Sops-Nix</title><id>https://saylesss88.github.io/installation/enc/sops-nix.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="https://saylesss88.github.io/installation/enc/sops-nix.html" rel="alternate"/><content type="html">&lt;h1&gt;Sops-Nix encrypted secrets&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; Click to Expand Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -20144,7 +20181,7 @@ and reproducible way to manage sensitive secrets. Unlike traditional approaches
 where secrets are often scattered in ad hoc locations, referenced by absolute
 paths, or managed outside version control, &lt;code&gt;sops-nix&lt;/code&gt; keeps your secrets
 encrypted, declarative, and version-control friendly.&lt;/p&gt;
-</content></entry><entry><title>Practical Nix Functions</title><id>/functions/practical_functions_2.1.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="/functions/practical_functions_2.1.html" rel="alternate"/><content type="html">&lt;h1&gt;Practical Nix Functions&lt;/h1&gt;
+</content></entry><entry><title>Practical Nix Functions</title><id>https://saylesss88.github.io/functions/practical_functions_2.1.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="https://saylesss88.github.io/functions/practical_functions_2.1.html" rel="alternate"/><content type="html">&lt;h1&gt;Practical Nix Functions&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt;
 ✔️
@@ -20354,7 +20391,7 @@ nix-build -A graphviz
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;This example showed us how to turn expressions into functions. We saw how
 functions are passed around and shared between Nix expressions and derivations.&lt;/p&gt;
-</content></entry><entry><title>Specialisations</title><id>/flakes/specialisations_4.6.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="/flakes/specialisations_4.6.html" rel="alternate"/><content type="html">&lt;h1&gt;NixOS Specialisations For Multiple Profiles&lt;/h1&gt;
+</content></entry><entry><title>Specialisations</title><id>https://saylesss88.github.io/flakes/specialisations_4.6.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="https://saylesss88.github.io/flakes/specialisations_4.6.html" rel="alternate"/><content type="html">&lt;h1&gt;NixOS Specialisations For Multiple Profiles&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Click to Expand Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -20688,7 +20725,7 @@ hardware, user, and service configs in separate files for easier management&lt;/
 &lt;p&gt;&lt;a href=&quot;https://www.tweag.io/blog/2022-11-01-hard-user-separation-with-nixos/&quot;&gt;Tweag Hard User Separation with NixOS&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-</content></entry><entry><title>Overlays</title><id>/flakes/overlays_4.5.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="/flakes/overlays_4.5.html" rel="alternate"/><content type="html">&lt;h1&gt;Extending Flakes with Custom Packages using Overlays&lt;/h1&gt;
+</content></entry><entry><title>Overlays</title><id>https://saylesss88.github.io/flakes/overlays_4.5.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="https://saylesss88.github.io/flakes/overlays_4.5.html" rel="alternate"/><content type="html">&lt;h1&gt;Extending Flakes with Custom Packages using Overlays&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Click to Expand Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -21074,7 +21111,7 @@ nix flake’s overlay, instead of the version that comes with the base &lt;code&
 input. This technique is highly useful for ensuring a consistent environment or
 testing specific package versions without affecting the entire system’s
 &lt;code&gt;nixpkgs&lt;/code&gt; set.&lt;/p&gt;
-</content></entry><entry><title>Intro to Nix</title><id>/Getting_Started_with_Nix_1.html</id><updated>2025-11-21T00:00:00+00:00</updated><link href="/Getting_Started_with_Nix_1.html" rel="alternate"/><content type="html">&lt;h1&gt;Chapter1&lt;/h1&gt;
+</content></entry><entry><title>Intro to Nix</title><id>https://saylesss88.github.io/Getting_Started_with_Nix_1.html</id><updated>2025-11-21T00:00:00+00:00</updated><link href="https://saylesss88.github.io/Getting_Started_with_Nix_1.html" rel="alternate"/><content type="html">&lt;h1&gt;Chapter1&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Click to Expand Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -21467,7 +21504,7 @@ actively update the information.&lt;/p&gt;
 a + a + builtins.toString &quot;4&quot;)
 `````
 &lt;/code&gt;&lt;/pre&gt;
-</content></entry><entry><title>Understanding Nix Functions</title><id>/Understanding_Nix_Functions_2.html</id><updated>2025-11-21T00:00:00+00:00</updated><link href="/Understanding_Nix_Functions_2.html" rel="alternate"/><content type="html">&lt;h1&gt;Chapter 2&lt;/h1&gt;
+</content></entry><entry><title>Understanding Nix Functions</title><id>https://saylesss88.github.io/Understanding_Nix_Functions_2.html</id><updated>2025-11-21T00:00:00+00:00</updated><link href="https://saylesss88.github.io/Understanding_Nix_Functions_2.html" rel="alternate"/><content type="html">&lt;h1&gt;Chapter 2&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -22079,7 +22116,7 @@ time.&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;/details&gt;
-</content></entry><entry><title>Package Definitions Explained</title><id>/Package_Definitions_Explained_6.html</id><updated>2025-11-21T00:00:00+00:00</updated><link href="/Package_Definitions_Explained_6.html" rel="alternate"/><content type="html">&lt;h1&gt;Chapter 8&lt;/h1&gt;
+</content></entry><entry><title>Package Definitions Explained</title><id>https://saylesss88.github.io/Package_Definitions_Explained_6.html</id><updated>2025-11-21T00:00:00+00:00</updated><link href="https://saylesss88.github.io/Package_Definitions_Explained_6.html" rel="alternate"/><content type="html">&lt;h1&gt;Chapter 8&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Click to Expand Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -22438,7 +22475,7 @@ isolation of your software builds through this fundamental concept.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&quot;https://nix.dev/tutorials/packaging-existing-software.html&quot;&gt;Packaging Existing Software&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
-</content></entry><entry><title>Top-Level Attributes</title><id>/Understanding_Top-Level_Attributes_5.html</id><updated>2025-11-21T00:00:00+00:00</updated><link href="/Understanding_Top-Level_Attributes_5.html" rel="alternate"/><content type="html">&lt;h1&gt;Chapter 5&lt;/h1&gt;
+</content></entry><entry><title>Top-Level Attributes</title><id>https://saylesss88.github.io/Understanding_Top-Level_Attributes_5.html</id><updated>2025-11-21T00:00:00+00:00</updated><link href="https://saylesss88.github.io/Understanding_Top-Level_Attributes_5.html" rel="alternate"/><content type="html">&lt;h1&gt;Chapter 5&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Click to Expand Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -22675,7 +22712,7 @@ packages. We will learn how Nix uses &lt;em&gt;package definitions&lt;/em&gt; to
 &lt;em&gt;derivations&lt;/em&gt;, which are the actual build plans that produce the software we use
 on our NixOS systems. This will bridge the gap between configuring your system
 and understanding how the software within it is managed.&lt;/p&gt;
-</content></entry><entry><title>Nix Flakes Explained</title><id>/Nix_Flakes_Explained_4.html</id><updated>2025-11-21T00:00:00+00:00</updated><link href="/Nix_Flakes_Explained_4.html" rel="alternate"/><content type="html">&lt;h1&gt;Chapter 4&lt;/h1&gt;
+</content></entry><entry><title>Nix Flakes Explained</title><id>https://saylesss88.github.io/Nix_Flakes_Explained_4.html</id><updated>2025-11-21T00:00:00+00:00</updated><link href="https://saylesss88.github.io/Nix_Flakes_Explained_4.html" rel="alternate"/><content type="html">&lt;h1&gt;Chapter 4&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Click to Expand Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -23329,7 +23366,7 @@ effectively leveraging the full potential of Nix Flakes.&lt;/p&gt;
 &lt;/ul&gt;
 &lt;p&gt;&lt;img src=&quot;images/nixosnix.png&quot; alt=&quot;FlakeHub&quot; /&gt;&lt;/p&gt;
 &lt;/details&gt;
-</content></entry><entry><title>Nix Module System Explained</title><id>/NixOS_Modules_Explained_3.html</id><updated>2025-11-21T00:00:00+00:00</updated><link href="/NixOS_Modules_Explained_3.html" rel="alternate"/><content type="html">&lt;h1&gt;Chapter 3&lt;/h1&gt;
+</content></entry><entry><title>Nix Module System Explained</title><id>https://saylesss88.github.io/NixOS_Modules_Explained_3.html</id><updated>2025-11-21T00:00:00+00:00</updated><link href="https://saylesss88.github.io/NixOS_Modules_Explained_3.html" rel="alternate"/><content type="html">&lt;h1&gt;Chapter 3&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Click to Expand Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
