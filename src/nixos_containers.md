@@ -264,7 +264,19 @@ sudo rm -rf mdbook-host/
 
 ## OCI deployment pipeline building a Rust App
 
-1. `nix-repl-server.nix`:
+> If you want to use `mdbook-nix-repl` check out the README, the following shows
+> how I tested locally before eventually adding a `flake.nix` to the repo
+> streamlining this for users of the project.
+
+- [mdbook-nix-repl README](https://github.com/saylesss88/mdbook-nix-repl)
+
+This documents how to work with a local Rust crate repository without a
+`flake.nix` for testing. The README above explains how to generate a token and
+use the project, this is just for educational purposes if you wanted to
+implement something similar:
+
+1. `nix-repl-server.nix`, place this in the same dir as your
+   `configuration.nix`:
 
 ```nix
 {
@@ -361,7 +373,7 @@ in
 }
 ```
 
-2. server-pkg.nix
+2. `server-pkg.nix`, place this in the same dir as `nix-repl-server.nix`:
 
 ```nix
 {
@@ -371,6 +383,7 @@ in
   pkg-config,
   openssl,
   makeWrapper,
+  inputs,
   src,
 }:
 
@@ -416,7 +429,7 @@ rustPlatform.buildRustPackage {
 ```nix
 inputs = {
   mdbook-nix-repl = {
-    url = "github:saylesss88/mdbook-nix-repl?dir=server";
+    url = "path:/home/jr/mdbook-nix-repl";
     flake = false;
   };
 }
@@ -431,7 +444,7 @@ inputs = {
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ./users.nix
-    inputs.mdbook-nix-repl.nixosModules.default
+    ./nix-repl-server.nix
   ];
 
   custom.nix-repl-server = {
