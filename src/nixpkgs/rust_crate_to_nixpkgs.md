@@ -338,3 +338,7 @@ git push --force-with-lease
 If you have an unrelated change accidentally included (for example: you staged
 an extra file), it’s usually better to fix it via rebase/splitting before
 reviewers spend time re-reviewing noise.
+
+> As of 01-13-26 I have been waiting for 2 weeks for the darwin checks to complete,
+I guess this [bottleneck](https://discourse.nixos.org/t/ofborg-aarch64-darwin-builds-causing-bottleneck/55290)
+has gotten worse. I guess most PRs take about 6 weeks to resolve FYI.

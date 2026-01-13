@@ -3,6 +3,21 @@
     {
       "author": "saylesss88",
       "collection": "blog",
+      "date": "2026-01-13T00:00:00+00:00",
+      "description": null,
+      "draft": false,
+      "path": "nix/hardening_NixOS.md",
+      "preview_html": "<p><img src=\"../images/guy_fawks.png\" alt=\"guy fawks hacker\" /></p><p>Securing your NixOS system begins with a philosophy of minimalism, explicit\nconfiguration, and proactive control. As desktop Linux attracts more novice\nusers, it has become an increasingly valuable target for attackers. This makes\nit crucial to adopt security best practices early to protect your desktop from\ncommon attack vectors and to avoid configuration mistakes that could expose\nvulnerabilities.</p><p>⚠️ Warning: I am not a security expert. This guide presents various options\nfor hardening NixOS, but it is your responsibility to evaluate whether each\nadjustment suits your specific needs and environment. Security hardening and\nprocess isolation can introduce stability challenges, compatibility issues, or\nunexpected be",
+      "tags": [
+        "security",
+        "privacy",
+        "hardening"
+      ],
+      "title": "Hardening NixOS"
+    },
+    {
+      "author": "saylesss88",
+      "collection": "blog",
       "date": "2026-01-11T00:00:00+00:00",
       "description": null,
       "draft": false,
@@ -83,21 +98,6 @@
         "jj"
       ],
       "title": "JJ VCS"
-    },
-    {
-      "author": "saylesss88",
-      "collection": "blog",
-      "date": "2025-12-08T00:00:00+00:00",
-      "description": null,
-      "draft": false,
-      "path": "nix/hardening_NixOS.md",
-      "preview_html": "<p><img src=\"../images/guy_fawks.png\" alt=\"guy fawks hacker\" /></p><p>Securing your NixOS system begins with a philosophy of minimalism, explicit\nconfiguration, and proactive control. As desktop Linux attracts more novice\nusers, it has become an increasingly valuable target for attackers. This makes\nit crucial to adopt security best practices early to protect your desktop from\ncommon attack vectors and to avoid configuration mistakes that could expose\nvulnerabilities.</p><p>⚠️ Warning: I am not a security expert. This guide presents various options\nfor hardening NixOS, but it is your responsibility to evaluate whether each\nadjustment suits your specific needs and environment. Security hardening and\nprocess isolation can introduce stability challenges, compatibility issues, or\nunexpected be",
-      "tags": [
-        "security",
-        "privacy",
-        "hardening"
-      ],
-      "title": "Hardening NixOS"
     },
     {
       "author": "saylesss88",

@@ -1,6 +1,6 @@
 ---
 title: Hardening NixOS
-date: 2025-12-08
+date: 2026-01-13
 author: saylesss88
 collection: "blog"
 tags: ["security", "privacy", "hardening"]
@@ -2894,6 +2894,14 @@ userspace tool and can potentially be bypassed by privilege escalation exploits.
 > hardened kernel because they require unprivileged user namespaces which the
 > hardened kernel completely disables.
 
+- [Flatpak permissions & What they Do](https://docs.flatpak.org/en/latest/sandbox-permissions.html#permissions-guidelines)
+  Reference this while setting permissions with Flatseal, many apps come with
+  more permissions than they need to function effectively breaking the sandbox.
+
+- [Portals](https://docs.flatpak.org/en/latest/sandbox-permissions.html#portals)
+  provide mediated, user-controlled access to host resources outside the
+  sandbox, so apps don’t need broad blanket permissions.
+
 Apps that don't have a flatpak equivalent can be further hardened with
 bubblewrap independently but bubblewrap is not needed on Flatpak apps.
 
@@ -2934,6 +2942,84 @@ systemd.user.services."xdg-desktop-portal-wlr" = {
   enable = false;
 };
 ```
+
+<details>
+<summary> ✔️ declarative-flatpak </summary>
+
+1. Add the flake input to your `flake.nix`:
+
+```nix
+inputs = {
+  flatpaks.url = "github:in-a-dil-emma/declarative-flatpak/latest";
+};
+```
+
+2. The following is a NixOS module that installs Firefox & Bitwarden:
+
+```nix
+# flatpak.nix
+{
+  pkgs,
+  inputs,
+  ...
+}: {
+  imports = [
+    inputs.flatpaks.nixosModules.default
+  ];
+  services.flatpak = {
+    enable = true;
+    remotes = {
+      "flathub" = "https://dl.flathub.org/repo/flathub.flatpakrepo";
+      # "flathub-beta" = "https://dl.flathub.org/beta-repo/flathub-beta.flatpakrepo";
+    };
+    packages = [
+      "flathub:app/org.mozilla.firefox//stable"
+      "flathub:app/com.bitwarden.desktop//stable"
+      # "flathub-beta:app/org.kde.kdenlive/x86_64/stable"
+      # ":${./foobar.flatpak}"
+      "flathub:/root/testflatpak.flatpakref"
+    ];
+    overrides = {
+      # note: "global" is a flatpak thing
+      # if you ever ran "flatpak override" without specifying a ref you will know
+      "global".Context = {
+        filesystems = [
+          "home"
+        ];
+        sockets = [
+          "!wayland"
+          "!fallback-x11"
+        ];
+      };
+      "org.mozilla.Firefox" = {
+        Environment = {
+          "MOZ_ENABLE_WAYLAND" = 1;
+        };
+        Context.sockets = [
+          "!wayland"
+          "!fallback-x11"
+          # "x11"
+        ];
+      };
+    };
+  };
+  xdg.portal = {
+    enable = true;
+    extraPortals = [
+      pkgs.xdg-desktop-portal-gtk
+    ];
+    config = {
+      common.default = ["gtk"];
+    };
+  };
+}
+```
+
+> NOTE: I got the above configuration to build successfully, one of the
+> hardening steps I took isn't allowing either app to launch. I'll update once I
+> find which setting it is exactly. (01-13-26)
+
+</details>
 
 - [Flathub Verified Apps](https://docs.flathub.org/docs/for-users/verification)
 
