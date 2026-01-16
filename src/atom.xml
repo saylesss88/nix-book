@@ -1,5 +1,1195 @@
 <?xml version="1.0"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>nix-book</title><id>https://saylesss88.github.io/atom.xml</id><updated>1970-01-01T00:00:00+00:00</updated><link href="https://saylesss88.github.io/atom.xml" rel="self"/><subtitle>An mdBook-generated site</subtitle><entry><title>Hardening NixOS</title><id>https://saylesss88.github.io/nix/hardening_NixOS.html</id><updated>2026-01-13T00:00:00+00:00</updated><link href="https://saylesss88.github.io/nix/hardening_NixOS.html" rel="alternate"/><content type="html">&lt;h1&gt;Hardening NixOS&lt;/h1&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>nix-book</title><id>https://saylesss88.github.io/atom.xml</id><updated>1970-01-01T00:00:00+00:00</updated><link href="https://saylesss88.github.io/atom.xml" rel="self"/><subtitle>An mdBook-generated site</subtitle><entry><title>ZFS Impermanence in a VM</title><id>https://saylesss88.github.io/nix/zfs_impermanence.html</id><updated>2026-01-16T00:00:00+00:00</updated><link href="https://saylesss88.github.io/nix/zfs_impermanence.html" rel="alternate"/><content type="html">&lt;h1&gt;ZFS Impermanence in a VM&lt;/h1&gt;
+&lt;details&gt;
+&lt;summary&gt; ✔️ Table of Contents&lt;/summary&gt;
+&lt;!-- toc --&gt;
+&lt;/details&gt;
+&lt;p&gt;I only tested this within a VM although with a few small tweaks it should work
+on bare metal. I used the libvirtd stack with KVM for this.&lt;/p&gt;
+&lt;p&gt;Yet another blog post inspired by
+&lt;a href=&quot;https://grahamc.com/blog/erase-your-darlings/&quot;&gt;erase your darlings&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Start with a minimal ISO.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://channels.nixos.org/nixos-25.11/latest-nixos-minimal-x86_64-linux.iso&quot;&gt;Download Minimal (64-bit Intel-AMD)&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Choose the LTS image, it comes with the &lt;code&gt;zfs&lt;/code&gt; module enabled.&lt;/p&gt;
+&lt;p&gt;When creating the VM, before clicking “Finish”, check the “Customize
+configuration before install” box and choose EFI Firmware &amp;gt; BIOS. &lt;strong&gt;You will
+waste a bunch of time if you forget to do this&lt;/strong&gt;!&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;I used &lt;code&gt;OVMF_CODE.fd&lt;/code&gt; in my testing.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Check out your layout:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;sudo fdisk -l
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Format your disk:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;sudo cfdisk /dev/vda
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Create a 1G &lt;strong&gt;EFI System&lt;/strong&gt; first, then a &lt;strong&gt;Linux Filesystem&lt;/strong&gt; with the remaining
+space. I used (100G)&lt;/p&gt;
+&lt;p&gt;For the following guide, you want &lt;code&gt;/dev/vda1&lt;/code&gt; to be your EFI System partition,
+and &lt;code&gt;/dev/vda2&lt;/code&gt; to be the Linux Filesystem partition.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;sudo fdisk -l
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;sudo mkfs.vfat -n EFI /dev/vda1
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;Create your ZFS Partitions&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Create a zpool&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;zpool create \
+  -o ashift=12 \
+  -o autotrim=on \
+  -O acltype=posixacl \
+  -O canmount=off \
+  -O dnodesize=auto \
+  -O normalization=formD \
+  -O relatime=on \
+  -O xattr=sa \
+  -O mountpoint=none \
+  rpool /dev/vda2
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&quot;2&quot;&gt;
+&lt;li&gt;Create all datasets with parents (&lt;code&gt;-p&lt;/code&gt;)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;# root (ephemeral – will be rolled back)
+zfs create -p -o canmount=noauto -o mountpoint=legacy rpool/local/root
+
+# blank snapshot (the “erase” target)
+zfs snapshot rpool/local/root@blank
+
+zfs create -p -o mountpoint=legacy rpool/local/boot
+# /nix – read-only store, must survive rollbacks
+zfs create -p -o mountpoint=legacy rpool/local/nix
+
+# persisted areas
+zfs create -p -o mountpoint=legacy rpool/safe/home
+zfs create -p -o mountpoint=legacy rpool/safe/persist
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&quot;3&quot;&gt;
+&lt;li&gt;Mount everything under &lt;code&gt;/mnt&lt;/code&gt;:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;mount -t zfs rpool/local/root /mnt
+
+mkdir -p /mnt/{boot,boot/efi,nix,home,persist}
+mount -t vfat -o umask=0077 /dev/vda1 /mnt/boot/efi
+mount -t zfs rpool/local/nix   /mnt/nix
+mount -t zfs rpool/safe/home  /mnt/home
+mount -t zfs rpool/safe/persist /mnt/persist
+&lt;/code&gt;&lt;/pre&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Note: By placing your Nix flake in &lt;code&gt;/home/user/nixos-config&lt;/code&gt; (which lives on
+&lt;code&gt;rpool/safe/home&lt;/code&gt;), it persists naturally. You don’t need to add your
+configuration files to the &lt;code&gt;environment.persistence&lt;/code&gt; module lists because the
+underlying storage isn’t being wiped.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;ol start=&quot;4&quot;&gt;
+&lt;li&gt;Continue with the rest of the install&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;nixos-generate-config --root /mnt
+# edit /mnt/etc/nixos/configuration.nix  (add ZFS + rollback + impermanence)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;details&gt;
+&lt;summary&gt; ✔️ Quick checklist: &lt;/summary&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;# 1. pool
+zpool create -o ashift=12 -o autotrim=on -O acltype=posixacl -O canmount=off \
+  -O dnodesize=auto -O normalization=formD -O relatime=on -O xattr=sa \
+  -O mountpoint=none rpool /dev/vda2
+
+# 2. datasets + snapshot
+zfs create -p -o canmount=noauto -o mountpoint=legacy rpool/local/root
+zfs snapshot rpool/local/root@blank
+zfs create -p -o mountpoint=legacy rpool/local/nix
+zfs create -p -o mountpoint=legacy rpool/safe/home
+zfs create -p -o mountpoint=legacy rpool/safe/persist
+# add a /boot dataset
+zfs create -p -o mountpoint=legacy rpool/local/boot
+
+# 3. mounts
+mount -t zfs rpool/local/root /mnt
+mkdir -p /mnt/{boot,boot/efi,nix,home,persist}
+
+# /boot on ZFS
+mount -t zfs rpool/local/boot /mnt/boot
+
+# ESP on /boot/efi
+mount -t vfat -o umask=0077 /dev/vda1 /mnt/boot/efi
+
+mount -t zfs rpool/local/nix /mnt/nix
+mount -t zfs rpool/safe/home /mnt/home
+mount -t zfs rpool/safe/persist /mnt/persist
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+&lt;h2&gt;Prep &lt;code&gt;configuration.nix&lt;/code&gt;&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;head -c4 /dev/urandom | xxd -p &amp;gt; /tmp/rand.txt
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;Create password file in a persistent location&lt;/strong&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;sudo mkdir -p /mnt/persist/etc/nixos-secrets/passwords
+
+# 2) Create the password hash and write it to the persistent file
+# Replace &quot;your-password&quot; and &quot;your-user&quot;
+sudo sh -c &apos;mkpasswd -m yescrypt &quot;your-password&quot; &amp;gt; /mnt/persist/etc/nixos-secrets/passwords/your-user&apos;
+
+# 3) Lock down permissions
+sudo chown root:root /mnt/persist/etc/nixos-secrets/passwords/your-user
+sudo chmod 600 /mnt/persist/etc/nixos-secrets/passwords/your-user
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;After first reboot, the above files will be placed directly under &lt;code&gt;/persist/&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;You will read these files into the &lt;code&gt;configuration.nix&lt;/code&gt; with &lt;code&gt;:r /tmp/rand.txt&lt;/code&gt;,
+etc.&lt;/p&gt;
+&lt;p&gt;Edit the &lt;code&gt;/mnt/etc/nixos/configuration.nix&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;{ config, lib, pkgs, ... }:
+
+{
+  # ------------------------------------------------------------------
+  # 1. Boot loader – systemd-boot (UEFI only)
+  # ------------------------------------------------------------------
+  boot.loader = {
+    systemd-boot = {
+      enable = true;
+      consoleMode = &quot;max&quot;;           # Full 80×25 console in VM
+      editor = false;                # Security – no edit at boot
+    };
+    efi = {
+      canTouchEfiVariables = true;   # libvirt provides /sys/firmware/efi
+      efiSysMountPoint = &quot;/boot/efi&quot;;    # Our 1 GiB FAT32 partition
+    };
+  };
+
+  # ------------------------------------------------------------------
+  # 2. ZFS support
+  # ------------------------------------------------------------------
+  boot.supportedFilesystems = [ &quot;zfs&quot; ];
+  boot.zfs.devNodes = &quot;/dev/&quot;;       # Critical for VMs
+
+  # Unique 8-hex hostId (run once in live ISO: head -c4 /dev/urandom | xxd -p)
+  networking.hostId = &quot;a1b2c3d4&quot;;    # &amp;lt;&amp;lt;&amp;lt;--- replace with your own value
+
+  # ------------------------------------------------------------------
+  # 3. Roll-back root to blank snapshot on **every** boot
+  # ------------------------------------------------------------------
+  boot.initrd.postDeviceCommands = lib.mkAfter &apos;&apos;
+    zpool import -N -f rpool
+    zfs rollback -r rpool/local/root@blank
+    zpool export rpool
+  &apos;&apos;;
+
+  # ------------------------------------------------------------------
+  # 4. Basic system (root password, serial console for VM)
+  # ------------------------------------------------------------------
+  users.users.root.initialPassword = &quot;changeme&quot;;   # change after first login
+  boot.kernelParams = [ &quot;console=ttyS0,115200n8&quot; ];
+
+  users.mutableUsers = false;
+
+  users.users.your-user = {
+    isNormalUser = true;
+    extraGroups = [ &quot;wheel&quot; ];
+    group = &quot;your-user&quot;;
+    # The location of `hashedPasswordFile` after first reboot
+    hashedPasswordFile = &quot;/persist/etc/nixos-secrets/passwords/your-user&quot;;
+  };
+
+  # This enables `chown -R your-user:your-user`
+  users.groups.your-user = { };
+
+  # ------------------------------------------------------------------
+  # 5. (Optional) Enable SSH for post-install configuration
+  # ------------------------------------------------------------------
+  # services.openssh = {
+  #  enable = true;
+  #  settings.PermitRootLogin = &quot;yes&quot;;
+  #};
+
+  # ------------------------------------------------------------------
+  # 6. Mark /persist as needed for boot
+  # ------------------------------------------------------------------
+  fileSystems.&quot;/persist&quot;.neededForBoot = true;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;blockquote&gt;
+&lt;p&gt;NOTE: Before my first rebuild, I had:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;boot.initrd.postDeviceCommands = lib.mkAfter &apos;&apos;
+   zfs rollback -r rpool/local/root@blank
+&apos;&apos;;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;But noticed in my logs that on reboot the &lt;code&gt;rpool/local/root@blank&lt;/code&gt; wasn’t
+available yet, I assume due to a race condition or something I did or forgot
+to do. Adding the &lt;code&gt;zpool import&lt;/code&gt; fixed the issue. I mention this in case you
+get different results from your first reboot.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;sudo nixos-install --root /mnt
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;reboot
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
+&lt;h2&gt;What gets Wiped vs. What Stays&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;What gets wiped?&lt;/strong&gt;:&lt;/p&gt;
+&lt;p&gt;Since we roll back &lt;code&gt;/&lt;/code&gt;(&lt;code&gt;rpool/local/root&lt;/code&gt;):&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;/etc&lt;/code&gt; (including system configs) -&amp;gt; WIPED&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;/var&lt;/code&gt; (logs, databases, containers) -&amp;gt; WIPED&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;/root&lt;/code&gt; (the root users home directory) -&amp;gt; WIPED&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;/usr&lt;/code&gt; (though in NixOS this is mostly empty) -&amp;gt; WIPED&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;What survives?&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;/nix&lt;/code&gt; (mounted from &lt;code&gt;rpool/local/nix&lt;/code&gt;) -&amp;gt; PERSISTS&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;/boot&lt;/code&gt; (mounted from &lt;code&gt;rpool/local/boot&lt;/code&gt;) -&amp;gt; PERSISTS&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;/home&lt;/code&gt; (mounted from &lt;code&gt;rpool/safe/home&lt;/code&gt;) -&amp;gt; PERSISTS&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;/persists&lt;/code&gt; (mounted from &lt;code&gt;rpool/safe/persist&lt;/code&gt;) -&amp;gt; PERSISTS&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Why this matters for secrets?&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;SSH Host keys&lt;/strong&gt; typically live in &lt;code&gt;/etc/ssh&lt;/code&gt;. Since &lt;code&gt;/etc&lt;/code&gt; is wiped, they
+disappear. Store them in &lt;code&gt;/persist/etc/ssh&lt;/code&gt; and tell NixOS to look there. (or
+symlink them)&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;User Secrets&lt;/strong&gt; (&lt;code&gt;~/.config/sops&lt;/code&gt;): They live in &lt;code&gt;/home&lt;/code&gt; so they’re safe.&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h2&gt;Integrating into a Flake&lt;/h2&gt;
+&lt;p&gt;After first reboot, I recommend setting up a flake in a persistent location such
+as &lt;code&gt;/home/your-user/flake&lt;/code&gt;. Because subsequent reboots will wipe the &lt;code&gt;/etc&lt;/code&gt;
+directory.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/saylesss88/flakey&quot;&gt;Example Flake&lt;/a&gt;, this is a WIP
+adaptation from another flake I had. Cloning it may save you some time.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;sudo mkdir /imperm_test
+echo &quot;This should be Gone after Reboot&quot; | sudo tee /imperm_test/testfile
+sudo ls -l /imperm_test/testfile # Verify the file exists
+sudo cat /imperm_test/testfile # Verify content
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Reboot and check again:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;sudo ls -l /imperm_test/testfile # Verify the file no longer exists
+sudo cat /imperm_test/testfile # Verify content is missing
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
+&lt;h2&gt;Persisting SSH Keys&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;sudo mkdir -p /persist/etc/ssh
+sudo ssh-keygen -t ed25519 -f /persist/etc/ssh/ssh_host_ed25519_key -N &quot;&quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;OR if you still have keys in &lt;code&gt;/etc/ssh&lt;/code&gt; you want to keep just copy them to the
+persistent location:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;sudo cp /etc/ssh/ssh_host_ed25519_key* /persist/etc/ssh/
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;Tell NixOS where to find them&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;services.openssh = {
+  hostKeys = [
+    {
+      path = &quot;/persist/etc/ssh/ssh_host_ed25519_key&quot;;
+      type = ed25519;
+    }
+  ];
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;After I initially get things working, I switch to &lt;code&gt;sops-nix&lt;/code&gt;, the following
+guide works for this setup:
+&lt;a href=&quot;https://saylesss88.github.io/installation/enc/sops-nix.html&quot;&gt;sops-nix Guide&lt;/a&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h3&gt;Resources&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://grahamc.com/blog/erase-your-darlings/&quot;&gt;erase-your-darlings&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://wiki.nixos.org/wiki/ZFS&quot;&gt;NixOS Wiki ZFS&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+</content></entry><entry><title>GnuPG gpg-agent</title><id>https://saylesss88.github.io/nix/gpg-agent.html</id><updated>2026-01-15T00:00:00+00:00</updated><link href="https://saylesss88.github.io/nix/gpg-agent.html" rel="alternate"/><content type="html">&lt;h1&gt;GnuPG &amp;amp; &lt;code&gt;gpg-agent&lt;/code&gt; on NixOS&lt;/h1&gt;
+&lt;details&gt;
+&lt;summary&gt; ✔️ Table of Contents&lt;/summary&gt;
+&lt;!-- toc --&gt;
+&lt;/details&gt;
+&lt;blockquote&gt;
+&lt;p&gt;⚠️ &lt;strong&gt;SECURITY WARNING&lt;/strong&gt;: This guide involves sensitive cryptographic material.
+&lt;strong&gt;Never share your private key or passphrase&lt;/strong&gt;. Backup your keys and handle
+them with extreme care.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;img src=&quot;../images/gnupg.png&quot; alt=&quot;GnuPG&quot; /&gt;&lt;/p&gt;
+&lt;h2&gt;⚠️ gpg.fail (practical OpenPGP vulnerabilities) (Added on 2026-01-15)&lt;/h2&gt;
+&lt;p&gt;The &lt;a href=&quot;https://gpg.fail&quot;&gt;gpg.fail&lt;/a&gt; is a write-up of real-world weaknesses in
+GPG/OpenPGP implementations and edge cases in the OpenPGP ecosystem—not the
+underlying math of modern cryptography. ​ The core idea is that signature
+verification needs two things: correct cryptography and confidence that the data
+you think was verified is actually the same data the verifier processed, which
+can break down when formats are complex and tooling is permissive or ambiguous.&lt;/p&gt;
+&lt;h3&gt;Why this matters even with good key hygiene&lt;/h3&gt;
+&lt;p&gt;Most of the hardening in this guide (offline primary key, subkeys, strict
+permissions, agent separation) is still worth doing because it protects your
+private key material and reduces the blast radius if a workstation is
+compromised.&lt;/p&gt;
+&lt;p&gt;But that kind of key hygiene doesn’t automatically protect you from OpenPGP
+“sharp edges” like ambiguous parsing rules, weird message constructions, or
+implementation bugs because those problems happen at the message/format/tooling
+layer, not the key-storage layer.&lt;/p&gt;
+&lt;h3&gt;How to avoid the sharp edges (actionable)&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Don’t treat “Good signature” as the end of the story. Treat verification as
+“verify + inspect what was verified,” especially if the output will be
+consumed by other tools or humans who may misinterpret it. ​&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Prefer OpenPGP for narrow, well-understood tasks (verifying release artifacts,
+encrypting files) and be extra cautious when dealing with untrusted,
+attacker-controlled OpenPGP inputs that flow through multiple tools (mail
+clients, import pipelines, automation). ​&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Keep GnuPG and related tooling updated; gpg.fail covers vulnerabilities that
+include classic implementation issues and not just “protocol design” pitfalls.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;If you automate verification (important)&lt;/h3&gt;
+&lt;p&gt;If you’re writing automation around signature verification, ensure your pipeline
+clearly distinguishes:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;“signature cryptographically valid” from&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;“the extracted/displayed message is exactly what was verified”. Some gpg.fail
+items specifically call out cases where output does not make this distinction
+obvious enough to prevent misuse.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3&gt;NixOS/Home-Manager hardening can break GPG (common failure mode)&lt;/h3&gt;
+&lt;p&gt;Some “hardening” choices can cause GPG to fail in ways that look mysterious but
+are just UI/agent integration problems (for example, &lt;strong&gt;No pinentry&lt;/strong&gt; / “gpg
+failed to sign the data” when the agent can’t prompt). If GPG signing/encryption
+suddenly stops working, first confirm pinentry is configured correctly (via your
+&lt;code&gt;services.gpg-agent.pinentryPackage&lt;/code&gt; or &lt;code&gt;gpg-agent.conf&lt;/code&gt;) and restart the agent
+with &lt;code&gt;gpgconf --kill gpg-agent&lt;/code&gt; then &lt;code&gt;gpgconf --launch gpg-agent&lt;/code&gt;.&lt;/p&gt;
+&lt;h2&gt;🔑 Key Concepts&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;GnuPG&lt;/strong&gt; is a complete and free implementation of the OpenPGP standard. It
+allows you to encrypt and sign your data and communications, has a versatile key
+management system, and access modules for many kinds of public key directories.
+GnuPG (GPG), is a command line tool for secure communication.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;PGP (Pretty Good Privacy)&lt;/strong&gt; and &lt;strong&gt;GPG (GNU Privacy Guard)&lt;/strong&gt;. While distinct,
+they are deeply interconnected and, for the rest of this section, I’ll use the
+terms interchangeably.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;PGP&lt;/strong&gt; was the original, groundbreaking software that brought robust public-key
+cryptography to the masses. It set the standard for secure email communication.
+However, PGP later became a commercial product.&lt;/p&gt;
+&lt;p&gt;To provide a free and open-source alternative that anyone could use and inspect,
+&lt;strong&gt;GPG&lt;/strong&gt; was created. Crucially, &lt;strong&gt;GPG&lt;/strong&gt; is a complete implementation of the
+OpenPGP standard. This open standard acts as a universal language for encryption
+and digital signatures.&lt;/p&gt;
+&lt;p&gt;GnuPG uses a more complex scheme in which a user has a primary keypair and then
+zero or more additional subordinate keypairs.&lt;/p&gt;
+&lt;p&gt;Signing public keys with the corresponding private key is called &lt;em&gt;self-signing&lt;/em&gt;,
+and a public key that has self-signed user IDs bound to it is called a
+&lt;em&gt;certificate&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Web of Trust&lt;/strong&gt;: Rather than validate every single key individually, you can
+rely on other factors such as if it has been signed by a key that you fully
+trust or if it has been signed by three marginally trusted keys to validate
+keys.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;gpg-agent&lt;/code&gt; is a daemon to manage secret (private) keys independently from any
+protocol. It is used as a backed for &lt;code&gt;gpg&lt;/code&gt; and &lt;code&gt;gpgsm&lt;/code&gt; as well as for a couple
+of other utilities. –&lt;a href=&quot;https://man.cx/gpg-agent&quot;&gt;man gpg-agent&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;There are numerous front-ends for gpg as well, i.e., GUI apps that simplify many
+of the commands and processes. Two that I touch on in this overview are
+&lt;code&gt;seahorse&lt;/code&gt; and &lt;code&gt;kleopatra&lt;/code&gt;.&lt;/p&gt;
+&lt;h3&gt;Asymmetric Encryption (Public-Key cryptography)&lt;/h3&gt;
+&lt;p&gt;E2ee requires that every sender and recipient does a one time preparation, which
+involves the generation of personal random numbers. Two such random numbers are
+necessary, one will be called your secret key and another one will be called
+your public key (together your &lt;em&gt;personal key&lt;/em&gt;). These numbers are very big, they
+consist of hundreds or thousands of digits.&lt;/p&gt;
+&lt;p&gt;A message can be encrypted using the recipients public key and can only be
+decrypted with the matching private key. In other words, if you exchange
+&lt;strong&gt;public keys&lt;/strong&gt; with someone you both can encrypt messages that only the other
+can decrypt with their own &lt;strong&gt;private key&lt;/strong&gt;. &lt;strong&gt;You must never share the private
+key or the private keys passphrase with anyone else&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;What’s safe to share?&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Your public key (used to encrypt files and verify signatures)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Your key ID (identifies your key, useful for sharing public keys or configs)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Your keys fingerprint &lt;code&gt;gpg --fingerprint&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;What must never be shared?&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Your private (secret) key, usually in your &lt;code&gt;~/.gnupg/private-keys-v1.d/&lt;/code&gt;
+directory. Usually called your &lt;em&gt;private keyring&lt;/em&gt;. &lt;strong&gt;Your main goal should be
+the protection of your private key&lt;/strong&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Your passphrase for your private key&lt;/strong&gt;. Even if someone is able to somehow
+get your private key, they need to break the passphrase to access it
+unencrypted. &lt;strong&gt;Protect this passphrase&lt;/strong&gt;!&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Best Practices&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Don’t rely on the short KeyID, at least use long OpenPGP Key IDs (for example
+0xA1E6148633874A3D), they are 64 bits long and harder to spoof. Even better, use
+the fingerprint.This is accomplished in the configuration with
+&lt;code&gt;keyid-format = &quot;0xlong&quot;;&lt;/code&gt;, and &lt;code&gt;with-fingerprint&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Always sign your public keys before you publish them to prevent man in the
+middle attacks and other modifications. When a subkey or userID is generated it
+is self-signed automatically, which is why you need to enter your password.&lt;/p&gt;
+&lt;p&gt;Don’t blindly trust keys from keyservers. You should verify the full key
+fingerprint with the owner over the phone if possible.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://www.kicksecure.com/wiki/Verifying_Software_Signatures&quot;&gt;Verifying software signatures&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Use a strong primary key, don’t use 1024-bit DSA, 1024-bit RSA, or SHA-1 for
+signing they are no longer recommended.&lt;/p&gt;
+&lt;p&gt;Choose an expiration date less than 2 years, you can add time if needed.
+Remember this date.&lt;/p&gt;
+&lt;p&gt;Rotate your subkeys.&lt;/p&gt;
+&lt;p&gt;Keep your primary key offline, this ensures that it can’t be stolen by an
+attacker allowing him to create new identities. We accomplish this by creating
+subkeys and only adding the subkeys keygrip and the subkeys &lt;code&gt;default-key&lt;/code&gt; to our
+configuration keeping the primary key out of it.&lt;/p&gt;
+&lt;p&gt;Since we will be removing our primary key, even we won’t be able to create
+additional keys so it’s important to think ahead and make all the keys you’ll
+need. However, it is as easy as reimporting it to give yourself access again.&lt;/p&gt;
+&lt;p&gt;Many of these best practices come from the following guide:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://riseup.net/ru/security/message-security/openpgp/gpg-best-practices&quot;&gt;RiseUp gpg-best-practices&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;p&gt;Home Manager module with &lt;code&gt;gpg-agent&lt;/code&gt;, &lt;code&gt;gnupg&lt;/code&gt;, and &lt;code&gt;pinentry-gnome3&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;# gpg-agent.nix
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: {
+  options = {
+    custom.pgp = {
+      enable = lib.mkEnableOption {
+        description = &quot;Enable PGP Gnupgp&quot;;
+        default = false;
+      };
+    };
+  };
+
+  config = lib.mkIf config.custom.pgp.enable {
+    services = {
+      ## Enable gpg-agent with ssh support
+      gpg-agent = {
+        enable = true;
+        enableSshSupport = true;
+        enableZshIntegration = true;
+        # pinentry is a collection of simple PIN or passphrase dialogs used for
+        # password entry
+        pinentryPackage = pkgs.pinentry-qt;
+      };
+
+      ## We will put our keygrip here
+      gpg-agent.sshKeys = [];
+    };
+    home.packages = [pkgs.gnupg];
+    programs = {
+      gpg = {
+        ## Enable GnuPG
+        enable = true;
+
+        # homedir = &quot;/home/userName/.config/gnupg&quot;;
+        settings = {
+          # Default/trusted key ID (helpful with throw-keyids)
+          # Example, you will put your own keyid here
+          # Use `gpg --list-keys`
+          # default-key = &quot;0x37ACBCDA569C5C44788&quot;;
+          # trusted-key = &quot;0x37ACBCDA569C5C44788&quot;;
+          # https://github.com/drduh/config/blob/master/gpg.conf
+          # https://www.gnupg.org/documentation/manuals/gnupg/GPG-Configuration-Options.html
+          # https://www.gnupg.org/documentation/manuals/gnupg/GPG-Esoteric-Options.html
+          # Some Best Practices, stronger algos etc
+          # Use AES256, 192, or 128 as cipher
+          personal-cipher-preferences = &quot;AES256 AES192 AES&quot;;
+          # Use SHA512, 384, or 256 as digest
+          personal-digest-preferences = &quot;SHA512 SHA384 SHA256&quot;;
+          # Use ZLIB, BZIP2, ZIP, or no compression
+          personal-compress-preferences = &quot;ZLIB BZIP2 ZIP Uncompressed&quot;;
+          # Default preferences for new keys
+          default-preference-list = &quot;SHA512 SHA384 SHA256 AES256 AES192 AES ZLIB BZIP2 ZIP Uncompressed&quot;;
+          # SHA512 as digest to sign keys
+          cert-digest-algo = &quot;SHA512&quot;;
+          # SHA512 as digest for symmetric ops
+          s2k-digest-algo = &quot;SHA512&quot;;
+          # AES256 as cipher for symmetric ops
+          s2k-cipher-algo = &quot;AES256&quot;;
+          # UTF-8 support for compatibility
+          charset = &quot;utf-8&quot;;
+          # Show Unix timestamps
+          fixed-list-mode = &quot;&quot;;
+          # No comments in signature
+          no-comments = &quot;&quot;;
+          # No version in signature
+          no-emit-version = &quot;&quot;;
+          # Disable banner
+          no-greeting = &quot;&quot;;
+          # Long hexidecimal key format
+          keyid-format = &quot;0xlong&quot;;
+          # Display UID validity
+          list-options = &quot;show-uid-validity&quot;;
+          verify-options = &quot;show-uid-validity&quot;;
+          # Display all keys and their fingerprints
+          with-fingerprint = &quot;&quot;;
+          # Cross-certify subkeys are present and valid
+          require-cross-certification = &quot;&quot;;
+          # Disable caching of passphrase for symmetrical ops
+          no-symkey-cache = &quot;&quot;;
+          # Enable smartcard
+          # use-agent = &quot;&quot;;
+        };
+      };
+    };
+  };
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;blockquote&gt;
+&lt;p&gt;🤔 Fun Fact: Elliot Alderson mentions encrypting Evil Corps files with 256 bit
+AES encryption ensuring that it’s impossible to break in &lt;code&gt;eps1.9_zer0.daY.avi&lt;/code&gt;
+of Mr. Robot.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;The default path is &lt;code&gt;~/.gnupg&lt;/code&gt;, if you prefer placing it in the &lt;code&gt;~/.config&lt;/code&gt;
+directory or elsewhere, uncomment the &lt;code&gt;homedir&lt;/code&gt; line and change &lt;code&gt;userName&lt;/code&gt; to
+your username.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;I use sway so &lt;code&gt;pinentry-qt&lt;/code&gt; works for me, there is also the following options
+for this attribute:&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;pinentry-tty&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;pinentry-gnome3&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;pinentry-gtk2&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;And more, research what you need and use the correct one.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://search.nixos.org/packages?channel=unstable&amp;amp;query=pinentry&quot;&gt;search.nixos.org pinentry&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Enable in your &lt;code&gt;home.nix&lt;/code&gt; or equivalent:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;# home.nix
+# ... snip ...
+imports = [
+    ./gpg-agent.nix
+];
+custom.pgp.enable = true;
+# ... snip ...
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;gpg --full-generate-key&lt;/code&gt; can be used to generate a basic keypair.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;gpg --expert --full-generate-key&lt;/code&gt; can be used for keys that require more
+capabilities.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;❗ NOTE: We will first generate our GPG primary key that is required to
+atleast have sign capabilities, we will then derive subkeys from said primary
+key and use them for signing and encrypting. It is recommended to generate a
+revoke certificate right after creating your primary key.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;To generate your gpg primary key you can do the following:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --full-generate-key
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Choose &lt;code&gt;(10) (sign only)&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Give it a name and description&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Give it an expiration date, 1y is common&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Use a strong passphrase or password&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Give it a comment, I typically add the date&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;If you see a warning about incorrect permissions, you can run the following:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;chmod 700 ~/.gnupg
+chmod 600 ~/.gnupg/*
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Verify:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;ls -ld ~/.gnupg
+# Should show: drwx------
+
+ls -l ~/.gnupg
+# Files should show: -rw-------
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;Generate a Revocation Certificate&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;mykey&lt;/code&gt; must be a key specifier, either the keyID of the primary keypair or any
+part of the user ID that identifies the keypair:&lt;/p&gt;
+&lt;p&gt;Replace &lt;code&gt;mykeyID&lt;/code&gt; with the keyID of your primary key and store the cert in a
+safe place:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --output revoke.asc --gen-revoke mykeyID
+Create a revocation certificate for this key? (y/N)
+Please select the reason for the revocation:
+  0 = No reason specified
+  1 = Key has been compromised
+  2 = Key is superseded
+  3 = Key is no longer used
+  Q = Cancel
+(Probably you want to select 1 here)
+Your decision?
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The certificate will be output to a file &lt;code&gt;revoke.asc&lt;/code&gt;. If the &lt;code&gt;--output&lt;/code&gt; is
+ommitted, the result will be placed on stdout.&lt;/p&gt;
+&lt;p&gt;Since it’s a short certificate, you can print a hardcopy and store it somewhere
+safe. The cert shouldn’t be somewhere that others can access it since anyone
+could publish the revoke cert and render the corresponding public key useless.&lt;/p&gt;
+&lt;p&gt;To apply the revoke cert, import it:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --import revoke.asc
+# And optionally push the revoked key to public keyservers to notify others:
+gpg --keyserver keyserver.ubuntu.com --send-keys YOUR_KEYID
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
+&lt;p&gt;After fixing, run &lt;code&gt;gpg --list-keys --with-fingerprint&lt;/code&gt;, which lists your public
+keys:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;# Take note of your public key
+gpg --list-keys --with-fingerprint
+/home/jr/.gnupg/pubring.kbx
+---------------------------
+pub   ed25519/0x095782A1B124AF15 2025-08-23 [SCA] [expires: 2026-08-23]
+Key fingerprint = 5908 9C5B FEC8 0D75 FCB0  E206 0958 82C1 A124 CF15
+uid                   [ultimate] Jr (08-23-25) &amp;lt;sayls8@proton.me&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;Copy the KeyID, in this example it would be &lt;code&gt;0x095722B2A123CF15&lt;/code&gt;. We will use
+it for the command below.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The warning should be gone.&lt;/p&gt;
+&lt;p&gt;Now we will generate 2 subkeys, 1 for encryption and 1 for authentication.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --expert --edit-key 0x095722B2A123CF15
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Choose 11 (set your own capabilities) and add A (Authenticate) and type &lt;code&gt;save&lt;/code&gt;
+to save and exit. Repeat this again and choose ECC (encrypt only).&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;❗ &lt;code&gt;gpg --edit-key&lt;/code&gt; has many more capabilities, after launching type &lt;code&gt;help&lt;/code&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Add Keygrip of Authenticate Subkey to &lt;code&gt;sshcontrol&lt;/code&gt; for gpg-agent&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --list-secret-keys --with-keygrip --keyid-format LONG
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Copy the keygrip of the subkey with Authenticate capabilities&lt;/p&gt;
+&lt;p&gt;Add the keygrip number to your &lt;code&gt;gpg-agent.sshKeys&lt;/code&gt; and rebuild, this adds an SSH
+key to &lt;code&gt;gpg-agent&lt;/code&gt;. This is for the SSH key functionality of &lt;code&gt;gpg-agent&lt;/code&gt;, while
+the key ID (&lt;code&gt;default-key&lt;/code&gt;) is for GPG-specific operations like signing commits:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;# gpg-agent.nix
+gpg-agent.sshKeys = [&quot;6BD11826F3845BC222127FE3D22C92C91BB3FB32&quot;];
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;By itself, a keygrip cannot be used to reconstruct your private key. It’s
+derived from the public key material, not from the secret key itself so it’s
+safe to version control. Don’t put your keygrip in a public repo if you don’t
+want people to know you use that key for signing/authentication. It’s not a
+security risk, but it leaks a tiny bit of metadata.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The following article mentions the keygrip being computed from public elements
+of the key:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://gnupg-users.gnupg.narkive.com/q5JtahdV/gpg-agent-what-is-a-keygrip&quot;&gt;gnupg-users what-is-a-keygrip&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Add the KeyId to your &lt;code&gt;gpg-agent.nix&lt;/code&gt;, this declares your default-key to persist
+through rebuilds:&lt;/p&gt;
+&lt;p&gt;Copy the public key of the same subkey with Authenticate capabilities you will
+see something like &lt;code&gt;[SA]&lt;/code&gt; next to it for Sign and Authenticate:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;# gpg-agent.nix
+gpg.settings = {
+    # Replace with your own Subkeys KeyID `gpg --list-keys --keyid-format LONG`
+    default-key = &quot;Ox37ACA569C5C44787&quot;;
+    trusted-key = &quot;Ox37ACA569C5C44787&quot;;
+};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This key should be signed automatically, ensure that it is:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --sign-key Ox37ACA569C5C44787
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Rebuild, and check that everything is correct with:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;ssh-add -L
+# you should see something like:
+ssh-ed25519 AABCC3NzaC1lZDI1NTE5ABBAIHyujgyCjjBTqIuFM3EMUSo6RGklmOXQW3uWRhWdJ1Mm (none)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;Never version-control your private key files or &lt;code&gt;.gnupg&lt;/code&gt; contents.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Add the following to your shell config:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;# zsh.nix
+# ... snip ...
+initContent = &apos;&apos;
+    export GPG_TTY=$(tty)
+    export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
+    gpgconf --launch gpg-agent
+&apos;&apos;;
+# ... snip ...
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Rebuild and then restart &lt;code&gt;gpg-agent&lt;/code&gt; if necessary:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpgconf --kill gpg-agent
+gpgconf --launch gpg-agent
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Test, these should match:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;echo &quot;$SSH_AUTH_SOCK&quot;
+# output
+/run/user/1000/gnupg/d.wft5hcsny4qqq3g31c76534j/S.gpg-agent.ssh
+
+gpgconf --list-dirs agent-ssh-socket
+# output
+/run/user/1000/gnupg/d.wft5hcsny4qqq3g31c76834j/S.gpg-agent.ssh
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;ssh-add -L
+# Copy the entire following line:
+ssh-ed25519 AABBC3NzaC1lZDI1NTE5AAAAIGXwhVokJ6cKgodYT+0+0ZrU0sBqMPPRDPJqFxqRtM+I (none)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;Mine shows &lt;code&gt;(none)&lt;/code&gt; because I left the comment field blank when creating the
+key and doesn’t affect functionality.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Then, in your server’s NixOS configuration (e.g., &lt;code&gt;configuration.nix&lt;/code&gt;): Change
+&lt;code&gt;yourUser&lt;/code&gt; to your username. This is how you grant access to a remote machine,
+and the public key from the GPG subkey is what’s added here, the output of
+&lt;code&gt;ssh-add -L&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;users.users.yourUser = {
+openssh = {
+  authorizedKeys.keys = [
+    # Replace with the output of `ssh-add -L`
+    &quot;ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGXwhVokJ6cKgodYT+0+0ZrU0sBqMPPRDPJqFxqRtM+I (none)&quot;
+  ];
+};
+};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;blockquote&gt;
+&lt;p&gt;❗ NOTE: Only the &lt;strong&gt;public&lt;/strong&gt; key goes here, it’s safe to commit to version
+control. If you prefer not to hardcode it in the config, you can reference it
+from a &lt;code&gt;.pub&lt;/code&gt; file in your repo and read it with
+&lt;code&gt;builtins.readFile ./mykey.pub&lt;/code&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Rebuild your system and test an SSH connection into the server:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;ssh -p &amp;lt;your-port&amp;gt; user@hostname
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;&amp;lt;your-port&amp;gt;&lt;/code&gt; is often &lt;code&gt;22&lt;/code&gt; so it would be something like:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;ssh -p 22 bill@xps
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Once you successfully sign in to SSH, it will ask you if you’re sure you trust
+the remote server’s SSH host key. Once you type &lt;code&gt;yes&lt;/code&gt;, it will automatically be
+used for tasks such as file decryption.&lt;/p&gt;
+&lt;h3&gt;Remove and Store your Primary Key offline&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;❗ NOTE: After you remove your primary key, you will no longer be able to
+derive subkeys from it or sign keys unless you re-import it.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;# extract the primary key
+gpg -a --export-secret-key sayls8@proton.me &amp;gt; secret_key
+# extract the subkeys, which we will reimport later
+gpg -a --export-secret-subkeys sayls8@proton.me &amp;gt; secret_subkeys.gpg
+# delete the secret keys from the keyring, so only subkeys are left
+gpg --delete-secret-keys sayls8@proton.me
+Delete this key from the keyring? (y/N) y
+This is a secret key! - really delete? (y/N) y
+# reimport the subkeys
+gpg --import secret_subkeys.gpg
+# verify everything is in order
+gpg --list-secret-keys
+# remove the subkeys from disk
+rm secret_subkeys.gpg
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I recommend also keeping a &lt;code&gt;.gpg&lt;/code&gt; version to make it easy to re-import your
+primary key: &lt;code&gt;gpg --export-secret-keys --armor --output private-key-bak.gpg&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Then store &lt;code&gt;secret_key&lt;/code&gt; on an encrypted USB drive or somewhere offline. If you
+want to protect it for now, you can just use the encryption subkey that we
+created to encrypt &lt;code&gt;secret_key&lt;/code&gt; with a passphrase:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --list-keys --keyid-format LONG
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Copy the KeyID of the subkey with encrypt capabilities for the following
+command:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;# Encrypting your secret key for yourself
+gpg --encrypt --recipient Ox37ACA569C5C44787 secret_key
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You can check that the secret key material is missing with
+&lt;code&gt;gpg --list-secret-keys&lt;/code&gt;, you should see &lt;code&gt;sec#&lt;/code&gt; instead of &lt;code&gt;sec&lt;/code&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --list-secret-keys
+# Output:
+sec#  ed25519/0x
+# ...snip...
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The above set of commands are from the
+&lt;a href=&quot;https://riseup.net/ru/security/message-security/openpgp/gpg-best-practices#keep-your-primary-key-entirely-offline&quot;&gt;RiseUp Keep your primary key offline&lt;/a&gt;&lt;/p&gt;
+&lt;h2&gt;Add your GPG Key to GitHub&lt;/h2&gt;
+&lt;p&gt;Plug your own public key from &lt;code&gt;gpg --list-keys&lt;/code&gt; in the following command:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --armor --export &amp;lt;Public-Key&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Copy the entire block from &lt;code&gt;-----BEGIN PGP PUBLIC KEY BLOCK-----&lt;/code&gt; to
+&lt;code&gt;-----END PGP PUBLIC KEY BLOCK-----&lt;/code&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;❗ You can also paste the above block into a public keyserver such as
+&lt;code&gt;keys.openpgp.org&lt;/code&gt;. This allows others to find and use your key to encrypt
+messages or verify your signatures. Many tools and users rely on public key
+servers to fetch keys automatically. You can also publish your revocation
+certificates, which help others know if your key is compromised or revoked.
+This can be a privacy concern as key servers publish (and keep) associated
+user IDs and metadata linked to your key, such as your email.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;It’s the same process as adding an SSH key, Go to Settings, SSH and GPG keys,
+&lt;code&gt;New GPG key&lt;/code&gt; and your all set.&lt;/p&gt;
+&lt;h3&gt;Sign your Commits for Git&lt;/h3&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;# git.nix
+{...}: {
+    programs.git = {
+        enable = true;
+      extraConfig = {
+          commit.gpgsign = true;
+          user.signingkey = &quot;0x0666C1A265F156&quot;
+      };
+    };
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;After this, you will be prompted for your Private Keys password on every commit.&lt;/p&gt;
+&lt;p&gt;If you look at your commits on GitHub, after adding the GPG key and the above
+settings to your git setup it will show your commits are &lt;code&gt;Verified&lt;/code&gt;.&lt;/p&gt;
+&lt;h3&gt;Backing up Your Keys&lt;/h3&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --export-secret-keys --armor --output my-private-key-backup.gpg
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Your private keys will be encrypted with a passphrase into a .gpg file. Store
+this backup in a secure location line an encrypted USB drive. This can prevent
+you from losing access to your keys in the case of disk failure or accidents.&lt;/p&gt;
+&lt;p&gt;You can export your public keys and publish them publicly if you choose:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --export --armor --output my-public-keys.gpg
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now if your keys ever get lost or corrupted, you can import these backups.&lt;/p&gt;
+&lt;h2&gt;Encrypt a File with PGP&lt;/h2&gt;
+&lt;p&gt;The easy way to do this is with an app like Kleopatra, available as
+&lt;code&gt;pkgs.kdePackages.kleopatra&lt;/code&gt;. Kleopatra will automatically recognize your gpg
+keys and enable you to easily encrypt messages by clicking the Notepad, typing
+your message and clicking &lt;code&gt;Sign/Encrypt Notepad&lt;/code&gt;. You can also choose to encrypt
+the message with a password, where anyone that has the password can read the
+message.&lt;/p&gt;
+&lt;p&gt;Using the above and below methods enable you to encrypt any message for
+basically any service and just copy past the encrypted text into the service for
+added privacy.&lt;/p&gt;
+&lt;p&gt;Encrypting a whole directory is a bit more involved and requires using
+compression.&lt;/p&gt;
+&lt;h3&gt;List your keys and get the key ID&lt;/h3&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --list-keys --keyid-format LONG
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Example output, don’t use RSA keys:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;pub   rsa4096/ABCDEF1234567890 2024-01-01 [SC]
+uid           [ultimate] Your Name &amp;lt;you@example.com&amp;gt;
+sub   rsa4096/1234567890ABCDEF 2024-01-01 [E]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Notice the &lt;code&gt;sub&lt;/code&gt; and the &lt;code&gt;[E]&lt;/code&gt; for the subkey with encrypt capabilities.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;The part after the slash on the &lt;code&gt;pub&lt;/code&gt; line is your key ID (&lt;code&gt;ABCDEF1234567890&lt;/code&gt;
+in the example)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;You can also use your email or name to refer to the key in most commands.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;Encrypt a file&lt;/h3&gt;
+&lt;p&gt;In order to encrypt a document you must have the public keys of the intended
+recipients.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;echo &quot;This file will be encrypted&quot; &amp;gt; file.txt
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Encrypting for yourself (using a key ID as recipient):&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --encrypt --recipient ABCDEF1234567890 file.txt
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;ls
+│  7 │ file.txt            │ file │     28 B │ now           │
+│  8 │ file.txt.gpg        │ file │    191 B │ now           │
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Encrypting for someone else with their email (public key identifier):&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --output file.gpg --encrypt --recipient jake@proton.me file.txt
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;ls
+file.txt
+file.gpg
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;gpg --encrypt&lt;/code&gt; doesn’t modify the original file. It creates a new encrypted
+file by default with &lt;code&gt;gpg&lt;/code&gt; amended to the filename.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --decrypt file.txt.gpg
+gpg: encrypted with cv25519 key, ID 0x4AC131B80CEC833E, created 2025-07-31
+      &quot;GPG Key &amp;lt;sayls8@proton.me&amp;gt;&quot;
+This file will be encrypted
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Or, to save the decrypted text to a file:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --output decrypted_file.txt --decrypt file.txt.gpg
+cat decrypted_file.txt
+# Output
+File: decrypted.txt
+This file will be encrypted
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;You will be asked for the passphrase you used when creating the key in order
+to decrypt the file.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;Sign and Verify Signatures&lt;/h3&gt;
+&lt;p&gt;When you sign a document it is certified and timestamped. If after the doc is
+signed, if the doc is further modified in any way the verification of the
+signature will fail.&lt;/p&gt;
+&lt;p&gt;A signature is created using the private key of the signer, and verified with
+the corresponding public key. For example, to verify Jakes signature you would
+use Jake’s public key to see that the work indeed came from him and hasn’t been
+modified since.&lt;/p&gt;
+&lt;p&gt;To sign the above &lt;code&gt;file.txt&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg output doc.sig --sign file.txt
+# To clearsign use:
+gpg --clearsign file.txt
+# For a detached signature use:
+gpg --output doc.sig --detach-sig file.txt
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You will be prompted for your passphrase.&lt;/p&gt;
+&lt;p&gt;You can either check the signature or check the signature and recover the
+original document.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;# To only check:
+gpg --output doc --verify doc.sig
+# To verify and extract the document
+gpg --output doc --decrypt doc.sig
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;Email Encryption&lt;/h2&gt;
+&lt;p&gt;Email is inherently insecure, and email-based attacks remain one of the top
+vectors for data breaches. Encrypting your email protects your privacy by
+ensuring that only the intended recipient can read it. Encrypting your emails
+with PGP provides valuable security benefits but also has inherent limitations
+that prevent it from being considered truly “secure communication” by modern
+standards.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://emailselfdefense.fsf.org/en/&quot;&gt;Email Self-Defense&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;What its Good for:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Confidentiality, it prevents unauthorized third parties (like email providers
+or network eavesdroppers) from reading your email content.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Integrity and authenticity: Digital signatures verify that the email genuinely
+came from the claimed sender and hasn’t been altered in transit.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Long-term confidentiality: Encrypted emails stored on servers or devices
+remain protected even if the storage is later compromised. With companies like
+Gmail giving you a “free” account, that usually means that you are the product
+and you should tread lightly.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;To securely communicate with someone never use email, use a dedicated service
+such as Threema, Signal or Brair.&lt;/strong&gt; It’s hard to recommend any messaging service
+at the moment, always do your own research and stay informed on the companies
+policies. Signal has taken some heat for the way it has implemented it’s
+MobileCoin. The biggest issue I’ve faced is getting other people to care or use
+the same e2ee app.&lt;/p&gt;
+&lt;p&gt;With Thunderbird you can go to settings, Privacy and Security, and scroll to the
+bottom where it says “End to End Encryption”, Click the Settings tab there,
+finally click End-To-End Encryption on the left.&lt;/p&gt;
+&lt;p&gt;From there, you can click &lt;code&gt;+ Add Key&lt;/code&gt; next to your email address and either
+generate a new key through Thunderbird. If you use this, choose the Curve
+protocol or whatever isn’t RSA.&lt;/p&gt;
+&lt;p&gt;Or import your own key which is definitely more secure since you’re not trusting
+someone else with your private key:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --export --armor sayls8@gmail.com &amp;gt; publickey.asc
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then select &lt;code&gt;+ Add Key&lt;/code&gt; and choose import your own, this didn’t work for me.
+What did work was to start composing an email and click on the &lt;code&gt;OpenPGP&lt;/code&gt; button,
+Go to &lt;code&gt;Key Manager&lt;/code&gt;, &lt;code&gt;File&lt;/code&gt;, &lt;code&gt;Import Public Key from a File&lt;/code&gt; and choose your
+&lt;code&gt;publickey.asc&lt;/code&gt;. This way, only you have access to your private key.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://support.mozilla.org/en-US/kb/introduction-to-e2e-encryption#w_how-e2ee-with-openpgp-works-in-general&quot;&gt;How e2ee with OpenPGP works in general&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Import your recipient’s public key&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;When you start composing an email, you’ll see that you need to resolve key
+issues if you don’t already have the recipients public key. Click &lt;code&gt;Resolve&lt;/code&gt;, and
+either Discover Public Keys Online… or Import Public Keys From File…&lt;/p&gt;
+&lt;p&gt;Thunderbird has the option to use the OpenPGP Key Manager to view or manage
+public keys of your correspondents.&lt;/p&gt;
+&lt;p&gt;If you’re sending encrypted emails to someone you’ll need their public key,
+there are a few methods of doing this just ensure you verify the Fingerprint
+with the person your talking to.&lt;/p&gt;
+&lt;p&gt;Exporting your public key means creating a copy of the public part of your
+cryptographic key pair that you can share with others.&lt;/p&gt;
+&lt;p&gt;For example, say that Jake wants to send you his public key. First he has to
+export his key:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --output jake.gpg --export jake@proton.me
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The key is exported in binary format, to export in ASCII-armored format use:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --armor --export jake@proton.me
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now, once he sends this to you, you’ll need to import and validate it:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --import jake.gpg
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Once the key is imported it should be validated. If you need to validate a key
+manually, it is done by verifying the key’s fingerprint and then signing the key
+to certify it as a valid key.&lt;/p&gt;
+&lt;p&gt;Check that it exists in your keychain:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --list-keys
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You should see Jakes key in the above list.&lt;/p&gt;
+&lt;p&gt;To certify the key you need to edit it:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --edit-key jake@proton.me
+# List the fingerprint
+gpg&amp;gt; fpr
+# once the fingerprint is verified with the owner, sign it
+gpg&amp;gt; sign
+# once signed, you can check the key to list signatures on it
+gpg&amp;gt; check
+&lt;/code&gt;&lt;/pre&gt;
+&lt;blockquote&gt;
+&lt;p&gt;❗ NOTE: You can use PGP to encrypt any message and paste it into &lt;strong&gt;any&lt;/strong&gt;
+software and send it. As long as only you and your recipient are the only
+people to have the private keys, you will be the only people able to decrypt
+the messages. Implementing this correctly is a good way to stop government
+mass surveillance.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2&gt;Make your Public Key Highly Available&lt;/h2&gt;
+&lt;p&gt;You should always make sure that you sign your public key before you publish it.
+When you distribute your public key, you’re distributing the public components
+of your master and subkeys as well as the user IDs. If unsigned, this is a
+security risk because it’s possible for an attacker to tamper with it. The
+public key can be modified by adding or substituting keys, or changing user IDs.&lt;/p&gt;
+&lt;p&gt;Signing the keys provides a web of trust, only the corresponding public key can
+be used to verify the signature and ensure it hasn’t been modified. Since we are
+already only using subkeys for public keys, they are automatically self-signed.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --output ~/mygpg.key --armor --export your_email@address.com
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You can then send this file to the other party.&lt;/p&gt;
+&lt;p&gt;You can also use the GPG interface to upload your key to a key server:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --list-keys your_email@address.com
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Copy the key ID for the following command, remember its on the &lt;code&gt;pub&lt;/code&gt; line after
+the &lt;code&gt;/&lt;/code&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --send-keys --keyserver pgp.mit.edu key_id
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The key will be uploaded to the server and likely be distributed to other key
+servers around the world. This is why expiration dates are important, if your
+key is lost or stolen, the damage window is limited to the expiration period.
+Also remember, you can add more time even after the key has expired.&lt;/p&gt;
+&lt;h3&gt;Example: Verifying Arch Linux Download&lt;/h3&gt;
+&lt;details&gt;
+&lt;summary&gt;
+&lt;p&gt;✔️ Click to Expand Example of verifying and signing the archlinux public key&lt;/p&gt;
+&lt;/summary&gt;
+&lt;p&gt;First, download both the arch &lt;code&gt;.iso&lt;/code&gt; and &lt;code&gt;.sig&lt;/code&gt; files.&lt;/p&gt;
+&lt;p&gt;I tried a few different methods from &lt;a href=&quot;https://archlinux.org/download/#checksums&quot;&gt;https://archlinux.org/download/#checksums&lt;/a&gt;
+and the easiest by far was using Sequoia available in Nixpkgs as
+&lt;code&gt;pkgs.sequoia-sq&lt;/code&gt;:&lt;/p&gt;
+&lt;p&gt;Download the archlinux public key:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;sq network wkd search pierre@archlinux.org --output release-key.pgp
+
+Found 2 certificates related to the query:
+
+ - 3E80CA1A8B89F69CBA57D98A76A5EF9054449A5C
+   - Pierre Schmitz &amp;lt;pierre@archlinux.org&amp;gt; (UNAUTHENTICATED)
+   - created 2022-10-31 09:11:51 UTC
+   - found via: WKD
+
+ - 4AA4767BBC9C4B1D18AE28B77F2D434B9741E8AC
+   - Pierre Schmitz &amp;lt;pierre@archlinux.de&amp;gt; (UNAUTHENTICATED)
+   - created 2011-04-10 09:35:33 UTC
+   - found via: WKD
+
+Hint: To extract a particular certificate from release-key.pgp, use any of:
+
+  $ sq cert export --keyring=release-key.pgp --cert=3E80CA1A8B89F69CBA57D98A76A5EF9054449A5C
+
+  $ sq cert export --keyring=release-key.pgp --cert=4AA4767BBC9C4B1D18AE28B77F2D434B9741E8AC
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Export the chosen key to a &lt;code&gt;.pgp&lt;/code&gt; file:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;sq cert export --keyring=release-key.pgp --cert=3E80CA1A8B89F69CBA57D98A76A5EF9054449A5C &amp;gt; pierre-archlinux.pgp
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Import into your keychain:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt; gpg --import pierre-archlinux.pgp
+gpg: key 0x76A5EF9054449A5C: 9 signatures not checked due to missing keys
+gpg: key 0x76A5EF9054449A5C: public key &quot;Pierre Schmitz &amp;lt;pierre@archlinux.org&amp;gt;&quot; imported
+gpg: Total number processed: 1
+gpg:               imported: 1
+gpg: marginals needed: 3  completes needed: 1  trust model: pgp
+gpg: depth: 0  valid:   3  signed:   0  trust: 0-, 0q, 0n, 0m, 0f, 3u
+gpg: next trustdb check due at 2026-08-23
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now, you should see &lt;code&gt;&amp;lt;pierre@archlinux.org&amp;gt;&lt;/code&gt; and his keys when you run
+&lt;code&gt;gpg --list-keys&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Finally, verify the signature:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;sq verify --signer-file release-key.pgp --signature-file archlinux-2025.08.01-x86_64.iso.sig archlinux-2025.08.01-x86_64.iso
+Authenticated signature made by 3E80CA1A8B89F69CBA57D98A76A5EF9054449A5C (Pierre Schmitz &amp;lt;pierre@archlinux.org&amp;gt;)
+
+1 authenticated signature.
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This shows that the signature was made by the key with the ID
+&lt;code&gt;3E80CA1A8B89F69CBA57D98A76A5EF9054449A5C&lt;/code&gt; (Pierre Schmitz).&lt;/p&gt;
+&lt;p&gt;GPG authenticated that the signature is valid and that the key used to sign is
+trusted in our keyring.&lt;/p&gt;
+&lt;p&gt;1 authenticated signature confirms the files integrity and authenticity.&lt;/p&gt;
+&lt;p&gt;We have successfully verified that the file was signed by Pierr’s official Arch
+Linux key and has not been tampered with.&lt;/p&gt;
+&lt;p&gt;Since the key has been verified we can now sign it. We will have to import our
+primary key to do so since we are keeping it offline for safety.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --import backup.gpg
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;List your keys to get the arch keyID:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --list-keys
+# ... snip ...
+pub   ed25519/0x76A5EF9054449A5C 2022-10-31 [SC] [expires: 2037-10-27]
+      Key fingerprint = 3E80 CA1A 8B89 F69C BA57  D98A 76A5 EF90 5444 9A5C
+uid                   [  full  ] Pierre Schmitz &amp;lt;pierre@archlinux.org&amp;gt;
+uid                   [  full  ] Pierre Schmitz &amp;lt;pierre@archlinux.de&amp;gt;
+sub   ed25519/0xD6D13C45BFCFBAFD 2022-10-31 [A] [expires: 2037-10-27]
+sub   cv25519/0x7F56ADE50CA3D899 2022-10-31 [E] [expires: 2037-10-27]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Sign the key:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --sign-key 0x76A5EF9054449A5C
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now you can Export and publish the new public key and send it to a keyserver:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --export --armor 0x76A5EF9054449A5C &amp;gt; archlinux-signed.asc
+gpg --send-keys 0x76A5EF9054449A5C
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The more people that verify, sign, and re-export and publish their keys the
+better for the web of trust that gpg uses making the network more secure for
+everyone.&lt;/p&gt;
+&lt;h3&gt;Edit your trust level of the key&lt;/h3&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --edit-key pierre@archlinux.org
+gpg&amp;gt; trust
+Please decide how far you trust this user to correctly verify other users&apos; keys
+(by looking at passports, checking fingerprints from different sources, etc.)
+
+  1 = I don&apos;t know or won&apos;t say
+  2 = I do NOT trust
+  3 = I trust marginally
+  4 = I trust fully
+  5 = I trust ultimately
+  m = back to the main menu
+
+Your decision? 3
+# Output:
+pub  ed25519/0x76A5EF9054449A5C
+     created: 2022-10-31  expires: 2037-10-27  usage: SC
+     trust: marginal      validity: full
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You can see that the trust is &lt;code&gt;marginal&lt;/code&gt; and validity is &lt;code&gt;full&lt;/code&gt;.&lt;/p&gt;
+&lt;/details&gt;
+</content></entry><entry><title>Hardening NixOS</title><id>https://saylesss88.github.io/nix/hardening_NixOS.html</id><updated>2026-01-13T00:00:00+00:00</updated><link href="https://saylesss88.github.io/nix/hardening_NixOS.html" rel="alternate"/><content type="html">&lt;h1&gt;Hardening NixOS&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -3680,6 +4870,11 @@ message.&lt;/li&gt;
 &lt;p&gt;If you have an unrelated change accidentally included (for example: you staged
 an extra file), it’s usually better to fix it via rebase/splitting before
 reviewers spend time re-reviewing noise.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;As of 01-13-26 I have been waiting for 2 weeks for the darwin checks to complete,
+I guess this &lt;a href=&quot;https://discourse.nixos.org/t/ofborg-aarch64-darwin-builds-causing-bottleneck/55290&quot;&gt;bottleneck&lt;/a&gt;
+has gotten worse. I guess most PRs take about 6 weeks to resolve FYI.&lt;/p&gt;
+&lt;/blockquote&gt;
 </content></entry><entry><title>Hardening Networking</title><id>https://saylesss88.github.io/nix/hardening_networking.html</id><updated>2025-12-25T00:00:00+00:00</updated><link href="https://saylesss88.github.io/nix/hardening_networking.html" rel="alternate"/><content type="html">&lt;h1&gt;Hardening Networking&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Table of Contents&lt;/summary&gt;
@@ -6298,831 +7493,231 @@ compelling alternative for both new and experienced developers.&lt;/p&gt;
 &lt;p&gt;&lt;a href=&quot;https://v5.chriskrycho.com/essays/jj-init/&quot;&gt;jj_init&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-</content></entry><entry><title>GnuPG gpg-agent</title><id>https://saylesss88.github.io/nix/gpg-agent.html</id><updated>2025-12-08T00:00:00+00:00</updated><link href="https://saylesss88.github.io/nix/gpg-agent.html" rel="alternate"/><content type="html">&lt;h1&gt;GnuPG &amp;amp; &lt;code&gt;gpg-agent&lt;/code&gt; on NixOS&lt;/h1&gt;
+</content></entry><entry><title>Encrypted Impermanence</title><id>https://saylesss88.github.io/nix/encrypted_impermanence.html</id><updated>2025-12-06T00:00:00+00:00</updated><link href="https://saylesss88.github.io/nix/encrypted_impermanence.html" rel="alternate"/><content type="html">&lt;h1&gt;Encrypted Impermanence&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
 &lt;/details&gt;
 &lt;blockquote&gt;
-&lt;p&gt;⚠️ &lt;strong&gt;SECURITY WARNING&lt;/strong&gt;: This guide involves sensitive cryptographic material.
-&lt;strong&gt;Never share your private key or passphrase&lt;/strong&gt;. Backup your keys and handle
-them with extreme care.&lt;/p&gt;
+&lt;p&gt;❗ Important Note: This guide details a setup involving encrypted partitions
+and impermanent NixOS. While powerful, such configurations require careful
+attention to detail. Incorrect steps, especially concerning encryption keys or
+persistent data paths, can lead to &lt;strong&gt;permanent data loss&lt;/strong&gt;. Please read all
+instructions thoroughly before proceeding and consider backing up any critical
+data beforehand. This has only been tested with the disk layout described in
+&lt;a href=&quot;https://saylesss88.github.io/installation/encrypted_manual.html&quot;&gt;Encrypted Setups&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;p&gt;&lt;img src=&quot;../images/gnupg.png&quot; alt=&quot;GnuPG&quot; /&gt;&lt;/p&gt;
-&lt;h2&gt;🔑 Key Concepts&lt;/h2&gt;
-&lt;p&gt;&lt;strong&gt;GnuPG&lt;/strong&gt; is a complete and free implementation of the OpenPGP standard. It
-allows you to encrypt and sign your data and communications, has a versatile key
-management system, and access modules for many kinds of public key directories.
-GnuPG (GPG), is a command line tool for secure communication.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;PGP (Pretty Good Privacy)&lt;/strong&gt; and &lt;strong&gt;GPG (GNU Privacy Guard)&lt;/strong&gt;. While distinct,
-they are deeply interconnected and, for the rest of this section, I’ll use the
-terms interchangeably.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;PGP&lt;/strong&gt; was the original, groundbreaking software that brought robust public-key
-cryptography to the masses. It set the standard for secure email communication.
-However, PGP later became a commercial product.&lt;/p&gt;
-&lt;p&gt;To provide a free and open-source alternative that anyone could use and inspect,
-&lt;strong&gt;GPG&lt;/strong&gt; was created. Crucially, &lt;strong&gt;GPG&lt;/strong&gt; is a complete implementation of the
-OpenPGP standard. This open standard acts as a universal language for encryption
-and digital signatures.&lt;/p&gt;
-&lt;p&gt;GnuPG uses a more complex scheme in which a user has a primary keypair and then
-zero or more additional subordinate keypairs.&lt;/p&gt;
-&lt;p&gt;Signing public keys with the corresponding private key is called &lt;em&gt;self-signing&lt;/em&gt;,
-and a public key that has self-signed user IDs bound to it is called a
-&lt;em&gt;certificate&lt;/em&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Web of Trust&lt;/strong&gt;: Rather than validate every single key individually, you can
-rely on other factors such as if it has been signed by a key that you fully
-trust or if it has been signed by three marginally trusted keys to validate
-keys.&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;gpg-agent&lt;/code&gt; is a daemon to manage secret (private) keys independently from any
-protocol. It is used as a backed for &lt;code&gt;gpg&lt;/code&gt; and &lt;code&gt;gpgsm&lt;/code&gt; as well as for a couple
-of other utilities. –&lt;a href=&quot;https://man.cx/gpg-agent&quot;&gt;man gpg-agent&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;There are numerous front-ends for gpg as well, i.e., GUI apps that simplify many
-of the commands and processes. Two that I touch on in this overview are
-&lt;code&gt;seahorse&lt;/code&gt; and &lt;code&gt;kleopatra&lt;/code&gt;.&lt;/p&gt;
-&lt;h3&gt;Asymmetric Encryption (Public-Key cryptography)&lt;/h3&gt;
-&lt;p&gt;E2ee requires that every sender and recipient does a one time preparation, which
-involves the generation of personal random numbers. Two such random numbers are
-necessary, one will be called your secret key and another one will be called
-your public key (together your &lt;em&gt;personal key&lt;/em&gt;). These numbers are very big, they
-consist of hundreds or thousands of digits.&lt;/p&gt;
-&lt;p&gt;A message can be encrypted using the recipients public key and can only be
-decrypted with the matching private key. In other words, if you exchange
-&lt;strong&gt;public keys&lt;/strong&gt; with someone you both can encrypt messages that only the other
-can decrypt with their own &lt;strong&gt;private key&lt;/strong&gt;. &lt;strong&gt;You must never share the private
-key or the private keys passphrase with anyone else&lt;/strong&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;What’s safe to share?&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;Your public key (used to encrypt files and verify signatures)&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Your key ID (identifies your key, useful for sharing public keys or configs)&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Your keys fingerprint &lt;code&gt;gpg --fingerprint&lt;/code&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;What must never be shared?&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;Your private (secret) key, usually in your &lt;code&gt;~/.gnupg/private-keys-v1.d/&lt;/code&gt;
-directory. Usually called your &lt;em&gt;private keyring&lt;/em&gt;. &lt;strong&gt;Your main goal should be
-the protection of your private key&lt;/strong&gt;.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Your passphrase for your private key&lt;/strong&gt;. Even if someone is able to somehow
-get your private key, they need to break the passphrase to access it
-unencrypted. &lt;strong&gt;Protect this passphrase&lt;/strong&gt;!&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;Best Practices&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Don’t rely on the short KeyID, at least use long OpenPGP Key IDs (for example
-0xA1E6148633874A3D), they are 64 bits long and harder to spoof. Even better, use
-the fingerprint.This is accomplished in the configuration with
-&lt;code&gt;keyid-format = &quot;0xlong&quot;;&lt;/code&gt;, and &lt;code&gt;with-fingerprint&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;Always sign your public keys before you publish them to prevent man in the
-middle attacks and other modifications. When a subkey or userID is generated it
-is self-signed automatically, which is why you need to enter your password.&lt;/p&gt;
-&lt;p&gt;Don’t blindly trust keys from keyservers. You should verify the full key
-fingerprint with the owner over the phone if possible.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&quot;https://www.kicksecure.com/wiki/Verifying_Software_Signatures&quot;&gt;Verifying software signatures&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Use a strong primary key, don’t use 1024-bit DSA, 1024-bit RSA, or SHA-1 for
-signing they are no longer recommended.&lt;/p&gt;
-&lt;p&gt;Choose an expiration date less than 2 years, you can add time if needed.
-Remember this date.&lt;/p&gt;
-&lt;p&gt;Rotate your subkeys.&lt;/p&gt;
-&lt;p&gt;Keep your primary key offline, this ensures that it can’t be stolen by an
-attacker allowing him to create new identities. We accomplish this by creating
-subkeys and only adding the subkeys keygrip and the subkeys &lt;code&gt;default-key&lt;/code&gt; to our
-configuration keeping the primary key out of it.&lt;/p&gt;
-&lt;p&gt;Since we will be removing our primary key, even we won’t be able to create
-additional keys so it’s important to think ahead and make all the keys you’ll
-need. However, it is as easy as reimporting it to give yourself access again.&lt;/p&gt;
-&lt;p&gt;Many of these best practices come from the following guide:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&quot;https://riseup.net/ru/security/message-security/openpgp/gpg-best-practices&quot;&gt;RiseUp gpg-best-practices&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr /&gt;
-&lt;p&gt;Home Manager module with &lt;code&gt;gpg-agent&lt;/code&gt;, &lt;code&gt;gnupg&lt;/code&gt;, and &lt;code&gt;pinentry-gnome3&lt;/code&gt;:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;# gpg-agent.nix
+&lt;h3&gt;Getting Started&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;Add impermanence to your &lt;code&gt;flake.nix&lt;/code&gt;. You will change the &lt;code&gt;hostname&lt;/code&gt; in the
+flake to match your &lt;code&gt;networking.hostName&lt;/code&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;# flake.nix
 {
+  description = &quot;NixOS configuration&quot;;
+
+  inputs = {
+    nixpkgs.url = &quot;github:nixos/nixpkgs/nixos-unstable&quot;;
+    disko.url = &quot;github:nix-community/disko/latest&quot;;
+    disko.inputs.nixpkgs.follows = &quot;nixpkgs&quot;;
+    impermanence.url = &quot;github:nix-community/impermanence&quot;;
+  };
+
+  outputs = inputs@{ nixpkgs, ... }: {
+    nixosConfigurations = {
+      hostname = nixpkgs.lib.nixosSystem {
+        system = &quot;x86_64-linux&quot;;
+        modules = [
+          ./configuration.nix
+          inputs.disko.nixosModules.disko
+          inputs.impermanence.nixosModules.impermanence
+        ];
+      };
+    };
+  };
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&quot;2&quot;&gt;
+&lt;li&gt;Discover where your root subvolume is located with &lt;code&gt;findmnt&lt;/code&gt;:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;If you followed the
+&lt;a href=&quot;https://saylesss88.github.io/installation/encrypted_manual.html&quot;&gt;Encrypted Setups&lt;/a&gt;
+guide, your encrypted subvolume should be located at:
+&lt;code&gt;/dev/mapper/cryptroot /mnt&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Your encrypted Btrfs partition, once unlocked by LUKS, will be available at
+&lt;code&gt;/dev/mapper/cryptroot&lt;/code&gt; as configured here in the &lt;code&gt;disk-config.nix&lt;/code&gt;:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;# disk-config2.nix
+# ... snip ...
+            luks = {
+              size = &quot;100%&quot;;
+              label = &quot;luks&quot;;
+              content = {
+                type = &quot;luks&quot;;
+                name = &quot;cryptroot&quot;;
+                content = {
+# ... snip ...
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Double check that the paths exist:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;cd /dev/mapper/crypt&amp;lt;TAB&amp;gt;  # autocomplete should fill out /dev/mapper/cryptroot
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&quot;3&quot;&gt;
+&lt;li&gt;Create an &lt;code&gt;impermanence.nix&lt;/code&gt;:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Now, create a new file named &lt;code&gt;impermanence.nix&lt;/code&gt; in your configuration directory
+(i.e. your flake directory). This file will contain all the specific settings
+for your impermanent setup, including BTRFS subvolume management and persistent
+data locations. Since this file is right next to your &lt;code&gt;configuration.nix&lt;/code&gt;,
+you’ll just add an &lt;code&gt;imports = [ ./impermanence.nix ]&lt;/code&gt; to your
+&lt;code&gt;configuration.nix&lt;/code&gt; apply it to your configuration.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;{
   config,
   lib,
-  pkgs,
   ...
 }: {
-  options = {
-    custom.pgp = {
-      enable = lib.mkEnableOption {
-        description = &quot;Enable PGP Gnupgp&quot;;
-        default = false;
-      };
-    };
+  boot.initrd.postDeviceCommands = lib.mkAfter &apos;&apos;
+    echo &quot;Rollback running&quot; &amp;gt; /mnt/rollback.log
+     mkdir -p /mnt
+     mount -t btrfs /dev/mapper/cryptroot /mnt
+
+     # Recursively delete all nested subvolumes inside /mnt/root
+     btrfs subvolume list -o /mnt/root | cut -f9 -d&apos; &apos; | while read subvolume; do
+       echo &quot;Deleting /$subvolume subvolume...&quot; &amp;gt;&amp;gt; /mnt/rollback.log
+       btrfs subvolume delete &quot;/mnt/$subvolume&quot;
+     done
+
+     echo &quot;Deleting /root subvolume...&quot; &amp;gt;&amp;gt; /mnt/rollback.log
+     btrfs subvolume delete /mnt/root
+
+     echo &quot;Restoring blank /root subvolume...&quot; &amp;gt;&amp;gt; /mnt/rollback.log
+     btrfs subvolume snapshot /mnt/root-blank /mnt/root
+
+     umount /mnt
+  &apos;&apos;;
+
+  environment.persistence.&quot;/persist&quot; = {
+    directories = [
+      &quot;/etc&quot;
+      &quot;/var/spool&quot;
+      &quot;/srv&quot;
+      &quot;/etc/NetworkManager/system-connections&quot;
+      &quot;/var/lib/bluetooth&quot;
+    ];
+    files = [
+      # &quot;/etc/machine-id&quot;
+      # Add more files you want to persist
+    ];
   };
 
-  config = lib.mkIf config.custom.pgp.enable {
-    services = {
-      ## Enable gpg-agent with ssh support
-      gpg-agent = {
-        enable = true;
-        enableSshSupport = true;
-        enableZshIntegration = true;
-        # pinentry is a collection of simple PIN or passphrase dialogs used for
-        # password entry
-        pinentryPackage = pkgs.pinentry-qt;
-      };
-
-      ## We will put our keygrip here
-      gpg-agent.sshKeys = [];
-    };
-    home.packages = [pkgs.gnupg];
-    programs = {
-      gpg = {
-        ## Enable GnuPG
-        enable = true;
-
-        # homedir = &quot;/home/userName/.config/gnupg&quot;;
-        settings = {
-          # Default/trusted key ID (helpful with throw-keyids)
-          # Example, you will put your own keyid here
-          # Use `gpg --list-keys`
-          # default-key = &quot;0x37ACBCDA569C5C44788&quot;;
-          # trusted-key = &quot;0x37ACBCDA569C5C44788&quot;;
-          # https://github.com/drduh/config/blob/master/gpg.conf
-          # https://www.gnupg.org/documentation/manuals/gnupg/GPG-Configuration-Options.html
-          # https://www.gnupg.org/documentation/manuals/gnupg/GPG-Esoteric-Options.html
-          # Some Best Practices, stronger algos etc
-          # Use AES256, 192, or 128 as cipher
-          personal-cipher-preferences = &quot;AES256 AES192 AES&quot;;
-          # Use SHA512, 384, or 256 as digest
-          personal-digest-preferences = &quot;SHA512 SHA384 SHA256&quot;;
-          # Use ZLIB, BZIP2, ZIP, or no compression
-          personal-compress-preferences = &quot;ZLIB BZIP2 ZIP Uncompressed&quot;;
-          # Default preferences for new keys
-          default-preference-list = &quot;SHA512 SHA384 SHA256 AES256 AES192 AES ZLIB BZIP2 ZIP Uncompressed&quot;;
-          # SHA512 as digest to sign keys
-          cert-digest-algo = &quot;SHA512&quot;;
-          # SHA512 as digest for symmetric ops
-          s2k-digest-algo = &quot;SHA512&quot;;
-          # AES256 as cipher for symmetric ops
-          s2k-cipher-algo = &quot;AES256&quot;;
-          # UTF-8 support for compatibility
-          charset = &quot;utf-8&quot;;
-          # Show Unix timestamps
-          fixed-list-mode = &quot;&quot;;
-          # No comments in signature
-          no-comments = &quot;&quot;;
-          # No version in signature
-          no-emit-version = &quot;&quot;;
-          # Disable banner
-          no-greeting = &quot;&quot;;
-          # Long hexidecimal key format
-          keyid-format = &quot;0xlong&quot;;
-          # Display UID validity
-          list-options = &quot;show-uid-validity&quot;;
-          verify-options = &quot;show-uid-validity&quot;;
-          # Display all keys and their fingerprints
-          with-fingerprint = &quot;&quot;;
-          # Cross-certify subkeys are present and valid
-          require-cross-certification = &quot;&quot;;
-          # Disable caching of passphrase for symmetrical ops
-          no-symkey-cache = &quot;&quot;;
-          # Enable smartcard
-          # use-agent = &quot;&quot;;
-        };
-      };
+# optional quality of life setting
+  security.sudo.extraConfig = &apos;&apos;
+    Defaults lecture = never
+  &apos;&apos;;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;/mnt/rollback.log&lt;/code&gt;: this log will be available during the boot process for
+debugging if the rollback fails, but won’t persist.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;With the above impermanence script, the btrfs subvolumes are deleted recursively
+and replaced with the &lt;code&gt;root-blank&lt;/code&gt; snapshot we took during the install.&lt;/p&gt;
+&lt;p&gt;I have commented out &lt;code&gt;&quot;/etc/machine-id&quot;&lt;/code&gt; because we already copied over all of
+the files to their persistent location and the above setting would work once and
+then cause a conflict.&lt;/p&gt;
+&lt;h2&gt;configuration.nix changes&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;# configuration.nix
+  boot.initrd.luks.devices = {
+    cryptroot = {
+      device = &quot;/dev/disk/by-partlabel/luks&quot;;
+      allowDiscards = true;
+      preLVM = true;
     };
   };
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;blockquote&gt;
-&lt;p&gt;🤔 Fun Fact: Elliot Alderson mentions encrypting Evil Corps files with 256 bit
-AES encryption ensuring that it’s impossible to break in &lt;code&gt;eps1.9_zer0.daY.avi&lt;/code&gt;
-of Mr. Robot.&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;The default path is &lt;code&gt;~/.gnupg&lt;/code&gt;, if you prefer placing it in the &lt;code&gt;~/.config&lt;/code&gt;
-directory or elsewhere, uncomment the &lt;code&gt;homedir&lt;/code&gt; line and change &lt;code&gt;userName&lt;/code&gt; to
-your username.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;I use sway so &lt;code&gt;pinentry-qt&lt;/code&gt; works for me, there is also the following options
-for this attribute:&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;code&gt;pinentry-tty&lt;/code&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;code&gt;pinentry-gnome3&lt;/code&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;code&gt;pinentry-gtk2&lt;/code&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;And more, research what you need and use the correct one.&lt;/p&gt;
-&lt;p&gt;&lt;a href=&quot;https://search.nixos.org/packages?channel=unstable&amp;amp;query=pinentry&quot;&gt;search.nixos.org pinentry&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;Enable in your &lt;code&gt;home.nix&lt;/code&gt; or equivalent:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;# home.nix
-# ... snip ...
-imports = [
-    ./gpg-agent.nix
-];
-custom.pgp.enable = true;
-# ... snip ...
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;code&gt;gpg --full-generate-key&lt;/code&gt; can be used to generate a basic keypair.&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;gpg --expert --full-generate-key&lt;/code&gt; can be used for keys that require more
-capabilities.&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;❗ NOTE: We will first generate our GPG primary key that is required to
-atleast have sign capabilities, we will then derive subkeys from said primary
-key and use them for signing and encrypting. It is recommended to generate a
-revoke certificate right after creating your primary key.&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;To generate your gpg primary key you can do the following:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --full-generate-key
 &lt;/code&gt;&lt;/pre&gt;
 &lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;Choose &lt;code&gt;(10) (sign only)&lt;/code&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Give it a name and description&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Give it an expiration date, 1y is common&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Use a strong passphrase or password&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Give it a comment, I typically add the date&lt;/p&gt;
-&lt;/li&gt;
+&lt;li&gt;This defines how your system’s initial ramdisk (&lt;code&gt;initrd&lt;/code&gt;) should handle a
+specific encrypted disk during the boot process. It helps with timing and is a
+more robust way of telling Nix that we are using an encrypted disk.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;If you see a warning about incorrect permissions, you can run the following:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;chmod 700 ~/.gnupg
-chmod 600 ~/.gnupg/*
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Verify:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;ls -ld ~/.gnupg
-# Should show: drwx------
-
-ls -l ~/.gnupg
-# Files should show: -rw-------
-&lt;/code&gt;&lt;/pre&gt;
-&lt;h3&gt;Generate a Revocation Certificate&lt;/h3&gt;
-&lt;p&gt;&lt;code&gt;mykey&lt;/code&gt; must be a key specifier, either the keyID of the primary keypair or any
-part of the user ID that identifies the keypair:&lt;/p&gt;
-&lt;p&gt;Replace &lt;code&gt;mykeyID&lt;/code&gt; with the keyID of your primary key and store the cert in a
-safe place:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --output revoke.asc --gen-revoke mykeyID
-Create a revocation certificate for this key? (y/N)
-Please select the reason for the revocation:
-  0 = No reason specified
-  1 = Key has been compromised
-  2 = Key is superseded
-  3 = Key is no longer used
-  Q = Cancel
-(Probably you want to select 1 here)
-Your decision?
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The certificate will be output to a file &lt;code&gt;revoke.asc&lt;/code&gt;. If the &lt;code&gt;--output&lt;/code&gt; is
-ommitted, the result will be placed on stdout.&lt;/p&gt;
-&lt;p&gt;Since it’s a short certificate, you can print a hardcopy and store it somewhere
-safe. The cert shouldn’t be somewhere that others can access it since anyone
-could publish the revoke cert and render the corresponding public key useless.&lt;/p&gt;
-&lt;p&gt;To apply the revoke cert, import it:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --import revoke.asc
-# And optionally push the revoked key to public keyservers to notify others:
-gpg --keyserver keyserver.ubuntu.com --send-keys YOUR_KEYID
-&lt;/code&gt;&lt;/pre&gt;
-&lt;hr /&gt;
-&lt;p&gt;After fixing, run &lt;code&gt;gpg --list-keys --with-fingerprint&lt;/code&gt;, which lists your public
-keys:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;# Take note of your public key
-gpg --list-keys --with-fingerprint
-/home/jr/.gnupg/pubring.kbx
----------------------------
-pub   ed25519/0x095782A1B124AF15 2025-08-23 [SCA] [expires: 2026-08-23]
-Key fingerprint = 5908 9C5B FEC8 0D75 FCB0  E206 0958 82C1 A124 CF15
-uid                   [ultimate] Jr (08-23-25) &amp;lt;sayls8@proton.me&amp;gt;
+&lt;p&gt;The following is optional to enable &lt;code&gt;autoScrub&lt;/code&gt; for btrfs, the wiki shows
+&lt;code&gt;interval = &quot;monthly&quot;;&lt;/code&gt; FYI.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;# configuration.nix
+  services.btrfs.autoScrub = {
+    enable = true;
+    interval = &quot;weekly&quot;;
+    fileSystems = [&quot;/&quot;];
+  };
 &lt;/code&gt;&lt;/pre&gt;
 &lt;ul&gt;
-&lt;li&gt;Copy the KeyID, in this example it would be &lt;code&gt;0x095722B2A123CF15&lt;/code&gt;. We will use
-it for the command below.&lt;/li&gt;
+&lt;li&gt;Remember to ensure that your &lt;code&gt;hostname&lt;/code&gt; in your &lt;code&gt;configuration.nix&lt;/code&gt; matches
+the &lt;code&gt;hostname&lt;/code&gt; in your &lt;code&gt;flake.nix&lt;/code&gt;.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;The warning should be gone.&lt;/p&gt;
-&lt;p&gt;Now we will generate 2 subkeys, 1 for encryption and 1 for authentication.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --expert --edit-key 0x095722B2A123CF15
+&lt;h3&gt;Applying Your Impermanence Configuration&lt;/h3&gt;
+&lt;p&gt;Once you have completed all the steps and created or modified the necessary
+files (&lt;code&gt;flake.nix&lt;/code&gt;, &lt;code&gt;impermanence.nix&lt;/code&gt;), you need to apply these changes to your
+NixOS system.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Navigate to your NixOS configuration directory (where your &lt;code&gt;flake.nix&lt;/code&gt; is
+located).&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;cd /path/to/your/flake
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Choose 11 (set your own capabilities) and add A (Authenticate) and type &lt;code&gt;save&lt;/code&gt;
-to save and exit. Repeat this again and choose ECC (encrypt only).&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;❗ &lt;code&gt;gpg --edit-key&lt;/code&gt; has many more capabilities, after launching type &lt;code&gt;help&lt;/code&gt;.&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;strong&gt;Add Keygrip of Authenticate Subkey to &lt;code&gt;sshcontrol&lt;/code&gt; for gpg-agent&lt;/strong&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --list-secret-keys --with-keygrip --keyid-format LONG
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Copy the keygrip of the subkey with Authenticate capabilities&lt;/p&gt;
-&lt;p&gt;Add the keygrip number to your &lt;code&gt;gpg-agent.sshKeys&lt;/code&gt; and rebuild, this adds an SSH
-key to &lt;code&gt;gpg-agent&lt;/code&gt;. This is for the SSH key functionality of &lt;code&gt;gpg-agent&lt;/code&gt;, while
-the key ID (&lt;code&gt;default-key&lt;/code&gt;) is for GPG-specific operations like signing commits:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;# gpg-agent.nix
-gpg-agent.sshKeys = [&quot;6BD11826F3845BC222127FE3D22C92C91BB3FB32&quot;];
-&lt;/code&gt;&lt;/pre&gt;
-&lt;ul&gt;
-&lt;li&gt;By itself, a keygrip cannot be used to reconstruct your private key. It’s
-derived from the public key material, not from the secret key itself so it’s
-safe to version control. Don’t put your keygrip in a public repo if you don’t
-want people to know you use that key for signing/authentication. It’s not a
-security risk, but it leaks a tiny bit of metadata.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;The following article mentions the keygrip being computed from public elements
-of the key:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&quot;https://gnupg-users.gnupg.narkive.com/q5JtahdV/gpg-agent-what-is-a-keygrip&quot;&gt;gnupg-users what-is-a-keygrip&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Add the KeyId to your &lt;code&gt;gpg-agent.nix&lt;/code&gt;, this declares your default-key to persist
-through rebuilds:&lt;/p&gt;
-&lt;p&gt;Copy the public key of the same subkey with Authenticate capabilities you will
-see something like &lt;code&gt;[SA]&lt;/code&gt; next to it for Sign and Authenticate:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;# gpg-agent.nix
-gpg.settings = {
-    # Replace with your own Subkeys KeyID `gpg --list-keys --keyid-format LONG`
-    default-key = &quot;Ox37ACA569C5C44787&quot;;
-    trusted-key = &quot;Ox37ACA569C5C44787&quot;;
-};
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;This key should be signed automatically, ensure that it is:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --sign-key Ox37ACA569C5C44787
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Rebuild, and check that everything is correct with:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;ssh-add -L
-# you should see something like:
-ssh-ed25519 AABCC3NzaC1lZDI1NTE5ABBAIHyujgyCjjBTqIuFM3EMUSo6RGklmOXQW3uWRhWdJ1Mm (none)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;ul&gt;
-&lt;li&gt;Never version-control your private key files or &lt;code&gt;.gnupg&lt;/code&gt; contents.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Add the following to your shell config:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;# zsh.nix
-# ... snip ...
-initContent = &apos;&apos;
-    export GPG_TTY=$(tty)
-    export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
-    gpgconf --launch gpg-agent
-&apos;&apos;;
-# ... snip ...
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Rebuild and then restart &lt;code&gt;gpg-agent&lt;/code&gt; if necessary:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpgconf --kill gpg-agent
-gpgconf --launch gpg-agent
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Test, these should match:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;echo &quot;$SSH_AUTH_SOCK&quot;
-# output
-/run/user/1000/gnupg/d.wft5hcsny4qqq3g31c76534j/S.gpg-agent.ssh
-
-gpgconf --list-dirs agent-ssh-socket
-# output
-/run/user/1000/gnupg/d.wft5hcsny4qqq3g31c76834j/S.gpg-agent.ssh
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;ssh-add -L
-# Copy the entire following line:
-ssh-ed25519 AABBC3NzaC1lZDI1NTE5AAAAIGXwhVokJ6cKgodYT+0+0ZrU0sBqMPPRDPJqFxqRtM+I (none)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;ul&gt;
-&lt;li&gt;Mine shows &lt;code&gt;(none)&lt;/code&gt; because I left the comment field blank when creating the
-key and doesn’t affect functionality.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Then, in your server’s NixOS configuration (e.g., &lt;code&gt;configuration.nix&lt;/code&gt;): Change
-&lt;code&gt;yourUser&lt;/code&gt; to your username. This is how you grant access to a remote machine,
-and the public key from the GPG subkey is what’s added here, the output of
-&lt;code&gt;ssh-add -L&lt;/code&gt;:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;users.users.yourUser = {
-openssh = {
-  authorizedKeys.keys = [
-    # Replace with the output of `ssh-add -L`
-    &quot;ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGXwhVokJ6cKgodYT+0+0ZrU0sBqMPPRDPJqFxqRtM+I (none)&quot;
-  ];
-};
-};
-&lt;/code&gt;&lt;/pre&gt;
-&lt;blockquote&gt;
-&lt;p&gt;❗ NOTE: Only the &lt;strong&gt;public&lt;/strong&gt; key goes here, it’s safe to commit to version
-control. If you prefer not to hardcode it in the config, you can reference it
-from a &lt;code&gt;.pub&lt;/code&gt; file in your repo and read it with
-&lt;code&gt;builtins.readFile ./mykey.pub&lt;/code&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;Rebuild your system and test an SSH connection into the server:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;ssh -p &amp;lt;your-port&amp;gt; user@hostname
-&lt;/code&gt;&lt;/pre&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;&amp;lt;your-port&amp;gt;&lt;/code&gt; is often &lt;code&gt;22&lt;/code&gt; so it would be something like:&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;ssh -p 22 bill@xps
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Once you successfully sign in to SSH, it will ask you if you’re sure you trust
-the remote server’s SSH host key. Once you type &lt;code&gt;yes&lt;/code&gt;, it will automatically be
-used for tasks such as file decryption.&lt;/p&gt;
-&lt;h3&gt;Remove and Store your Primary Key offline&lt;/h3&gt;
-&lt;blockquote&gt;
-&lt;p&gt;❗ NOTE: After you remove your primary key, you will no longer be able to
-derive subkeys from it or sign keys unless you re-import it.&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;# extract the primary key
-gpg -a --export-secret-key sayls8@proton.me &amp;gt; secret_key
-# extract the subkeys, which we will reimport later
-gpg -a --export-secret-subkeys sayls8@proton.me &amp;gt; secret_subkeys.gpg
-# delete the secret keys from the keyring, so only subkeys are left
-gpg --delete-secret-keys sayls8@proton.me
-Delete this key from the keyring? (y/N) y
-This is a secret key! - really delete? (y/N) y
-# reimport the subkeys
-gpg --import secret_subkeys.gpg
-# verify everything is in order
-gpg --list-secret-keys
-# remove the subkeys from disk
-rm secret_subkeys.gpg
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;I recommend also keeping a &lt;code&gt;.gpg&lt;/code&gt; version to make it easy to re-import your
-primary key: &lt;code&gt;gpg --export-secret-keys --armor --output private-key-bak.gpg&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;Then store &lt;code&gt;secret_key&lt;/code&gt; on an encrypted USB drive or somewhere offline. If you
-want to protect it for now, you can just use the encryption subkey that we
-created to encrypt &lt;code&gt;secret_key&lt;/code&gt; with a passphrase:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --list-keys --keyid-format LONG
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Copy the KeyID of the subkey with encrypt capabilities for the following
-command:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;# Encrypting your secret key for yourself
-gpg --encrypt --recipient Ox37ACA569C5C44787 secret_key
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;You can check that the secret key material is missing with
-&lt;code&gt;gpg --list-secret-keys&lt;/code&gt;, you should see &lt;code&gt;sec#&lt;/code&gt; instead of &lt;code&gt;sec&lt;/code&gt;.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --list-secret-keys
-# Output:
-sec#  ed25519/0x
-# ...snip...
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The above set of commands are from the
-&lt;a href=&quot;https://riseup.net/ru/security/message-security/openpgp/gpg-best-practices#keep-your-primary-key-entirely-offline&quot;&gt;RiseUp Keep your primary key offline&lt;/a&gt;&lt;/p&gt;
-&lt;h2&gt;Add your GPG Key to GitHub&lt;/h2&gt;
-&lt;p&gt;Plug your own public key from &lt;code&gt;gpg --list-keys&lt;/code&gt; in the following command:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --armor --export &amp;lt;Public-Key&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Copy the entire block from &lt;code&gt;-----BEGIN PGP PUBLIC KEY BLOCK-----&lt;/code&gt; to
-&lt;code&gt;-----END PGP PUBLIC KEY BLOCK-----&lt;/code&gt;&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;❗ You can also paste the above block into a public keyserver such as
-&lt;code&gt;keys.openpgp.org&lt;/code&gt;. This allows others to find and use your key to encrypt
-messages or verify your signatures. Many tools and users rely on public key
-servers to fetch keys automatically. You can also publish your revocation
-certificates, which help others know if your key is compromised or revoked.
-This can be a privacy concern as key servers publish (and keep) associated
-user IDs and metadata linked to your key, such as your email.&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;It’s the same process as adding an SSH key, Go to Settings, SSH and GPG keys,
-&lt;code&gt;New GPG key&lt;/code&gt; and your all set.&lt;/p&gt;
-&lt;h3&gt;Sign your Commits for Git&lt;/h3&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;# git.nix
-{...}: {
-    programs.git = {
-        enable = true;
-      extraConfig = {
-          commit.gpgsign = true;
-          user.signingkey = &quot;0x0666C1A265F156&quot;
-      };
-    };
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;After this, you will be prompted for your Private Keys password on every commit.&lt;/p&gt;
-&lt;p&gt;If you look at your commits on GitHub, after adding the GPG key and the above
-settings to your git setup it will show your commits are &lt;code&gt;Verified&lt;/code&gt;.&lt;/p&gt;
-&lt;h3&gt;Backing up Your Keys&lt;/h3&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --export-secret-keys --armor --output my-private-key-backup.gpg
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Your private keys will be encrypted with a passphrase into a .gpg file. Store
-this backup in a secure location line an encrypted USB drive. This can prevent
-you from losing access to your keys in the case of disk failure or accidents.&lt;/p&gt;
-&lt;p&gt;You can export your public keys and publish them publicly if you choose:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --export --armor --output my-public-keys.gpg
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Now if your keys ever get lost or corrupted, you can import these backups.&lt;/p&gt;
-&lt;h2&gt;Encrypt a File with PGP&lt;/h2&gt;
-&lt;p&gt;The easy way to do this is with an app like Kleopatra, available as
-&lt;code&gt;pkgs.kdePackages.kleopatra&lt;/code&gt;. Kleopatra will automatically recognize your gpg
-keys and enable you to easily encrypt messages by clicking the Notepad, typing
-your message and clicking &lt;code&gt;Sign/Encrypt Notepad&lt;/code&gt;. You can also choose to encrypt
-the message with a password, where anyone that has the password can read the
-message.&lt;/p&gt;
-&lt;p&gt;Using the above and below methods enable you to encrypt any message for
-basically any service and just copy past the encrypted text into the service for
-added privacy.&lt;/p&gt;
-&lt;p&gt;Encrypting a whole directory is a bit more involved and requires using
-compression.&lt;/p&gt;
-&lt;h3&gt;List your keys and get the key ID&lt;/h3&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --list-keys --keyid-format LONG
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Example output, don’t use RSA keys:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;pub   rsa4096/ABCDEF1234567890 2024-01-01 [SC]
-uid           [ultimate] Your Name &amp;lt;you@example.com&amp;gt;
-sub   rsa4096/1234567890ABCDEF 2024-01-01 [E]
-&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&quot;2&quot;&gt;
+&lt;li&gt;Rebuild and Switch: Execute the &lt;code&gt;nixos-rebuild switch&lt;/code&gt; command. This command
+will:&lt;/li&gt;
+&lt;/ol&gt;
 &lt;ul&gt;
 &lt;li&gt;
-&lt;p&gt;Notice the &lt;code&gt;sub&lt;/code&gt; and the &lt;code&gt;[E]&lt;/code&gt; for the subkey with encrypt capabilities.&lt;/p&gt;
+&lt;p&gt;Evaluate your &lt;code&gt;flake.nix&lt;/code&gt; and the modules it imports (including your new
+&lt;code&gt;impermanence.nix&lt;/code&gt;).&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;The part after the slash on the &lt;code&gt;pub&lt;/code&gt; line is your key ID (&lt;code&gt;ABCDEF1234567890&lt;/code&gt;
-in the example)&lt;/p&gt;
+&lt;p&gt;Build a new NixOS system closure based on your updated configuration.&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;You can also use your email or name to refer to the key in most commands.&lt;/p&gt;
+&lt;p&gt;Activate the new system configuration, making it the current running system.&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;h3&gt;Encrypt a file&lt;/h3&gt;
-&lt;p&gt;In order to encrypt a document you must have the public keys of the intended
-recipients.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;echo &quot;This file will be encrypted&quot; &amp;gt; file.txt
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;sudo nixos-rebuild switch --flake .#hostname # Replace &apos;hostname&apos; with your actual system hostname
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Encrypting for yourself (using a key ID as recipient):&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --encrypt --recipient ABCDEF1234567890 file.txt
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;ls
-│  7 │ file.txt            │ file │     28 B │ now           │
-│  8 │ file.txt.gpg        │ file │    191 B │ now           │
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Encrypting for someone else with their email (public key identifier):&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --output file.gpg --encrypt --recipient jake@proton.me file.txt
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;ls
-file.txt
-file.gpg
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;code&gt;gpg --encrypt&lt;/code&gt; doesn’t modify the original file. It creates a new encrypted
-file by default with &lt;code&gt;gpg&lt;/code&gt; amended to the filename.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --decrypt file.txt.gpg
-gpg: encrypted with cv25519 key, ID 0x4AC131B80CEC833E, created 2025-07-31
-      &quot;GPG Key &amp;lt;sayls8@proton.me&amp;gt;&quot;
-This file will be encrypted
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Or, to save the decrypted text to a file:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --output decrypted_file.txt --decrypt file.txt.gpg
-cat decrypted_file.txt
-# Output
-File: decrypted.txt
-This file will be encrypted
-&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&quot;3&quot;&gt;
+&lt;li&gt;Perform an Impermanence Test (Before Reboot):&lt;/li&gt;
+&lt;/ol&gt;
 &lt;ul&gt;
-&lt;li&gt;You will be asked for the passphrase you used when creating the key in order
-to decrypt the file.&lt;/li&gt;
+&lt;li&gt;Before you reboot, create a temporary directory and file in a non-persistent
+location. Since you haven’t explicitly added &lt;code&gt;/imperm_test&lt;/code&gt; to your
+&lt;code&gt;environment.persistence.&quot;/persist&quot;&lt;/code&gt; directories, this file should not survive
+a reboot.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h3&gt;Sign and Verify Signatures&lt;/h3&gt;
-&lt;p&gt;When you sign a document it is certified and timestamped. If after the doc is
-signed, if the doc is further modified in any way the verification of the
-signature will fail.&lt;/p&gt;
-&lt;p&gt;A signature is created using the private key of the signer, and verified with
-the corresponding public key. For example, to verify Jakes signature you would
-use Jake’s public key to see that the work indeed came from him and hasn’t been
-modified since.&lt;/p&gt;
-&lt;p&gt;To sign the above &lt;code&gt;file.txt&lt;/code&gt;:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg output doc.sig --sign file.txt
-# To clearsign use:
-gpg --clearsign file.txt
-# For a detached signature use:
-gpg --output doc.sig --detach-sig file.txt
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;mkdir /imperm_test
+echo &quot;This should be Gone after Reboot&quot; | sudo tee /imperm_test/testfile
+ls -l /imperm_test/testfile # Verify the file exists
+cat /imperm_test/testfile # Verify content
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;You will be prompted for your passphrase.&lt;/p&gt;
-&lt;p&gt;You can either check the signature or check the signature and recover the
-original document.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;# To only check:
-gpg --output doc --verify doc.sig
-# To verify and extract the document
-gpg --output doc --decrypt doc.sig
+&lt;ol start=&quot;4&quot;&gt;
+&lt;li&gt;Reboot Your System: For the impermanence setup to take full effect and for
+your root filesystem to be reset for the first time, you must reboot your
+machine.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;sudo reboot
 &lt;/code&gt;&lt;/pre&gt;
-&lt;h2&gt;Email Encryption&lt;/h2&gt;
-&lt;p&gt;Email is inherently insecure, and email-based attacks remain one of the top
-vectors for data breaches. Encrypting your email protects your privacy by
-ensuring that only the intended recipient can read it. Encrypting your emails
-with PGP provides valuable security benefits but also has inherent limitations
-that prevent it from being considered truly “secure communication” by modern
-standards.&lt;/p&gt;
+&lt;ol start=&quot;5&quot;&gt;
+&lt;li&gt;Verify Impermanence (After Reboot):&lt;/li&gt;
+&lt;/ol&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&quot;https://emailselfdefense.fsf.org/en/&quot;&gt;Email Self-Defense&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;After the system has rebooted, check if the test directory and file still
+exist:&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;What its Good for:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;Confidentiality, it prevents unauthorized third parties (like email providers
-or network eavesdroppers) from reading your email content.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Integrity and authenticity: Digital signatures verify that the email genuinely
-came from the claimed sender and hasn’t been altered in transit.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Long-term confidentiality: Encrypted emails stored on servers or devices
-remain protected even if the storage is later compromised. With companies like
-Gmail giving you a “free” account, that usually means that you are the product
-and you should tread lightly.&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;To securely communicate with someone never use email, use a dedicated service
-such as Threema, Signal or Brair.&lt;/strong&gt; It’s hard to recommend any messaging service
-at the moment, always do your own research and stay informed on the companies
-policies. Signal has taken some heat for the way it has implemented it’s
-MobileCoin. The biggest issue I’ve faced is getting other people to care or use
-the same e2ee app.&lt;/p&gt;
-&lt;p&gt;With Thunderbird you can go to settings, Privacy and Security, and scroll to the
-bottom where it says “End to End Encryption”, Click the Settings tab there,
-finally click End-To-End Encryption on the left.&lt;/p&gt;
-&lt;p&gt;From there, you can click &lt;code&gt;+ Add Key&lt;/code&gt; next to your email address and either
-generate a new key through Thunderbird. If you use this, choose the Curve
-protocol or whatever isn’t RSA.&lt;/p&gt;
-&lt;p&gt;Or import your own key which is definitely more secure since you’re not trusting
-someone else with your private key:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --export --armor sayls8@gmail.com &amp;gt; publickey.asc
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;ls -l /imperm_test/testfile
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Then select &lt;code&gt;+ Add Key&lt;/code&gt; and choose import your own, this didn’t work for me.
-What did work was to start composing an email and click on the &lt;code&gt;OpenPGP&lt;/code&gt; button,
-Go to &lt;code&gt;Key Manager&lt;/code&gt;, &lt;code&gt;File&lt;/code&gt;, &lt;code&gt;Import Public Key from a File&lt;/code&gt; and choose your
-&lt;code&gt;publickey.asc&lt;/code&gt;. This way, only you have access to your private key.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&quot;https://support.mozilla.org/en-US/kb/introduction-to-e2e-encryption#w_how-e2ee-with-openpgp-works-in-general&quot;&gt;How e2ee with OpenPGP works in general&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;Import your recipient’s public key&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;When you start composing an email, you’ll see that you need to resolve key
-issues if you don’t already have the recipients public key. Click &lt;code&gt;Resolve&lt;/code&gt;, and
-either Discover Public Keys Online… or Import Public Keys From File…&lt;/p&gt;
-&lt;p&gt;Thunderbird has the option to use the OpenPGP Key Manager to view or manage
-public keys of your correspondents.&lt;/p&gt;
-&lt;p&gt;If you’re sending encrypted emails to someone you’ll need their public key,
-there are a few methods of doing this just ensure you verify the Fingerprint
-with the person your talking to.&lt;/p&gt;
-&lt;p&gt;Exporting your public key means creating a copy of the public part of your
-cryptographic key pair that you can share with others.&lt;/p&gt;
-&lt;p&gt;For example, say that Jake wants to send you his public key. First he has to
-export his key:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --output jake.gpg --export jake@proton.me
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The key is exported in binary format, to export in ASCII-armored format use:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --armor --export jake@proton.me
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Now, once he sends this to you, you’ll need to import and validate it:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --import jake.gpg
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Once the key is imported it should be validated. If you need to validate a key
-manually, it is done by verifying the key’s fingerprint and then signing the key
-to certify it as a valid key.&lt;/p&gt;
-&lt;p&gt;Check that it exists in your keychain:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --list-keys
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;You should see Jakes key in the above list.&lt;/p&gt;
-&lt;p&gt;To certify the key you need to edit it:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --edit-key jake@proton.me
-# List the fingerprint
-gpg&amp;gt; fpr
-# once the fingerprint is verified with the owner, sign it
-gpg&amp;gt; sign
-# once signed, you can check the key to list signatures on it
-gpg&amp;gt; check
-&lt;/code&gt;&lt;/pre&gt;
-&lt;blockquote&gt;
-&lt;p&gt;❗ NOTE: You can use PGP to encrypt any message and paste it into &lt;strong&gt;any&lt;/strong&gt;
-software and send it. As long as only you and your recipient are the only
-people to have the private keys, you will be the only people able to decrypt
-the messages. Implementing this correctly is a good way to stop government
-mass surveillance.&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;h2&gt;Make your Public Key Highly Available&lt;/h2&gt;
-&lt;p&gt;You should always make sure that you sign your public key before you publish it.
-When you distribute your public key, you’re distributing the public components
-of your master and subkeys as well as the user IDs. If unsigned, this is a
-security risk because it’s possible for an attacker to tamper with it. The
-public key can be modified by adding or substituting keys, or changing user IDs.&lt;/p&gt;
-&lt;p&gt;Signing the keys provides a web of trust, only the corresponding public key can
-be used to verify the signature and ensure it hasn’t been modified. Since we are
-already only using subkeys for public keys, they are automatically self-signed.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --output ~/mygpg.key --armor --export your_email@address.com
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;You can then send this file to the other party.&lt;/p&gt;
-&lt;p&gt;You can also use the GPG interface to upload your key to a key server:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --list-keys your_email@address.com
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Copy the key ID for the following command, remember its on the &lt;code&gt;pub&lt;/code&gt; line after
-the &lt;code&gt;/&lt;/code&gt;.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --send-keys --keyserver pgp.mit.edu key_id
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The key will be uploaded to the server and likely be distributed to other key
-servers around the world. This is why expiration dates are important, if your
-key is lost or stolen, the damage window is limited to the expiration period.
-Also remember, you can add more time even after the key has expired.&lt;/p&gt;
-&lt;h3&gt;Example: Verifying Arch Linux Download&lt;/h3&gt;
-&lt;details&gt;
-&lt;summary&gt;
-&lt;p&gt;✔️ Click to Expand Example of verifying and signing the archlinux public key&lt;/p&gt;
-&lt;/summary&gt;
-&lt;p&gt;First, download both the arch &lt;code&gt;.iso&lt;/code&gt; and &lt;code&gt;.sig&lt;/code&gt; files.&lt;/p&gt;
-&lt;p&gt;I tried a few different methods from &lt;a href=&quot;https://archlinux.org/download/#checksums&quot;&gt;https://archlinux.org/download/#checksums&lt;/a&gt;
-and the easiest by far was using Sequoia available in Nixpkgs as
-&lt;code&gt;pkgs.sequoia-sq&lt;/code&gt;:&lt;/p&gt;
-&lt;p&gt;Download the archlinux public key:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;sq network wkd search pierre@archlinux.org --output release-key.pgp
-
-Found 2 certificates related to the query:
-
- - 3E80CA1A8B89F69CBA57D98A76A5EF9054449A5C
-   - Pierre Schmitz &amp;lt;pierre@archlinux.org&amp;gt; (UNAUTHENTICATED)
-   - created 2022-10-31 09:11:51 UTC
-   - found via: WKD
-
- - 4AA4767BBC9C4B1D18AE28B77F2D434B9741E8AC
-   - Pierre Schmitz &amp;lt;pierre@archlinux.de&amp;gt; (UNAUTHENTICATED)
-   - created 2011-04-10 09:35:33 UTC
-   - found via: WKD
-
-Hint: To extract a particular certificate from release-key.pgp, use any of:
-
-  $ sq cert export --keyring=release-key.pgp --cert=3E80CA1A8B89F69CBA57D98A76A5EF9054449A5C
-
-  $ sq cert export --keyring=release-key.pgp --cert=4AA4767BBC9C4B1D18AE28B77F2D434B9741E8AC
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Export the chosen key to a &lt;code&gt;.pgp&lt;/code&gt; file:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;sq cert export --keyring=release-key.pgp --cert=3E80CA1A8B89F69CBA57D98A76A5EF9054449A5C &amp;gt; pierre-archlinux.pgp
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Import into your keychain:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt; gpg --import pierre-archlinux.pgp
-gpg: key 0x76A5EF9054449A5C: 9 signatures not checked due to missing keys
-gpg: key 0x76A5EF9054449A5C: public key &quot;Pierre Schmitz &amp;lt;pierre@archlinux.org&amp;gt;&quot; imported
-gpg: Total number processed: 1
-gpg:               imported: 1
-gpg: marginals needed: 3  completes needed: 1  trust model: pgp
-gpg: depth: 0  valid:   3  signed:   0  trust: 0-, 0q, 0n, 0m, 0f, 3u
-gpg: next trustdb check due at 2026-08-23
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Now, you should see &lt;code&gt;&amp;lt;pierre@archlinux.org&amp;gt;&lt;/code&gt; and his keys when you run
-&lt;code&gt;gpg --list-keys&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;Finally, verify the signature:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;sq verify --signer-file release-key.pgp --signature-file archlinux-2025.08.01-x86_64.iso.sig archlinux-2025.08.01-x86_64.iso
-Authenticated signature made by 3E80CA1A8B89F69CBA57D98A76A5EF9054449A5C (Pierre Schmitz &amp;lt;pierre@archlinux.org&amp;gt;)
-
-1 authenticated signature.
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;This shows that the signature was made by the key with the ID
-&lt;code&gt;3E80CA1A8B89F69CBA57D98A76A5EF9054449A5C&lt;/code&gt; (Pierre Schmitz).&lt;/p&gt;
-&lt;p&gt;GPG authenticated that the signature is valid and that the key used to sign is
-trusted in our keyring.&lt;/p&gt;
-&lt;p&gt;1 authenticated signature confirms the files integrity and authenticity.&lt;/p&gt;
-&lt;p&gt;We have successfully verified that the file was signed by Pierr’s official Arch
-Linux key and has not been tampered with.&lt;/p&gt;
-&lt;p&gt;Since the key has been verified we can now sign it. We will have to import our
-primary key to do so since we are keeping it offline for safety.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --import backup.gpg
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;List your keys to get the arch keyID:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --list-keys
-# ... snip ...
-pub   ed25519/0x76A5EF9054449A5C 2022-10-31 [SC] [expires: 2037-10-27]
-      Key fingerprint = 3E80 CA1A 8B89 F69C BA57  D98A 76A5 EF90 5444 9A5C
-uid                   [  full  ] Pierre Schmitz &amp;lt;pierre@archlinux.org&amp;gt;
-uid                   [  full  ] Pierre Schmitz &amp;lt;pierre@archlinux.de&amp;gt;
-sub   ed25519/0xD6D13C45BFCFBAFD 2022-10-31 [A] [expires: 2037-10-27]
-sub   cv25519/0x7F56ADE50CA3D899 2022-10-31 [E] [expires: 2037-10-27]
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Sign the key:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --sign-key 0x76A5EF9054449A5C
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Now you can Export and publish the new public key and send it to a keyserver:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --export --armor 0x76A5EF9054449A5C &amp;gt; archlinux-signed.asc
-gpg --send-keys 0x76A5EF9054449A5C
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The more people that verify, sign, and re-export and publish their keys the
-better for the web of trust that gpg uses making the network more secure for
-everyone.&lt;/p&gt;
-&lt;h3&gt;Edit your trust level of the key&lt;/h3&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;gpg --edit-key pierre@archlinux.org
-gpg&amp;gt; trust
-Please decide how far you trust this user to correctly verify other users&apos; keys
-(by looking at passports, checking fingerprints from different sources, etc.)
-
-  1 = I don&apos;t know or won&apos;t say
-  2 = I do NOT trust
-  3 = I trust marginally
-  4 = I trust fully
-  5 = I trust ultimately
-  m = back to the main menu
-
-Your decision? 3
-# Output:
-pub  ed25519/0x76A5EF9054449A5C
-     created: 2022-10-31  expires: 2037-10-27  usage: SC
-     trust: marginal      validity: full
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;You can see that the trust is &lt;code&gt;marginal&lt;/code&gt; and validity is &lt;code&gt;full&lt;/code&gt;.&lt;/p&gt;
-&lt;/details&gt;
+&lt;p&gt;You should see an output like &lt;code&gt;ls: cannot access &apos;/imperm_test/testfile&apos;&lt;/code&gt;: No
+such file or directory. This confirms that the &lt;code&gt;/imperm_test&lt;/code&gt; directory and its
+contents were indeed ephemeral and were removed during the reboot process,
+indicating your impermanence setup is working correctly!&lt;/p&gt;
+&lt;p&gt;Your system should now come up with a fresh root filesystem, and only the data
+specified in your &lt;code&gt;environment.persistence.&quot;/persist&quot;&lt;/code&gt; configuration will be
+persistent.&lt;/p&gt;
 </content></entry><entry><title>KVM</title><id>https://saylesss88.github.io/nix/kvm.html</id><updated>2025-12-06T00:00:00+00:00</updated><link href="https://saylesss88.github.io/nix/kvm.html" rel="alternate"/><content type="html">&lt;h1&gt;Running NixOS in a VM with Maximum Isolation (Beginner Guide)&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; Click to Expand Table of Contents&lt;/summary&gt;
@@ -7480,232 +8075,6 @@ and within a few days the global DNS will work again.&lt;/p&gt;
 &lt;p&gt;&lt;a href=&quot;https://bitgrounds.tech/posts/kvm-qemu-libvirt-virtualization/&quot;&gt;Virtualization on Linux using the KVM/QEMU/Libvirt stack&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-</content></entry><entry><title>Encrypted Impermanence</title><id>https://saylesss88.github.io/nix/encrypted_impermanence.html</id><updated>2025-12-06T00:00:00+00:00</updated><link href="https://saylesss88.github.io/nix/encrypted_impermanence.html" rel="alternate"/><content type="html">&lt;h1&gt;Encrypted Impermanence&lt;/h1&gt;
-&lt;details&gt;
-&lt;summary&gt; ✔️ Table of Contents&lt;/summary&gt;
-&lt;!-- toc --&gt;
-&lt;/details&gt;
-&lt;blockquote&gt;
-&lt;p&gt;❗ Important Note: This guide details a setup involving encrypted partitions
-and impermanent NixOS. While powerful, such configurations require careful
-attention to detail. Incorrect steps, especially concerning encryption keys or
-persistent data paths, can lead to &lt;strong&gt;permanent data loss&lt;/strong&gt;. Please read all
-instructions thoroughly before proceeding and consider backing up any critical
-data beforehand. This has only been tested with the disk layout described in
-&lt;a href=&quot;https://saylesss88.github.io/installation/encrypted_manual.html&quot;&gt;Encrypted Setups&lt;/a&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;h3&gt;Getting Started&lt;/h3&gt;
-&lt;ol&gt;
-&lt;li&gt;Add impermanence to your &lt;code&gt;flake.nix&lt;/code&gt;. You will change the &lt;code&gt;hostname&lt;/code&gt; in the
-flake to match your &lt;code&gt;networking.hostName&lt;/code&gt;.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;# flake.nix
-{
-  description = &quot;NixOS configuration&quot;;
-
-  inputs = {
-    nixpkgs.url = &quot;github:nixos/nixpkgs/nixos-unstable&quot;;
-    disko.url = &quot;github:nix-community/disko/latest&quot;;
-    disko.inputs.nixpkgs.follows = &quot;nixpkgs&quot;;
-    impermanence.url = &quot;github:nix-community/impermanence&quot;;
-  };
-
-  outputs = inputs@{ nixpkgs, ... }: {
-    nixosConfigurations = {
-      hostname = nixpkgs.lib.nixosSystem {
-        system = &quot;x86_64-linux&quot;;
-        modules = [
-          ./configuration.nix
-          inputs.disko.nixosModules.disko
-          inputs.impermanence.nixosModules.impermanence
-        ];
-      };
-    };
-  };
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;ol start=&quot;2&quot;&gt;
-&lt;li&gt;Discover where your root subvolume is located with &lt;code&gt;findmnt&lt;/code&gt;:&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;If you followed the
-&lt;a href=&quot;https://saylesss88.github.io/installation/encrypted_manual.html&quot;&gt;Encrypted Setups&lt;/a&gt;
-guide, your encrypted subvolume should be located at:
-&lt;code&gt;/dev/mapper/cryptroot /mnt&lt;/code&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Your encrypted Btrfs partition, once unlocked by LUKS, will be available at
-&lt;code&gt;/dev/mapper/cryptroot&lt;/code&gt; as configured here in the &lt;code&gt;disk-config.nix&lt;/code&gt;:&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;# disk-config2.nix
-# ... snip ...
-            luks = {
-              size = &quot;100%&quot;;
-              label = &quot;luks&quot;;
-              content = {
-                type = &quot;luks&quot;;
-                name = &quot;cryptroot&quot;;
-                content = {
-# ... snip ...
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Double check that the paths exist:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;cd /dev/mapper/crypt&amp;lt;TAB&amp;gt;  # autocomplete should fill out /dev/mapper/cryptroot
-&lt;/code&gt;&lt;/pre&gt;
-&lt;ol start=&quot;3&quot;&gt;
-&lt;li&gt;Create an &lt;code&gt;impermanence.nix&lt;/code&gt;:&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;Now, create a new file named &lt;code&gt;impermanence.nix&lt;/code&gt; in your configuration directory
-(i.e. your flake directory). This file will contain all the specific settings
-for your impermanent setup, including BTRFS subvolume management and persistent
-data locations. Since this file is right next to your &lt;code&gt;configuration.nix&lt;/code&gt;,
-you’ll just add an &lt;code&gt;imports = [ ./impermanence.nix ]&lt;/code&gt; to your
-&lt;code&gt;configuration.nix&lt;/code&gt; apply it to your configuration.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;{
-  config,
-  lib,
-  ...
-}: {
-  boot.initrd.postDeviceCommands = lib.mkAfter &apos;&apos;
-    echo &quot;Rollback running&quot; &amp;gt; /mnt/rollback.log
-     mkdir -p /mnt
-     mount -t btrfs /dev/mapper/cryptroot /mnt
-
-     # Recursively delete all nested subvolumes inside /mnt/root
-     btrfs subvolume list -o /mnt/root | cut -f9 -d&apos; &apos; | while read subvolume; do
-       echo &quot;Deleting /$subvolume subvolume...&quot; &amp;gt;&amp;gt; /mnt/rollback.log
-       btrfs subvolume delete &quot;/mnt/$subvolume&quot;
-     done
-
-     echo &quot;Deleting /root subvolume...&quot; &amp;gt;&amp;gt; /mnt/rollback.log
-     btrfs subvolume delete /mnt/root
-
-     echo &quot;Restoring blank /root subvolume...&quot; &amp;gt;&amp;gt; /mnt/rollback.log
-     btrfs subvolume snapshot /mnt/root-blank /mnt/root
-
-     umount /mnt
-  &apos;&apos;;
-
-  environment.persistence.&quot;/persist&quot; = {
-    directories = [
-      &quot;/etc&quot;
-      &quot;/var/spool&quot;
-      &quot;/root&quot;
-      &quot;/srv&quot;
-      &quot;/etc/NetworkManager/system-connections&quot;
-      &quot;/var/lib/bluetooth&quot;
-    ];
-    files = [
-      # &quot;/etc/machine-id&quot;
-      # Add more files you want to persist
-    ];
-  };
-
-# optional quality of life setting
-  security.sudo.extraConfig = &apos;&apos;
-    Defaults lecture = never
-  &apos;&apos;;
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;/mnt/rollback.log&lt;/code&gt;: this log will be available during the boot process for
-debugging if the rollback fails, but won’t persist.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;With the above impermanence script, the btrfs subvolumes are deleted recursively
-and replaced with the &lt;code&gt;root-blank&lt;/code&gt; snapshot we took during the install.&lt;/p&gt;
-&lt;p&gt;I have commented out &lt;code&gt;&quot;/etc/machine-id&quot;&lt;/code&gt; because we already copied over all of
-the files to their persistent location and the above setting would work once and
-then cause a conflict.&lt;/p&gt;
-&lt;h2&gt;configuration.nix changes&lt;/h2&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;# configuration.nix
-  boot.initrd.luks.devices = {
-    cryptroot = {
-      device = &quot;/dev/disk/by-partlabel/luks&quot;;
-      allowDiscards = true;
-      preLVM = true;
-    };
-  };
-&lt;/code&gt;&lt;/pre&gt;
-&lt;ul&gt;
-&lt;li&gt;This defines how your system’s initial ramdisk (&lt;code&gt;initrd&lt;/code&gt;) should handle a
-specific encrypted disk during the boot process. It helps with timing and is a
-more robust way of telling Nix that we are using an encrypted disk.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;The following is optional to enable &lt;code&gt;autoScrub&lt;/code&gt; for btrfs, the wiki shows
-&lt;code&gt;interval = &quot;monthly&quot;;&lt;/code&gt; FYI.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;# configuration.nix
-  services.btrfs.autoScrub = {
-    enable = true;
-    interval = &quot;weekly&quot;;
-    fileSystems = [&quot;/&quot;];
-  };
-&lt;/code&gt;&lt;/pre&gt;
-&lt;ul&gt;
-&lt;li&gt;Remember to ensure that your &lt;code&gt;hostname&lt;/code&gt; in your &lt;code&gt;configuration.nix&lt;/code&gt; matches
-the &lt;code&gt;hostname&lt;/code&gt; in your &lt;code&gt;flake.nix&lt;/code&gt;.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;Applying Your Impermanence Configuration&lt;/h3&gt;
-&lt;p&gt;Once you have completed all the steps and created or modified the necessary
-files (&lt;code&gt;flake.nix&lt;/code&gt;, &lt;code&gt;impermanence.nix&lt;/code&gt;), you need to apply these changes to your
-NixOS system.&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Navigate to your NixOS configuration directory (where your &lt;code&gt;flake.nix&lt;/code&gt; is
-located).&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;cd /path/to/your/flake
-&lt;/code&gt;&lt;/pre&gt;
-&lt;ol start=&quot;2&quot;&gt;
-&lt;li&gt;Rebuild and Switch: Execute the &lt;code&gt;nixos-rebuild switch&lt;/code&gt; command. This command
-will:&lt;/li&gt;
-&lt;/ol&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;Evaluate your &lt;code&gt;flake.nix&lt;/code&gt; and the modules it imports (including your new
-&lt;code&gt;impermanence.nix&lt;/code&gt;).&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Build a new NixOS system closure based on your updated configuration.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Activate the new system configuration, making it the current running system.&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;sudo nixos-rebuild switch --flake .#hostname # Replace &apos;hostname&apos; with your actual system hostname
-&lt;/code&gt;&lt;/pre&gt;
-&lt;ol start=&quot;3&quot;&gt;
-&lt;li&gt;Perform an Impermanence Test (Before Reboot):&lt;/li&gt;
-&lt;/ol&gt;
-&lt;ul&gt;
-&lt;li&gt;Before you reboot, create a temporary directory and file in a non-persistent
-location. Since you haven’t explicitly added &lt;code&gt;/imperm_test&lt;/code&gt; to your
-&lt;code&gt;environment.persistence.&quot;/persist&quot;&lt;/code&gt; directories, this file should not survive
-a reboot.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;mkdir /imperm_test
-echo &quot;This should be Gone after Reboot&quot; | sudo tee /imperm_test/testfile
-ls -l /imperm_test/testfile # Verify the file exists
-cat /imperm_test/testfile # Verify content
-&lt;/code&gt;&lt;/pre&gt;
-&lt;ol start=&quot;4&quot;&gt;
-&lt;li&gt;Reboot Your System: For the impermanence setup to take full effect and for
-your root filesystem to be reset for the first time, you must reboot your
-machine.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;sudo reboot
-&lt;/code&gt;&lt;/pre&gt;
-&lt;ol start=&quot;5&quot;&gt;
-&lt;li&gt;Verify Impermanence (After Reboot):&lt;/li&gt;
-&lt;/ol&gt;
-&lt;ul&gt;
-&lt;li&gt;After the system has rebooted, check if the test directory and file still
-exist:&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;ls -l /imperm_test/testfile
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;You should see an output like &lt;code&gt;ls: cannot access &apos;/imperm_test/testfile&apos;&lt;/code&gt;: No
-such file or directory. This confirms that the &lt;code&gt;/imperm_test&lt;/code&gt; directory and its
-contents were indeed ephemeral and were removed during the reboot process,
-indicating your impermanence setup is working correctly!&lt;/p&gt;
-&lt;p&gt;Your system should now come up with a fresh root filesystem, and only the data
-specified in your &lt;code&gt;environment.persistence.&quot;/persist&quot;&lt;/code&gt; configuration will be
-persistent.&lt;/p&gt;
 </content></entry><entry><title>Cachix devour-flake</title><id>https://saylesss88.github.io/nix/cachix_devour.html</id><updated>2025-12-05T00:00:00+00:00</updated><link href="https://saylesss88.github.io/nix/cachix_devour.html" rel="alternate"/><content type="html">&lt;h1&gt;Cachix and the devour-flake&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Table of Contents&lt;/summary&gt;
@@ -16823,6 +17192,252 @@ can be deleted or rolled back as needed.&lt;/li&gt;
 &lt;p&gt;&lt;a href=&quot;https://btrfs.readthedocs.io/en/latest/Subvolumes.html&quot;&gt;BTRFS Subvolumes&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;To continue following along and set up impermanence
 &lt;a href=&quot;https://saylesss88.github.io/installation/unencrypted/impermanence.html&quot;&gt;Click Here&lt;/a&gt;&lt;/p&gt;
+</content></entry><entry><title>Encrypted Impermanence</title><id>https://saylesss88.github.io/installation/enc/encrypted_impermanence.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="https://saylesss88.github.io/installation/enc/encrypted_impermanence.html" rel="alternate"/><content type="html">&lt;h1&gt;Encrypted Impermanence&lt;/h1&gt;
+&lt;details&gt;
+&lt;summary&gt; ✔️ Click to Expand Table of Contents&lt;/summary&gt;
+&lt;!-- toc --&gt;
+&lt;/details&gt;
+&lt;blockquote&gt;
+&lt;p&gt;❗ Important Note: This guide details a setup involving encrypted partitions
+and impermanent NixOS. While powerful, such configurations require careful
+attention to detail. Incorrect steps, especially concerning encryption keys or
+persistent data paths, can lead to &lt;strong&gt;permanent data loss&lt;/strong&gt;. Please read all
+instructions thoroughly before proceeding and consider backing up any critical
+data beforehand. This has only been tested with the disk layout described in
+&lt;a href=&quot;https://saylesss88.github.io/installation/encrypted_manual.html&quot;&gt;Encrypted Setups&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;As a system operates, it gradually accumulates state on its root partition. This
+state is stored in various directories such as &lt;code&gt;/etc&lt;/code&gt; and &lt;code&gt;/var&lt;/code&gt;, capturing all
+the configuration changes, logs, and other modifications—whether they’re
+well-documented or the result of ad-hoc adjustments made while setting up and
+running services.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Impermanence&lt;/strong&gt;,in the context of operating systems, refers to a setup where
+the majority of the system’s root filesystem (&lt;code&gt;/&lt;/code&gt;) is reset to a pristine state
+on every reboot. This means any changes made to the system (e.g., installing new
+packages, modifying system files outside of configuration management, creating
+temporary files) are discarded upon shutdown or reboot.&lt;/p&gt;
+&lt;p&gt;Having an impermanent root and &lt;code&gt;/tmp&lt;/code&gt; has some security benefits as well. By
+reducing your persistent footprint you reduce your chance of leaving behind
+sensitive activity or data. Since Nix can boot with only &lt;code&gt;/nix&lt;/code&gt; and &lt;code&gt;/boot&lt;/code&gt;,
+experienced users familiar with “stateless” systems can take advantage of this
+smaller attack surface.&lt;/p&gt;
+&lt;p&gt;Although this setup does not use &lt;code&gt;/tmp&lt;/code&gt; as the root filesystem, the root itself
+is restored to its original state upon each reboot, as it was at installation.
+However, by configuring &lt;code&gt;/tmp&lt;/code&gt; to reside in RAM, you ensure that temporary files
+including sensitive data like passwords are stored only in volatile memory and
+are automatically cleared on shutdown or reboot. This significantly enhances the
+security of temporary data by preventing it from ever being written to disk.&lt;/p&gt;
+&lt;h3&gt;Getting Started&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;Add impermanence to your &lt;code&gt;flake.nix&lt;/code&gt;. You will change the &lt;code&gt;hostname&lt;/code&gt; in the
+flake to match your &lt;code&gt;networking.hostName&lt;/code&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;# flake.nix
+{
+  description = &quot;NixOS configuration&quot;;
+
+  inputs = {
+    nixpkgs.url = &quot;github:nixos/nixpkgs/nixos-unstable&quot;;
+    disko.url = &quot;github:nix-community/disko/latest&quot;;
+    disko.inputs.nixpkgs.follows = &quot;nixpkgs&quot;;
+    impermanence.url = &quot;github:nix-community/impermanence&quot;;
+  };
+
+  outputs = inputs@{ nixpkgs, ... }: {
+    nixosConfigurations = {
+      hostname = nixpkgs.lib.nixosSystem {
+        system = &quot;x86_64-linux&quot;;
+        modules = [
+          ./configuration.nix
+          inputs.disko.nixosModules.disko
+          inputs.impermanence.nixosModules.impermanence
+        ];
+      };
+    };
+  };
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&quot;2&quot;&gt;
+&lt;li&gt;Discover where your root subvolume is located with &lt;code&gt;findmnt&lt;/code&gt;:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;If you followed the
+&lt;a href=&quot;https://saylesss88.github.io/installation/encrypted_manual.html&quot;&gt;Encrypted Setups&lt;/a&gt;
+guide, your encrypted subvolume should be located at:
+&lt;code&gt;/dev/mapper/cryptroot /mnt&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Your encrypted Btrfs partition, once unlocked by LUKS, will be available at
+&lt;code&gt;/dev/mapper/cryptroot&lt;/code&gt; as configured here in the &lt;code&gt;disk-config.nix&lt;/code&gt;:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;# disk-config2.nix
+# ... snip ...
+            luks = {
+              size = &quot;100%&quot;;
+              label = &quot;luks&quot;;
+              content = {
+                type = &quot;luks&quot;;
+                name = &quot;cryptroot&quot;;
+                content = {
+# ... snip ...
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Double check that the paths exist:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;cd /dev/mapper/crypt&amp;lt;TAB&amp;gt;  # autocomplete should fill out /dev/mapper/cryptroot
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&quot;3&quot;&gt;
+&lt;li&gt;Create an &lt;code&gt;impermanence.nix&lt;/code&gt;:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Now, create a new file named &lt;code&gt;impermanence.nix&lt;/code&gt; in your configuration directory
+(i.e. your flake directory). This file will contain all the specific settings
+for your impermanent setup, including BTRFS subvolume management and persistent
+data locations. Since this file is right next to your &lt;code&gt;configuration.nix&lt;/code&gt;,
+you’ll just add an &lt;code&gt;imports = [ ./impermanence.nix ]&lt;/code&gt; to your
+&lt;code&gt;configuration.nix&lt;/code&gt; apply it to your configuration.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;{
+  config,
+  lib,
+  ...
+}: {
+  boot.initrd.postDeviceCommands = lib.mkAfter &apos;&apos;
+    echo &quot;Rollback running&quot; &amp;gt; /mnt/rollback.log
+     mkdir -p /mnt
+     mount -t btrfs /dev/mapper/cryptroot /mnt
+
+     # Recursively delete all nested subvolumes inside /mnt/root
+     btrfs subvolume list -o /mnt/root | cut -f9 -d&apos; &apos; | while read subvolume; do
+       echo &quot;Deleting /$subvolume subvolume...&quot; &amp;gt;&amp;gt; /mnt/rollback.log
+       btrfs subvolume delete &quot;/mnt/$subvolume&quot;
+     done
+
+     echo &quot;Deleting /root subvolume...&quot; &amp;gt;&amp;gt; /mnt/rollback.log
+     btrfs subvolume delete /mnt/root
+
+     echo &quot;Restoring blank /root subvolume...&quot; &amp;gt;&amp;gt; /mnt/rollback.log
+     btrfs subvolume snapshot /mnt/root-blank /mnt/root
+
+     umount /mnt
+  &apos;&apos;;
+
+  environment.persistence.&quot;/persist&quot; = {
+    directories = [
+      &quot;/etc&quot;
+      &quot;/var/spool&quot;
+      &quot;/srv&quot;
+      &quot;/etc/NetworkManager/system-connections&quot;
+      &quot;/var/lib/bluetooth&quot;
+    ];
+    files = [
+      # &quot;/etc/machine-id&quot;
+      # Add more files you want to persist
+    ];
+  };
+
+# optional quality of life setting
+  security.sudo.extraConfig = &apos;&apos;
+    Defaults lecture = never
+  &apos;&apos;;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;/mnt/rollback.log&lt;/code&gt;: this log will be available during the boot process for
+debugging if the rollback fails, but won’t persist.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;With the above impermanence script, the btrfs subvolumes are deleted recursively
+and replaced with the &lt;code&gt;root-blank&lt;/code&gt; snapshot we took during the install.&lt;/p&gt;
+&lt;p&gt;I have commented out &lt;code&gt;&quot;/etc/machine-id&quot;&lt;/code&gt; because we already copied over all of
+the files to their persistent location and the above setting would work once and
+then cause a conflict.&lt;/p&gt;
+&lt;h2&gt;configuration.nix changes&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;# configuration.nix
+  boot.initrd.luks.devices = {
+    cryptroot = {
+      device = &quot;/dev/disk/by-partlabel/luks&quot;;
+      allowDiscards = true;
+      preLVM = true;
+    };
+  };
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;This defines how your system’s initial ramdisk (&lt;code&gt;initrd&lt;/code&gt;) should handle a
+specific encrypted disk during the boot process. It helps with timing and is a
+more robust way of telling Nix that we are using an encrypted disk.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The following is optional to enable &lt;code&gt;autoScrub&lt;/code&gt; for btrfs, the wiki shows
+&lt;code&gt;interval = &quot;monthly&quot;;&lt;/code&gt; FYI.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;# configuration.nix
+  services.btrfs.autoScrub = {
+    enable = true;
+    interval = &quot;weekly&quot;;
+    fileSystems = [&quot;/&quot;];
+  };
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;Remember to ensure that your &lt;code&gt;hostname&lt;/code&gt; in your &lt;code&gt;configuration.nix&lt;/code&gt; matches
+the &lt;code&gt;hostname&lt;/code&gt; in your &lt;code&gt;flake.nix&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;Applying Your Impermanence Configuration&lt;/h3&gt;
+&lt;p&gt;Once you have completed all the steps and created or modified the necessary
+files (&lt;code&gt;flake.nix&lt;/code&gt;, &lt;code&gt;impermanence.nix&lt;/code&gt;), you need to apply these changes to your
+NixOS system.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Navigate to your NixOS configuration directory (where your &lt;code&gt;flake.nix&lt;/code&gt; is
+located).&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;cd /path/to/your/flake
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&quot;2&quot;&gt;
+&lt;li&gt;Rebuild and Switch: Execute the &lt;code&gt;nixos-rebuild switch&lt;/code&gt; command. This command
+will:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Evaluate your &lt;code&gt;flake.nix&lt;/code&gt; and the modules it imports (including your new
+&lt;code&gt;impermanence.nix&lt;/code&gt;).&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Build a new NixOS system closure based on your updated configuration.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Activate the new system configuration, making it the current running system.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;sudo nixos-rebuild switch --flake .#hostname # Replace &apos;hostname&apos; with your actual system hostname
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&quot;3&quot;&gt;
+&lt;li&gt;Perform an Impermanence Test (Before Reboot):&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;Before you reboot, create a temporary directory and file in a non-persistent
+location. Since you haven’t explicitly added &lt;code&gt;/imperm_test&lt;/code&gt; to your
+&lt;code&gt;environment.persistence.&quot;/persist&quot;&lt;/code&gt; directories, this file should not survive
+a reboot.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;mkdir /imperm_test
+echo &quot;This should be Gone after Reboot&quot; | sudo tee /imperm_test/testfile
+ls -l /imperm_test/testfile # Verify the file exists
+cat /imperm_test/testfile # Verify content
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&quot;4&quot;&gt;
+&lt;li&gt;Reboot Your System: For the impermanence setup to take full effect and for
+your root filesystem to be reset for the first time, you must reboot your
+machine.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;sudo reboot
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&quot;5&quot;&gt;
+&lt;li&gt;Verify Impermanence (After Reboot):&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;After the system has rebooted, check if the test directory and file still
+exist:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;ls -l /imperm_test/testfile
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You should see an output like &lt;code&gt;ls: cannot access &apos;/imperm_test/testfile&apos;&lt;/code&gt;: No
+such file or directory. This confirms that the &lt;code&gt;/imperm_test&lt;/code&gt; directory and its
+contents were indeed ephemeral and were removed during the reboot process,
+indicating your impermanence setup is working correctly!&lt;/p&gt;
+&lt;p&gt;Your system should now come up with a fresh root filesystem, and only the data
+specified in your &lt;code&gt;environment.persistence.&quot;/persist&quot;&lt;/code&gt; configuration will be
+persistent.&lt;/p&gt;
 </content></entry><entry><title>Sops-Nix</title><id>https://saylesss88.github.io/installation/enc/sops-nix.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="https://saylesss88.github.io/installation/enc/sops-nix.html" rel="alternate"/><content type="html">&lt;h1&gt;Sops-Nix encrypted secrets&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; Click to Expand Table of Contents&lt;/summary&gt;
@@ -17357,253 +17972,6 @@ bypasses Secure Boot, they cannot read or modify your files without your
 passphrase&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
-</content></entry><entry><title>Encrypted Impermanence</title><id>https://saylesss88.github.io/installation/enc/encrypted_impermanence.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="https://saylesss88.github.io/installation/enc/encrypted_impermanence.html" rel="alternate"/><content type="html">&lt;h1&gt;Encrypted Impermanence&lt;/h1&gt;
-&lt;details&gt;
-&lt;summary&gt; ✔️ Click to Expand Table of Contents&lt;/summary&gt;
-&lt;!-- toc --&gt;
-&lt;/details&gt;
-&lt;blockquote&gt;
-&lt;p&gt;❗ Important Note: This guide details a setup involving encrypted partitions
-and impermanent NixOS. While powerful, such configurations require careful
-attention to detail. Incorrect steps, especially concerning encryption keys or
-persistent data paths, can lead to &lt;strong&gt;permanent data loss&lt;/strong&gt;. Please read all
-instructions thoroughly before proceeding and consider backing up any critical
-data beforehand. This has only been tested with the disk layout described in
-&lt;a href=&quot;https://saylesss88.github.io/installation/encrypted_manual.html&quot;&gt;Encrypted Setups&lt;/a&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;As a system operates, it gradually accumulates state on its root partition. This
-state is stored in various directories such as &lt;code&gt;/etc&lt;/code&gt; and &lt;code&gt;/var&lt;/code&gt;, capturing all
-the configuration changes, logs, and other modifications—whether they’re
-well-documented or the result of ad-hoc adjustments made while setting up and
-running services.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Impermanence&lt;/strong&gt;,in the context of operating systems, refers to a setup where
-the majority of the system’s root filesystem (&lt;code&gt;/&lt;/code&gt;) is reset to a pristine state
-on every reboot. This means any changes made to the system (e.g., installing new
-packages, modifying system files outside of configuration management, creating
-temporary files) are discarded upon shutdown or reboot.&lt;/p&gt;
-&lt;p&gt;Having an impermanent root and &lt;code&gt;/tmp&lt;/code&gt; has some security benefits as well. By
-reducing your persistent footprint you reduce your chance of leaving behind
-sensitive activity or data. Since Nix can boot with only &lt;code&gt;/nix&lt;/code&gt; and &lt;code&gt;/boot&lt;/code&gt;,
-experienced users familiar with “stateless” systems can take advantage of this
-smaller attack surface.&lt;/p&gt;
-&lt;p&gt;Although this setup does not use &lt;code&gt;/tmp&lt;/code&gt; as the root filesystem, the root itself
-is restored to its original state upon each reboot, as it was at installation.
-However, by configuring &lt;code&gt;/tmp&lt;/code&gt; to reside in RAM, you ensure that temporary files
-including sensitive data like passwords are stored only in volatile memory and
-are automatically cleared on shutdown or reboot. This significantly enhances the
-security of temporary data by preventing it from ever being written to disk.&lt;/p&gt;
-&lt;h3&gt;Getting Started&lt;/h3&gt;
-&lt;ol&gt;
-&lt;li&gt;Add impermanence to your &lt;code&gt;flake.nix&lt;/code&gt;. You will change the &lt;code&gt;hostname&lt;/code&gt; in the
-flake to match your &lt;code&gt;networking.hostName&lt;/code&gt;.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;# flake.nix
-{
-  description = &quot;NixOS configuration&quot;;
-
-  inputs = {
-    nixpkgs.url = &quot;github:nixos/nixpkgs/nixos-unstable&quot;;
-    disko.url = &quot;github:nix-community/disko/latest&quot;;
-    disko.inputs.nixpkgs.follows = &quot;nixpkgs&quot;;
-    impermanence.url = &quot;github:nix-community/impermanence&quot;;
-  };
-
-  outputs = inputs@{ nixpkgs, ... }: {
-    nixosConfigurations = {
-      hostname = nixpkgs.lib.nixosSystem {
-        system = &quot;x86_64-linux&quot;;
-        modules = [
-          ./configuration.nix
-          inputs.disko.nixosModules.disko
-          inputs.impermanence.nixosModules.impermanence
-        ];
-      };
-    };
-  };
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;ol start=&quot;2&quot;&gt;
-&lt;li&gt;Discover where your root subvolume is located with &lt;code&gt;findmnt&lt;/code&gt;:&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;If you followed the
-&lt;a href=&quot;https://saylesss88.github.io/installation/encrypted_manual.html&quot;&gt;Encrypted Setups&lt;/a&gt;
-guide, your encrypted subvolume should be located at:
-&lt;code&gt;/dev/mapper/cryptroot /mnt&lt;/code&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Your encrypted Btrfs partition, once unlocked by LUKS, will be available at
-&lt;code&gt;/dev/mapper/cryptroot&lt;/code&gt; as configured here in the &lt;code&gt;disk-config.nix&lt;/code&gt;:&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;# disk-config2.nix
-# ... snip ...
-            luks = {
-              size = &quot;100%&quot;;
-              label = &quot;luks&quot;;
-              content = {
-                type = &quot;luks&quot;;
-                name = &quot;cryptroot&quot;;
-                content = {
-# ... snip ...
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Double check that the paths exist:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;cd /dev/mapper/crypt&amp;lt;TAB&amp;gt;  # autocomplete should fill out /dev/mapper/cryptroot
-&lt;/code&gt;&lt;/pre&gt;
-&lt;ol start=&quot;3&quot;&gt;
-&lt;li&gt;Create an &lt;code&gt;impermanence.nix&lt;/code&gt;:&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;Now, create a new file named &lt;code&gt;impermanence.nix&lt;/code&gt; in your configuration directory
-(i.e. your flake directory). This file will contain all the specific settings
-for your impermanent setup, including BTRFS subvolume management and persistent
-data locations. Since this file is right next to your &lt;code&gt;configuration.nix&lt;/code&gt;,
-you’ll just add an &lt;code&gt;imports = [ ./impermanence.nix ]&lt;/code&gt; to your
-&lt;code&gt;configuration.nix&lt;/code&gt; apply it to your configuration.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;{
-  config,
-  lib,
-  ...
-}: {
-  boot.initrd.postDeviceCommands = lib.mkAfter &apos;&apos;
-    echo &quot;Rollback running&quot; &amp;gt; /mnt/rollback.log
-     mkdir -p /mnt
-     mount -t btrfs /dev/mapper/cryptroot /mnt
-
-     # Recursively delete all nested subvolumes inside /mnt/root
-     btrfs subvolume list -o /mnt/root | cut -f9 -d&apos; &apos; | while read subvolume; do
-       echo &quot;Deleting /$subvolume subvolume...&quot; &amp;gt;&amp;gt; /mnt/rollback.log
-       btrfs subvolume delete &quot;/mnt/$subvolume&quot;
-     done
-
-     echo &quot;Deleting /root subvolume...&quot; &amp;gt;&amp;gt; /mnt/rollback.log
-     btrfs subvolume delete /mnt/root
-
-     echo &quot;Restoring blank /root subvolume...&quot; &amp;gt;&amp;gt; /mnt/rollback.log
-     btrfs subvolume snapshot /mnt/root-blank /mnt/root
-
-     umount /mnt
-  &apos;&apos;;
-
-  environment.persistence.&quot;/persist&quot; = {
-    directories = [
-      &quot;/etc&quot;
-      &quot;/var/spool&quot;
-      &quot;/root&quot;
-      &quot;/srv&quot;
-      &quot;/etc/NetworkManager/system-connections&quot;
-      &quot;/var/lib/bluetooth&quot;
-    ];
-    files = [
-      # &quot;/etc/machine-id&quot;
-      # Add more files you want to persist
-    ];
-  };
-
-# optional quality of life setting
-  security.sudo.extraConfig = &apos;&apos;
-    Defaults lecture = never
-  &apos;&apos;;
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;/mnt/rollback.log&lt;/code&gt;: this log will be available during the boot process for
-debugging if the rollback fails, but won’t persist.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;With the above impermanence script, the btrfs subvolumes are deleted recursively
-and replaced with the &lt;code&gt;root-blank&lt;/code&gt; snapshot we took during the install.&lt;/p&gt;
-&lt;p&gt;I have commented out &lt;code&gt;&quot;/etc/machine-id&quot;&lt;/code&gt; because we already copied over all of
-the files to their persistent location and the above setting would work once and
-then cause a conflict.&lt;/p&gt;
-&lt;h2&gt;configuration.nix changes&lt;/h2&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;# configuration.nix
-  boot.initrd.luks.devices = {
-    cryptroot = {
-      device = &quot;/dev/disk/by-partlabel/luks&quot;;
-      allowDiscards = true;
-      preLVM = true;
-    };
-  };
-&lt;/code&gt;&lt;/pre&gt;
-&lt;ul&gt;
-&lt;li&gt;This defines how your system’s initial ramdisk (&lt;code&gt;initrd&lt;/code&gt;) should handle a
-specific encrypted disk during the boot process. It helps with timing and is a
-more robust way of telling Nix that we are using an encrypted disk.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;The following is optional to enable &lt;code&gt;autoScrub&lt;/code&gt; for btrfs, the wiki shows
-&lt;code&gt;interval = &quot;monthly&quot;;&lt;/code&gt; FYI.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;# configuration.nix
-  services.btrfs.autoScrub = {
-    enable = true;
-    interval = &quot;weekly&quot;;
-    fileSystems = [&quot;/&quot;];
-  };
-&lt;/code&gt;&lt;/pre&gt;
-&lt;ul&gt;
-&lt;li&gt;Remember to ensure that your &lt;code&gt;hostname&lt;/code&gt; in your &lt;code&gt;configuration.nix&lt;/code&gt; matches
-the &lt;code&gt;hostname&lt;/code&gt; in your &lt;code&gt;flake.nix&lt;/code&gt;.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;Applying Your Impermanence Configuration&lt;/h3&gt;
-&lt;p&gt;Once you have completed all the steps and created or modified the necessary
-files (&lt;code&gt;flake.nix&lt;/code&gt;, &lt;code&gt;impermanence.nix&lt;/code&gt;), you need to apply these changes to your
-NixOS system.&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Navigate to your NixOS configuration directory (where your &lt;code&gt;flake.nix&lt;/code&gt; is
-located).&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;cd /path/to/your/flake
-&lt;/code&gt;&lt;/pre&gt;
-&lt;ol start=&quot;2&quot;&gt;
-&lt;li&gt;Rebuild and Switch: Execute the &lt;code&gt;nixos-rebuild switch&lt;/code&gt; command. This command
-will:&lt;/li&gt;
-&lt;/ol&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;Evaluate your &lt;code&gt;flake.nix&lt;/code&gt; and the modules it imports (including your new
-&lt;code&gt;impermanence.nix&lt;/code&gt;).&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Build a new NixOS system closure based on your updated configuration.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Activate the new system configuration, making it the current running system.&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;sudo nixos-rebuild switch --flake .#hostname # Replace &apos;hostname&apos; with your actual system hostname
-&lt;/code&gt;&lt;/pre&gt;
-&lt;ol start=&quot;3&quot;&gt;
-&lt;li&gt;Perform an Impermanence Test (Before Reboot):&lt;/li&gt;
-&lt;/ol&gt;
-&lt;ul&gt;
-&lt;li&gt;Before you reboot, create a temporary directory and file in a non-persistent
-location. Since you haven’t explicitly added &lt;code&gt;/imperm_test&lt;/code&gt; to your
-&lt;code&gt;environment.persistence.&quot;/persist&quot;&lt;/code&gt; directories, this file should not survive
-a reboot.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;mkdir /imperm_test
-echo &quot;This should be Gone after Reboot&quot; | sudo tee /imperm_test/testfile
-ls -l /imperm_test/testfile # Verify the file exists
-cat /imperm_test/testfile # Verify content
-&lt;/code&gt;&lt;/pre&gt;
-&lt;ol start=&quot;4&quot;&gt;
-&lt;li&gt;Reboot Your System: For the impermanence setup to take full effect and for
-your root filesystem to be reset for the first time, you must reboot your
-machine.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;sudo reboot
-&lt;/code&gt;&lt;/pre&gt;
-&lt;ol start=&quot;5&quot;&gt;
-&lt;li&gt;Verify Impermanence (After Reboot):&lt;/li&gt;
-&lt;/ol&gt;
-&lt;ul&gt;
-&lt;li&gt;After the system has rebooted, check if the test directory and file still
-exist:&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;ls -l /imperm_test/testfile
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;You should see an output like &lt;code&gt;ls: cannot access &apos;/imperm_test/testfile&apos;&lt;/code&gt;: No
-such file or directory. This confirms that the &lt;code&gt;/imperm_test&lt;/code&gt; directory and its
-contents were indeed ephemeral and were removed during the reboot process,
-indicating your impermanence setup is working correctly!&lt;/p&gt;
-&lt;p&gt;Your system should now come up with a fresh root filesystem, and only the data
-specified in your &lt;code&gt;environment.persistence.&quot;/persist&quot;&lt;/code&gt; configuration will be
-persistent.&lt;/p&gt;
 </content></entry><entry><title>Encrypted Install</title><id>https://saylesss88.github.io/installation/enc/enc_install.html</id><updated>2025-11-22T00:00:00+00:00</updated><link href="https://saylesss88.github.io/installation/enc/enc_install.html" rel="alternate"/><content type="html">&lt;h1&gt;Encrypted Setups&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Click to Expand Table of Contents&lt;/summary&gt;

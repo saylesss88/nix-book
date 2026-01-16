@@ -1,6 +1,6 @@
 ---
 title: GnuPG gpg-agent
-date: 2025-12-08
+date: 2026-01-15
 author: saylesss88
 collection: "blog"
 tags: ["Encryption", "GnuPG", "security"]
@@ -21,6 +21,61 @@ draft: false
 > them with extreme care.
 
 ![GnuPG](../images/gnupg.png)
+
+## ⚠️ gpg.fail (practical OpenPGP vulnerabilities) (Added on 2026-01-15)
+
+The [gpg.fail](https://gpg.fail) is a write-up of real-world weaknesses in
+GPG/OpenPGP implementations and edge cases in the OpenPGP ecosystem—not the
+underlying math of modern cryptography. ​ The core idea is that signature
+verification needs two things: correct cryptography and confidence that the data
+you think was verified is actually the same data the verifier processed, which
+can break down when formats are complex and tooling is permissive or ambiguous.
+
+### Why this matters even with good key hygiene
+
+Most of the hardening in this guide (offline primary key, subkeys, strict
+permissions, agent separation) is still worth doing because it protects your
+private key material and reduces the blast radius if a workstation is
+compromised.
+
+But that kind of key hygiene doesn’t automatically protect you from OpenPGP
+“sharp edges” like ambiguous parsing rules, weird message constructions, or
+implementation bugs because those problems happen at the message/format/tooling
+layer, not the key-storage layer.
+
+### How to avoid the sharp edges (actionable)
+
+- Don’t treat “Good signature” as the end of the story. Treat verification as
+  “verify + inspect what was verified,” especially if the output will be
+  consumed by other tools or humans who may misinterpret it. ​
+
+- Prefer OpenPGP for narrow, well-understood tasks (verifying release artifacts,
+  encrypting files) and be extra cautious when dealing with untrusted,
+  attacker-controlled OpenPGP inputs that flow through multiple tools (mail
+  clients, import pipelines, automation). ​
+
+- Keep GnuPG and related tooling updated; gpg.fail covers vulnerabilities that
+  include classic implementation issues and not just “protocol design” pitfalls.
+
+### If you automate verification (important)
+
+If you’re writing automation around signature verification, ensure your pipeline
+clearly distinguishes:
+
+1. “signature cryptographically valid” from
+
+2. “the extracted/displayed message is exactly what was verified”. Some gpg.fail
+   items specifically call out cases where output does not make this distinction
+   obvious enough to prevent misuse.
+
+### NixOS/Home-Manager hardening can break GPG (common failure mode)
+
+Some “hardening” choices can cause GPG to fail in ways that look mysterious but
+are just UI/agent integration problems (for example, **No pinentry** / “gpg
+failed to sign the data” when the agent can’t prompt). If GPG signing/encryption
+suddenly stops working, first confirm pinentry is configured correctly (via your
+`services.gpg-agent.pinentryPackage` or `gpg-agent.conf`) and restart the agent
+with `gpgconf --kill gpg-agent` then `gpgconf --launch gpg-agent`.
 
 ## 🔑 Key Concepts
 

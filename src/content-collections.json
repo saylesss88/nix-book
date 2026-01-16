@@ -3,6 +3,36 @@
     {
       "author": "saylesss88",
       "collection": "blog",
+      "date": "2026-01-16T00:00:00+00:00",
+      "description": null,
+      "draft": false,
+      "path": "nix/zfs_impermanence.md",
+      "preview_html": "<p>I only tested this within a VM although with a few small tweaks it should work\non bare metal. I used the libvirtd stack with KVM for this.</p><p>Yet another blog post inspired by\n<a href=\"https://grahamc.com/blog/erase-your-darlings/\">erase your darlings</a></p><p>Start with a minimal ISO.</p>",
+      "tags": [
+        "Virtual Machines",
+        "KVM",
+        "Impermanence"
+      ],
+      "title": "ZFS Impermanence in a VM"
+    },
+    {
+      "author": "saylesss88",
+      "collection": "blog",
+      "date": "2026-01-15T00:00:00+00:00",
+      "description": null,
+      "draft": false,
+      "path": "nix/gpg-agent.md",
+      "preview_html": "<p>⚠️ <strong>SECURITY WARNING</strong>: This guide involves sensitive cryptographic material.\n<strong>Never share your private key or passphrase</strong>. Backup your keys and handle\nthem with extreme care.</p><p><img src=\"../images/gnupg.png\" alt=\"GnuPG\" /></p><p>The <a href=\"https://gpg.fail\">gpg.fail</a> is a write-up of real-world weaknesses in\nGPG/OpenPGP implementations and edge cases in the OpenPGP ecosystem—not the\nunderlying math of modern cryptography. ​ The core idea is that signature\nverification needs two things: correct cryptography and confidence that the data\nyou think was verified is actually the same data the verifier processed, which\ncan break down when formats are complex and tooling is permissive or ambiguous.</p>",
+      "tags": [
+        "Encryption",
+        "GnuPG",
+        "security"
+      ],
+      "title": "GnuPG gpg-agent"
+    },
+    {
+      "author": "saylesss88",
+      "collection": "blog",
       "date": "2026-01-13T00:00:00+00:00",
       "description": null,
       "draft": false,
@@ -102,17 +132,16 @@
     {
       "author": "saylesss88",
       "collection": "blog",
-      "date": "2025-12-08T00:00:00+00:00",
+      "date": "2025-12-06T00:00:00+00:00",
       "description": null,
       "draft": false,
-      "path": "nix/gpg-agent.md",
-      "preview_html": "<p>⚠️ <strong>SECURITY WARNING</strong>: This guide involves sensitive cryptographic material.\n<strong>Never share your private key or passphrase</strong>. Backup your keys and handle\nthem with extreme care.</p><p><img src=\"../images/gnupg.png\" alt=\"GnuPG\" /></p><p><strong>GnuPG</strong> is a complete and free implementation of the OpenPGP standard. It\nallows you to encrypt and sign your data and communications, has a versatile key\nmanagement system, and access modules for many kinds of public key directories.\nGnuPG (GPG), is a command line tool for secure communication.</p>",
+      "path": "nix/encrypted_impermanence.md",
+      "preview_html": "<p>❗ Important Note: This guide details a setup involving encrypted partitions\nand impermanent NixOS. While powerful, such configurations require careful\nattention to detail. Incorrect steps, especially concerning encryption keys or\npersistent data paths, can lead to <strong>permanent data loss</strong>. Please read all\ninstructions thoroughly before proceeding and consider backing up any critical\ndata beforehand. This has only been tested with the disk layout described in\n<a href=\"https://saylesss88.github.io/installation/encrypted_manual.html\">Encrypted Setups</a></p><pre><code class=\"language-nix\"># flake.nix\n{\n  description = \"NixOS configuration\";\n\n  inputs = {\n    nixpkgs.url = \"github:nixos/nixpkgs/nixos-unstable\";\n    disko.url = \"github:nix-community/disko/latest\";\n    disko.input",
       "tags": [
-        "Encryption",
-        "GnuPG",
+        "impermanence",
         "security"
       ],
-      "title": "GnuPG gpg-agent"
+      "title": "Encrypted Impermanence"
     },
     {
       "author": "saylesss88",
@@ -128,20 +157,6 @@
         "secureblue"
       ],
       "title": "KVM"
-    },
-    {
-      "author": "saylesss88",
-      "collection": "blog",
-      "date": "2025-12-06T00:00:00+00:00",
-      "description": null,
-      "draft": false,
-      "path": "nix/encrypted_impermanence.md",
-      "preview_html": "<p>❗ Important Note: This guide details a setup involving encrypted partitions\nand impermanent NixOS. While powerful, such configurations require careful\nattention to detail. Incorrect steps, especially concerning encryption keys or\npersistent data paths, can lead to <strong>permanent data loss</strong>. Please read all\ninstructions thoroughly before proceeding and consider backing up any critical\ndata beforehand. This has only been tested with the disk layout described in\n<a href=\"https://saylesss88.github.io/installation/encrypted_manual.html\">Encrypted Setups</a></p><pre><code class=\"language-nix\"># flake.nix\n{\n  description = \"NixOS configuration\";\n\n  inputs = {\n    nixpkgs.url = \"github:nixos/nixpkgs/nixos-unstable\";\n    disko.url = \"github:nix-community/disko/latest\";\n    disko.input",
-      "tags": [
-        "impermanence",
-        "security"
-      ],
-      "title": "Encrypted Impermanence"
     },
     {
       "author": "saylesss88",
@@ -442,6 +457,17 @@
       "date": "2025-11-22T00:00:00+00:00",
       "description": null,
       "draft": false,
+      "path": "installation/enc/encrypted_impermanence.md",
+      "preview_html": "<p>❗ Important Note: This guide details a setup involving encrypted partitions\nand impermanent NixOS. While powerful, such configurations require careful\nattention to detail. Incorrect steps, especially concerning encryption keys or\npersistent data paths, can lead to <strong>permanent data loss</strong>. Please read all\ninstructions thoroughly before proceeding and consider backing up any critical\ndata beforehand. This has only been tested with the disk layout described in\n<a href=\"https://saylesss88.github.io/installation/encrypted_manual.html\">Encrypted Setups</a></p><p>As a system operates, it gradually accumulates state on its root partition. This\nstate is stored in various directories such as <code>/etc</code> and <code>/var</code>, capturing all\nthe configuration changes, logs, and o",
+      "tags": [],
+      "title": "Encrypted Impermanence"
+    },
+    {
+      "author": "saylesss88",
+      "collection": null,
+      "date": "2025-11-22T00:00:00+00:00",
+      "description": null,
+      "draft": false,
       "path": "installation/enc/sops-nix.md",
       "preview_html": "<p><a href=\"https://github.com/getsops/sops?ref=blog.gitguardian.com\">SOPS</a>, short for\n<strong>S</strong>ecrets<strong>OP</strong>eration<strong>S</strong>, is an editor of encrypted files that supports\nquite a few BINARY formats and encrypts with AWS KMS, GCP KMS, Azure Key Vault,\nage, and PGP.</p><p>Managing secrets—like API keys, SSH deploy keys, and password hashes is a\ncritical part of system configuration, but it’s also one of the trickiest to do\nsecurely and reproducibly. Traditionally, secrets might be stored in ad hoc\nlocations, referenced by absolute paths, or managed manually outside of version\ncontrol. This approach makes it hard to share, rebuild, or audit your\nconfiguration, and increases the risk of accidental leaks or inconsistencies\nbetween systems.</p><p><code>sops-nix",
       "tags": [],
@@ -457,17 +483,6 @@
       "preview_html": "<p>⚠️ <strong>Warning: This can easily brick your system</strong> ⚠️</p><p>We will mainly follow the lanzaboote\n<a href=\"https://github.com/nix-community/lanzaboote/blob/master/docs/QUICK_START.md\">Quick Start Guide</a></p><p>For Windows dual-booters and BitLocker users, you should export your BitLocker\nrecovery keys and confirm that they are correct. Refer to this\n<a href=\"https://support.microsoft.com/en-us/windows/find-your-bitlocker-recovery-key-6b71ad27-0b89-ea08-f143-056f5ab347d6\">Microsoft support article</a></p>",
       "tags": [],
       "title": "Lanzaboote"
-    },
-    {
-      "author": "saylesss88",
-      "collection": null,
-      "date": "2025-11-22T00:00:00+00:00",
-      "description": null,
-      "draft": false,
-      "path": "installation/enc/encrypted_impermanence.md",
-      "preview_html": "<p>❗ Important Note: This guide details a setup involving encrypted partitions\nand impermanent NixOS. While powerful, such configurations require careful\nattention to detail. Incorrect steps, especially concerning encryption keys or\npersistent data paths, can lead to <strong>permanent data loss</strong>. Please read all\ninstructions thoroughly before proceeding and consider backing up any critical\ndata beforehand. This has only been tested with the disk layout described in\n<a href=\"https://saylesss88.github.io/installation/encrypted_manual.html\">Encrypted Setups</a></p><p>As a system operates, it gradually accumulates state on its root partition. This\nstate is stored in various directories such as <code>/etc</code> and <code>/var</code>, capturing all\nthe configuration changes, logs, and o",
-      "tags": [],
-      "title": "Encrypted Impermanence"
     },
     {
       "author": "saylesss88",

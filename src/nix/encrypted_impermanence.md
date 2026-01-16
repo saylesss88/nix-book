@@ -124,7 +124,6 @@ you'll just add an `imports = [ ./impermanence.nix ]` to your
     directories = [
       "/etc"
       "/var/spool"
-      "/root"
       "/srv"
       "/etc/NetworkManager/system-connections"
       "/var/lib/bluetooth"
