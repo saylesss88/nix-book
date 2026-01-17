@@ -1,15 +1,350 @@
-<?xml version="1.0" encoding="utf-8"?><rss version="2.0"><channel><title>nix-book</title><link>https://saylesss88.github.io/</link><description>An mdBook-generated site</description><generator>mdbook-rss-feed 1.0.0</generator><item><title>ZFS Impermanence in a VM</title><link>https://saylesss88.github.io/nix/zfs_impermanence.html</link><description><![CDATA[<h1>ZFS Impermanence in a VM</h1>
+<?xml version="1.0" encoding="utf-8"?><rss version="2.0"><channel><title>nix-book</title><link>https://saylesss88.github.io/</link><description>An mdBook-generated site</description><generator>mdbook-rss-feed 1.0.0</generator><item><title>ZFS with LUKS and Impermanence</title><link>https://saylesss88.github.io/nix/encrypted_zfs.html</link><description><![CDATA[<h1>ZFS with LUKS and Impermanence</h1>
 <details>
 <summary> ✔️ Table of Contents</summary>
 <!-- toc -->
 </details>
-<p>I only tested this within a VM although with a few small tweaks it should work
-on bare metal. I used the libvirtd stack with KVM for this.</p>
+<p>I tested this on the libvirt stack with KVM, this should work on bare metal with
+a few omissions.</p>
+<details>
+<summary> ✔️ SSH Method </summary>
+<p>This saves a ton of typing…</p>
+<ol>
+<li>
+<p>Boot the minimal ISO</p>
+</li>
+<li>
+<p>Set a password for the <code>nixos</code> user: <code>sudo passwd nixos</code></p>
+</li>
+<li>
+<p>Find the IP address: <code>ip a</code> (look for <code>etho</code> or <code>wlan0</code>)</p>
+</li>
+<li>
+<p>SSH in from your host or another machine: <code>ssh nixos@192.168.1.x</code></p>
+</li>
+</ol>
+</details>
+<p>When creating the VM, before clicking “Finish”, check the “Customize
+configuration before install” box and choose EFI Firmware &gt; BIOS. <strong>You will
+waste a bunch of time if you forget to do this</strong>!</p>
+<ul>
+<li>I used <code>OVMF_CODE.fd</code> in my testing.</li>
+</ul>
+<p><strong>Format your disk</strong></p>
+<ol>
+<li>Partition &amp; Format</li>
+</ol>
+<pre><code class="language-bash">sudo cfdisk /dev/vda
+sudo mkfs.fat -F32 /dev/vda1
+</code></pre>
+<ol start="2">
+<li>Setup LUKS</li>
+</ol>
+<pre><code class="language-bash">sudo cryptsetup luksFormat /dev/vda2
+sudo cryptsetup open /dev/vda2 cryptroot
+</code></pre>
+<ol start="3">
+<li>Create zpool</li>
+</ol>
+<pre><code class="language-bash">sudo zpool create \
+  -o ashift=12 \
+  -o autotrim=on \
+  -O acltype=posixacl \
+  -O canmount=off \
+  -O compression=zstd \
+  -O normalization=formD \
+  -O relatime=on \
+  -O xattr=sa \
+  -O mountpoint=none \
+  rpool /dev/mapper/cryptroot
+</code></pre>
+<ol start="5">
+<li>Dataset Creation</li>
+</ol>
+<pre><code class="language-bash"># root (ephemeral)
+sudo zfs create -p -o canmount=noauto -o mountpoint=legacy rpool/local/root
+sudo zfs snapshot rpool/local/root@blank
+
+# nix store
+sudo zfs create -p -o mountpoint=legacy rpool/local/nix
+
+# persistent data
+sudo zfs create -p -o mountpoint=legacy rpool/safe/home
+sudo zfs create -p -o mountpoint=legacy rpool/safe/persist
+</code></pre>
+<ol start="6">
+<li>Mounting</li>
+</ol>
+<pre><code class="language-bash"># 1. Mount root first
+sudo mount -t zfs rpool/local/root /mnt
+
+# 2. Create directories
+sudo mkdir -p /mnt/{nix,home,persist,boot}
+
+# 3. Mount ESP directly to /boot (simpler and safer for systemd-boot)
+sudo mount -t vfat -o umask=0077 /dev/vda1 /mnt/boot
+
+# 4. Mount other ZFS datasets
+sudo mount -t zfs rpool/local/nix /mnt/nix
+sudo mount -t zfs rpool/safe/home /mnt/home
+sudo mount -t zfs rpool/safe/persist /mnt/persist
+</code></pre>
+<ol start="7">
+<li>Configuration Prep</li>
+</ol>
+<pre><code class="language-bash">sudo nixos-generate-config --root /mnt
+</code></pre>
+<pre><code class="language-bash">export NIX_CONFIG='experimental-features = nix-command flakes'
+nix-shell -p helix
+</code></pre>
+<pre><code class="language-bash">sudo blkid /dev/vda2
+# Copy the uuid
+</code></pre>
+<pre><code class="language-nix"># configuration.nix
+ boot.initrd.luks.devices = {
+     cryptroot = {
+       device = "/dev/disk/by-uuid/uuid#";
+       allowDiscards = true;
+       preLVM = true;
+     };
+   };
+</code></pre>
+<pre><code class="language-nix">boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/&lt;UUID-OF-PARTITION-2&gt;";
+</code></pre>
+<h2>Prep <code>configuration.nix</code></h2>
+<pre><code class="language-bash">head -c4 /dev/urandom | xxd -p &gt; /tmp/rand.txt
+</code></pre>
+<p><strong>Create password file in a persistent location</strong>:</p>
+<pre><code class="language-bash">sudo mkdir -p /mnt/persist/etc/nixos-secrets/passwords
+
+ #2) Create the password hash and write it to the persistent file
+ #Replace "your-password" and "your-user"
+sudo sh -c 'mkpasswd -m yescrypt "your-password" &gt; /mnt/persist/etc/nixos-secrets/passwords/your-user'
+
+ #3) Lock down permissions
+sudo chown root:root /mnt/persist/etc/nixos-secrets/passwords/your-user
+sudo chmod 600 /mnt/persist/etc/nixos-secrets/passwords/your-user
+</code></pre>
+<p>After first reboot, the above files will be placed directly under <code>/persist/</code></p>
+<pre><code class="language-nix">{ config, lib, pkgs, ... }:
+
+{
+  # ------------------------------------------------------------------
+  # 1. Boot loader – systemd-boot (UEFI only)
+  # ------------------------------------------------------------------
+  boot.loader = {
+    systemd-boot = {
+      enable = true;
+      consoleMode = "max";           # Full 80×25 console in VM
+      editor = false;                # Security – no edit at boot
+    };
+    efi = {
+      canTouchEfiVariables = true;   # libvirt provides /sys/firmware/efi
+      efiSysMountPoint = "/boot";    # Our 1 GiB FAT32 partition
+    };
+  };
+
+  # ------------------------------------------------------------------
+  # 2. ZFS support
+  # ------------------------------------------------------------------
+  boot.supportedFilesystems = [ "zfs" ];
+  boot.zfs.devNodes = "/dev/";       # Critical for VMs
+  # Not needed with LUKS
+  boot.zfs.requestEncryptionCredentials = false;
+
+   boot.initrd.luks.devices = {
+     cryptroot = {
+    # replace uuid# with output of `sudo blkid /dev/vda2`
+       device = "/dev/disk/by-uuid/uuid#";
+       allowDiscards = true;
+       preLVM = true;
+     };
+   };
+
+
+
+  # Unique 8-hex hostId (run once in live ISO: head -c4 /dev/urandom | xxd -p)
+  networking.hostId = "a1b2c3d4";    # &lt;&lt;&lt;--- replace with your own value
+
+  # ------------------------------------------------------------------
+  # 3. Roll-back root to blank snapshot on **every** boot
+  # ------------------------------------------------------------------
+ # Uncomment after first reboot
+ # boot.initrd.postDeviceCommands = lib.mkAfter ''
+ #   zpool import -N -f rpool
+ #   zfs rollback -r rpool/local/root@blank
+ #   zpool export rpool
+ # '';
+
+  # ------------------------------------------------------------------
+  # 4. Basic system (root password, serial console for VM)
+  # ------------------------------------------------------------------
+  users.users.root.initialPassword = "changeme";   # change after first login
+
+  boot.kernelParams = [ "console=tty1" ];
+
+  users.mutableUsers = false;
+
+  # Change `your-user`
+  users.users.your-user = {
+    isNormalUser = true;
+    extraGroups = [ "wheel" ];
+    group = "your-user";
+    # The location of `hashedPasswordFile` after first reboot
+    hashedPasswordFile = "/persist/etc/nixos-secrets/passwords/your-user";
+  };
+
+  # This enables `chown -R your-user:your-user`
+  users.groups.your-user = { };
+
+  # ------------------------------------------------------------------
+  # 5. (Optional) Enable SSH for post-install configuration
+  # ------------------------------------------------------------------
+  # services.openssh = {
+  #  enable = true;
+  #  settings.PermitRootLogin = "yes";
+  #};
+
+  # ------------------------------------------------------------------
+  # 6. Mark /persist as needed for boot
+  # ------------------------------------------------------------------
+  fileSystems."/persist".neededForBoot = true;
+}
+</code></pre>
+<p>I ran <code>nixos-install</code> and rebooted once before uncommenting:</p>
+<pre><code class="language-nix"> # boot.initrd.postDeviceCommands = lib.mkAfter ''
+ #   zpool import -N -f rpool
+ #   zfs rollback -r rpool/local/root@blank
+ #   zpool export rpool
+ # '';
+</code></pre>
+<p>Rebuilding and testing, Reboot, uncomment the above script and test: (Don’t
+forget that the <code>/etc</code> directory will be wiped, including your
+<code>configuration.nix</code> and <code>hardware-configuration.nix</code>!)</p>
+<pre><code class="language-bash">sudo touch /etc/rollback-canary
+sudo reboot
+</code></pre>
+<p>If the rollback is working, <code>/etc/rollback-canary</code> should be gone after reboot
+(while things in <code>/persist</code> remain).</p>
+<pre><code class="language-bash">sudo mkdir -p /persist/etc
+sudo cp /etc/nixos/hardware-configuration.nix /etc/nixos/configuration.nix /persist/etc/
+</code></pre>
+<h2>Adding a disk serial (libvirt XML)</h2>
+<p>NixOS ZFS boot support is broken for virtio drives without serial numbers.
+Virtio disks without serials don’t appear in /dev/disk/by-id, but ZFS boot logic
+only tries to import pools from /dev/disk/by-id. The official OpenZFS NixOS
+documentation explicitly states: “If virtio is used as disk bus, power off the
+VM and set serial numbers for disk”</p>
+<p>In the <code>&lt;disk ...&gt;</code> block of your root disk add:</p>
+<p>Add to <code>.zshrc</code>:</p>
+<pre><code class="language-bash">export LIBVIRT_DEFAULT_URI="qemu:///system"
+</code></pre>
+<pre><code class="language-bash">virsh list --all
+virsh edit nixos-unstable
+</code></pre>
+<p>In the first <code>&lt;disk ... device='disk'&gt;</code> section (the one with target <code>dev='vda'</code>
+<code>bus='virtio'</code>), add a <code>&lt;serial&gt;</code> line, e.g.:</p>
+<pre><code class="language-xml">&lt;disk type='file' device='disk'&gt;
+  &lt;driver name='qemu' type='qcow2' discard='unmap'/&gt;
+  &lt;source file='/var/lib/libvirt/images/nixos-unstable-1.qcow2' index='2'/&gt;
+  &lt;backingStore/&gt;
+  &lt;target dev='vda' bus='virtio'/&gt;
+  &lt;serial&gt;disk01&lt;/serial&gt;
+  &lt;alias name='virtio-disk0'/&gt;
+  ...
+&lt;/disk&gt;
+</code></pre>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/nix/encrypted_zfs.html</guid><pubDate>Sat, 17 Jan 2026 00:00:00 +0000</pubDate></item><item><title>ZFS Impermanence in a VM</title><link>https://saylesss88.github.io/nix/zfs_impermanence.html</link><description><![CDATA[<h1>ZFS Impermanence in a VM</h1>
+<details>
+<summary> ✔️ Table of Contents</summary>
+<!-- toc -->
+</details>
 <p>Yet another blog post inspired by
 <a href="https://grahamc.com/blog/erase-your-darlings/">erase your darlings</a></p>
+<p>I only tested this within a VM although with a few small tweaks it should work
+on bare metal. I used the libvirtd stack with KVM for this.</p>
+<blockquote>
+<p>NOTE: This example doesn’t use encryption, it would be easy to add ZFS Native
+Encryption by changing the first <code>zpool</code> command. It’s good enough for most
+people but does leak some metadata. I’ll add a LUKS example eventually which
+is more involved.</p>
+</blockquote>
+<p>I added this file as a README to a
+<a href="https://github.com/saylesss88/flakey">flake</a>:</p>
+<pre><code class="language-bash">git clone https://github.com/saylesss88/flakey.git
+</code></pre>
+<details>
+<summary> ✔️ SSH Method to enable copy-paste</summary>
+<ol>
+<li>
+<p>Boot the minimal ISO</p>
+</li>
+<li>
+<p>Set a password for the <code>nixos</code> user: <code>sudo passwd nixos</code></p>
+</li>
+<li>
+<p>Find the IP address: <code>ip a</code> (look for <code>eth0</code> or <code>wlan0</code>)</p>
+</li>
+<li>
+<p>SSH in from another machine: <code>ssh nixos@192.168.1.x</code></p>
+</li>
+<li>
+<p>Clone the repo and copy-paste commands from your browser to the terminal.</p>
+</li>
+</ol>
+</details>
+<details>
+<summary> ✔️ Multi-TTY Method (No extra Devices) </summary>
+<ol>
+<li>
+<p>Log in on the default TTY (usually Alt+F1).</p>
+</li>
+<li>
+<p>Switch to a second TTY by pressing Alt+F2.</p>
+</li>
+<li>
+<p>Log in again (user nixos, no password default).</p>
+</li>
+<li>
+<p>Clone your repo in TTY2: git clone https://github.com/your/repo.</p>
+</li>
+<li>
+<p>Open the README with a pager: less repo/README.md.</p>
+</li>
+<li>
+<p>Switch back to TTY1 (Alt+F1) to execute commands.</p>
+</li>
+<li>
+<p>Toggle back and forth (Alt+F2 / Alt+F1) to read and type.</p>
+</li>
+</ol>
+</details>
+<details>
+<summary> ✔️ tmux Method (Split Screen) </summary>
+<p>The minimal ISO includes <code>tmux</code> in the package set, but it’s not installed in
+the environment by default.</p>
+<ol>
+<li>
+<p>Run: <code>nix run nixpkgs#tmux</code></p>
+</li>
+<li>
+<p>Once inside tmux, split the screen vertically: Press <strong>Ctrl+b</strong> then <strong>%</strong></p>
+</li>
+<li>
+<p>In the right pane, open the README: <code>less repo/README.md</code></p>
+</li>
+<li>
+<p>In the left pane, type the commands</p>
+</li>
+<li>
+<p>Switch panes with <strong>Ctrl+b</strong> then <strong>Left/Right Arrow</strong></p>
+</li>
+</ol>
+</details>
 <p>Start with a minimal ISO.</p>
 <p><a href="https://channels.nixos.org/nixos-25.11/latest-nixos-minimal-x86_64-linux.iso">Download Minimal (64-bit Intel-AMD)</a></p>
 <p>Choose the LTS image, it comes with the <code>zfs</code> module enabled.</p>
+<p>I’ve also found that for my system it works best to switch the Video Model to
+Virtio, with 3D accelleration disabled (causes mouse inversion).</p>
 <p>When creating the VM, before clicking “Finish”, check the “Customize
 configuration before install” box and choose EFI Firmware &gt; BIOS. <strong>You will
 waste a bunch of time if you forget to do this</strong>!</p>
@@ -24,15 +359,15 @@ waste a bunch of time if you forget to do this</strong>!</p>
 </code></pre>
 <p>Create a 1G <strong>EFI System</strong> first, then a <strong>Linux Filesystem</strong> with the remaining
 space. I used (100G)</p>
-<p>For the following guide, you want <code>/dev/vda1</code> to be your EFI System partition,
-and <code>/dev/vda2</code> to be the Linux Filesystem partition.</p>
+<p>For the following guide, you want <code>/dev/vda1</code> to be your <strong>EFI System</strong>
+partition, and <code>/dev/vda2</code> to be the <strong>Linux Filesystem</strong> partition.</p>
 <pre><code class="language-bash">sudo fdisk -l
 </code></pre>
 <pre><code class="language-bash">sudo mkfs.vfat -n EFI /dev/vda1
 </code></pre>
-<h2>Create your ZFS Partitions</h2>
+<h2>Create Your ZFS Partitions</h2>
 <ol>
-<li>Create a zpool</li>
+<li>Create a zpool:</li>
 </ol>
 <pre><code class="language-bash">zpool create \
   -o ashift=12 \
@@ -46,8 +381,24 @@ and <code>/dev/vda2</code> to be the Linux Filesystem partition.</p>
   -O mountpoint=none \
   rpool /dev/vda2
 </code></pre>
+<details>
+<summary> ZFS Native Encryption (Work in Progress) </summary>
+<pre><code class="language-bash">zpool create -f \
+  -o ashift=12 \
+  -O encryption=aes-256-gcm \
+  -O keyformat=passphrase \
+  -O keylocation=prompt \
+  -O mountpoint=none \
+  -O acltype=posixacl \
+  -O compression=lz4 \
+  -O xattr=sa \
+  rpool /dev/vda2
+</code></pre>
+<p>I just got impermanence working without encryption, I haven’t been able to test
+and iron out any quirks of this encryption method..</p>
+</details>
 <ol start="2">
-<li>Create all datasets with parents (<code>-p</code>)</li>
+<li>Create all datasets with parents (<code>-p</code>):</li>
 </ol>
 <pre><code class="language-bash"># root (ephemeral – will be rolled back)
 zfs create -p -o canmount=noauto -o mountpoint=legacy rpool/local/root
@@ -88,6 +439,7 @@ underlying storage isn’t being wiped.</p>
 </code></pre>
 <details>
 <summary> ✔️ Quick checklist: </summary>
+<p>Quick checklist to confirm that you’ve taken all of the necessary steps.</p>
 <pre><code class="language-bash"># 1. pool
 zpool create -o ashift=12 -o autotrim=on -O acltype=posixacl -O canmount=off \
   -O dnodesize=auto -O normalization=formD -O relatime=on -O xattr=sa \
@@ -134,8 +486,7 @@ sudo chmod 600 /mnt/persist/etc/nixos-secrets/passwords/your-user
 <ul>
 <li>After first reboot, the above files will be placed directly under <code>/persist/</code></li>
 </ul>
-<p>You will read these files into the <code>configuration.nix</code> with <code>:r /tmp/rand.txt</code>,
-etc.</p>
+<p>You will read <code>rand.txt</code> into the <code>configuration.nix</code> with <code>:r /tmp/rand.txt</code>.</p>
 <p>Edit the <code>/mnt/etc/nixos/configuration.nix</code>:</p>
 <pre><code class="language-nix">{ config, lib, pkgs, ... }:
 
@@ -167,11 +518,12 @@ etc.</p>
   # ------------------------------------------------------------------
   # 3. Roll-back root to blank snapshot on **every** boot
   # ------------------------------------------------------------------
-  boot.initrd.postDeviceCommands = lib.mkAfter ''
-    zpool import -N -f rpool
-    zfs rollback -r rpool/local/root@blank
-    zpool export rpool
-  '';
+# Uncomment after first reboot
+#  boot.initrd.postDeviceCommands = lib.mkAfter ''
+#    zpool import -N -f rpool
+#    zfs rollback -r rpool/local/root@blank
+#    zpool export rpool
+#  '';
 
   # ------------------------------------------------------------------
   # 4. Basic system (root password, serial console for VM)
@@ -206,21 +558,27 @@ etc.</p>
   fileSystems."/persist".neededForBoot = true;
 }
 </code></pre>
-<blockquote>
-<p>NOTE: Before my first rebuild, I had:</p>
-<pre><code class="language-nix">boot.initrd.postDeviceCommands = lib.mkAfter ''
-   zfs rollback -r rpool/local/root@blank
-'';
-</code></pre>
-<p>But noticed in my logs that on reboot the <code>rpool/local/root@blank</code> wasn’t
-available yet, I assume due to a race condition or something I did or forgot
-to do. Adding the <code>zpool import</code> fixed the issue. I mention this in case you
-get different results from your first reboot.</p>
-</blockquote>
 <pre><code class="language-bash">sudo nixos-install --root /mnt
 </code></pre>
 <pre><code class="language-bash">reboot
 </code></pre>
+<p>Copy your system files to a persistent location before uncommenting the
+impermanence script.</p>
+<pre><code class="language-bash">sudo mkdir -p /persist/etc
+sudo cp /etc/nixos/configuration.nix /etc/nixos/hardware-configuration.nix /persist/etc/
+</code></pre>
+<p>Now, you can uncomment this block:</p>
+<pre><code class="language-nix">  boot.initrd.postDeviceCommands = lib.mkAfter ''
+    zpool import -N -f rpool
+    zfs rollback -r rpool/local/root@blank
+    zpool export rpool
+  '';
+</code></pre>
+<pre><code class="language-bash">sudo touch /etc/rollback-canary
+sudo reboot
+</code></pre>
+<p>If the rollback is working, <code>/etc/rollback-canary</code> should be gone after reboot
+(while things in <code>/persist</code> remain).</p>
 <hr />
 <h2>What gets Wiped vs. What Stays</h2>
 <p><strong>What gets wiped?</strong>:</p>
@@ -266,7 +624,7 @@ as <code>/home/your-user/flake</code>. Because subsequent reboots will wipe the 
 directory.</p>
 <ul>
 <li><a href="https://github.com/saylesss88/flakey">Example Flake</a>, this is a WIP
-adaptation from another flake I had. Cloning it may save you some time.</li>
+adaptation from another flake I had.</li>
 </ul>
 <pre><code class="language-bash">sudo mkdir /imperm_test
 echo "This should be Gone after Reboot" | sudo tee /imperm_test/testfile

@@ -3,11 +3,27 @@
     {
       "author": "saylesss88",
       "collection": "blog",
+      "date": "2026-01-17T00:00:00+00:00",
+      "description": null,
+      "draft": false,
+      "path": "nix/encrypted_zfs.md",
+      "preview_html": "<p>I tested this on the libvirt stack with KVM, this should work on bare metal with\na few omissions.</p><p>This saves a ton of typing…</p><p>Boot the minimal ISO</p>",
+      "tags": [
+        "Virtual Machines",
+        "KVM",
+        "Impermanence",
+        "Encryption"
+      ],
+      "title": "ZFS with LUKS and Impermanence"
+    },
+    {
+      "author": "saylesss88",
+      "collection": "blog",
       "date": "2026-01-16T00:00:00+00:00",
       "description": null,
       "draft": false,
       "path": "nix/zfs_impermanence.md",
-      "preview_html": "<p>I only tested this within a VM although with a few small tweaks it should work\non bare metal. I used the libvirtd stack with KVM for this.</p><p>Yet another blog post inspired by\n<a href=\"https://grahamc.com/blog/erase-your-darlings/\">erase your darlings</a></p><p>Start with a minimal ISO.</p>",
+      "preview_html": "<p>Yet another blog post inspired by\n<a href=\"https://grahamc.com/blog/erase-your-darlings/\">erase your darlings</a></p><p>I only tested this within a VM although with a few small tweaks it should work\non bare metal. I used the libvirtd stack with KVM for this.</p><p>NOTE: This example doesn’t use encryption, it would be easy to add ZFS Native\nEncryption by changing the first <code>zpool</code> command. It’s good enough for most\npeople but does leak some metadata. I’ll add a LUKS example eventually which\nis more involved.</p>",
       "tags": [
         "Virtual Machines",
         "KVM",

@@ -13,6 +13,7 @@
     - [Whonix KVM on NixOS](nix/whonix_kvm.md)
     - [Running NixOS as a VM](nix/kvm.md)
     - [ZFS Impermanence in a VM](nix/zfs_impermanence.md)
+    - [ZFS with LUKS and Impermanence](nix/encrypted_zfs.md)
   - [Version Control with Git](vcs/git.md)
   - [Version Control with JJ](vcs/jujutsu.md)
 - [Installation](installation/README.md)

@@ -16,11 +16,75 @@ draft: false
 
 </details>
 
+Yet another blog post inspired by
+[erase your darlings](https://grahamc.com/blog/erase-your-darlings/)
+
 I only tested this within a VM although with a few small tweaks it should work
 on bare metal. I used the libvirtd stack with KVM for this.
 
-Yet another blog post inspired by
-[erase your darlings](https://grahamc.com/blog/erase-your-darlings/)
+> NOTE: This example doesn't use encryption, it would be easy to add ZFS Native
+> Encryption by changing the first `zpool` command. It's good enough for most
+> people but does leak some metadata. I'll add a LUKS example eventually which
+> is more involved.
+
+I added this file as a README to a
+[flake](https://github.com/saylesss88/flakey):
+
+```bash
+git clone https://github.com/saylesss88/flakey.git
+```
+
+<details>
+<summary> ✔️ SSH Method to enable copy-paste</summary>
+
+1. Boot the minimal ISO
+
+2. Set a password for the `nixos` user: `sudo passwd nixos`
+
+3. Find the IP address: `ip a` (look for `eth0` or `wlan0`)
+
+4. SSH in from another machine: `ssh nixos@192.168.1.x`
+
+5. Clone the repo and copy-paste commands from your browser to the terminal.
+
+</details>
+
+<details>
+<summary> ✔️ Multi-TTY Method (No extra Devices) </summary>
+
+1. Log in on the default TTY (usually Alt+F1).
+
+2. Switch to a second TTY by pressing Alt+F2.
+
+3. Log in again (user nixos, no password default).
+
+4. Clone your repo in TTY2: git clone https://github.com/your/repo.
+
+5. Open the README with a pager: less repo/README.md.
+
+6. Switch back to TTY1 (Alt+F1) to execute commands.
+
+7. Toggle back and forth (Alt+F2 / Alt+F1) to read and type.
+
+</details>
+
+<details>
+<summary> ✔️ tmux Method (Split Screen) </summary>
+
+The minimal ISO includes `tmux` in the package set, but it's not installed in
+the environment by default.
+
+1. Run: `nix run nixpkgs#tmux`
+
+2. Once inside tmux, split the screen vertically: Press **Ctrl+b** then **%**
+
+3. In the right pane, open the README: `less repo/README.md`
+
+4. In the left pane, type the commands
+
+5. Switch panes with **Ctrl+b** then **Left/Right Arrow**
+
+</details>
 
 Start with a minimal ISO.
 
@@ -29,8 +93,7 @@ Start with a minimal ISO.
 Choose the LTS image, it comes with the `zfs` module enabled.
 
 I've also found that for my system it works best to switch the Video Model to
-Virtio, with 3D accelleration disabled (causes mouse inversion). You can also
-set the Display Spice Listen type to `None`, and enable `OpenGL`.
+Virtio, with 3D accelleration disabled (causes mouse inversion).
 
 When creating the VM, before clicking "Finish", check the "Customize
 configuration before install" box and choose EFI Firmware > BIOS. **You will
@@ -81,6 +144,27 @@ zpool create \
   -O mountpoint=none \
   rpool /dev/vda2
 ```
+
+<details>
+<summary> ZFS Native Encryption (Work in Progress) </summary>
+
+```bash
+zpool create -f \
+  -o ashift=12 \
+  -O encryption=aes-256-gcm \
+  -O keyformat=passphrase \
+  -O keylocation=prompt \
+  -O mountpoint=none \
+  -O acltype=posixacl \
+  -O compression=lz4 \
+  -O xattr=sa \
+  rpool /dev/vda2
+```
+
+I just got impermanence working without encryption, I haven't been able to test
+and iron out any quirks of this encryption method..
+
+</details>
 
 2. Create all datasets with parents (`-p`):
 
@@ -218,11 +302,12 @@ Edit the `/mnt/etc/nixos/configuration.nix`:
   # ------------------------------------------------------------------
   # 3. Roll-back root to blank snapshot on **every** boot
   # ------------------------------------------------------------------
-  boot.initrd.postDeviceCommands = lib.mkAfter ''
-    zpool import -N -f rpool
-    zfs rollback -r rpool/local/root@blank
-    zpool export rpool
-  '';
+# Uncomment after first reboot
+#  boot.initrd.postDeviceCommands = lib.mkAfter ''
+#    zpool import -N -f rpool
+#    zfs rollback -r rpool/local/root@blank
+#    zpool export rpool
+#  '';
 
   # ------------------------------------------------------------------
   # 4. Basic system (root password, serial console for VM)
@@ -258,19 +343,6 @@ Edit the `/mnt/etc/nixos/configuration.nix`:
 }
 ```
 
-> NOTE: Before my first rebuild, I had:
->
-> ```nix
-> boot.initrd.postDeviceCommands = lib.mkAfter ''
->    zfs rollback -r rpool/local/root@blank
-> '';
-> ```
->
-> But noticed in my logs that on reboot the `rpool/local/root@blank` wasn't
-> available yet, I assume due to a race condition or something I did or forgot
-> to do. Adding the `zpool import` fixed the issue. I mention this in case you
-> get different results from your first reboot.
-
 ```bash
 sudo nixos-install --root /mnt
 ```
@@ -278,6 +350,32 @@ sudo nixos-install --root /mnt
 ```bash
 reboot
 ```
+
+Copy your system files to a persistent location before uncommenting the
+impermanence script.
+
+```bash
+sudo mkdir -p /persist/etc
+sudo cp /etc/nixos/configuration.nix /etc/nixos/hardware-configuration.nix /persist/etc/
+```
+
+Now, you can uncomment this block:
+
+```nix
+  boot.initrd.postDeviceCommands = lib.mkAfter ''
+    zpool import -N -f rpool
+    zfs rollback -r rpool/local/root@blank
+    zpool export rpool
+  '';
+```
+
+```bash
+sudo touch /etc/rollback-canary
+sudo reboot
+```
+
+If the rollback is working, `/etc/rollback-canary` should be gone after reboot
+(while things in `/persist` remain).
 
 ---
 
