@@ -1,5 +1,162 @@
 <?xml version="1.0"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>nix-book</title><id>https://saylesss88.github.io/atom.xml</id><updated>1970-01-01T00:00:00+00:00</updated><link href="https://saylesss88.github.io/atom.xml" rel="self"/><subtitle>An mdBook-generated site</subtitle><entry><title>ZFS with LUKS and Impermanence</title><id>https://saylesss88.github.io/nix/encrypted_zfs.html</id><updated>2026-01-17T00:00:00+00:00</updated><link href="https://saylesss88.github.io/nix/encrypted_zfs.html" rel="alternate"/><content type="html">&lt;h1&gt;ZFS with LUKS and Impermanence&lt;/h1&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>nix-book</title><id>https://saylesss88.github.io/atom.xml</id><updated>1970-01-01T00:00:00+00:00</updated><link href="https://saylesss88.github.io/atom.xml" rel="self"/><subtitle>An mdBook-generated site</subtitle><entry><title>Secure Boot on Libvirt stack</title><id>https://saylesss88.github.io/nix/secureboot_libvirt.html</id><updated>2026-01-19T00:00:00+00:00</updated><link href="https://saylesss88.github.io/nix/secureboot_libvirt.html" rel="alternate"/><content type="html">&lt;h1&gt;Secure Boot in a Libvirt (KVM) VM with ZFS on LUKS Impermanence&lt;/h1&gt;
+&lt;h2&gt;Initial VM Setup&lt;/h2&gt;
+&lt;p&gt;When creating the VM in virt-manager:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Before clicking “Finish”, check the “Customize configuration before install”
+box&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;In the Overview section, change Firmware from BIOS to UEFI x86_64:
+&lt;code&gt;/usr/share/edk2/ovmf/OVMF_CODE_4M.secboot.qcow2&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Proceed with the NixOS installation as normal. For lanzaboote to build
+successfully, I had to pin it to nixpkgs &lt;code&gt;25.05&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;Known Issue&lt;/strong&gt;: After running &lt;code&gt;nixos-install&lt;/code&gt; and rebooting, the SATA CDROM
+source path may be cleared. If the VM fails to boot, manually reselect the NixOS
+ISO in the SATA settings and reboot. ​&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h2&gt;Configure Firmware for Custom Secure Boot Keys&lt;/h2&gt;
+&lt;p&gt;The default configuration uses Microsoft’s pre-enrolled keys, which won’t trust
+your custom-signed kernel. To enable custom key enrollment, you need to modify
+the VM’s XML configuration. ​&lt;/p&gt;
+&lt;p&gt;On your host, find your VM name:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;virsh -c qemu:///system list --all
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Example Output:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt; Id   Name             State
+---------------------------------
+ -    nixos-unstable   shut off
+ -    nixos            shut off
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Edit the VM configuration:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;virsh edit nixos-unstable
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Make the following changes to the &lt;code&gt;&amp;lt;os&amp;gt;&lt;/code&gt; section:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Change the &lt;code&gt;enrolled-keys&lt;/code&gt; feature from &lt;code&gt;yes&lt;/code&gt; to &lt;code&gt;no&lt;/code&gt;:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code class=&quot;language-xml&quot;&gt;&amp;lt;feature enabled=&apos;no&apos; name=&apos;enrolled-keys&apos;/&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&quot;2&quot;&gt;
+&lt;li&gt;Delete the explicit &lt;code&gt;&amp;lt;loader&amp;gt;&lt;/code&gt; and &lt;code&gt;&amp;lt;nvram&amp;gt;&lt;/code&gt; lines. These conflict with
+libvirt’s firmware autoselection when using &lt;code&gt;enrolled-keys=&apos;no&apos;&lt;/code&gt;:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code class=&quot;language-xml&quot;&gt;&amp;lt;!-- DELETE THESE TWO LINES --&amp;gt;
+&amp;lt;loader readonly=&apos;yes&apos; secure=&apos;yes&apos; type=&apos;pflash&apos; format=&apos;qcow2&apos;&amp;gt;/usr/share/edk2/ovmf/OVMF_CODE_4M.secboot.qcow2&amp;lt;/loader&amp;gt;
+&amp;lt;nvram template=&apos;/usr/share/edk2/ovmf/OVMF_VARS_4M.secboot.qcow2&apos; templateFormat=&apos;qcow2&apos; format=&apos;qcow2&apos;&amp;gt;/var/lib/libvirt/qemu/nvram/nixos-unstable_VARS.qcow2&amp;lt;/nvram&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Your final &lt;code&gt;&amp;lt;os&amp;gt;&lt;/code&gt; section should look like this:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-xml&quot;&gt;&amp;lt;os firmware=&apos;efi&apos;&amp;gt;
+  &amp;lt;type arch=&apos;x86_64&apos; machine=&apos;pc-q35-10.1&apos;&amp;gt;hvm&amp;lt;/type&amp;gt;
+  &amp;lt;firmware&amp;gt;
+    &amp;lt;feature enabled=&apos;no&apos; name=&apos;enrolled-keys&apos;/&amp;gt;
+    &amp;lt;feature enabled=&apos;yes&apos; name=&apos;secure-boot&apos;/&amp;gt;
+  &amp;lt;/firmware&amp;gt;
+  &amp;lt;boot dev=&apos;hd&apos;/&amp;gt;
+&amp;lt;/os&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&quot;3&quot;&gt;
+&lt;li&gt;Add the &lt;code&gt;&amp;lt;serial&amp;gt;&lt;/code&gt; tag as a best practice&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code class=&quot;language-xml&quot;&gt;    &amp;lt;disk type=&apos;file&apos; device=&apos;disk&apos;&amp;gt;
+      &amp;lt;driver name=&apos;qemu&apos; type=&apos;qcow2&apos; discard=&apos;unmap&apos;/&amp;gt;
+      &amp;lt;source file=&apos;/var/lib/libvirt/images/nixos-unstable-1.qcow2&apos;/&amp;gt;
+      &amp;lt;serial&amp;gt;disk01&amp;lt;/serial&amp;gt;
+      &amp;lt;target dev=&apos;vda&apos; bus=&apos;virtio&apos;/&amp;gt;
+      &amp;lt;address type=&apos;pci&apos; domain=&apos;0x0000&apos; bus=&apos;0x04&apos; slot=&apos;0x00&apos; function=&apos;0x0&apos;/&amp;gt;
+    &amp;lt;/disk&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;This enables commands like: &lt;code&gt;zpool import -d /dev/disk/by-id rpool&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Save and exit the editor. Libvirt will now automatically create a new NVRAM file
+in Setup Mode (no keys enrolled).&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h2&gt;NixOS Installation with ZFS on root with LUKS&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://saylesss88.github.io/nix/encrypted_zfs.html&quot;&gt;ZFS on root with LUKS &amp;amp; Impermanence&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Add the impermanence flake input. I also had to pin lanzaboote to nixpkgs
+&lt;code&gt;25.05&lt;/code&gt; for lanzaboote to build successfully:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;inputs = {
+   impermanence.url = &quot;github:nix-community/impermanence&quot;;
+   nixpkgs.url = &quot;github:nixos/nixpkgs/nixos-unstable&quot;;
+   nixpkgs-stable.url = &quot;github:nixos/nixpkgs/nixos-25.05&quot;;
+};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Add lanzaboote, if you don’t use &lt;code&gt;unstable&lt;/code&gt;, you can obviously avoid the
+overlay:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;{ pkgs, lib, inputs, ... }: {
+# configuration.nix
+nixpkgs.overlays = [
+   (final: prev: {
+      lanzaboote = (inputs.nixpkgs-stable.legacyPackages.${pkgs.system}.lanzaboote or prev.lanzaboote)
+   })
+];
+
+environment.systemPackages = [ pkgs.sbctl ];
+
+boot.loader.systemd-boot.enable = lib.mkForce false;
+
+boot.lanzaboote = {
+  enable = true;
+  pkiBundle = &quot;/var/lib/sbctl&quot;;
+};
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;And &lt;code&gt;impermanence.nix&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;{ inputs, lib, ... }: {
+   imports = [
+      inputs.impermanence.nixosModules.impermanence
+   ];
+   boot.initrd.postMountCommands = lib.mkAfter &apos;&apos;
+     zfs rollback -r rpool/local/root@blank
+   &apos;&apos;;
+   environment.persistence.&quot;/persist&quot; = {
+      directories = [ &quot;/var/lib/sbctl&quot; &quot;/var/lib/nixos&quot; ];
+   };
+   fileSystems.&quot;/persist&quot; = {
+      device = &quot;rpool/safe/persist&quot;;
+      fsType = &quot;zfs&quot;;
+      neededForBoot = true;
+   };
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
+&lt;h2&gt;Lanzaboote Installation&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://saylesss88.github.io/installation/enc/lanzaboote.html&quot;&gt;Secure Boot with Lanzaboote&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;h2&gt;Enroll the Secure Boot Keys&lt;/h2&gt;
+&lt;p&gt;After the XML changes, boot the VM and enter the firmware setup (press ESC
+during boot).&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Navigate to Device Manager → Secure Boot Configuration&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Switch to “Custom mode”, uncheck Attempt Secure Boot [ ], select “Reset
+Secure Boot Keys”, save with F10, and reboot.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Enroll the keys: &lt;code&gt;sudo sbctl enroll-keys -m&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Reboot: After enrolling the keys and rebooting, the system will automatically
+be placed in “Standard mode”, and Attempt Secure Boot [x] selected. You do
+not need to re-enter firmware setup mode.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Verify Secure Boot Status: &lt;code&gt;bootctl status&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+</content></entry><entry><title>ZFS with LUKS and Impermanence</title><id>https://saylesss88.github.io/nix/encrypted_zfs.html</id><updated>2026-01-17T00:00:00+00:00</updated><link href="https://saylesss88.github.io/nix/encrypted_zfs.html" rel="alternate"/><content type="html">&lt;h1&gt;ZFS with LUKS and Impermanence&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -23,7 +180,199 @@ a few omissions.&lt;/p&gt;
 &lt;p&gt;SSH in from your host or another machine: &lt;code&gt;ssh nixos@192.168.1.x&lt;/code&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/saylesss88/my-flake2&quot;&gt;Starter Repo containing a flake and the configuration.nix from this chapter&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;git clone https://github.com/saylesss88/my-flake2.git
+&lt;/code&gt;&lt;/pre&gt;
 &lt;/details&gt;
+&lt;h2&gt;What is OpenZFS&lt;/h2&gt;
+&lt;p&gt;ZFS is an advanced filesystem, originally developed by Sun Microsystems in 05.&lt;/p&gt;
+&lt;p&gt;OpenZFS is a fork of the proprietary Oracle ZFS, it was forked over a decade
+ago. Most of the code remains the same so you can check the
+&lt;a href=&quot;https://docs.oracle.com/en/storage/zfs-storage/index.html&quot;&gt;Oracle website&lt;/a&gt; for
+docs and administration guides.&lt;/p&gt;
+&lt;p&gt;ZFS is licensed under the
+&lt;a href=&quot;https://en.wikipedia.org/wiki/CDDL&quot;&gt;Common Development and Distribution License&lt;/a&gt;
+(CDDL). Because the CDDL is incompatible with the GPL,
+&lt;a href=&quot;https://sfconservancy.org/blog/2016/feb/25/zfs-and-linux/&quot;&gt;it is not possible&lt;/a&gt;
+for ZFS to be included in the Linux Kernel. This requirement, however, does not
+prevent a native Linux kernel module from being developed and distributed by a
+third party, as is the case with &lt;a href=&quot;https://openzfs.org/&quot;&gt;OpenZFS&lt;/a&gt; (previously
+named ZFS on Linux). –arch wiki&lt;/p&gt;
+&lt;h2&gt;Comparison: OpenZFS Native Encryption vs. LUKS&lt;/h2&gt;
+&lt;details&gt;
+&lt;summary&gt; ✔️ OpenZFS Native Encryption vs. LUKS &lt;/summary&gt;
+&lt;blockquote&gt;
+&lt;p&gt;NOTE: This isn’t an attack on ZFS Native Encryption, I’m just presenting the
+information, the choice is yours. Unless you have a high threat model, ZFS
+native encryption has many benefits such improved flexibility and
+authentication.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;LUKS (Device Layer)&lt;/strong&gt;: LUKS operates on the block device (like
+&lt;code&gt;/dev/nvme0n1&lt;/code&gt;). It knows nothing about files, folders, or datasets. It just
+sees a stream of bytes and scrambles them.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Everything on the partition is encrypted. The filesystem sits inside the
+encrypted container.&lt;/li&gt;
+&lt;li&gt;With standard LUKS, an adversary can see you are using encryption (the LUKS
+header is visible), but they cannot determine what filesystem (ZFS, ext4,
+etc.) is inside. If you go a step further and use a detached header, the
+entire drive looks like random noise, providing plausible deniability that
+any data exists at all.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;ZFS Native (Filesystem Layer)&lt;/strong&gt;: ZFS encryption operates at the Dataset
+(Filesystem) level. It is aware of the structure of your data.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Only the &lt;strong&gt;file blocks&lt;/strong&gt; (the actual content of your files) and the &lt;strong&gt;file
+attributes&lt;/strong&gt; (ACLs, permissions) within a specific dataset are encrypted.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;No matter how careful you are with ZFS Native encryption, these cannot be
+hidden:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;The Structure&lt;/strong&gt;: The fact that &lt;code&gt;dataset A&lt;/code&gt; is a child of &lt;code&gt;dataset B&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;The Volume&lt;/strong&gt;: The exact amount of disk space used by each dataset (in bytes)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;The Activity&lt;/strong&gt;: The fact that &lt;em&gt;something&lt;/em&gt; changed at a specific time (via
+snapshot creation or &lt;code&gt;used&lt;/code&gt; property changing)&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;By using generic dataset names (e.g., &lt;code&gt;data/vol1&lt;/code&gt; instead of
+&lt;code&gt;data/mistress_photos&lt;/code&gt;) and automated snapshot schedules, you can strip the
+semantic value from the exposed metadata. An attacker will see that you have
+data and how much you have, but they won’t know what it is or which dataset is
+the valuable one.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Sanitizing your ZFS usage (Mitigating risk)&lt;/strong&gt;:&lt;/p&gt;
+&lt;p&gt;By following a few simple best practices you can mitigate most, if not all of
+the risk depending on the situation.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Use generic IDs for dataset names, instead of &lt;code&gt;tank/mistress_photos&lt;/code&gt; use
+&lt;code&gt;tank/vol-A&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Automate your snapshots to prevent traffic analysis&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Use padding to mitigate size analysis, add dummy files to obfuscate the size
+(Can be tedious in ZFS). This is the hardest to mitigate, if this is a real
+threat, use LUKS instead.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;OpenZFS native encryption allows you to transparently encrypt data at rest
+within ZFS itself. It was initially released in May 2019, giving it much less
+time to be scrutinized compared to LUKS (initial release in 2004).&lt;/p&gt;
+&lt;p&gt;OpenZFS Encryption operates at the dataset layer, not the disk layer, which
+creates several critical security gaps that full-disk encryption (FDE) solutions
+like LUKS completely avoid.&lt;/p&gt;
+&lt;p&gt;Unlike LUKS, which presents a “black box” of random noise to anyone without the
+key, ZFS Native Encryption must leave certain structural elements visible to the
+operating system. This is a deliberate design choice that allows ZFS to perform
+maintenance tasks (like scrubbing) on locked datasets without requiring the user
+to type in a password. (Depending on your threat model, this can be a deal
+breaker).&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h2&gt;Threat Example&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Example: Threat Model where ZFS Native Encryption falls short compared to
+LUKS&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;The “Pattern of Life” Attack (Timestamp Leaks)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;The Leak&lt;/strong&gt;: ZFS snapshot names and creation times are visible in plaintext
+(&lt;code&gt;zfs list -t snapshot&lt;/code&gt;)&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;The Threat Model&lt;/strong&gt;: An adversary monitoring your backups or seizing your drive
+can build a profile of your behavior without decrypting a single byte.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;If you claim to be asleep at 3AM, but &lt;code&gt;zfs list&lt;/code&gt; shows snapshots being created
+or data changing size at 3:15 AM, your alibi is broken.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Or, say a whistleblower contacts a journalist. An adversary seizes the
+journalist’s laptop. They can’t read the files, but they see a new dataset
+grew by exactly 5GB at the exact time the leak occured. Correlation = Guilt.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Compress &amp;amp; Encrypt&lt;/strong&gt;:&lt;/p&gt;
+&lt;p&gt;It’s actually a common misconception that LUKS prevents compression before
+encryption, both methods are able to do this.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;ZFS Native: &lt;code&gt;Data -&amp;gt; Compress -&amp;gt; Encrypt -&amp;gt; Checksum -&amp;gt; Write to Disk&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;ZFS on LUKS: &lt;code&gt;Data -&amp;gt; Compress -&amp;gt; ZFS Write -&amp;gt; LUKS Encrypt -&amp;gt; Write to Disk&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Both methods save disk space.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Integrety and Authentication&lt;/strong&gt;:&lt;/p&gt;
+&lt;p&gt;This is the strongest architectural argument for ZFS Native.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;ZFS Native: Uses AES-GCM (default) which is an Authenticated Encryption with
+Associated Data (AEAD) mode. If a single bit is flipped on disk (maliciously
+or accidentally), ZFS refuses to return the bad data and reports a checksum
+error.
+&lt;ul&gt;
+&lt;li&gt;NOTE: You can get integrity with LUKS2 with &lt;code&gt;dm-integrity&lt;/code&gt;, but it incurs a
+massive performance penalty and is considered experimental for production
+use.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;h2&gt;ZFS Native Encryption OR LUKS&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Use LUKS if&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;You can’t afford to leak metadata like dataset names or snapshot timestamps.
+LUKS makes the drive look like random noise.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;You require rock-solid stability. The ZFS-on-LUKS stack is very
+“battle-tested”.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Use ZFS Native Encryption if&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;You have “Untrusted” Offsite Backups: This is a really nice feature! You can
+&lt;code&gt;zfs send -w&lt;/code&gt; your data to a friend’s server or a cloud VM. The remote host
+cannot mount or read your data because they never have the key, but they can
+still scrub the pool and verify the data integrity.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;You need granular control: ZFS Native Encryption allows you to for example,
+keep your OS root unencrypted for fast booting/repair, but your &lt;code&gt;/home&lt;/code&gt;
+directory encrypted.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;You run many VMs/Containers: You can create a new encrypted dataset for a
+specific project/client without repartitioning or creating loopback files.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;You want to verify data authenticity.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://arstechnica.com/gadgets/2021/06/a-quick-start-guide-to-openzfs-native-encryption/&quot;&gt;arsTechnica quick start to openzfs-native-encryption&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://discourse.practicalzfs.com/t/is-native-encryption-ready-for-production-use/532&quot;&gt;Practical ZFS is native encryption ready for production use?&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/details&gt;
+&lt;h2&gt;Getting Started&lt;/h2&gt;
 &lt;p&gt;When creating the VM, before clicking “Finish”, check the “Customize
 configuration before install” box and choose EFI Firmware &amp;gt; BIOS. &lt;strong&gt;You will
 waste a bunch of time if you forget to do this&lt;/strong&gt;!&lt;/p&gt;
@@ -44,7 +393,7 @@ sudo mkfs.fat -F32 /dev/vda1
 sudo cryptsetup open /dev/vda2 cryptroot
 &lt;/code&gt;&lt;/pre&gt;
 &lt;ol start=&quot;3&quot;&gt;
-&lt;li&gt;Create zpool&lt;/li&gt;
+&lt;li&gt;Create zpool (Edited 2026-01-18 normalization=none)&lt;/li&gt;
 &lt;/ol&gt;
 &lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;sudo zpool create \
   -o ashift=12 \
@@ -52,9 +401,10 @@ sudo cryptsetup open /dev/vda2 cryptroot
   -O acltype=posixacl \
   -O canmount=off \
   -O compression=zstd \
-  -O normalization=formD \
+  -O normalization=none \
   -O relatime=on \
   -O xattr=sa \
+  -O dnodesize=auto \
   -O mountpoint=none \
   rpool /dev/mapper/cryptroot
 &lt;/code&gt;&lt;/pre&gt;
@@ -72,6 +422,9 @@ sudo zfs create -p -o mountpoint=legacy rpool/local/nix
 sudo zfs create -p -o mountpoint=legacy rpool/safe/home
 sudo zfs create -p -o mountpoint=legacy rpool/safe/persist
 &lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;mountpoint=legacy&lt;/code&gt; means that systemd will take care of the mounting&lt;/li&gt;
+&lt;/ul&gt;
 &lt;ol start=&quot;6&quot;&gt;
 &lt;li&gt;Mounting&lt;/li&gt;
 &lt;/ol&gt;
@@ -111,21 +464,19 @@ nix-shell -p helix
 &lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;boot.initrd.luks.devices.&quot;cryptroot&quot;.device = &quot;/dev/disk/by-uuid/&amp;lt;UUID-OF-PARTITION-2&amp;gt;&quot;;
 &lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
 &lt;h2&gt;Prep &lt;code&gt;configuration.nix&lt;/code&gt;&lt;/h2&gt;
 &lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;head -c4 /dev/urandom | xxd -p &amp;gt; /tmp/rand.txt
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;strong&gt;Create password file in a persistent location&lt;/strong&gt;:&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;sudo mkdir -p /mnt/persist/etc/nixos-secrets/passwords
 
- #2) Create the password hash and write it to the persistent file
- #Replace &quot;your-password&quot; and &quot;your-user&quot;
-sudo sh -c &apos;mkpasswd -m yescrypt &quot;your-password&quot; &amp;gt; /mnt/persist/etc/nixos-secrets/passwords/your-user&apos;
-
- #3) Lock down permissions
-sudo chown root:root /mnt/persist/etc/nixos-secrets/passwords/your-user
-sudo chmod 600 /mnt/persist/etc/nixos-secrets/passwords/your-user
+ #1) This is for `initialHashedPassword`
+ #   Read this in with `:r /tmp/pass.txt`
+mkpasswd --method=yescrypt &amp;gt; /tmp/pass.txt
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;After first reboot, the above files will be placed directly under &lt;code&gt;/persist/&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;(Edited 2026-01-18 use &lt;code&gt;postMountCommands&lt;/code&gt; &amp;gt; &lt;code&gt;postResumeCommands&lt;/code&gt;)&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;{ config, lib, pkgs, ... }:
 
 {
@@ -135,53 +486,65 @@ sudo chmod 600 /mnt/persist/etc/nixos-secrets/passwords/your-user
   boot.loader = {
     systemd-boot = {
       enable = true;
-      consoleMode = &quot;max&quot;;           # Full 80×25 console in VM
-      editor = false;                # Security – no edit at boot
+      consoleMode = &quot;max&quot;;
+      editor = false;
     };
     efi = {
-      canTouchEfiVariables = true;   # libvirt provides /sys/firmware/efi
-      efiSysMountPoint = &quot;/boot&quot;;    # Our 1 GiB FAT32 partition
+      canTouchEfiVariables = true;
+      efiSysMountPoint = &quot;/boot&quot;;
     };
   };
 
   # ------------------------------------------------------------------
-  # 2. ZFS support
+  # 2. ZFS support see: https://openzfs.github.io/openzfs-docs/Getting%20Started/NixOS/index.html
   # ------------------------------------------------------------------
   boot.supportedFilesystems = [ &quot;zfs&quot; ];
   boot.zfs.devNodes = &quot;/dev/&quot;;       # Critical for VMs
   # Not needed with LUKS
   boot.zfs.requestEncryptionCredentials = false;
+  # systemd handles mounting
+  systemd.services.zfs-mount.enable = false;
 
+  services.zfs = {
+    autoScrub.enable = true;
+    # periodically runs `zpool trim`
+    trim.enable = true;
+    # autoSnapshot = true;
+  };
+
+  # ------------------------------------------------------------------
+  # 3. LUKS
+  # ------------------------------------------------------------------
    boot.initrd.luks.devices = {
      cryptroot = {
-    # replace uuid# with output of `sudo blkid /dev/vda2`
+    # replace uuid# with output of UUID # from `sudo blkid /dev/vda2`
        device = &quot;/dev/disk/by-uuid/uuid#&quot;;
        allowDiscards = true;
        preLVM = true;
      };
    };
 
-
-
-  # Unique 8-hex hostId (run once in live ISO: head -c4 /dev/urandom | xxd -p)
-  networking.hostId = &quot;a1b2c3d4&quot;;    # &amp;lt;&amp;lt;&amp;lt;--- replace with your own value
-
   # ------------------------------------------------------------------
-  # 3. Roll-back root to blank snapshot on **every** boot
+  # 4. Roll-back root to blank snapshot on **every** boot
   # ------------------------------------------------------------------
  # Uncomment after first reboot
- # boot.initrd.postDeviceCommands = lib.mkAfter &apos;&apos;
- #   zpool import -N -f rpool
+ # boot.initrd.postMountCommands = lib.mkAfter &apos;&apos;
  #   zfs rollback -r rpool/local/root@blank
- #   zpool export rpool
  # &apos;&apos;;
 
   # ------------------------------------------------------------------
-  # 4. Basic system (root password, serial console for VM)
+  # 5. Basic system (root password, serial console for VM)
   # ------------------------------------------------------------------
+  # Unique 8-hex hostId (run once in live ISO: head -c4 /dev/urandom | xxd -p)
+  networking.hostId = &quot;a1b2c3d4&quot;;    # &amp;lt;&amp;lt;&amp;lt;--- replace with your own value
+
   users.users.root.initialPassword = &quot;changeme&quot;;   # change after first login
 
   boot.kernelParams = [ &quot;console=tty1&quot; ];
+
+  # ------------------------------------------------------------------
+  #  Users
+  # ------------------------------------------------------------------
 
   users.mutableUsers = false;
 
@@ -190,15 +553,29 @@ sudo chmod 600 /mnt/persist/etc/nixos-secrets/passwords/your-user
     isNormalUser = true;
     extraGroups = [ &quot;wheel&quot; ];
     group = &quot;your-user&quot;;
-    # The location of `hashedPasswordFile` after first reboot
-    hashedPasswordFile = &quot;/persist/etc/nixos-secrets/passwords/your-user&quot;;
+    # :r /tmp/pass.txt:
+    initialHashedPassword = &quot;&quot;;
   };
 
   # This enables `chown -R your-user:your-user`
   users.groups.your-user = { };
 
   # ------------------------------------------------------------------
-  # 5. (Optional) Enable SSH for post-install configuration
+  #  (Optional) Helpful for recovery situations
+  # ------------------------------------------------------------------
+  # users.users.admin = {
+  #  isNormalUser = true;
+  #  description = &quot;admin account&quot;;
+  #  extraGroups = [ &quot;wheel&quot; ];
+  #  group = &quot;admin&quot;;
+    # initialHashedPassword = &quot;Output of `:r /tmp/pass.txt`&quot;;
+ # };
+
+ # users.groups.admin = { };
+  # ------------------------------------------------------------------
+
+  # ------------------------------------------------------------------
+  # 6. (Optional) Enable SSH for post-install configuration
   # ------------------------------------------------------------------
   # services.openssh = {
   #  enable = true;
@@ -206,29 +583,30 @@ sudo chmod 600 /mnt/persist/etc/nixos-secrets/passwords/your-user
   #};
 
   # ------------------------------------------------------------------
-  # 6. Mark /persist as needed for boot
+  # 7. Mark /persist as needed for boot
   # ------------------------------------------------------------------
   fileSystems.&quot;/persist&quot;.neededForBoot = true;
 }
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;I ran &lt;code&gt;nixos-install&lt;/code&gt; and rebooted once before uncommenting:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt; # boot.initrd.postDeviceCommands = lib.mkAfter &apos;&apos;
- #   zpool import -N -f rpool
- #   zfs rollback -r rpool/local/root@blank
- #   zpool export rpool
- # &apos;&apos;;
+&lt;p&gt;After reboot, you can uncomment:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;  boot.initrd.postMountCommands = lib.mkAfter &apos;&apos;
+    zfs rollback -r rpool/local/root@blank
+  &apos;&apos;;
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Rebuilding and testing, Reboot, uncomment the above script and test: (Don’t
-forget that the &lt;code&gt;/etc&lt;/code&gt; directory will be wiped, including your
-&lt;code&gt;configuration.nix&lt;/code&gt; and &lt;code&gt;hardware-configuration.nix&lt;/code&gt;!)&lt;/p&gt;
+&lt;p&gt;Uncomment the above script and test: (Don’t forget that the &lt;code&gt;/etc&lt;/code&gt; directory
+will be wiped, including your &lt;code&gt;configuration.nix&lt;/code&gt; and
+&lt;code&gt;hardware-configuration.nix&lt;/code&gt;!)&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Configuration backup&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;sudo mkdir -p /persist/etc
+sudo cp /etc/nixos/hardware-configuration.nix /etc/nixos/configuration.nix /persist/etc/
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;Rollback Test&lt;/strong&gt;&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;sudo touch /etc/rollback-canary
 sudo reboot
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;If the rollback is working, &lt;code&gt;/etc/rollback-canary&lt;/code&gt; should be gone after reboot
 (while things in &lt;code&gt;/persist&lt;/code&gt; remain).&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;sudo mkdir -p /persist/etc
-sudo cp /etc/nixos/hardware-configuration.nix /etc/nixos/configuration.nix /persist/etc/
-&lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
 &lt;h2&gt;Adding a disk serial (libvirt XML)&lt;/h2&gt;
 &lt;p&gt;NixOS ZFS boot support is broken for virtio drives without serial numbers.
 Virtio disks without serials don’t appear in /dev/disk/by-id, but ZFS boot logic
@@ -254,6 +632,84 @@ virsh edit nixos-unstable
   ...
 &amp;lt;/disk&amp;gt;
 &lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
+&lt;h2&gt;Issues I’ve Come Across&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;sops-nix README&lt;/strong&gt;: Explicitly warns: “If you are using Impermanence, the key
+used for secret decryption … must be in a persisted directory, loaded early
+enough during boot.” It specifically cites activation timing as the reason this
+fails.&lt;/p&gt;
+&lt;p&gt;Typically the solution was to add &lt;code&gt;neededForUsers = true;&lt;/code&gt; in your
+“password_hash” block but that isn’t working for this setup. (ZFS/LUKS/Imperm)&lt;/p&gt;
+&lt;p&gt;I’ve been using &lt;code&gt;initialHashedPassword&lt;/code&gt;, which bypasses the race entirely by
+baking the salted hash into the store. This is all that I’ve found that works so
+far…&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Without adding the &lt;code&gt;&amp;lt;serial&amp;gt;disk01&amp;lt;/serial&amp;gt;&lt;/code&gt; to the XML when you reboot, your
+system will hang before asking for your LUKS password.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Without clicking “Customize configuration before install” box and choosing EFI
+Firmware instead of the default BIOS, &lt;strong&gt;you will not be able to boot at all&lt;/strong&gt;.
+This seems to be the case for all custom disk layouts with NixOS on the
+libvirt stack.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;h3&gt;Resources&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://openzfs.github.io/openzfs-docs/&quot;&gt;openzfs-docs&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://openzfs.github.io/openzfs-docs/Getting%20Started/NixOS/Root%20on%20ZFS.html&quot;&gt;openzfs-docs NixOS Root on ZFS&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://wiki.nixos.org/wiki/ZFS&quot;&gt;NixOS Wiki ZFS&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://klarasystems.com/articles/keeping-data-safe-with-openzfs-security-encryption-delegation/&quot;&gt;klarasystems OpenZFS: Security, Encryption, and Delegation Sept 2025&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://klarasystems.com/articles/improving-replication-security-with-openzfs-delegation/&quot;&gt;klarasystems Improving Replication Security with OpenZFS Delegation&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://forum.level1techs.com/t/zfs-guide-for-starters-and-advanced-users-concepts-pool-config-tuning-troubleshooting/196035&quot;&gt;ZFS Guide for starters &amp;amp; advanced users&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://openzfs.org/wiki/System_Administration&quot;&gt;OpenZFS Sysem Administration&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://docs.oracle.com/cd/E19253-01/819-5461/&quot;&gt;Oracle Solaris ZFS Admin Guide&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://docs.freebsd.org/en/books/handbook/zfs/&quot;&gt;FreeBSD Handbook Chapter 22 The Z File System (ZFS)&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/ankek/awesome-zfs&quot;&gt;awesome-zfs&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://arstechnica.com/series/storage-fundamentals/&quot;&gt;arsTechnica Storage Fundamentals&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/jimsalterjrs/sanoid/&quot;&gt;sanoid&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://discourse.practicalzfs.com/&quot;&gt;Practical ZFS&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/openzfs/zfs&quot;&gt;openzfs/zfs GH Repo&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/openzfs/zfs/issues&quot;&gt;openzfs Issues&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://zfsonlinux.org/&quot;&gt;zfsonlinux.org&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://wiki.archlinux.org/title/ZFS&quot;&gt;arch wiki ZFS&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
 </content></entry><entry><title>ZFS Impermanence in a VM</title><id>https://saylesss88.github.io/nix/zfs_impermanence.html</id><updated>2026-01-16T00:00:00+00:00</updated><link href="https://saylesss88.github.io/nix/zfs_impermanence.html" rel="alternate"/><content type="html">&lt;h1&gt;ZFS Impermanence in a VM&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Table of Contents&lt;/summary&gt;
@@ -269,9 +725,10 @@ Encryption by changing the first &lt;code&gt;zpool&lt;/code&gt; command. It’s 
 people but does leak some metadata. I’ll add a LUKS example eventually which
 is more involved.&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;p&gt;I added this file as a README to a
-&lt;a href=&quot;https://github.com/saylesss88/flakey&quot;&gt;flake&lt;/a&gt;:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;git clone https://github.com/saylesss88/flakey.git
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/saylesss88/my-flake2&quot;&gt;Starter Repo containing a flake and the configuration.nix from this chapter&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;git clone https://github.com/saylesss88/my-flake2.git
 &lt;/code&gt;&lt;/pre&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ SSH Method to enable copy-paste&lt;/summary&gt;
@@ -368,7 +825,7 @@ partition, and &lt;code&gt;/dev/vda2&lt;/code&gt; to be the &lt;strong&gt;Linux 
 &lt;/code&gt;&lt;/pre&gt;
 &lt;h2&gt;Create Your ZFS Partitions&lt;/h2&gt;
 &lt;ol&gt;
-&lt;li&gt;Create a zpool:&lt;/li&gt;
+&lt;li&gt;Create a zpool: (Edited 2026-01-18 normalization=none)&lt;/li&gt;
 &lt;/ol&gt;
 &lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;zpool create \
   -o ashift=12 \
@@ -376,7 +833,7 @@ partition, and &lt;code&gt;/dev/vda2&lt;/code&gt; to be the &lt;strong&gt;Linux 
   -O acltype=posixacl \
   -O canmount=off \
   -O dnodesize=auto \
-  -O normalization=formD \
+  -O normalization=none \
   -O relatime=on \
   -O xattr=sa \
   -O mountpoint=none \
@@ -488,7 +945,8 @@ sudo chmod 600 /mnt/persist/etc/nixos-secrets/passwords/your-user
 &lt;li&gt;After first reboot, the above files will be placed directly under &lt;code&gt;/persist/&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;You will read &lt;code&gt;rand.txt&lt;/code&gt; into the &lt;code&gt;configuration.nix&lt;/code&gt; with &lt;code&gt;:r /tmp/rand.txt&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;Edit the &lt;code&gt;/mnt/etc/nixos/configuration.nix&lt;/code&gt;:&lt;/p&gt;
+&lt;p&gt;Edit the &lt;code&gt;/mnt/etc/nixos/configuration.nix&lt;/code&gt; (Edited 2026-01-18 use
+&lt;code&gt;postMountCommands&lt;/code&gt; instead of &lt;code&gt;postResumeCommands&lt;/code&gt;) :&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;{ config, lib, pkgs, ... }:
 
 {
@@ -520,10 +978,8 @@ sudo chmod 600 /mnt/persist/etc/nixos-secrets/passwords/your-user
   # 3. Roll-back root to blank snapshot on **every** boot
   # ------------------------------------------------------------------
 # Uncomment after first reboot
-#  boot.initrd.postDeviceCommands = lib.mkAfter &apos;&apos;
-#    zpool import -N -f rpool
+#  boot.initrd.postMountCommands = lib.mkAfter &apos;&apos;
 #    zfs rollback -r rpool/local/root@blank
-#    zpool export rpool
 #  &apos;&apos;;
 
   # ------------------------------------------------------------------
@@ -569,10 +1025,8 @@ impermanence script.&lt;/p&gt;
 sudo cp /etc/nixos/configuration.nix /etc/nixos/hardware-configuration.nix /persist/etc/
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Now, you can uncomment this block:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;  boot.initrd.postDeviceCommands = lib.mkAfter &apos;&apos;
-    zpool import -N -f rpool
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;  boot.initrd.postMountCommands = lib.mkAfter &apos;&apos;
     zfs rollback -r rpool/local/root@blank
-    zpool export rpool
   &apos;&apos;;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;sudo touch /etc/rollback-canary

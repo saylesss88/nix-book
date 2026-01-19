@@ -3,6 +3,22 @@
     {
       "author": "saylesss88",
       "collection": "blog",
+      "date": "2026-01-19T00:00:00+00:00",
+      "description": null,
+      "draft": false,
+      "path": "nix/secureboot_libvirt.md",
+      "preview_html": "<p>When creating the VM in virt-manager:</p><p>Before clicking “Finish”, check the “Customize configuration before install”\nbox</p><p>In the Overview section, change Firmware from BIOS to UEFI x86_64:\n<code>/usr/share/edk2/ovmf/OVMF_CODE_4M.secboot.qcow2</code></p>",
+      "tags": [
+        "Virtual Machines",
+        "KVM",
+        "Impermanence",
+        "Secure Boot"
+      ],
+      "title": "Secure Boot on Libvirt stack"
+    },
+    {
+      "author": "saylesss88",
+      "collection": "blog",
       "date": "2026-01-17T00:00:00+00:00",
       "description": null,
       "draft": false,

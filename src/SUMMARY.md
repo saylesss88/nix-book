@@ -12,6 +12,7 @@
     - [Browser/Browsing Security](nix/browsing_security.md)
     - [Whonix KVM on NixOS](nix/whonix_kvm.md)
     - [Running NixOS as a VM](nix/kvm.md)
+    - [Secure Boot with libvirt](nix/secureboot_libvirt.md)
     - [ZFS Impermanence in a VM](nix/zfs_impermanence.md)
     - [ZFS with LUKS and Impermanence](nix/encrypted_zfs.md)
   - [Version Control with Git](vcs/git.md)

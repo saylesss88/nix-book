@@ -27,11 +27,10 @@ on bare metal. I used the libvirtd stack with KVM for this.
 > people but does leak some metadata. I'll add a LUKS example eventually which
 > is more involved.
 
-I added this file as a README to a
-[flake](https://github.com/saylesss88/flakey):
+- [Starter Repo containing a flake and the configuration.nix from this chapter](https://github.com/saylesss88/my-flake2)
 
 ```bash
-git clone https://github.com/saylesss88/flakey.git
+git clone https://github.com/saylesss88/my-flake2.git
 ```
 
 <details>
@@ -129,7 +128,7 @@ sudo mkfs.vfat -n EFI /dev/vda1
 
 ## Create Your ZFS Partitions
 
-1. Create a zpool:
+1. Create a zpool: (Edited 2026-01-18 normalization=none)
 
 ```bash
 zpool create \
@@ -138,7 +137,7 @@ zpool create \
   -O acltype=posixacl \
   -O canmount=off \
   -O dnodesize=auto \
-  -O normalization=formD \
+  -O normalization=none \
   -O relatime=on \
   -O xattr=sa \
   -O mountpoint=none \
@@ -269,7 +268,8 @@ sudo chmod 600 /mnt/persist/etc/nixos-secrets/passwords/your-user
 
 You will read `rand.txt` into the `configuration.nix` with `:r /tmp/rand.txt`.
 
-Edit the `/mnt/etc/nixos/configuration.nix`:
+Edit the `/mnt/etc/nixos/configuration.nix` (Edited 2026-01-18 use
+`postMountCommands` instead of `postResumeCommands`) :
 
 ```nix
 { config, lib, pkgs, ... }:
@@ -303,10 +303,8 @@ Edit the `/mnt/etc/nixos/configuration.nix`:
   # 3. Roll-back root to blank snapshot on **every** boot
   # ------------------------------------------------------------------
 # Uncomment after first reboot
-#  boot.initrd.postDeviceCommands = lib.mkAfter ''
-#    zpool import -N -f rpool
+#  boot.initrd.postMountCommands = lib.mkAfter ''
 #    zfs rollback -r rpool/local/root@blank
-#    zpool export rpool
 #  '';
 
   # ------------------------------------------------------------------
@@ -362,10 +360,8 @@ sudo cp /etc/nixos/configuration.nix /etc/nixos/hardware-configuration.nix /pers
 Now, you can uncomment this block:
 
 ```nix
-  boot.initrd.postDeviceCommands = lib.mkAfter ''
-    zpool import -N -f rpool
+  boot.initrd.postMountCommands = lib.mkAfter ''
     zfs rollback -r rpool/local/root@blank
-    zpool export rpool
   '';
 ```
 

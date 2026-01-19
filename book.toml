@@ -30,9 +30,9 @@ additional-css = [
 	"theme/extra.css",
 	"theme/rss-button.css",
 	# "theme/css/kanagawa-code.css",
-	# "theme/css/tokyo-night-code.css",
+	"theme/css/tokyo-night-code.css",
 	# "theme/css/dracula-code.css",
-	"theme/css/catppuccin-mocha-code.css",
+	# "theme/css/catppuccin-mocha-code.css",
 ]
 additional-js = ["theme/extra.js", "theme/rss-button.js", "theme/nix_http.js"]
 git-repository-url = "https://github.com/saylesss88/nix-book.git"
@@ -66,10 +66,10 @@ header_notes = "Recent notes"
 header_tags = "Popular tags"
 
 # css_import = "/assets/dracula.css"
-# css_import = "/assets/tokyo-night.css"
-css_import = "/assets/catppuccin-mocha.css"
+css_import = "/assets/tokyo-night.css"
+# css_import = "/assets/catppuccin-mocha.css"
 disable_builtin_css = false
-card_layout = "wide"                        #"compact"
+card_layout = "wide"        #"compact"
 support_footer = true
 
 [preprocessor.nix-repl]
