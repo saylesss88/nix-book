@@ -545,6 +545,9 @@ far...
 
 ### Resources
 
+<details>
+<summary> ✔️ Resources </summary>
+
 - [openzfs-docs](https://openzfs.github.io/openzfs-docs/)
 
 - [openzfs-docs NixOS Root on ZFS](https://openzfs.github.io/openzfs-docs/Getting%20Started/NixOS/Root%20on%20ZFS.html)
@@ -578,3 +581,15 @@ far...
 - [zfsonlinux.org](https://zfsonlinux.org/)
 
 - [arch wiki ZFS](https://wiki.archlinux.org/title/ZFS)
+
+- [tech-couch Btrfs Vs ZFS](https://tech-couch.com/post/btrfs-vs-zfs)
+
+- [PureStorage btrfs vs zfs](https://blog.purestorage.com/purely-educational/btrfs-vs-zfs/)
+
+- [The Zettabyte File System design docs](https://www.cs.hmc.edu/~rhodes/cs134/readings/The%20Zettabyte%20File%20System.pdf)
+
+- [Understanding ZFS, the Zettabyte File System](https://mrczntt.com/blog/understanding-zfs-the-zettabyte-file-system/)
+
+- [ZFS - Wikipedia](https://en.wikipedia.org/wiki/ZFS)
+
+</details>
