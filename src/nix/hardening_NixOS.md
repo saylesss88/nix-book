@@ -621,13 +621,16 @@ users.users.admin = {
   users.groups.daily = {};
 
 security = {
+# alias sudo = 'run0'
+run0.enableSudoAlias = true;
 polkit.enable = true;
 # Disable sudo
 sudo.enable = false;
 wrappers = {
     su.setuid = lib.mkForce = false;
-    sudo.setuid = lib.mkForce = false;
-    sudoedit.setuid = lib.mkForce = false;
+    # Not needed when sudo is disabled
+    # sudo.setuid = lib.mkForce = false;
+    # sudoedit.setuid = lib.mkForce = false;
     sg.setuid = lib.mkForce = false;
     fusermount.setuid = lib.mkForce = false;
     fusermount3.setuid = lib.mkForce = false;
