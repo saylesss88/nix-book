@@ -1,5 +1,5 @@
 ---
-title: Encrypted Install
+title: Encrypted Install (BTRFS)
 date: 2025-11-22
 author: saylesss88
 ---

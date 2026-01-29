@@ -1,6 +1,17 @@
 {
   "entries": [
     {
+      "author": null,
+      "collection": null,
+      "date": "2026-01-23T16:12:43.424789118+00:00",
+      "description": "\n",
+      "draft": false,
+      "path": "index.md",
+      "preview_html": "",
+      "tags": [],
+      "title": "index"
+    },
+    {
       "author": "saylesss88",
       "collection": "blog",
       "date": "2026-01-19T00:00:00+00:00",
@@ -22,7 +33,7 @@
       "date": "2026-01-17T00:00:00+00:00",
       "description": null,
       "draft": false,
-      "path": "nix/encrypted_zfs.md",
+      "path": "installation/enc/encrypted_ZFS.md",
       "preview_html": "<p>I tested this on the libvirt stack with KVM, this should work on bare metal with\na few omissions.</p><p>This saves a ton of typing…</p><p>Boot the minimal ISO</p>",
       "tags": [
         "Virtual Machines",
@@ -92,17 +103,6 @@
       "title": "NixOS Containers"
     },
     {
-      "author": null,
-      "collection": null,
-      "date": "2026-01-04T19:05:54.846247871+00:00",
-      "description": "\n",
-      "draft": false,
-      "path": "index.md",
-      "preview_html": "",
-      "tags": [],
-      "title": "index"
-    },
-    {
       "author": "saylesss88",
       "collection": "blog",
       "date": "2025-12-31T00:00:00+00:00",
@@ -167,20 +167,6 @@
       "date": "2025-12-06T00:00:00+00:00",
       "description": null,
       "draft": false,
-      "path": "nix/encrypted_impermanence.md",
-      "preview_html": "<p>❗ Important Note: This guide details a setup involving encrypted partitions\nand impermanent NixOS. While powerful, such configurations require careful\nattention to detail. Incorrect steps, especially concerning encryption keys or\npersistent data paths, can lead to <strong>permanent data loss</strong>. Please read all\ninstructions thoroughly before proceeding and consider backing up any critical\ndata beforehand. This has only been tested with the disk layout described in\n<a href=\"https://saylesss88.github.io/installation/encrypted_manual.html\">Encrypted Setups</a></p><pre><code class=\"language-nix\"># flake.nix\n{\n  description = \"NixOS configuration\";\n\n  inputs = {\n    nixpkgs.url = \"github:nixos/nixpkgs/nixos-unstable\";\n    disko.url = \"github:nix-community/disko/latest\";\n    disko.input",
-      "tags": [
-        "impermanence",
-        "security"
-      ],
-      "title": "Encrypted Impermanence"
-    },
-    {
-      "author": "saylesss88",
-      "collection": "blog",
-      "date": "2025-12-06T00:00:00+00:00",
-      "description": null,
-      "draft": false,
       "path": "nix/kvm.md",
       "preview_html": "<p><img src=\"/images/steampunk5.cleaned.png\" alt=\"sp5\" /></p><p><strong>Host</strong> <code>secureblue</code> = Fedora Atomic with <strong>SELinux enforcing</strong>, <strong>sVirt</strong>,\n<strong>Secure Boot</strong>, and hardened defaults.</p><p><strong>Guest</strong>: NixOS in a VM → full declarative power, near zero risk to host.</p>",
       "tags": [
@@ -189,6 +175,20 @@
         "secureblue"
       ],
       "title": "KVM"
+    },
+    {
+      "author": "saylesss88",
+      "collection": "blog",
+      "date": "2025-12-06T00:00:00+00:00",
+      "description": null,
+      "draft": false,
+      "path": "nix/encrypted_impermanence.md",
+      "preview_html": "<p>❗ Important Note: This guide details a setup involving encrypted partitions\nand impermanent NixOS. While powerful, such configurations require careful\nattention to detail. Incorrect steps, especially concerning encryption keys or\npersistent data paths, can lead to <strong>permanent data loss</strong>. Please read all\ninstructions thoroughly before proceeding and consider backing up any critical\ndata beforehand. This has only been tested with the disk layout described in\n<a href=\"https://saylesss88.github.io/installation/encrypted_manual.html\">Encrypted Setups</a></p><pre><code class=\"language-nix\"># flake.nix\n{\n  description = \"NixOS configuration\";\n\n  inputs = {\n    nixpkgs.url = \"github:nixos/nixpkgs/nixos-unstable\";\n    disko.url = \"github:nix-community/disko/latest\";\n    disko.input",
+      "tags": [
+        "impermanence",
+        "security"
+      ],
+      "title": "Encrypted Impermanence"
     },
     {
       "author": "saylesss88",
@@ -489,10 +489,21 @@
       "date": "2025-11-22T00:00:00+00:00",
       "description": null,
       "draft": false,
+      "path": "installation/enc/enc_install.md",
+      "preview_html": "<p>NixOS supports file systems that are encrypted using LUKS (Linux Unified Key\nSetup). This guide walks you through an encrypted NixOS installation using Disko\nfor disk management and Btrfs for subvolumes. It is designed for users who want\nfull disk encryption and a modern filesystem layout. If you prefer an\nunencrypted setup, you can skip the LUKS and encryption steps, but this guide\nfocuses on security and flexibility.</p><p>If you choose to set up impermanence, ensure it matches your install. Encrypted\nSetup with Encrypted Impermanence and Unencrypted Setup with Unencrypted\nImpermanence.</p><p>❗ NOTE: This is a bit convoluted, there are a few paths you can follow. If\nyou choose to use the starter repo (<a href=\"https://github.com/saylesss88/my-flake\">https://github.com/saylesss88/my-fl",
+      "tags": [],
+      "title": "Encrypted Install (BTRFS)"
+    },
+    {
+      "author": "saylesss88",
+      "collection": null,
+      "date": "2025-11-22T00:00:00+00:00",
+      "description": null,
+      "draft": false,
       "path": "installation/enc/encrypted_impermanence.md",
       "preview_html": "<p>❗ Important Note: This guide details a setup involving encrypted partitions\nand impermanent NixOS. While powerful, such configurations require careful\nattention to detail. Incorrect steps, especially concerning encryption keys or\npersistent data paths, can lead to <strong>permanent data loss</strong>. Please read all\ninstructions thoroughly before proceeding and consider backing up any critical\ndata beforehand. This has only been tested with the disk layout described in\n<a href=\"https://saylesss88.github.io/installation/encrypted_manual.html\">Encrypted Setups</a></p><p>As a system operates, it gradually accumulates state on its root partition. This\nstate is stored in various directories such as <code>/etc</code> and <code>/var</code>, capturing all\nthe configuration changes, logs, and o",
       "tags": [],
-      "title": "Encrypted Impermanence"
+      "title": "Encrypted BTRFS Impermanence"
     },
     {
       "author": "saylesss88",
@@ -515,17 +526,6 @@
       "preview_html": "<p>⚠️ <strong>Warning: This can easily brick your system</strong> ⚠️</p><p>We will mainly follow the lanzaboote\n<a href=\"https://github.com/nix-community/lanzaboote/blob/master/docs/QUICK_START.md\">Quick Start Guide</a></p><p>For Windows dual-booters and BitLocker users, you should export your BitLocker\nrecovery keys and confirm that they are correct. Refer to this\n<a href=\"https://support.microsoft.com/en-us/windows/find-your-bitlocker-recovery-key-6b71ad27-0b89-ea08-f143-056f5ab347d6\">Microsoft support article</a></p>",
       "tags": [],
       "title": "Lanzaboote"
-    },
-    {
-      "author": "saylesss88",
-      "collection": null,
-      "date": "2025-11-22T00:00:00+00:00",
-      "description": null,
-      "draft": false,
-      "path": "installation/enc/enc_install.md",
-      "preview_html": "<p>NixOS supports file systems that are encrypted using LUKS (Linux Unified Key\nSetup). This guide walks you through an encrypted NixOS installation using Disko\nfor disk management and Btrfs for subvolumes. It is designed for users who want\nfull disk encryption and a modern filesystem layout. If you prefer an\nunencrypted setup, you can skip the LUKS and encryption steps, but this guide\nfocuses on security and flexibility.</p><p>If you choose to set up impermanence, ensure it matches your install. Encrypted\nSetup with Encrypted Impermanence and Unencrypted Setup with Unencrypted\nImpermanence.</p><p>❗ NOTE: This is a bit convoluted, there are a few paths you can follow. If\nyou choose to use the starter repo (<a href=\"https://github.com/saylesss88/my-flake\">https://github.com/saylesss88/my-fl",
-      "tags": [],
-      "title": "Encrypted Install"
     },
     {
       "author": "saylesss88",

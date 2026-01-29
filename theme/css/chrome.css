@@ -1,5 +1,3 @@
-@import url("/assets/tokyo-night.css");
-
 :root.navy,
 .navy,
 html.navy,
@@ -20,6 +18,7 @@ body.navy {
   --blue: #7FB4CA;      /* springBlue */
 
   --heading: #7AA89F;   /* waveAqua2 */
+  --sidebar-title: #E46876;  /* kanagawa dragan red */
   --links:  #7FB4CA;    /* springBlue: inline links */
   --bold: #C8C093;      /* oldWhite */
 }
@@ -964,5 +963,14 @@ a:hover {
 .tag-cloud .tag-pill:hover {
   background: var(--accent);
   color: var(--bg);
+}
+
+.sidebar .part-title {
+  color: var(--sidebar-title, var(--heading)) !important; /* Kanagawa Dragon Red (#E46876) */
+  font-weight: bold;
+  margin-top: 25px;            /* More spacing above new sections */
+  margin-bottom: 10px;
+  opacity: 1;                  /* Ensure they stand out */
+  letter-spacing: 0.05em;
 }
 

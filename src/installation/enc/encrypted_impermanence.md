@@ -1,5 +1,5 @@
 ---
-title: Encrypted Impermanence
+title: Encrypted BTRFS Impermanence
 date: 2025-11-22
 author: saylesss88
 ---
