@@ -18,9 +18,11 @@ body.navy {
   --blue: #7FB4CA;      /* springBlue */
 
   --heading: #7AA89F;   /* waveAqua2 */
-  --sidebar-title: #E46876;  /* kanagawa dragan red */
   --links:  #7FB4CA;    /* springBlue: inline links */
   --bold: #C8C093;      /* oldWhite */
+  --sidebar-title: #E46876;  /* Kanagawa Wave Red */
+  --sidebar-active: var(--sidebar-title)
+
 }
 
 :root.light,
@@ -806,6 +808,19 @@ html:not(.js) .sidebar-resize-handle {
 }
 
 
+
+.sidebar .chapter li.part-title {
+  color: var(--sidebar-title, var(--red));
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+/* If your category headers are just text nodes inside the li */
+#sidebar .chapter li.chapter-item > a.active {
+  color: var(--sidebar-title, var(--red)) !important;
+  font-weight: 600;
+}
+
 body {
   background: var(--bg);
   color: var(--fg);
@@ -963,14 +978,5 @@ a:hover {
 .tag-cloud .tag-pill:hover {
   background: var(--accent);
   color: var(--bg);
-}
-
-.sidebar .part-title {
-  color: var(--sidebar-title, var(--heading)) !important; /* Kanagawa Dragon Red (#E46876) */
-  font-weight: bold;
-  margin-top: 25px;            /* More spacing above new sections */
-  margin-bottom: 10px;
-  opacity: 1;                  /* Ensure they stand out */
-  letter-spacing: 0.05em;
 }
 

@@ -16,6 +16,7 @@
 - [NixOS Modules](./NixOS_Modules_Explained_3.md)
 - [Top-Level Attributes](./Understanding_Top-Level_Attributes_5.md)
 - [Derivations](./Intro_to_Nix_Derivations_7.md)
+- [Idiomatic Nix](./idiomatic_nix.md)
 
 # Flakes & Modern Workflows
 
@@ -38,6 +39,7 @@
   - [USB Keyfile Unlock](installation/enc/USB_keyfile.md)
   - [Impermanence (BTRFS Unencrypted)](installation/unenc/unenc_impermanence.md)
   - [Impermanence (BTRFS Encrypted)](installation/enc/encrypted_impermanence.md)
+  - [ZFS Impermanence (Unencrypted)](nix/zfs_impermanence.md)
   - [ZFS with LUKS](installation/enc/encrypted_ZFS.md)
 - [Secrets Management (Sops-Nix)](installation/enc/sops-nix.md)
 

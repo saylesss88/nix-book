@@ -591,6 +591,9 @@ admin tasks for my daily user. That may be a better option for servers, etc.
 Create an admin user for administrative tasks and remove your daily user from
 the `wheel` group, and disable the `sudo`, `su`, and `pkexec` SUIDs:
 
+(Edited: 2026-02-01): Changed from disabling the `setuid` bits to disabling the
+wrapper entirely. Caught by `SuperSandro2000`
+
 ```nix
 { config, pkgs, lib }:
 {
@@ -627,18 +630,19 @@ polkit.enable = true;
 # Disable sudo
 sudo.enable = false;
 wrappers = {
-    su.setuid = lib.mkForce false;
-    # Not needed when sudo is disabled
-    # sudo.setuid = lib.mkForce false;
-    # sudoedit.setuid = lib.mkForce false;
-    sg.setuid = lib.mkForce false;
-    fusermount.setuid = lib.mkForce false;
-    fusermount3.setuid = lib.mkForce false;
-    mount.setuid = lib.mkForce false;
+    su.enable = lib.mkForce false;
+    sudoedit.enable = lib.mkForce false;
+    sg.enable = lib.mkForce false;
+    fusermount.enable = lib.mkForce false;
+    fusermount3.enable = lib.mkForce false;
     pkexec.setuid = lib.mkForce false;
     newgrp.setuid = lib.mkForce false;
     newgidmap.setuid = lib.mkForce false;
     newuidmap.setuid = lib.mkForce false;
+    # `mount` Needed for `fileSystems.options`
+    # mount.enable = lib.mkForce false;
+    # Optional: if you disable mount, disable umount as well
+    # umount.enable = lib.mkForce false;
 };
 # Or hyprlock, required for swaylock to accept your password
 pam.services.swaylock = {
@@ -660,7 +664,9 @@ SUID's that can be disabled:
 
 - `umount`: Allows unprivileged users to unmount devices listed in your fstab.
 
-- `mount`: Same as above but for mounting.
+- `mount`: Same as above but for mounting. It is recommended to set
+  `fileSystems."/boot".options = [ "fmask=0077" "dmask=0077" ];` this won't work
+  without `mount`s setuid.
 
 - `sg`: Executes a command as a different group.
 
@@ -684,7 +690,18 @@ Check again which SUID binaries are active:
 
 ```bash
 sudo find / -perm -4000 -type f -ls 2>/dev/null
+# Example
+-rwsr-xr-x  root  root  /run/wrappers/bin/fusermount
+   ^-- This 's' means setuid bit is set
 ```
+
+```bash
+ls -la /run/wrappers/bin/
+# Or
+find /run/wrappers -perm -4000 -ls
+```
+
+**Only enable the wrappers you actually use!**
 
 ---
 

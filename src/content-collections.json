@@ -1,6 +1,20 @@
 {
   "entries": [
     {
+      "author": "saylesss88",
+      "collection": "blog",
+      "date": "2026-01-30T00:00:00+00:00",
+      "description": null,
+      "draft": true,
+      "path": "idiomatic_nix.md",
+      "preview_html": "<p>There are quite a few resources out there that share best practices, but no\nsingle unified place to find them all. I’m going to try to build on\n<a href=\"https://nix.dev/guides/best-practices\">nix.dev’s Best practices</a>, by doing some\nresearch as well as examining the code of some of the leaders in the NixOS\nworld. (Tweag, numtide, etc.)</p><p>I’ve added a <code>flake.nix</code> to the <code>mdbook-nix-repl</code> repo, you can add it as a\nflake input:</p><pre><code class=\"language-nix\"># flake.nix\n{\n  inputs = {\n    nixpkgs.url = \"github:nixos/nixpkgs/nixos-unstable\";\n\n    mdbook-nix-repl.url = \"github:saylesss88/mdbook-nix-repl?dir=server\";\n  };\n\n  outputs = { self, nixpkgs, mdbook-nix-repl, ... }: {\n    nixosConfigurations.magic = nixpkgs.lib.nixosSystem {\n      system = \"x86_64-lin",
+      "tags": [
+        "nix lang",
+        "idiomatic"
+      ],
+      "title": "NixOS Containers"
+    },
+    {
       "author": null,
       "collection": null,
       "date": "2026-01-23T16:12:43.424789118+00:00",
@@ -478,6 +492,17 @@
       "date": "2025-11-22T00:00:00+00:00",
       "description": null,
       "draft": false,
+      "path": "installation/README.md",
+      "preview_html": "<p>This section provides detailed guides for installing NixOS. You’ll choose\nbetween an <strong>unencrypted</strong> or <strong>encrypted</strong> base setup. After your core\ninstallation, you can explore adding optional features like <code>sops</code> for encrypted\nsecrets, <code>lanzaboote</code> for Secure Boot, or <code>impermanence</code> for a stateless system.</p><p><strong>Guide:</strong>\n<a href=\"https://saylesss88.github.io/installation/unenc/unencrypted_setups.html\">Minimal Btrfs-Subvol Install with Disko and Flakes</a></p><p><strong>Best for:</strong></p>",
+      "tags": [],
+      "title": "My Chapter"
+    },
+    {
+      "author": "saylesss88",
+      "collection": null,
+      "date": "2025-11-22T00:00:00+00:00",
+      "description": null,
+      "draft": false,
       "path": "installation/unenc/unencrypted_setups.md",
       "preview_html": "<p>Figure 1: BTRFS Logo: Image of the BTRFS logo. Sourced from the BTRFS repo BTRFS\nlogo</p><p>Why I Chose BTRFS I chose BTRFS because I was already familiar with it from\nusing it with Arch Linux and I found it to be very easy to use. From what I’ve\nread, there are licensing issues between the Linux Kernel and ZFS which means\nthat ZFS is not part of the Linux Kernel; it’s maintained by the OpenZFS project\nand available as a separate kernel module. This can cause issues and make you\nthink more about your filesystem than I personally want to at this point.</p><p>A <strong>Btrfs subvolume</strong> is essentially a distinct section within a Btrfs\nfilesystem that maintains its own set of files and directories, along with a\nseparate inode numbering system. Unlike block-level partitions (such as ",
       "tags": [],
@@ -489,10 +514,10 @@
       "date": "2025-11-22T00:00:00+00:00",
       "description": null,
       "draft": false,
-      "path": "installation/enc/enc_install.md",
-      "preview_html": "<p>NixOS supports file systems that are encrypted using LUKS (Linux Unified Key\nSetup). This guide walks you through an encrypted NixOS installation using Disko\nfor disk management and Btrfs for subvolumes. It is designed for users who want\nfull disk encryption and a modern filesystem layout. If you prefer an\nunencrypted setup, you can skip the LUKS and encryption steps, but this guide\nfocuses on security and flexibility.</p><p>If you choose to set up impermanence, ensure it matches your install. Encrypted\nSetup with Encrypted Impermanence and Unencrypted Setup with Unencrypted\nImpermanence.</p><p>❗ NOTE: This is a bit convoluted, there are a few paths you can follow. If\nyou choose to use the starter repo (<a href=\"https://github.com/saylesss88/my-flake\">https://github.com/saylesss88/my-fl",
+      "path": "installation/enc/encrypted_impermanence.md",
+      "preview_html": "<p>❗ Important Note: This guide details a setup involving encrypted partitions\nand impermanent NixOS. While powerful, such configurations require careful\nattention to detail. Incorrect steps, especially concerning encryption keys or\npersistent data paths, can lead to <strong>permanent data loss</strong>. Please read all\ninstructions thoroughly before proceeding and consider backing up any critical\ndata beforehand. This has only been tested with the disk layout described in\n<a href=\"https://saylesss88.github.io/installation/encrypted_manual.html\">Encrypted Setups</a></p><p>As a system operates, it gradually accumulates state on its root partition. This\nstate is stored in various directories such as <code>/etc</code> and <code>/var</code>, capturing all\nthe configuration changes, logs, and o",
       "tags": [],
-      "title": "Encrypted Install (BTRFS)"
+      "title": "Encrypted BTRFS Impermanence"
     },
     {
       "author": "saylesss88",
@@ -500,10 +525,10 @@
       "date": "2025-11-22T00:00:00+00:00",
       "description": null,
       "draft": false,
-      "path": "installation/enc/encrypted_impermanence.md",
-      "preview_html": "<p>❗ Important Note: This guide details a setup involving encrypted partitions\nand impermanent NixOS. While powerful, such configurations require careful\nattention to detail. Incorrect steps, especially concerning encryption keys or\npersistent data paths, can lead to <strong>permanent data loss</strong>. Please read all\ninstructions thoroughly before proceeding and consider backing up any critical\ndata beforehand. This has only been tested with the disk layout described in\n<a href=\"https://saylesss88.github.io/installation/encrypted_manual.html\">Encrypted Setups</a></p><p>As a system operates, it gradually accumulates state on its root partition. This\nstate is stored in various directories such as <code>/etc</code> and <code>/var</code>, capturing all\nthe configuration changes, logs, and o",
+      "path": "installation/enc/enc_install.md",
+      "preview_html": "<p>NixOS supports file systems that are encrypted using LUKS (Linux Unified Key\nSetup). This guide walks you through an encrypted NixOS installation using Disko\nfor disk management and Btrfs for subvolumes. It is designed for users who want\nfull disk encryption and a modern filesystem layout. If you prefer an\nunencrypted setup, you can skip the LUKS and encryption steps, but this guide\nfocuses on security and flexibility.</p><p>If you choose to set up impermanence, ensure it matches your install. Encrypted\nSetup with Encrypted Impermanence and Unencrypted Setup with Unencrypted\nImpermanence.</p><p>❗ NOTE: This is a bit convoluted, there are a few paths you can follow. If\nyou choose to use the starter repo (<a href=\"https://github.com/saylesss88/my-flake\">https://github.com/saylesss88/my-fl",
       "tags": [],
-      "title": "Encrypted BTRFS Impermanence"
+      "title": "Encrypted Install (BTRFS)"
     },
     {
       "author": "saylesss88",
@@ -537,17 +562,6 @@
       "preview_html": "<p>This allows you to use a USB stick for your keyfile, with a backup in case you\nwant or need it. There is a setting <code>fallbackToPassword</code> that protects you in\ncase something fails with the USB key.</p><p>First, I’ll show how to set up a dedicated USB stick for a keyfile. (i.e., one\nthat is only used for this). After that I will show the process of adding the\nkeyfile to a USB stick with existing data on it that you don’t want to lose.</p><p><strong>Generate the keyfile</strong></p>",
       "tags": [],
       "title": "USB Keyfile"
-    },
-    {
-      "author": "saylesss88",
-      "collection": null,
-      "date": "2025-11-22T00:00:00+00:00",
-      "description": null,
-      "draft": false,
-      "path": "installation/README.md",
-      "preview_html": "<p>This section provides detailed guides for installing NixOS. You’ll choose\nbetween an <strong>unencrypted</strong> or <strong>encrypted</strong> base setup. After your core\ninstallation, you can explore adding optional features like <code>sops</code> for encrypted\nsecrets, <code>lanzaboote</code> for Secure Boot, or <code>impermanence</code> for a stateless system.</p><p><strong>Guide:</strong>\n<a href=\"https://saylesss88.github.io/installation/unenc/unencrypted_setups.html\">Minimal Btrfs-Subvol Install with Disko and Flakes</a></p><p><strong>Best for:</strong></p>",
-      "tags": [],
-      "title": "My Chapter"
     },
     {
       "author": "saylesss88",

@@ -38,6 +38,32 @@ This saves a ton of typing...
 git clone https://github.com/saylesss88/my-flake2.git
 ```
 
+I included a personally tested script that handles all of the steps up until you
+start configuring the `configuration.nix`.
+
+```bash
+cd my-flake2
+sudo chmod +x install.sh
+sudo ./install.sh
+```
+
+You will be prompted to enter your disk, just enter the disk, not anything else,
+like this:
+
+```bash
+vda
+# OR
+nvme0n1
+```
+
+After the first script completes, there is a `test.sh` script that ensures
+everything is in order.
+
+```bash
+sudo chmod +x test.sh
+sudo ./test.sh
+```
+
 </details>
 
 ## What is OpenZFS
