@@ -28,6 +28,7 @@
 - [Multiple Profiles (Specialisations)](flakes/specialisations_4.6.md)
 - [Case Study: Helix Flake](flakes/helix_flake_4.4.md)
 - [Flakes vs. Traditional Nix](./Comparing_Flakes_and_Traditional_Nix_8.md)
+- [The Dendritic Pattern with flake-parts](flakes/dendritic_flake_parts.md)
 
 ---
 
@@ -41,6 +42,7 @@
   - [Impermanence (BTRFS Encrypted)](installation/enc/encrypted_impermanence.md)
   - [ZFS Impermanence (Unencrypted)](nix/zfs_impermanence.md)
   - [ZFS with LUKS](installation/enc/encrypted_ZFS.md)
+  - [ZFS Imperm Bare-Metal](installation/enc/zfs_bare-metal.md)
 - [Secrets Management (Sops-Nix)](installation/enc/sops-nix.md)
 
 ---
@@ -69,6 +71,7 @@
 
 - [Git](vcs/git.md)
 - [Jujutsu (JJ)](vcs/jujutsu.md)
+- [Practical Jujutsu](vcs/practical_jj.md)
 - [Nushell on NixOS](./intro_to_nushell_on_NixOS.md)
 - [Cachix & Devour](nix/cachix_devour.md)
 - [Working with Nixpkgs](./Working_with_Nixpkgs_Locally_10.md)

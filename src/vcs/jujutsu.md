@@ -197,10 +197,85 @@ Working copy  (@) now at: ktlywzlx 8e88ddbe (empty) (no description set)
 Parent commit (@-)      : zuknrzrx bcd3d965 main | My feature
 ```
 
+- Above we can see that the Working copy `@` is no longer empty, and now has the
+  description "My feature".
+
+With jujutsu, most commands allow you to pass `-r`/`--revision`
+
 ## What is the Jujutsu Working Copy
 
 <details>
 <summary> ✔️ Click To Expand Working Copy Description </summary>
+
+`@` is a revset for "whichever commit the working copy reflects". Think of `@`
+as where you are currently making changes.
+
+Every time you run a `jj` command, it examines the working copy (the files on
+disk) and takes a snapshot. --Steves JJ Tutorial
+
+Let's version control an existing nix development environment.
+
+```bash
+cd projects/rust
+
+❯  ls
+ flake.lock   flake.nix
+
+jj git init --colocate
+Initialized repo in "."
+Hint: Running `git clean -xdf` will remove `.jj/`!
+```
+
+```bash
+❯  jj log
+@  t sayls8@proton.me 2026-03-15 08:49:21 e8fd7ee0
+│  (no description set)
+◆  z root() 00000000
+```
+
+Let's give this change a description:
+
+```bash
+ jj desc -m "Initial commit of dev environment"
+Working copy  (@) now at: t d671f27c Initial commit of dev environment
+Parent commit (@-)      : z 00000000 (empty) (no description set)
+
+❯  jj log
+# The change ID stays the same, but the commit ID changes
+@  t sayls8@proton.me 2026-03-15 09:04:17 d671f27c
+│  Initial commit of dev environment
+◆  z root() 00000000
+```
+
+Ok, I'm done with that change. Let's start a new one, based off of `t`:
+
+```bash
+jj new
+Working copy  (@) now at: q a3f5afe8 (empty) (no description set)
+Parent commit (@-)      : t d671f27c Initial commit of dev environment
+
+jj log
+@  q saylesss87@proton.me 2026-03-15 09:10:46 a3f5afe8
+│  (empty) (no description set)
+○  t saylesss87@proton.me 2026-03-15 09:04:17 d671f27c
+│  Initial commit of dev environment
+◆  z root() 00000000
+```
+
+Since the repo wasn't an existing git repo there are no existing branches (bookmarks).
+To share our work we'll want to create a branch:
+
+
+
+
+Above is a repo that was just created with `jj git init --colocate`. Notice that
+there is already 2 changes with change IDs `t` & `z` and 2 commits with
+identifiers `e8fd7ee0` & `00000000`.
+
+Every `jj` repo has a root commit with `zzzzzzzz` `00000000 ` identifiers.
+`The diamond `◆` represents an immutable, protected revision. This is the
+foundation of the repo. Jujutsu created a second change based on top of the
+empty root commit.
 
 The **working copy** in Jujutsu is an actual **commit** that represents the
 current state of the files you're working on. Unlike Git, where the working copy

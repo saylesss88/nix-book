@@ -389,6 +389,9 @@ could publish the revoke cert and render the corresponding public key useless.
 
 To apply the revoke cert, import it:
 
+> NOTE: Only import the `revoce.asc` if you want to revoke (i.e., make it not
+> work anymore)
+
 ```bash
 gpg --import revoke.asc
 # And optionally push the revoked key to public keyservers to notify others:
@@ -421,8 +424,10 @@ Now we will generate 2 subkeys, 1 for encryption and 1 for authentication.
 gpg --expert --edit-key 0x095722B2A123CF15
 ```
 
+When the screen opens, type `addkey`
+
 Choose 11 (set your own capabilities) and add A (Authenticate) and type `save`
-to save and exit. Repeat this again and choose ECC (encrypt only).
+to save and exit. Repeat this again and choose 12 ECC (encrypt only).
 
 > ❗ `gpg --edit-key` has many more capabilities, after launching type `help`.
 

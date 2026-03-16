@@ -873,7 +873,8 @@ a:hover {
   position: fixed;
   inset: 0;
   z-index: -1;
-  overflow: hidden;
+  background: var(--bg);
+  // overflow: hidden;
 }
 
 .wave {
@@ -951,9 +952,16 @@ a:hover {
 .card {
   background: var(--bg-alt);
   padding: 2rem;
-  border-radius: 16px;
-  border: 1px solid rgba(126,156,216,0.2);
-  backdrop-filter: blur(10px);
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+  // border: 1px solid rgba(126,156,216,0.2);
+  // backdrop-filter: blur(10px);
+}
+
+.card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px)
 }
 
 .card h2 {
