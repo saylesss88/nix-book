@@ -1,6 +1,6 @@
 ---
-title: JJ VCS
-date: 2026-03-15
+title: Practical Jujutsu
+date: 2026-03-16
 author: saylesss88
 description: Practical Jujutsu
 collection: "blog"

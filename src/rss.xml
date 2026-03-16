@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><rss version="2.0"><channel><title>nix-book</title><link>https://saylesss88.github.io/</link><description>Description</description><generator>mdbook-rss-feed 1.0.0</generator><item><title>JJ VCS</title><link>https://saylesss88.github.io/vcs/practical_jj.html</link><description><![CDATA[<h1>Practical Jujutsu</h1>
+<?xml version="1.0" encoding="utf-8"?><rss version="2.0"><channel><title>nix-book</title><link>https://saylesss88.github.io/</link><description>Description</description><generator>mdbook-rss-feed 1.0.0</generator><item><title>Practical Jujutsu</title><link>https://saylesss88.github.io/vcs/practical_jj.html</link><description><![CDATA[<h1>Practical Jujutsu</h1>
 <p>JJ simplifies keeping a linear history and makes it easy to break down big
 changes into smaller atomic changes.</p>
 <details>
@@ -337,7 +337,7 @@ permanent record (pushed to the remote).</p>
 <p>In Git, achieving this usually requires <code>git add</code>, <code>git commit --amend</code>, or an
 interactive rebase. In jj, you just worked in the working copy and pushed, the
 tool handled the “shaping” of the history for you.</p>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/vcs/practical_jj.html</guid><pubDate>Sun, 15 Mar 2026 00:00:00 +0000</pubDate></item><item><title>The Dendritic Pattern with flake-parts</title><link>https://saylesss88.github.io/flakes/dendritic_flake_parts.html</link><description><![CDATA[<h1>The Dendritic Pattern with flake-parts</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/vcs/practical_jj.html</guid><pubDate>Mon, 16 Mar 2026 00:00:00 +0000</pubDate></item><item><title>The Dendritic Pattern with flake-parts</title><link>https://saylesss88.github.io/flakes/dendritic_flake_parts.html</link><description><![CDATA[<h1>The Dendritic Pattern with flake-parts</h1>
 <p><img src="../images/dendritic_nix.png" alt="Dendritic Logo" />–<a href="https://github.com/mightyiam/dendritic">dendretic repo</a></p>
 <p>In the early days of Flakes, users often ended up with a massive, monolithic
 <code>flake.nix</code> or a spaghetti-like web of manual imports. The Dendritic (Tree-like)

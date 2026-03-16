@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>nix-book</title><id>https://saylesss88.github.io/</id><updated>1970-01-01T00:00:00+00:00</updated><link href="https://saylesss88.github.io/" rel="alternate"/><subtitle>Description</subtitle><entry><title>JJ VCS</title><id>https://saylesss88.github.io/vcs/practical_jj.html</id><updated>2026-03-15T00:00:00+00:00</updated><link href="https://saylesss88.github.io/vcs/practical_jj.html" rel="alternate"/><content type="html">&lt;h1&gt;Practical Jujutsu&lt;/h1&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>nix-book</title><id>https://saylesss88.github.io/</id><updated>1970-01-01T00:00:00+00:00</updated><link href="https://saylesss88.github.io/" rel="alternate"/><subtitle>Description</subtitle><entry><title>Practical Jujutsu</title><id>https://saylesss88.github.io/vcs/practical_jj.html</id><updated>2026-03-16T00:00:00+00:00</updated><link href="https://saylesss88.github.io/vcs/practical_jj.html" rel="alternate"/><content type="html">&lt;h1&gt;Practical Jujutsu&lt;/h1&gt;
 &lt;p&gt;JJ simplifies keeping a linear history and makes it easy to break down big
 changes into smaller atomic changes.&lt;/p&gt;
 &lt;details&gt;
