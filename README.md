@@ -112,5 +112,8 @@ This means you are free to use, modify, and distribute this work, provided you
 adhere to the terms of the license. You can find the full text of the license in
 the LICENSE file within this repository:
 
+To see a WIP book on privacy, checkout
+[privacy-book](https://saylesss88.github.io/privacy-book/)
+
 View the
 [Apache License 2.0](https://github.com/saylesss88/nix-book/tree/main?tab=Apache-2.0-1-ov-file)
