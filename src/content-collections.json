@@ -7,7 +7,7 @@
       "description": "Practical Jujutsu",
       "draft": false,
       "path": "vcs/practical_jj.md",
-      "preview_html": "<p>JJ simplifies keeping a linear history and makes it easy to break down big\nchanges into smaller atomic changes.</p><p>An atomic commit is a single unit of work that cannot be broken down further\nwithout losing its meaning.</p><p>One commit should do one thing.</p>",
+      "preview_html": "<p>This post assumes basic understanding of Git and GitHub.</p><p>I’ve spent enough time hovering between the familiarity of Git and the potential\nof Jujutsu. It’s time to move past a ‘primitive’ workflow. By truly mastering\none of these tools, I want to turn version control from a chore into a way to\nprecisely navigate my development stages and build a history that future\ncontributors can actually follow.</p><p>JJ simplifies keeping a linear history and makes it easy to break down big\nchanges into smaller atomic changes.</p>",
       "tags": [
         "vcs",
         "jj"

@@ -66,7 +66,7 @@ jj git push --help
 <details>
 <summary> ✔️ Click to Expand Key Concepts </summary>
 
-1. Working Copy as Commit
+1. **Working Copy as Commit**
 
 - In JJ your working copy is always a real commit. Any changes you make are
   automatically recorded in this working commit. The working copy is always
@@ -76,7 +76,7 @@ jj git push --help
   `git add` or `git commit` for every change. Modifications are always tracked
   in the current commit.
 
-2. Branchless Workflow and Bookmarks
+2. **Branchless Workflow and Bookmarks**
 
 - JJ does not have the concept of a "current branch." Instead, use bookmarks,
   which are named pointers to specific commits.
@@ -90,10 +90,10 @@ jj git push --help
 - Only commits referenced by bookmarks are pushed to remotes, preventing
   accidental sharing of unfinished work.
 
-3. Automatic Tracking and Simpler Workflow
+3. **Automatic Tracking and Simpler Workflow**
 
-- Adding or removing files is automatically tracked, no need for explicit `add`
-  or `rm` commands.
+To stop tracking a specific file, first add it to your `.gitignore`, then run
+`jj untrack <file>`
 
 - The working copy acts as a live snapshot of your workspace. Commands first
   sync filesystem changes into this commit, then perform the requested
@@ -167,38 +167,144 @@ Check where you're at, JJ doesn't care about commits without descriptions but
 Git and GitHub do:
 
 ```bash
-jj st
-Working copy  (@) now at: zuknrzrx 8a20bfa7 (empty) (no description set)
-Parent commit (@-)      : yzppulzo bdd64e8d main | (empty) "Enable Rofi and update nu func for jj"
+❯  jj st
+The working copy has no changes.
+Working copy  (@) : n a8b19ca2 (empty) (no description set)
+Parent commit (@-): k 8c487558 edit(jj): ui.color = always diff.format color-words
 ```
 
 We can see that the Working copy is `(empty)` and has `(no description set)`,
 lets give it a description:
 
 ```bash
-jj desc -m "My feature"
-# ...edit files...
-# Check where we're at again
-jj st
-Working copy changes:
-M home/jj.nix
-Working copy  (@) : zuknrzrx bcd3d965 My feature
-Parent commit (@-): yzppulzo bdd64e8d main | (empty) "Enable Rofi and update nu func for jj"
-
-# Tell JJ which branch we're interested in
-jj bookmark set main
-# Push this change to main
-jj git push
-Changes to push to origin:
-  Move forward bookmark main from bdd64e8d6ea5 to bcd3d96567f8
-remote: Resolving deltas: 100% (3/3), completed with 3 local objects.
-Warning: The working-copy commit in workspace 'default' became immutable, so a new commit has been created on top of it.
-Working copy  (@) now at: ktlywzlx 8e88ddbe (empty) (no description set)
-Parent commit (@-)      : zuknrzrx bcd3d965 main | My feature
+❯  jj desc -m "chore: nix flake update"
+Working copy  (@) now at: n 5c36a33d (empty) chore: nix flake update
+Parent commit (@-)      : k 8c487558 edit(jj): ui.color = always diff.format color-words
 ```
 
-- Above we can see that the Working copy `@` is no longer empty, and now has the
-  description "My feature".
+I ran `nix flake update`, let's check our status:
+
+```bash
+❯  jj st
+Working copy changes:
+M flake.lock
+Working copy  (@) : n d54ab019 chore: nix flake update
+Parent commit (@-): k 8c487558 edit(jj): ui.color = always diff.format color-words
+```
+
+- We can see that running `nix flake update` modified `M` our `flake.lock`. To
+  finalize this change we can run `jj new`.
+
+```bash
+❯  jj new
+Working copy  (@) now at: v cad9d50b (empty) (no description set)
+Parent commit (@-)      : n d54ab019 chore: nix flake update
+```
+
+Now, looking at the output of `jj new` above, we can see that the Working copy
+is empty and has no description set. If we want to push these changes to GitHub,
+we have to point the `main` bookmark where the changes exist, the Parent commit
+in this case:
+
+```bash
+❯  jj bookmark set main -r @-
+Moved 1 bookmarks to n d54ab019 main* | chore: nix flake update
+```
+
+- Notice the `main*`, the `*` indicates that our local `main` has changes that
+  `main@origin` does not have.
+
+Ok, our `main` bookmark is now pointing at our latest changes. We can now run
+`jj git push` to push them to the remote and make them a part of the permanent
+record:
+
+```bash
+❯  jj git push
+Changes to push to origin:
+  Move forward bookmark main from 3956b1386d0a to d54ab0197bef
+git: Enumerating objects: 14, done.
+git: Counting objects: 100% (14/14), done.
+git: Delta compression using up to 16 threads
+git: Compressing objects: 100% (10/10), done.
+git: Writing objects: 100% (10/10), 1.52 KiB | 520.00 KiB/s, done.
+git: Total 10 (delta 7), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (7/7), completed with 4 local objects.
+```
+
+Success! Let's check out our status again:
+
+```bash
+❯  jj st
+The working copy has no changes.
+Working copy  (@) : v cad9d50b (empty) (no description set)
+Parent commit (@-): n d54ab019 main | chore: nix flake update
+```
+
+- Notice that `main*` is now just `main`, indicating our local and remotes are
+  in sync!
+
+Let's check out the log:
+
+```bash
+❯  jj log
+@  v sayls8@proton.me 2026-03-22 12:35:34 5835b760
+│  (no description set)
+◆  n sayls8@proton.me 2026-03-22 12:26:20 main d54ab019
+│  chore: nix flake update
+~
+```
+
+- The `◆` indicates that change `n` is now immutable after the push. Since it is
+  now immutable, `jj` automatically creates a new change on top of `main` and
+  moves the working copy to it.
+
+This is the hardest part for most people to grasp so let's try another example
+where this time we push changes from the working copy.
+
+I'll add a simple `README.md` to our flake root:
+
+```bash
+❯ touch README.md
+
+
+❯  jj st
+Working copy changes:
+A README.md
+Working copy  (@) : v 5835b760 (no description set)
+Parent commit (@-): n d54ab019 main | chore: nix flake update
+```
+
+Let's give the change a description. Remember that `jj` commands default to the
+working copy, so `jj desc` is the same is `jj desc -r @`
+
+```bash
+❯  jj desc -m "chore: add README"
+Working copy  (@) now at: v cdbb489f chore: add README
+Parent commit (@-)      : n d54ab019 main | chore: nix flake update
+```
+
+Now rather than finalizing the current change with `jj new`, we will just point
+the `main` bookmark at the working copy `@` and then push.
+
+```bash
+❯  jj bookmark set main -r @
+Moved 1 bookmarks to v cdbb489f main* | chore: add README
+
+  flake   HEAD [!]
+❯  jj git push
+Changes to push to origin:
+  Move forward bookmark main from d54ab0197bef to cdbb489fecc0
+  git: Enumerating objects: 4, done.
+  git: Counting objects: 100% (4/4), done.
+  git: Delta compression using up to 16 threads
+  git: Compressing objects: 100% (2/2), done.
+  git: Writing objects: 100% (3/3), 332 bytes | 332.00 KiB/s, done.
+  git: Total 3 (delta 1), reused 0 (delta 0), pack-reused 0 (from 0)
+  remote: Resolving deltas: 100% (1/1), completed with 1 local object.
+  Warning: The working-copy commit in workspace 'default' became immutable, so a new commit has been created on top of it.
+  Working copy  (@) now at: s 51306e16 (empty) (no description set)
+  Parent commit (@-)      : v cdbb489f main | chore: add README
+```
 
 With jujutsu, most commands allow you to pass `-r`/`--revision`
 
@@ -255,18 +361,15 @@ Working copy  (@) now at: q a3f5afe8 (empty) (no description set)
 Parent commit (@-)      : t d671f27c Initial commit of dev environment
 
 jj log
-@  q saylesss87@proton.me 2026-03-15 09:10:46 a3f5afe8
+@  q sayls8@proton.me 2026-03-15 09:10:46 a3f5afe8
 │  (empty) (no description set)
-○  t saylesss87@proton.me 2026-03-15 09:04:17 d671f27c
+○  t sayls8@proton.me 2026-03-15 09:04:17 d671f27c
 │  Initial commit of dev environment
 ◆  z root() 00000000
 ```
 
-Since the repo wasn't an existing git repo there are no existing branches (bookmarks).
-To share our work we'll want to create a branch:
-
-
-
+Since the repo wasn't an existing git repo there are no existing branches
+(bookmarks). To share our work we'll want to create a branch:
 
 Above is a repo that was just created with `jj git init --colocate`. Notice that
 there is already 2 changes with change IDs `t` & `z` and 2 commits with
@@ -572,18 +675,8 @@ Working copy  (@) : mnkrokmt 7f0558f8 say hello and goodbye
 Parent commit (@-): ywyvxrts 986d16f5 main | test3
 ```
 
-- We can see that `ywy` is the `main` branch so lets create our change on top of
-  that. We can also see that it's (`@-`), and this is actually what `main` will
-  always be. Once I understood this everything came together.
-
 ```bash
-jj new @-
-Working copy  (@) now at: kxwrsmmu bc7e8144 (empty) (no description set)
-Parent commit (@-)      : ywyvxrts 986d16f5 main | test3
-Added 0 files, modified 1 files, removed 0 files
-jj desc @ -m "Add a devShell"
-Working copy  (@) now at: kxwrsmmu eacafd73 (empty) Add a devShell
-Parent commit (@-)      : ywyvxrts 986d16f5 main | test3
+
 ```
 
 Being more explicit about your commands ensures both you and jj know where
