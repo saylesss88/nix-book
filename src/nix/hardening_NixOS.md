@@ -357,6 +357,8 @@ doesn't mean "safe to run uncontained". --summarized from kicksecure docs
 
 **Pre-Install Recommendations**
 
+- [NixOS Security](https://nixos.org/community/teams/security/)
+
 When installing software, first check
 [search.nixos](https://search.nixos.org/packages), and follow the `Homepage`
 link to ensure that said package is maintained.

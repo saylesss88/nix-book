@@ -1,6 +1,6 @@
 ---
 title: Top-Level Attributes
-date: 2025-11-21
+date: 2026-05-31
 author: saylesss88
 ---
 
@@ -41,8 +41,11 @@ hierarchy** for your entire NixOS system. Almost every setting you configure
 eventually influences this top-level derivation, often through a series of
 intermediate steps.
 
-**Key Takeaway:** `system.build.toplevel` is the ultimate output that defines
-your entire NixOS system.
+> [!NOTE]
+> "top-level attributes" here refers to the attributes at the top level of a
+> module file (imports, options, config), not to be confused with
+> `system.build.toplevel`, which is the final system derivation everything
+> builds toward.
 
 </details>
 
@@ -67,8 +70,6 @@ configuration:
 
 </details>
 
-**Key Takeaway:** Higher-level, user-friendly options are translated into
-lower-level system configurations that are part of the final system build.
 
 ### The NixOS Module System: Evaluating Options
 
@@ -114,9 +115,6 @@ in (import <nixpkgs/lib>).evalModules {
 nix-instantiate --eval file.nix -A config.toplevel
 ```
 
-**Key Takeaway**: The NixOS module system is responsible for evaluating and
-merging option configurations from different modules.
-
 ### How the Module System Works: A Simplified Overview
 
 The module system processes a set of "modules" through these general steps:
@@ -137,14 +135,11 @@ The module system processes a set of "modules" through these general steps:
    level if no `options` or `config` are present) from all modules and merges
    them according to the option's defined type.
 
-> **Important Note**: Option evaluation is lazy, meaning an option's value is
-> only computed when it's actually needed. It can also depend on the values of
-> other options.
+> [!NOTE]
+> Option evaluation is lazy, meaning an option's value is only computed when
+> it's actually needed. It can also depend on the values of other options.
 
 </details>
-
-**Key Takeaway**: The module system imports, declares, and then evaluates option
-values from various modules to build the final configuration.
 
 **Top-Level Attributes in a Module: `imports`, `options`, and `config`**
 
@@ -161,9 +156,6 @@ specific meanings:
 
 - `config`: This attribute is where you assign values to the options that have
   been declared (either in the current module or in imported modules).
-
-**Key Takeaway**: The top-level attributes `imports`, `options`, and `config`
-are the primary ways to structure a NixOS module.
 
 **The Rule: Move Non-Option Attributes Under `config`**
 
@@ -187,7 +179,7 @@ options.mine.desktop.enable = lib.mkEnableOption "desktop settings";
 
 # This will cause an error because 'environment' and 'appstream'
 
-# are not 'options' and 'config' is also present at the top level.jjjj
+# are not 'options' and 'config' is also present at the top level.
 
 environment.systemPackages =
 lib.mkIf config.appstream.enable [ pkgs.git ];
@@ -199,10 +191,7 @@ appstream.enable = true;
 This will result in the error:
 `error: Module has an unsupported attribute 'appstream' This is caused by introducing a top-level 'config' or 'options' attribute. Add configuration attributes immediately on the top level instead, or move all of them into the explicit 'config' attribute`.
 
-**Key Takeaway**: When you have `options` or `config` at the top level, all
-value assignments need to go inside the config block.
-
-**The Correct Way**): Using the `config` Attribute
+**The Correct Way**: Using the `config` Attribute
 
 To fix the previous example, you need to move the value assignments for
 `environment.systemPackages` and `appstream.enable` inside the config attribute:
@@ -230,9 +219,6 @@ Now, Nix knows that you are declaring an option (`options.mine.desktop.enable`)
 and then setting values for other options (`environment.systemPackages`,
 `appstream.enable`) within the `config` block.
 
-**Key Takeaway**: The `config` attribute is used to define the values of
-options.
-
 **Implicit `config`: When `options` is Absent**
 
 If your module does not define either `options` or `config` at the top level,
@@ -254,9 +240,6 @@ appstream.enable = true;
 Nix will implicitly understand that `environment.systemPackages` and
 `appstream.enable` are configuration settings.
 
-**Key Takeaway**: If no explicit options or config are present, top-level
-attributes are automatically considered part of the configuration.
-
 **Removing an Option: What Happens to `config`**
 
 Even if you remove the `options` declaration from a module that has a `config`
@@ -265,9 +248,6 @@ function correctly, assuming the option it's referencing (`appstream.enable` in
 this case) is defined elsewhere (e.g., in an imported module).
 
 </details>
-
-**Key Takeaway**: The `config` section defines values for options, regardless of
-whether those options are declared in the same module.
 
 #### Conclusion
 

@@ -23,6 +23,20 @@ changes into smaller atomic changes.
 <details>
 <summary> Atomic commits & Linear History explained </summary>
 
+> - [Angular Commit Message Format](https://github.com/angular/angular/blob/main/contributing-docs/commit-message-guidelines.md)
+>
+> ```text
+> <header>
+> <BLANK LINE>
+> <body>
+> <BLANK LINE>
+> <footer>
+> ```
+>
+> - The `header` is mandatory.
+> - The `body` is mandatory for all commits except "doc" type commits.
+> - The `footer` is optional
+
 1. Atomic Commits
 
 - An atomic commit is a single unit of work that cannot be broken down further
@@ -267,6 +281,49 @@ feat: implement dendretic pattern for boot module
 
 - [semantic-release](https://github.com/semantic-release/semantic-release)
   automates the whole package release workflow.
+
+**Using Tags**
+
+Tags are just named pointers to commits. Create one pointing to your latest
+change:
+
+```bash
+jj st
+The working copy has no changes.
+Working copy  (@) : ysrlmzlt 7d093162 (empty) (no description set)
+Parent commit (@-): wmuwoply ea03805e chore: add 'release version' to justfile
+```
+
+```bash
+jj tag set v0.1.5 --revision @-
+jj git push --tags
+cargo publish
+```
+
+When you publish next, create a new tag `v0.1.6`.
+
+The simple order:
+
+1. Write code, commit, `jj git push` as normal (many times)
+
+2. When ready to release:
+
+- bump version in `Cargo.toml` to `0.1.6`
+- update CHANGELOG
+- commit
+- `jj git push`
+- `jj tag set v0.1.6 --revision @-`
+- `jj git push --tag v0.1.6` # This only pushes the tag, not the commit again
+- `cargo publish`
+
+That's it. Tags only appear at step 2, once per release.
+
+**One tag per release, on the commit you publish. Everything in between is just
+normal commits with no tags involved.**
+
+You can also use `-dev` tags between releases. Right after the release, set your
+version in your `Cargo.toml` to `0.1.7-dev` and that will make clear which
+commit's haven't been published yet.
 
 ### The edit workflow
 

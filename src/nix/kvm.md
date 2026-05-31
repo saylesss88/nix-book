@@ -82,8 +82,7 @@ takes some getting used to but is very stable.
 
 ## Create NixOS VM (via virt-manager)
 
-Easiest way to get a working configuration IMO, I haven't personally had luck
-with custom NixOS disk layouts within a VM.
+Easiest way to get a working configuration IMO:
 
 1. Download: [NixOS Graphical ISO](https://nixos.org/download/)
 
