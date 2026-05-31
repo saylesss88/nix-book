@@ -25,6 +25,12 @@ modules.
 
 ### The Core of a NixOS System: `system.build.toplevel`
 
+> [!NOTE]
+> "top-level attributes" here refers to the attributes at the top level of a
+> module file (imports, options, config), not to be confused with
+> `system.build.toplevel`, which is the final system derivation everything
+> builds toward.
+
 <details>
 <summary> ✔️ `system.build.toplevel` Explained (Click to Expand) </summary>
 
@@ -41,11 +47,6 @@ hierarchy** for your entire NixOS system. Almost every setting you configure
 eventually influences this top-level derivation, often through a series of
 intermediate steps.
 
-> [!NOTE]
-> "top-level attributes" here refers to the attributes at the top level of a
-> module file (imports, options, config), not to be confused with
-> `system.build.toplevel`, which is the final system derivation everything
-> builds toward.
 
 </details>
 

@@ -1,5 +1,229 @@
 <?xml version="1.0"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>nix-book</title><id>https://saylesss88.github.io/</id><updated>1970-01-01T00:00:00+00:00</updated><link href="https://saylesss88.github.io/" rel="alternate"/><subtitle>Description</subtitle><entry><title>index</title><id>https://saylesss88.github.io/index.html</id><updated>2026-05-12T11:38:33+00:00</updated><link href="https://saylesss88.github.io/index.html" rel="alternate"/><content type="html"></content></entry><entry><title>Practical Jujutsu</title><id>https://saylesss88.github.io/vcs/practical_jj.html</id><updated>2026-03-16T00:00:00+00:00</updated><link href="https://saylesss88.github.io/vcs/practical_jj.html" rel="alternate"/><content type="html">&lt;h1&gt;Practical Jujutsu&lt;/h1&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>nix-book</title><id>https://saylesss88.github.io/</id><updated>1970-01-01T00:00:00+00:00</updated><link href="https://saylesss88.github.io/" rel="alternate"/><subtitle>Description</subtitle><entry><title>Top-Level Attributes</title><id>https://saylesss88.github.io/Understanding_Top-Level_Attributes_5.html</id><updated>2026-05-31T00:00:00+00:00</updated><link href="https://saylesss88.github.io/Understanding_Top-Level_Attributes_5.html" rel="alternate"/><content type="html">&lt;h1&gt;Chapter 5&lt;/h1&gt;
+&lt;details&gt;
+&lt;summary&gt; ✔️ Click to Expand Table of Contents&lt;/summary&gt;
+&lt;!-- toc --&gt;
+&lt;/details&gt;
+&lt;!-- ![coding1](images/coding1.png) --&gt;
+&lt;img src=&quot;images/gruv9.png&quot; width=&quot;800&quot; height=&quot;600&quot;&gt;
+&lt;h2&gt;Understanding Top-Level Attributes in NixOS Modules&lt;/h2&gt;
+&lt;p&gt;This explanation is based on insights from Infinisil, a prominent figure in the
+Nix community, to help clarify the concept of top-level attributes within NixOS
+modules.&lt;/p&gt;
+&lt;h3&gt;The Core of a NixOS System: &lt;code&gt;system.build.toplevel&lt;/code&gt;&lt;/h3&gt;
+&lt;details&gt;
+&lt;summary&gt; ✔️ `system.build.toplevel` Explained (Click to Expand) &lt;/summary&gt;
+&lt;p&gt;In a NixOS system, everything is built from a single “system derivation.” The
+command &lt;code&gt;nix-build &apos;&amp;lt;nixpkgs/nixos&amp;gt;&apos; -A system&lt;/code&gt; initiates this build process.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;-A system&lt;/code&gt; part tells Nix to focus on the &lt;code&gt;system&lt;/code&gt; attribute defined in the
+&lt;code&gt;&apos;&amp;lt;nixpkgs/nixos&amp;gt;&apos;&lt;/code&gt; file (which is essentially &lt;code&gt;./default.nix&lt;/code&gt; within the
+Nixpkgs repository).&lt;/p&gt;
+&lt;p&gt;This &lt;code&gt;system&lt;/code&gt; attribute is specifically the NixOS option &lt;code&gt;system.build.toplevel&lt;/code&gt;
+. Think of &lt;code&gt;system.build.toplevel&lt;/code&gt; as the &lt;strong&gt;very top of the configuration
+hierarchy&lt;/strong&gt; for your entire NixOS system. Almost every setting you configure
+eventually influences this top-level derivation, often through a series of
+intermediate steps.&lt;/p&gt;
+&lt;blockquote class=&quot;markdown-alert-note&quot;&gt;
+&lt;p&gt;“top-level attributes” here refers to the attributes at the top level of a
+module file (imports, options, config), not to be confused with
+&lt;code&gt;system.build.toplevel&lt;/code&gt;, which is the final system derivation everything
+builds toward.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/details&gt;
+&lt;h3&gt;How Options Relate: A Chain of Influence&lt;/h3&gt;
+&lt;p&gt;Options in NixOS are not isolated; they often build upon each other.&lt;/p&gt;
+&lt;details&gt;
+&lt;summary&gt;Example: Nginx Option Chain (Click to Expand)&lt;/summary&gt;
+&lt;p&gt;Here’s an example of how a high-level option can lead down to a low-level system
+configuration:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;You enable Nginx with &lt;code&gt;services.nginx.enable = true;&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;This setting influences the lower-level option &lt;code&gt;systemd.services.nginx&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Which, in turn, affects the even lower-level option
+&lt;code&gt;systemd.units.&quot;nginx.service&quot;&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Ultimately, this leads to the creation of a systemd unit file within
+&lt;code&gt;environment.etc.&quot;systemd/system&quot;&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Finally, this unit file ends up as &lt;code&gt;result/etc/systemd/system/nginx.service&lt;/code&gt;
+within the final &lt;code&gt;system.build.toplevel&lt;/code&gt; derivation.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/details&gt;
+&lt;h3&gt;The NixOS Module System: Evaluating Options&lt;/h3&gt;
+&lt;p&gt;So, how do these options get processed and turned into the final system
+configuration? That’s the job of the &lt;strong&gt;NixOS module system&lt;/strong&gt;, located in the
+&lt;code&gt;./lib&lt;/code&gt; directory of Nixpkgs (specifically in &lt;code&gt;modules.nix&lt;/code&gt;, &lt;code&gt;options.nix&lt;/code&gt;, and
+&lt;code&gt;types.nix&lt;/code&gt;).&lt;/p&gt;
+&lt;p&gt;Interestingly, the module system isn’t exclusive to NixOS; you can use it to
+manage option sets in your own Nix projects.&lt;/p&gt;
+&lt;p&gt;Here’s a simplified example of using the module system outside of NixOS:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;let
+  systemModule = { lib, config, ... }: {
+    options.toplevel = lib.mkOption {
+      type = lib.types.str;
+    };
+
+    options.enableFoo = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+    };
+
+    config.toplevel = &apos;&apos;
+      Is foo enabled? ${lib.boolToString config.enableFoo}
+    &apos;&apos;;
+  };
+
+  userModule = {
+    enableFoo = true;
+  };
+
+in (import &amp;lt;nixpkgs/lib&amp;gt;).evalModules {
+  modules = [ systemModule userModule ];
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;You can evaluate the &lt;code&gt;config.toplevel&lt;/code&gt; option from this example using:&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;nix-instantiate --eval file.nix -A config.toplevel
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;How the Module System Works: A Simplified Overview&lt;/h3&gt;
+&lt;p&gt;The module system processes a set of “modules” through these general steps:&lt;/p&gt;
+&lt;details&gt;
+&lt;summary&gt; ✔️ Detailed Steps (Click to Expand)&lt;/summary&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Importing Modules&lt;/strong&gt;: It recursively finds and includes all modules
+specified in &lt;code&gt;imports = [ ... ];&lt;/code&gt; statements.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Declaring Options&lt;/strong&gt;: It collects all option declarations defined using
+&lt;code&gt;options = { ... };&lt;/code&gt; from all the modules and merges them. If the same option
+is declared in multiple modules, the module system handles this (details
+omitted for simplicity).&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Defining Option Values&lt;/strong&gt;: For each declared option, it gathers all the
+value assignments (defined using &lt;code&gt;config = { ... };&lt;/code&gt; or directly at the top
+level if no &lt;code&gt;options&lt;/code&gt; or &lt;code&gt;config&lt;/code&gt; are present) from all modules and merges
+them according to the option’s defined type.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;blockquote class=&quot;markdown-alert-note&quot;&gt;
+&lt;p&gt;Option evaluation is lazy, meaning an option’s value is only computed when
+it’s actually needed. It can also depend on the values of other options.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/details&gt;
+&lt;p&gt;&lt;strong&gt;Top-Level Attributes in a Module: &lt;code&gt;imports&lt;/code&gt;, &lt;code&gt;options&lt;/code&gt;, and &lt;code&gt;config&lt;/code&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Within a NixOS module (the files that define parts of your system configuration)
+, the attributes defined directly at the top level of the module’s function have
+specific meanings:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;imports&lt;/code&gt;: This attribute is a list of other module files to include. Their
+options and configurations will also be part of the evaluation.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;options&lt;/code&gt;: This attribute is where you declare new configuration options. You
+define their type, default value, description, etc., using functions like
+&lt;code&gt;lib.mkOption&lt;/code&gt; or &lt;code&gt;lib.mkEnableOption&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;config&lt;/code&gt;: This attribute is where you assign values to the options that have
+been declared (either in the current module or in imported modules).&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;The Rule: Move Non-Option Attributes Under &lt;code&gt;config&lt;/code&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;If you define either an &lt;code&gt;options&lt;/code&gt; or a &lt;code&gt;config&lt;/code&gt; attribute at the top level of
+your module, any other attributes that are not option declarations must be moved
+inside the config attribute.&lt;/p&gt;
+&lt;details&gt;
+&lt;summary&gt; ✔️ Examples of Correct and Incorrect Usage (Click to Expand)&lt;/summary&gt;
+&lt;p&gt;Let’s look at an example of what not to do:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;{ pkgs, lib, config, ... }:
+{
+imports = [];
+
+# Defining an option at the top level
+
+options.mine.desktop.enable = lib.mkEnableOption &quot;desktop settings&quot;;
+
+# This will cause an error because &apos;environment&apos; and &apos;appstream&apos;
+
+# are not &apos;options&apos; and &apos;config&apos; is also present at the top level.
+
+environment.systemPackages =
+lib.mkIf config.appstream.enable [ pkgs.git ];
+
+appstream.enable = true;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This will result in the error:
+&lt;code&gt;error: Module has an unsupported attribute &apos;appstream&apos; This is caused by introducing a top-level &apos;config&apos; or &apos;options&apos; attribute. Add configuration attributes immediately on the top level instead, or move all of them into the explicit &apos;config&apos; attribute&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;The Correct Way&lt;/strong&gt;: Using the &lt;code&gt;config&lt;/code&gt; Attribute&lt;/p&gt;
+&lt;p&gt;To fix the previous example, you need to move the value assignments for
+&lt;code&gt;environment.systemPackages&lt;/code&gt; and &lt;code&gt;appstream.enable&lt;/code&gt; inside the config attribute:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;{ pkgs, lib, config, ... }:
+{
+imports = [];
+
+# Defining an option at the top level
+
+options.mine.desktop.enable = lib.mkEnableOption &quot;desktop settings&quot;;
+
+config = {
+environment.systemPackages =
+lib.mkIf config.appstream.enable [ pkgs.git ];
+
+    appstream.enable = true;
+
+};
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now, Nix knows that you are declaring an option (&lt;code&gt;options.mine.desktop.enable&lt;/code&gt;)
+and then setting values for other options (&lt;code&gt;environment.systemPackages&lt;/code&gt;,
+&lt;code&gt;appstream.enable&lt;/code&gt;) within the &lt;code&gt;config&lt;/code&gt; block.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Implicit &lt;code&gt;config&lt;/code&gt;: When &lt;code&gt;options&lt;/code&gt; is Absent&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;If your module does not define either &lt;code&gt;options&lt;/code&gt; or &lt;code&gt;config&lt;/code&gt; at the top level,
+then any attributes you define directly at the top level are implicitly treated
+as being part of the config.&lt;/p&gt;
+&lt;p&gt;For example, this is valid:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;{ pkgs, lib, config, ... }:
+{
+environment.systemPackages =
+lib.mkIf config.appstream.enable [ pkgs.git ];
+
+appstream.enable = true;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Nix will implicitly understand that &lt;code&gt;environment.systemPackages&lt;/code&gt; and
+&lt;code&gt;appstream.enable&lt;/code&gt; are configuration settings.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Removing an Option: What Happens to &lt;code&gt;config&lt;/code&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Even if you remove the &lt;code&gt;options&lt;/code&gt; declaration from a module that has a &lt;code&gt;config&lt;/code&gt;
+section, the &lt;code&gt;config = { environment.systemPackages = ... };&lt;/code&gt; part will still
+function correctly, assuming the option it’s referencing (&lt;code&gt;appstream.enable&lt;/code&gt; in
+this case) is defined elsewhere (e.g., in an imported module).&lt;/p&gt;
+&lt;/details&gt;
+&lt;h4&gt;Conclusion&lt;/h4&gt;
+&lt;p&gt;Understanding the nuances of top-level attributes within NixOS modules,
+particularly &lt;code&gt;imports&lt;/code&gt;, &lt;code&gt;options&lt;/code&gt;, and &lt;code&gt;config&lt;/code&gt;, is fundamental to structuring
+and managing your system’s configuration effectively. As we’ve seen, the module
+system provides a powerful and declarative way to define and evaluate system
+settings, ultimately contributing to the construction of the
+&lt;code&gt;system.build.toplevel&lt;/code&gt; derivation that represents your entire NixOS
+environment.&lt;/p&gt;
+&lt;p&gt;The concepts of option declaration and value assignment, along with the crucial
+rule of organizing non-option attributes under the &lt;code&gt;config&lt;/code&gt; attribute when
+&lt;code&gt;options&lt;/code&gt; is present, provide a clear framework for building modular and
+maintainable configurations.&lt;/p&gt;
+&lt;p&gt;Now that we have a solid grasp of how NixOS modules are structured and how they
+contribute to the final system derivation, it’s a natural next step to explore
+the tangible results of these configurations: the software and system components
+themselves. These are built and managed by a core concept in Nix, known as
+&lt;strong&gt;derivations&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;In the next chapter,
+&lt;a href=&quot;https://saylesss88.github.io/Package_Definitions_Explained_6.html&quot;&gt;Package Definitions Explained&lt;/a&gt;
+we will shift our focus from the abstract configuration to the concrete software
+packages. We will learn how Nix uses &lt;em&gt;package definitions&lt;/em&gt; to create
+&lt;em&gt;derivations&lt;/em&gt;, which are the actual build plans that produce the software we use
+on our NixOS systems. This will bridge the gap between configuring your system
+and understanding how the software within it is managed.&lt;/p&gt;
+</content></entry><entry><title>index</title><id>https://saylesss88.github.io/index.html</id><updated>2026-05-12T11:38:33+00:00</updated><link href="https://saylesss88.github.io/index.html" rel="alternate"/><content type="html"></content></entry><entry><title>Practical Jujutsu</title><id>https://saylesss88.github.io/vcs/practical_jj.html</id><updated>2026-03-16T00:00:00+00:00</updated><link href="https://saylesss88.github.io/vcs/practical_jj.html" rel="alternate"/><content type="html">&lt;h1&gt;Practical Jujutsu&lt;/h1&gt;
 &lt;p&gt;This post assumes basic understanding of Git and GitHub.&lt;/p&gt;
 &lt;p&gt;I’ve spent enough time hovering between the familiarity of Git and the potential
 of Jujutsu. It’s time to move past a ‘primitive’ workflow. By truly mastering
@@ -24845,243 +25069,6 @@ and tools that can help you understand the evaluation process, inspect the
 values of expressions, and trace the execution of your Nix code, enabling you to
 effectively troubleshoot and resolve issues in both Flake-based and traditional
 Nix projects.&lt;/p&gt;
-</content></entry><entry><title>Top-Level Attributes</title><id>https://saylesss88.github.io/Understanding_Top-Level_Attributes_5.html</id><updated>2025-11-21T00:00:00+00:00</updated><link href="https://saylesss88.github.io/Understanding_Top-Level_Attributes_5.html" rel="alternate"/><content type="html">&lt;h1&gt;Chapter 5&lt;/h1&gt;
-&lt;details&gt;
-&lt;summary&gt; ✔️ Click to Expand Table of Contents&lt;/summary&gt;
-&lt;!-- toc --&gt;
-&lt;/details&gt;
-&lt;!-- ![coding1](images/coding1.png) --&gt;
-&lt;img src=&quot;images/gruv9.png&quot; width=&quot;800&quot; height=&quot;600&quot;&gt;
-&lt;h2&gt;Understanding Top-Level Attributes in NixOS Modules&lt;/h2&gt;
-&lt;p&gt;This explanation is based on insights from Infinisil, a prominent figure in the
-Nix community, to help clarify the concept of top-level attributes within NixOS
-modules.&lt;/p&gt;
-&lt;h3&gt;The Core of a NixOS System: &lt;code&gt;system.build.toplevel&lt;/code&gt;&lt;/h3&gt;
-&lt;details&gt;
-&lt;summary&gt; ✔️ `system.build.toplevel` Explained (Click to Expand) &lt;/summary&gt;
-&lt;p&gt;In a NixOS system, everything is built from a single “system derivation.” The
-command &lt;code&gt;nix-build &apos;&amp;lt;nixpkgs/nixos&amp;gt;&apos; -A system&lt;/code&gt; initiates this build process.&lt;/p&gt;
-&lt;p&gt;The &lt;code&gt;-A system&lt;/code&gt; part tells Nix to focus on the &lt;code&gt;system&lt;/code&gt; attribute defined in the
-&lt;code&gt;&apos;&amp;lt;nixpkgs/nixos&amp;gt;&apos;&lt;/code&gt; file (which is essentially &lt;code&gt;./default.nix&lt;/code&gt; within the
-Nixpkgs repository).&lt;/p&gt;
-&lt;p&gt;This &lt;code&gt;system&lt;/code&gt; attribute is specifically the NixOS option &lt;code&gt;system.build.toplevel&lt;/code&gt;
-. Think of &lt;code&gt;system.build.toplevel&lt;/code&gt; as the &lt;strong&gt;very top of the configuration
-hierarchy&lt;/strong&gt; for your entire NixOS system. Almost every setting you configure
-eventually influences this top-level derivation, often through a series of
-intermediate steps.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Key Takeaway:&lt;/strong&gt; &lt;code&gt;system.build.toplevel&lt;/code&gt; is the ultimate output that defines
-your entire NixOS system.&lt;/p&gt;
-&lt;/details&gt;
-&lt;h3&gt;How Options Relate: A Chain of Influence&lt;/h3&gt;
-&lt;p&gt;Options in NixOS are not isolated; they often build upon each other.&lt;/p&gt;
-&lt;details&gt;
-&lt;summary&gt;Example: Nginx Option Chain (Click to Expand)&lt;/summary&gt;
-&lt;p&gt;Here’s an example of how a high-level option can lead down to a low-level system
-configuration:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;You enable Nginx with &lt;code&gt;services.nginx.enable = true;&lt;/code&gt;.&lt;/li&gt;
-&lt;li&gt;This setting influences the lower-level option &lt;code&gt;systemd.services.nginx&lt;/code&gt;.&lt;/li&gt;
-&lt;li&gt;Which, in turn, affects the even lower-level option
-&lt;code&gt;systemd.units.&quot;nginx.service&quot;&lt;/code&gt;.&lt;/li&gt;
-&lt;li&gt;Ultimately, this leads to the creation of a systemd unit file within
-&lt;code&gt;environment.etc.&quot;systemd/system&quot;&lt;/code&gt;.&lt;/li&gt;
-&lt;li&gt;Finally, this unit file ends up as &lt;code&gt;result/etc/systemd/system/nginx.service&lt;/code&gt;
-within the final &lt;code&gt;system.build.toplevel&lt;/code&gt; derivation.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/details&gt;
-&lt;p&gt;&lt;strong&gt;Key Takeaway:&lt;/strong&gt; Higher-level, user-friendly options are translated into
-lower-level system configurations that are part of the final system build.&lt;/p&gt;
-&lt;h3&gt;The NixOS Module System: Evaluating Options&lt;/h3&gt;
-&lt;p&gt;So, how do these options get processed and turned into the final system
-configuration? That’s the job of the &lt;strong&gt;NixOS module system&lt;/strong&gt;, located in the
-&lt;code&gt;./lib&lt;/code&gt; directory of Nixpkgs (specifically in &lt;code&gt;modules.nix&lt;/code&gt;, &lt;code&gt;options.nix&lt;/code&gt;, and
-&lt;code&gt;types.nix&lt;/code&gt;).&lt;/p&gt;
-&lt;p&gt;Interestingly, the module system isn’t exclusive to NixOS; you can use it to
-manage option sets in your own Nix projects.&lt;/p&gt;
-&lt;p&gt;Here’s a simplified example of using the module system outside of NixOS:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;let
-  systemModule = { lib, config, ... }: {
-    options.toplevel = lib.mkOption {
-      type = lib.types.str;
-    };
-
-    options.enableFoo = lib.mkOption {
-      type = lib.types.bool;
-      default = false;
-    };
-
-    config.toplevel = &apos;&apos;
-      Is foo enabled? ${lib.boolToString config.enableFoo}
-    &apos;&apos;;
-  };
-
-  userModule = {
-    enableFoo = true;
-  };
-
-in (import &amp;lt;nixpkgs/lib&amp;gt;).evalModules {
-  modules = [ systemModule userModule ];
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;strong&gt;You can evaluate the &lt;code&gt;config.toplevel&lt;/code&gt; option from this example using:&lt;/strong&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;nix-instantiate --eval file.nix -A config.toplevel
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;strong&gt;Key Takeaway&lt;/strong&gt;: The NixOS module system is responsible for evaluating and
-merging option configurations from different modules.&lt;/p&gt;
-&lt;h3&gt;How the Module System Works: A Simplified Overview&lt;/h3&gt;
-&lt;p&gt;The module system processes a set of “modules” through these general steps:&lt;/p&gt;
-&lt;details&gt;
-&lt;summary&gt; ✔️ Detailed Steps (Click to Expand)&lt;/summary&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Importing Modules&lt;/strong&gt;: It recursively finds and includes all modules
-specified in &lt;code&gt;imports = [ ... ];&lt;/code&gt; statements.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Declaring Options&lt;/strong&gt;: It collects all option declarations defined using
-&lt;code&gt;options = { ... };&lt;/code&gt; from all the modules and merges them. If the same option
-is declared in multiple modules, the module system handles this (details
-omitted for simplicity).&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Defining Option Values&lt;/strong&gt;: For each declared option, it gathers all the
-value assignments (defined using &lt;code&gt;config = { ... };&lt;/code&gt; or directly at the top
-level if no &lt;code&gt;options&lt;/code&gt; or &lt;code&gt;config&lt;/code&gt; are present) from all modules and merges
-them according to the option’s defined type.&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;blockquote&gt;
-&lt;p&gt;&lt;strong&gt;Important Note&lt;/strong&gt;: Option evaluation is lazy, meaning an option’s value is
-only computed when it’s actually needed. It can also depend on the values of
-other options.&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;/details&gt;
-&lt;p&gt;&lt;strong&gt;Key Takeaway&lt;/strong&gt;: The module system imports, declares, and then evaluates option
-values from various modules to build the final configuration.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Top-Level Attributes in a Module: &lt;code&gt;imports&lt;/code&gt;, &lt;code&gt;options&lt;/code&gt;, and &lt;code&gt;config&lt;/code&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Within a NixOS module (the files that define parts of your system configuration)
-, the attributes defined directly at the top level of the module’s function have
-specific meanings:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;code&gt;imports&lt;/code&gt;: This attribute is a list of other module files to include. Their
-options and configurations will also be part of the evaluation.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;code&gt;options&lt;/code&gt;: This attribute is where you declare new configuration options. You
-define their type, default value, description, etc., using functions like
-&lt;code&gt;lib.mkOption&lt;/code&gt; or &lt;code&gt;lib.mkEnableOption&lt;/code&gt;.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;code&gt;config&lt;/code&gt;: This attribute is where you assign values to the options that have
-been declared (either in the current module or in imported modules).&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;Key Takeaway&lt;/strong&gt;: The top-level attributes &lt;code&gt;imports&lt;/code&gt;, &lt;code&gt;options&lt;/code&gt;, and &lt;code&gt;config&lt;/code&gt;
-are the primary ways to structure a NixOS module.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;The Rule: Move Non-Option Attributes Under &lt;code&gt;config&lt;/code&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;If you define either an &lt;code&gt;options&lt;/code&gt; or a &lt;code&gt;config&lt;/code&gt; attribute at the top level of
-your module, any other attributes that are not option declarations must be moved
-inside the config attribute.&lt;/p&gt;
-&lt;details&gt;
-&lt;summary&gt; ✔️ Examples of Correct and Incorrect Usage (Click to Expand)&lt;/summary&gt;
-&lt;p&gt;Let’s look at an example of what not to do:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;{ pkgs, lib, config, ... }:
-{
-imports = [];
-
-# Defining an option at the top level
-
-options.mine.desktop.enable = lib.mkEnableOption &quot;desktop settings&quot;;
-
-# This will cause an error because &apos;environment&apos; and &apos;appstream&apos;
-
-# are not &apos;options&apos; and &apos;config&apos; is also present at the top level.jjjj
-
-environment.systemPackages =
-lib.mkIf config.appstream.enable [ pkgs.git ];
-
-appstream.enable = true;
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;This will result in the error:
-&lt;code&gt;error: Module has an unsupported attribute &apos;appstream&apos; This is caused by introducing a top-level &apos;config&apos; or &apos;options&apos; attribute. Add configuration attributes immediately on the top level instead, or move all of them into the explicit &apos;config&apos; attribute&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Key Takeaway&lt;/strong&gt;: When you have &lt;code&gt;options&lt;/code&gt; or &lt;code&gt;config&lt;/code&gt; at the top level, all
-value assignments need to go inside the config block.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;The Correct Way&lt;/strong&gt;): Using the &lt;code&gt;config&lt;/code&gt; Attribute&lt;/p&gt;
-&lt;p&gt;To fix the previous example, you need to move the value assignments for
-&lt;code&gt;environment.systemPackages&lt;/code&gt; and &lt;code&gt;appstream.enable&lt;/code&gt; inside the config attribute:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;{ pkgs, lib, config, ... }:
-{
-imports = [];
-
-# Defining an option at the top level
-
-options.mine.desktop.enable = lib.mkEnableOption &quot;desktop settings&quot;;
-
-config = {
-environment.systemPackages =
-lib.mkIf config.appstream.enable [ pkgs.git ];
-
-    appstream.enable = true;
-
-};
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Now, Nix knows that you are declaring an option (&lt;code&gt;options.mine.desktop.enable&lt;/code&gt;)
-and then setting values for other options (&lt;code&gt;environment.systemPackages&lt;/code&gt;,
-&lt;code&gt;appstream.enable&lt;/code&gt;) within the &lt;code&gt;config&lt;/code&gt; block.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Key Takeaway&lt;/strong&gt;: The &lt;code&gt;config&lt;/code&gt; attribute is used to define the values of
-options.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Implicit &lt;code&gt;config&lt;/code&gt;: When &lt;code&gt;options&lt;/code&gt; is Absent&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;If your module does not define either &lt;code&gt;options&lt;/code&gt; or &lt;code&gt;config&lt;/code&gt; at the top level,
-then any attributes you define directly at the top level are implicitly treated
-as being part of the config.&lt;/p&gt;
-&lt;p&gt;For example, this is valid:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;{ pkgs, lib, config, ... }:
-{
-environment.systemPackages =
-lib.mkIf config.appstream.enable [ pkgs.git ];
-
-appstream.enable = true;
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Nix will implicitly understand that &lt;code&gt;environment.systemPackages&lt;/code&gt; and
-&lt;code&gt;appstream.enable&lt;/code&gt; are configuration settings.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Key Takeaway&lt;/strong&gt;: If no explicit options or config are present, top-level
-attributes are automatically considered part of the configuration.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Removing an Option: What Happens to &lt;code&gt;config&lt;/code&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Even if you remove the &lt;code&gt;options&lt;/code&gt; declaration from a module that has a &lt;code&gt;config&lt;/code&gt;
-section, the &lt;code&gt;config = { environment.systemPackages = ... };&lt;/code&gt; part will still
-function correctly, assuming the option it’s referencing (&lt;code&gt;appstream.enable&lt;/code&gt; in
-this case) is defined elsewhere (e.g., in an imported module).&lt;/p&gt;
-&lt;/details&gt;
-&lt;p&gt;&lt;strong&gt;Key Takeaway&lt;/strong&gt;: The &lt;code&gt;config&lt;/code&gt; section defines values for options, regardless of
-whether those options are declared in the same module.&lt;/p&gt;
-&lt;h4&gt;Conclusion&lt;/h4&gt;
-&lt;p&gt;Understanding the nuances of top-level attributes within NixOS modules,
-particularly &lt;code&gt;imports&lt;/code&gt;, &lt;code&gt;options&lt;/code&gt;, and &lt;code&gt;config&lt;/code&gt;, is fundamental to structuring
-and managing your system’s configuration effectively. As we’ve seen, the module
-system provides a powerful and declarative way to define and evaluate system
-settings, ultimately contributing to the construction of the
-&lt;code&gt;system.build.toplevel&lt;/code&gt; derivation that represents your entire NixOS
-environment.&lt;/p&gt;
-&lt;p&gt;The concepts of option declaration and value assignment, along with the crucial
-rule of organizing non-option attributes under the &lt;code&gt;config&lt;/code&gt; attribute when
-&lt;code&gt;options&lt;/code&gt; is present, provide a clear framework for building modular and
-maintainable configurations.&lt;/p&gt;
-&lt;p&gt;Now that we have a solid grasp of how NixOS modules are structured and how they
-contribute to the final system derivation, it’s a natural next step to explore
-the tangible results of these configurations: the software and system components
-themselves. These are built and managed by a core concept in Nix, known as
-&lt;strong&gt;derivations&lt;/strong&gt;.&lt;/p&gt;
-&lt;p&gt;In the next chapter,
-&lt;a href=&quot;https://saylesss88.github.io/Package_Definitions_Explained_6.html&quot;&gt;Package Definitions Explained&lt;/a&gt;
-we will shift our focus from the abstract configuration to the concrete software
-packages. We will learn how Nix uses &lt;em&gt;package definitions&lt;/em&gt; to create
-&lt;em&gt;derivations&lt;/em&gt;, which are the actual build plans that produce the software we use
-on our NixOS systems. This will bridge the gap between configuring your system
-and understanding how the software within it is managed.&lt;/p&gt;
 </content></entry><entry><title>Understanding Nix Functions</title><id>https://saylesss88.github.io/Understanding_Nix_Functions_2.html</id><updated>2025-11-21T00:00:00+00:00</updated><link href="https://saylesss88.github.io/Understanding_Nix_Functions_2.html" rel="alternate"/><content type="html">&lt;h1&gt;Chapter 2&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Table of Contents&lt;/summary&gt;

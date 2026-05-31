@@ -1,6 +1,17 @@
 {
   "entries": [
     {
+      "author": "saylesss88",
+      "collection": null,
+      "date": "2026-05-31T00:00:00+00:00",
+      "description": null,
+      "draft": false,
+      "path": "Understanding_Top-Level_Attributes_5.md",
+      "preview_html": "<p>This explanation is based on insights from Infinisil, a prominent figure in the\nNix community, to help clarify the concept of top-level attributes within NixOS\nmodules.</p><p>In a NixOS system, everything is built from a single “system derivation.” The\ncommand <code>nix-build '&lt;nixpkgs/nixos&gt;' -A system</code> initiates this build process.</p><p>The <code>-A system</code> part tells Nix to focus on the <code>system</code> attribute defined in the\n<code>'&lt;nixpkgs/nixos&gt;'</code> file (which is essentially <code>./default.nix</code> within the\nNixpkgs repository).</p>",
+      "tags": [],
+      "title": "Top-Level Attributes"
+    },
+    {
       "author": null,
       "collection": null,
       "date": "2026-05-12T11:38:33.116514810+00:00",
@@ -683,17 +694,6 @@
       "preview_html": "<p>A key benefit of Nix Flakes is their <em>default</em> enforcement of <strong>pure\nevaluation</strong>.</p><p>In Nix, an <strong>impure operation</strong> depends on something <em>outside</em> its explicit\ninputs. Examples include:</p><p>Impurity leads to unpredictable builds that may differ across systems or time.</p>",
       "tags": [],
       "title": "Comparing Flakes and Traditional Nix"
-    },
-    {
-      "author": "saylesss88",
-      "collection": null,
-      "date": "2025-11-21T00:00:00+00:00",
-      "description": null,
-      "draft": false,
-      "path": "Understanding_Top-Level_Attributes_5.md",
-      "preview_html": "<p>This explanation is based on insights from Infinisil, a prominent figure in the\nNix community, to help clarify the concept of top-level attributes within NixOS\nmodules.</p><p>In a NixOS system, everything is built from a single “system derivation.” The\ncommand <code>nix-build '&lt;nixpkgs/nixos&gt;' -A system</code> initiates this build process.</p><p>The <code>-A system</code> part tells Nix to focus on the <code>system</code> attribute defined in the\n<code>'&lt;nixpkgs/nixos&gt;'</code> file (which is essentially <code>./default.nix</code> within the\nNixpkgs repository).</p>",
-      "tags": [],
-      "title": "Top-Level Attributes"
     },
     {
       "author": "saylesss88",
