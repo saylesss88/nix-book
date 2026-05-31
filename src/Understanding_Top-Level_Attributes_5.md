@@ -23,13 +23,18 @@ This explanation is based on insights from Infinisil, a prominent figure in the
 Nix community, to help clarify the concept of top-level attributes within NixOS
 modules.
 
-### The Core of a NixOS System: `system.build.toplevel`
-
-> [!NOTE]
-> "top-level attributes" here refers to the attributes at the top level of a
-> module file (imports, options, config), not to be confused with
+> [!NOTE] "top-level attributes" here refers to the attributes at the top level
+> of a module file (imports, options, config), not to be confused with
 > `system.build.toplevel`, which is the final system derivation everything
 > builds toward.
+
+To understand why top-level module attributes matter, it helps to first
+understand what they're ultimately building toward: `system.build.toplevel`, the
+final derivation that represents your entire NixOS system.
+
+---
+
+### The Core of a NixOS System: `system.build.toplevel`
 
 <details>
 <summary> ✔️ `system.build.toplevel` Explained (Click to Expand) </summary>
@@ -46,7 +51,6 @@ This `system` attribute is specifically the NixOS option `system.build.toplevel`
 hierarchy** for your entire NixOS system. Almost every setting you configure
 eventually influences this top-level derivation, often through a series of
 intermediate steps.
-
 
 </details>
 
@@ -70,7 +74,6 @@ configuration:
   within the final `system.build.toplevel` derivation.
 
 </details>
-
 
 ### The NixOS Module System: Evaluating Options
 
@@ -116,12 +119,11 @@ in (import <nixpkgs/lib>).evalModules {
 nix-instantiate --eval file.nix -A config.toplevel
 ```
 
+---
+
 ### How the Module System Works: A Simplified Overview
 
 The module system processes a set of "modules" through these general steps:
-
-<details>
-<summary> ✔️ Detailed Steps (Click to Expand)</summary>
 
 1. **Importing Modules**: It recursively finds and includes all modules
    specified in `imports = [ ... ];` statements.
@@ -136,11 +138,10 @@ The module system processes a set of "modules" through these general steps:
    level if no `options` or `config` are present) from all modules and merges
    them according to the option's defined type.
 
-> [!NOTE]
-> Option evaluation is lazy, meaning an option's value is only computed when
-> it's actually needed. It can also depend on the values of other options.
+> [!NOTE] Option evaluation is lazy, meaning an option's value is only computed
+> when it's actually needed. It can also depend on the values of other options.
 
-</details>
+---
 
 **Top-Level Attributes in a Module: `imports`, `options`, and `config`**
 

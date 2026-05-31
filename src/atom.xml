@@ -11,6 +11,12 @@
 Nix community, to help clarify the concept of top-level attributes within NixOS
 modules.&lt;/p&gt;
 &lt;h3&gt;The Core of a NixOS System: &lt;code&gt;system.build.toplevel&lt;/code&gt;&lt;/h3&gt;
+&lt;blockquote class=&quot;markdown-alert-note&quot;&gt;
+&lt;p&gt;“top-level attributes” here refers to the attributes at the top level of a
+module file (imports, options, config), not to be confused with
+&lt;code&gt;system.build.toplevel&lt;/code&gt;, which is the final system derivation everything
+builds toward.&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ `system.build.toplevel` Explained (Click to Expand) &lt;/summary&gt;
 &lt;p&gt;In a NixOS system, everything is built from a single “system derivation.” The
@@ -23,12 +29,6 @@ Nixpkgs repository).&lt;/p&gt;
 hierarchy&lt;/strong&gt; for your entire NixOS system. Almost every setting you configure
 eventually influences this top-level derivation, often through a series of
 intermediate steps.&lt;/p&gt;
-&lt;blockquote class=&quot;markdown-alert-note&quot;&gt;
-&lt;p&gt;“top-level attributes” here refers to the attributes at the top level of a
-module file (imports, options, config), not to be confused with
-&lt;code&gt;system.build.toplevel&lt;/code&gt;, which is the final system derivation everything
-builds toward.&lt;/p&gt;
-&lt;/blockquote&gt;
 &lt;/details&gt;
 &lt;h3&gt;How Options Relate: A Chain of Influence&lt;/h3&gt;
 &lt;p&gt;Options in NixOS are not isolated; they often build upon each other.&lt;/p&gt;
@@ -25069,6 +25069,660 @@ and tools that can help you understand the evaluation process, inspect the
 values of expressions, and trace the execution of your Nix code, enabling you to
 effectively troubleshoot and resolve issues in both Flake-based and traditional
 Nix projects.&lt;/p&gt;
+</content></entry><entry><title>Nix Flakes Explained</title><id>https://saylesss88.github.io/Nix_Flakes_Explained_4.html</id><updated>2025-11-21T00:00:00+00:00</updated><link href="https://saylesss88.github.io/Nix_Flakes_Explained_4.html" rel="alternate"/><content type="html">&lt;h1&gt;Chapter 4&lt;/h1&gt;
+&lt;details&gt;
+&lt;summary&gt; ✔️ Click to Expand Table of Contents&lt;/summary&gt;
+&lt;!-- toc --&gt;
+&lt;/details&gt;
+&lt;p&gt;&lt;img src=&quot;images/trees3.cleaned.png&quot; alt=&quot;trees3&quot; /&gt;&lt;/p&gt;
+&lt;!-- &lt;img src=&quot;images/gruv15.png&quot; width=&quot;800&quot; height=&quot;600&quot;&gt; --&gt;
+&lt;h2&gt;Nix Flakes Explained&lt;/h2&gt;
+&lt;p&gt;If you’re completely new, take a look at
+&lt;a href=&quot;https://nixos.wiki/wiki/flakes#Installing_flakes&quot;&gt;this&lt;/a&gt; to get flakes on your
+system.&lt;/p&gt;
+&lt;p&gt;For the Nix Flake man page type &lt;code&gt;man nix3 flake&lt;/code&gt; and for a specific feature,
+type something like &lt;code&gt;man nix3 flake-lock&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Flakes replace stateful channels (which cause much confusion among novices) and
+introduce a more intuitive and consistent CLI, making them a perfect opportunity
+to start using Nix. – Alexander Bantyev
+&lt;a href=&quot;https://serokell.io/blog/practical-nix-flakes&quot;&gt;Practical Nix Flakes&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;The “state” being remembered and updated by channels is the specific revision of
+the Nixpkgs repository that your local Nix installation considers “current” for
+a given channel. When this state changes on your machine, your builds diverge
+from others whose machines have a different, independently updated channel
+state.&lt;/p&gt;
+&lt;p&gt;Channels are also constantly updated on the remote servers. So, “nixos-unstable”
+today refers to a different set of packages and versions than “nixos-unstable”
+did yesterday or will tomorrow.&lt;/p&gt;
+&lt;p&gt;Flakes solve this by making the exact revision of &lt;code&gt;nixpkgs&lt;/code&gt; (and other
+dependencies) an explicit input within your &lt;code&gt;flake.nix&lt;/code&gt; file, pinned in the
+&lt;code&gt;flake.lock&lt;/code&gt;. This means the state is explicitly defined in the configuration
+itself, not implicitly managed by a global system setting.&lt;/p&gt;
+&lt;p&gt;Evaluation time is notoriously slow on NixOS, the problem was that in the past
+Nix evaluation wasn’t hermetic preventing effective evaluation caching. A &lt;code&gt;.nix&lt;/code&gt;
+file can import other Nix files or by looking them up in the Nix search path
+(&lt;code&gt;$NIX_PATH&lt;/code&gt;). This causes a cached result to be inconsistent unless every file
+is perfectly kept track of. Flakes solve this problem by ensuring fully hermetic
+evaluation.&lt;/p&gt;
+&lt;p&gt;“Hermetic” means that the output of an evaluation (the derivation itself)
+depends &lt;em&gt;only&lt;/em&gt; on the explicit inputs provided, not on anything external like
+environment variables or pulling in files only on your system. This is the
+problem that Nix solves and the problem that flakes are built around.&lt;/p&gt;
+&lt;h2&gt;What is a Nix Flake?&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Nix flakes&lt;/strong&gt; are independent components in the Nix ecosystem. They define
+their own &lt;strong&gt;dependencies&lt;/strong&gt; (inputs) and what they produce (outputs), which can
+include &lt;strong&gt;packages&lt;/strong&gt;, &lt;strong&gt;deployment configurations&lt;/strong&gt;, or &lt;strong&gt;Nix functions&lt;/strong&gt; for
+other flakes to use.&lt;/p&gt;
+&lt;p&gt;Flakes provide a standardized framework for building and managing software,
+making all project inputs explicit for greater reproducibility and
+self-containment.&lt;/p&gt;
+&lt;p&gt;At its core, a flake is a source tree (like a Git repository) that contains a
+&lt;code&gt;flake.nix&lt;/code&gt; file in its root directory. This file provides a standardized way to
+access Nix artifacts such as packages and modules.&lt;/p&gt;
+&lt;p&gt;Flakes provide a standard way to write Nix expressions (and therefore packages)
+whose dependencies are version-pinned in a lock file, improving reproducibility
+of Nix installations. – NixOS Wiki&lt;/p&gt;
+&lt;p&gt;Think of &lt;code&gt;flake.nix&lt;/code&gt; as the central entry point of a flake. It not only defines
+what the flake produces but also declares its dependencies.&lt;/p&gt;
+&lt;h3&gt;Key Concepts&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;flake.nix&lt;/code&gt;: &lt;strong&gt;The Heart of a Flake&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;flake.nix&lt;/code&gt; file is mandatory for any flake. It must contain an attribute
+set with at least one required attribute: &lt;code&gt;outputs&lt;/code&gt;. It can also optionally
+include &lt;code&gt;description&lt;/code&gt; and &lt;code&gt;inputs&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Basic Structure:&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;{
+  description = &quot;Package description&quot;;
+  inputs = { /* Dependencies go here */ };
+  outputs = { /* What the flake produces */ };
+  nixConfig = { /* Advanced configuration options */ };
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I typically see &lt;code&gt;nixConfig&lt;/code&gt; used for extra-substituters for cachix. This is a
+general-purpose way to define Nix configuration options that apply when this
+flake is evaluated or built. It ties into your &lt;code&gt;/etc/nix/nix.conf&lt;/code&gt; or
+&lt;code&gt;~/.config/nix/nix.conf&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;For example, create a directory and add a &lt;code&gt;flake.nix&lt;/code&gt; with the following
+contents, yes this is a complete &lt;code&gt;flake.nix&lt;/code&gt; demonstrating &lt;em&gt;outputs&lt;/em&gt; being the
+only required attribute:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;# flake.nix
+{
+  outputs = _: { multiply = 2 * 2; };
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now evaluate it with:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;nix eval .#multiply
+4
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;In the &lt;code&gt;outputs = _: { ... };&lt;/code&gt; line, the &lt;code&gt;_&lt;/code&gt; (underscore) is a placeholder
+argument. It represents the inputs that the outputs function could receive (like
+&lt;code&gt;inputs&lt;/code&gt;, &lt;code&gt;self&lt;/code&gt;, &lt;code&gt;pkgs&lt;/code&gt;, etc.), but in this specific case, we’re not using any
+of them to define the multiply attribute. It’s a common convention in Nix to use
+&lt;code&gt;_&lt;/code&gt; when an argument is required by a function but intentionally ignored.&lt;/p&gt;
+&lt;p&gt;In the command &lt;code&gt;nix eval .#multiply&lt;/code&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;the &lt;code&gt;.&lt;/code&gt; signifies the current directory, indicating that Nix should look for a
+&lt;code&gt;flake.nix&lt;/code&gt; file in the directory where you’re running the command.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;The &lt;code&gt;#&lt;/code&gt; is used to select a specific attribute from the &lt;code&gt;outputs&lt;/code&gt; of the
+flake. In this case, it’s telling Nix to evaluate the &lt;code&gt;multiply&lt;/code&gt; attribute.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In the next example we will create a &lt;code&gt;devShells&lt;/code&gt; output as well as a &lt;code&gt;packages&lt;/code&gt;
+output.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;code&gt;flake.lock&lt;/code&gt; auto-generated lock file&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;All flake inputs are pinned to specific revisions in a lockfile called
+&lt;code&gt;flake.lock&lt;/code&gt; This file stores the revision info as JSON.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;flake.lock&lt;/code&gt; file ensures that Nix flakes have purely deterministic outputs.
+A &lt;code&gt;flake.nix&lt;/code&gt; file without an accompanying &lt;code&gt;flake.lock&lt;/code&gt; should be considered
+incomplete and a kind of proto-flake. Any Nix CLI command that is run against
+the flake—like &lt;code&gt;nix build&lt;/code&gt;, &lt;code&gt;nix develop&lt;/code&gt;, or even &lt;code&gt;nix flake show&lt;/code&gt;—generates a
+&lt;code&gt;flake.lock&lt;/code&gt; for you.&lt;/p&gt;
+&lt;p&gt;Here’s an example section of a &lt;code&gt;flake.lock&lt;/code&gt; file that pins Nixpkgs to a specific
+revision:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;$ cat flake.lock
+{
+  &quot;nodes&quot;: {
+    &quot;nixpkgs&quot;: {
+      &quot;info&quot;: {
+        &quot;lastModified&quot;: 1587398327,
+        &quot;narHash&quot;: &quot;sha256-mEKkeLgUrzAsdEaJ/1wdvYn0YZBAKEG3AN21koD2AgU=&quot;
+      },
+      &quot;locked&quot;: {
+        &quot;owner&quot;: &quot;NixOS&quot;,
+        &quot;repo&quot;: &quot;nixpkgs&quot;,
+        &quot;rev&quot;: &quot;5272327b81ed355bbed5659b8d303cf2979b6953&quot;,
+        &quot;type&quot;: &quot;github&quot;
+      },
+      &quot;original&quot;: {
+        &quot;owner&quot;: &quot;NixOS&quot;,
+        &quot;ref&quot;: &quot;nixos-20.03&quot;,
+        &quot;repo&quot;: &quot;nixpkgs&quot;,
+        &quot;type&quot;: &quot;github&quot;
+      }
+    },
+    &quot;root&quot;: {
+      &quot;inputs&quot;: {
+        &quot;nixpkgs&quot;: &quot;nixpkgs&quot;
+      }
+    }
+  },
+  &quot;root&quot;: &quot;root&quot;,
+  &quot;version&quot;: 5
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Any future build of this flake will use the version of &lt;code&gt;nixpkgs&lt;/code&gt; recorded in the
+lock file. If you add new inputs, they will be automatically added when you run
+a nix flake command like &lt;code&gt;nix flake show&lt;/code&gt;. But it won’t replace existing locks.&lt;/p&gt;
+&lt;p&gt;If you need to update a locked input to the latest version:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;nix flake lock --update-input nixpkgs
+nix build
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The above command allows you to update individual inputs, and &lt;code&gt;nix flake update&lt;/code&gt;
+will update the whole lock file.&lt;/p&gt;
+&lt;h3&gt;Helper functions that are good to know for working with Flakes&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;lib.genAttrs&lt;/code&gt;: A function, given the name of the attribute, returns the
+attribute’s value&lt;/p&gt;
+&lt;p&gt;Example:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;nix repl
+nix-repl&amp;gt; :l &amp;lt;nixpkgs&amp;gt;
+nix-repl&amp;gt; lib.genAttrs [ &quot;boom&quot; &quot;bash&quot; ] (name: &quot;sonic&quot; + name)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;Output&lt;/strong&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;{
+  bash = &quot;sonicbash&quot;;
+  boom = &quot;sonicboom&quot;;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You will often see the following:&lt;/p&gt;
+&lt;p&gt;A common use for this with flakes is to have a list of different systems:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;     systems = [
+       &quot;x86_64-linux&quot;
+       &quot;aarch64-linux&quot;
+       &quot;x86_64-darwin&quot;
+       &quot;aarch64-darwin&quot;
+     ];
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;And use it to generate an attribute set for each listed system:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;eachSystem = lib.genAttrs systems;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The above command creates an attribute set by mapping over a list of system
+strings. If you notice, you provide it a list (i.e. [ 1 2 3 ]) and the function
+returns a set (i.e. &lt;code&gt;{ ... }&lt;/code&gt;)&lt;/p&gt;
+&lt;p&gt;Why &lt;code&gt;genAttrs&lt;/code&gt; is useful:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;It lets you define attributes (like &lt;code&gt;packages&lt;/code&gt;, &lt;code&gt;checks&lt;/code&gt;, &lt;code&gt;devShells&lt;/code&gt;) per
+supported system in a DRY(don’t repeat yourself), structured way.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;lib.mapAttrs&lt;/code&gt;: A function, given an attribute’s name and value, returns a new
+&lt;code&gt;nameValuePair&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Example:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;nix-repl&amp;gt; builtins.mapAttrs (name: value: name + &quot;-&quot; + value) { x = &quot;foo&quot;; y = &quot;bar&quot;; }
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;Output&lt;/strong&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;{
+  x = &quot;x-foo&quot;;
+  y = &quot;y-bar&quot;;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;pkgs.mkShell&lt;/code&gt;: is a specialized &lt;code&gt;stdenv.mkDerivation&lt;/code&gt; that removes some
+repetition when using it with &lt;code&gt;nix-shell&lt;/code&gt; (or &lt;code&gt;nix develop&lt;/code&gt;)&lt;/p&gt;
+&lt;p&gt;Example:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;{ pkgs ? import &amp;lt;nixpkgs&amp;gt; {} }:
+pkgs.mkShell {
+  packages = [ pkgs.gnumake ];
+
+  inputsFrom = [ pkgs.hello pkgs.gnutar ];
+
+  shellHook = &apos;&apos;
+    export DEBUG=1
+  &apos;&apos;;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;A Simple flake that outputs a devshell and a package&lt;/h4&gt;
+&lt;p&gt;In a new directory create a &lt;code&gt;flake.nix&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;# flake.nix
+{
+  outputs = {
+    self,
+    nixpkgs,
+  }: let
+    pkgs = nixpkgs.legacyPackages.x86_64-linux;
+  in {
+
+    packages.x86_64-linux.default = pkgs.kakoune; # You could define a meta-package here
+
+    devShells.x86_64-linux.default = pkgs.mkShell {
+      packages = [
+        pkgs.kakoune
+        pkgs.git
+        pkgs.ripgrep
+        pkgs.fzf
+      ];
+    };
+  };
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;mkShell&lt;/code&gt; is a wrapper around &lt;code&gt;mkDerivation&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;This flake offers two main outputs for &lt;code&gt;x86_64-linux&lt;/code&gt; systems:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;A &lt;strong&gt;standard package&lt;/strong&gt; (&lt;code&gt;packages.x86_64-linux.default&lt;/code&gt;): This simple example
+just re-exports &lt;code&gt;kakoune&lt;/code&gt; from &lt;code&gt;nixpkgs&lt;/code&gt;. You could build your own apps here.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;A &lt;strong&gt;development shell&lt;/strong&gt; (&lt;code&gt;devShells.x86_64-linux.default&lt;/code&gt;): This provides a
+convenient environment where you have specific tools available without
+installing them globally on your system.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;To use this flake you have a few options:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;nix run&lt;/code&gt; will launch kakoune&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;nix develop&lt;/code&gt; will activate the development environment providing all of the
+pkgs listed under &lt;code&gt;mkShell&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Or more explicitly &lt;code&gt;nix develop .#devShells.x86_64-linux.default&lt;/code&gt;, does the
+same thing as the command above.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;Flake References&lt;/h4&gt;
+&lt;details&gt;
+&lt;summary&gt; ✔️ Flake References (Click to Expand) &lt;/summary&gt;
+&lt;p&gt;&lt;strong&gt;Flake references&lt;/strong&gt; (flakerefs) are a way to specify the location of a flake.
+They have two different formats:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Attribute set representation&lt;/strong&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;{
+  type = &quot;github&quot;;
+  owner = &quot;NixOS&quot;;
+  repo = &quot;nixpkgs&quot;;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;or &lt;strong&gt;URL-like syntax&lt;/strong&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;github:NixOS/nixpkgs
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;These are used on the command line as a more convenient alternative to the
+attribute set representation. For instance, in the command&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;nix build github:NixOS/nixpkgs#hello
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;github:NixOS/nixpkgs&lt;/code&gt; is a flake reference (while &lt;code&gt;hello&lt;/code&gt; is an output
+attribute). They are also allowed in the &lt;code&gt;inputs&lt;/code&gt; attribute of a flake, e.g.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;inputs.nixpkgs.url = &quot;github:NixOS/nixpkgs&quot;;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;is equivalent to&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;inputs.nixpkgs = {
+  type = &quot;github&quot;;
+  owner = &quot;NixOS&quot;;
+  repo = &quot;nixpkgs&quot;;
+};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;–
+&lt;a href=&quot;https://nix.dev/manual/nix/2.24/command-ref/new-cli/nix3-flake#flake-references&quot;&gt;nix.dev flake-references&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/details&gt;
+&lt;h4&gt;Nix Flake Commands&lt;/h4&gt;
+&lt;details&gt;
+&lt;summary&gt; ✔️ Flake Commands (Click to Expand) &lt;/summary&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;code&gt;nix flake&lt;/code&gt; provides subcommands for creating, modifying and querying &lt;em&gt;Nix
+Flakes&lt;/em&gt;. Flakes are the unit for packaging Nix code in a reproducible and
+discoverable way. They can have dependencies on other flakes, making it
+possible to have multi-repository Nix projects.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;— From
+&lt;a href=&quot;https://nix.dev/manual/nix/2.28/command-ref/new-cli/nix3-flake&quot;&gt;nix.dev Reference Manual&lt;/a&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;The main thing to note here is that &lt;code&gt;nix flake&lt;/code&gt; is used to manage Nix flakes
+and that Flake commands are whitespace separated rather than hyphen &lt;code&gt;-&lt;/code&gt;
+separated.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Flakes do provide some advantages when it comes to discoverability of outputs.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;For Example, two helpful commands to inspect a flake are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://nix.dev/manual/nix/2.28/command-ref/new-cli/nix3-flake-show&quot;&gt;nix flake show&lt;/a&gt;
+command: Show the outputs provided by a flake.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://nix.dev/manual/nix/2.28/command-ref/new-cli/nix3-flake-check&quot;&gt;nix flake check&lt;/a&gt;
+command: check whether the flake evaluates and run its tests.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Any Nix CLI command that is run against a flake – like &lt;code&gt;nix build&lt;/code&gt;,
+&lt;code&gt;nix develop&lt;/code&gt;, &lt;code&gt;nix flake show&lt;/code&gt; – generate a &lt;code&gt;flake.lock&lt;/code&gt; file for you.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The &lt;code&gt;flake.lock&lt;/code&gt; file ensures that all flake inputs are pinned to specific
+revisions and that Flakes have purely deterministic outputs.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Example:&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;nix shell nixpkgs#ponysay --command ponysay &quot;Flakes Rock!&quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This works because of the [flake registry] that maps symbolic identifiers like
+&lt;code&gt;nixpkgs&lt;/code&gt; to actual locations such as &lt;code&gt;https://github.com/NixOS/nixpkgs&lt;/code&gt;. So the
+following are equivalent:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;nix shell nixpkgs#ponysay --command ponysay Flakes Rock!
+nix shell github:NixOS/nixpkgs#ponysay --command ponysay Flakes Rock!
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;To override the &lt;code&gt;nixpkgs&lt;/code&gt; registry with your own local copy you could:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;nix registry add nixpkgs ~/src/local-nixpkgs
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+&lt;h3&gt;Attribute Sets: The Building Blocks&lt;/h3&gt;
+&lt;details&gt;
+&lt;summary&gt; ✔️ Attribute set Refresher (Click to Expand) &lt;/summary&gt;
+&lt;p&gt;&lt;strong&gt;Attribute sets&lt;/strong&gt; are fundamental in Nix. They are simply collections of
+name-value pairs wrapped in curly braces &lt;code&gt;{}&lt;/code&gt;.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Example, (click to see Output):&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;let
+  my_attrset = { foo = &quot;bar&quot;; };
+in
+my_attrset.foo
+~ &quot;bar&quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;Top-Level Attributes of a Flake&lt;/strong&gt;:&lt;/p&gt;
+&lt;p&gt;Flakes have specific &lt;strong&gt;top-level attributes&lt;/strong&gt; that can be accessed directly
+(without dot notation). The most common ones are &lt;code&gt;inputs&lt;/code&gt;, &lt;code&gt;outputs&lt;/code&gt;, and
+&lt;code&gt;nixConfig&lt;/code&gt;.&lt;/p&gt;
+  &lt;/details&gt;
+&lt;h3&gt;Deeper Dive into the Structure of &lt;code&gt;flake.nix&lt;/code&gt;&lt;/h3&gt;
+&lt;!-- ![Flakes](images/Flakes.png) --&gt;
+&lt;p&gt;&lt;code&gt;inputs&lt;/code&gt;: &lt;strong&gt;Declaring Dependencies&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;inputs&lt;/code&gt; attribute set specifies the other flakes that your current flake
+depends on.&lt;/p&gt;
+&lt;p&gt;Each key in the &lt;code&gt;inputs&lt;/code&gt; set is a name you choose for the dependency, and the
+value is a reference to that flake (usually a URL or a Git Repo).&lt;/p&gt;
+&lt;p&gt;To access something from a dependency, you generally go through the &lt;code&gt;inputs&lt;/code&gt;
+attribute (e.g., &lt;code&gt;inputs.helix.packages&lt;/code&gt;).&lt;/p&gt;
+&lt;p&gt;See
+&lt;a href=&quot;https://saylesss88.github.io/flakes/flake_inputs_4.1.html&quot;&gt;Nix Flake inputs&lt;/a&gt;
+for a flake inputs deep dive.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Example:&lt;/strong&gt; This declares dependencies on the &lt;code&gt;nixpkgs&lt;/code&gt; and &lt;code&gt;import-cargo&lt;/code&gt;
+flakes:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;inputs = {
+  import-cargo.url = &quot;github:edolstra/import-cargo&quot;;
+  nixpkgs.url = &quot;nixpkgs&quot;;
+};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;When Nix evaluates your flake, it fetches and evaluates each input. These
+evaluated inputs are then passed as an attribute set to the outputs function,
+with the keys matching the names you gave them in the inputs set.&lt;/p&gt;
+&lt;p&gt;The special input &lt;code&gt;self&lt;/code&gt; is a reference to the &lt;code&gt;outputs&lt;/code&gt; and the source tree of
+the current flake itself.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;code&gt;outputs&lt;/code&gt;: Defining What Your Flake Provides&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The &lt;strong&gt;&lt;code&gt;outputs&lt;/code&gt;&lt;/strong&gt; attribute defines what your flake makes available. This can
+include packages, NixOS modules, development environments (&lt;code&gt;devShells&lt;/code&gt;) and
+other Nix derivations.&lt;/p&gt;
+&lt;p&gt;Flakes can output arbitrary Nix values. However, certain outputs have specific
+meanings for Nix commands and must adhere to particular types (often
+derivations, as described in the
+&lt;a href=&quot;https://nixos.wiki/wiki/Flakes&quot;&gt;output schema&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;You can inspect the outputs of a flake using the command:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;nix flake show
+&lt;/code&gt;&lt;/pre&gt;
+&lt;blockquote&gt;
+&lt;p&gt;This command takes a flake URI and displays its outputs in a tree structure,
+showing the attribute paths and their corresponding types.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Understanding the &lt;code&gt;outputs&lt;/code&gt; Function&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Beginners often mistakenly think that self and nixpkgs within
+&lt;code&gt;outputs = { self, nixpkgs, ... }: { ... }&lt;/code&gt; are the outputs themselves. Instead,
+they are the &lt;em&gt;input arguments&lt;/em&gt; (often called &lt;em&gt;output arguments&lt;/em&gt;) to the outputs
+function.&lt;/p&gt;
+&lt;p&gt;The outputs function in &lt;code&gt;flake.nix&lt;/code&gt; always takes a single argument, which is an
+attribute set. The syntax &lt;code&gt;{ self, nixpkgs, ... }&lt;/code&gt; is Nix’s way of destructuring
+this single input attribute set to extract the values associated with the keys
+&lt;code&gt;self&lt;/code&gt; and &lt;code&gt;nixpkgs&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Flakes output your whole system configuration, packages, as well as Nix
+functions for use elsewhere.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;For example, the &lt;code&gt;nixpkgs&lt;/code&gt; repository has its own &lt;code&gt;flake.nix&lt;/code&gt; file that
+outputs many helper functions via the &lt;code&gt;lib&lt;/code&gt; attribute.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;For a deep dive into flake outputs, see
+&lt;a href=&quot;https://saylesss88.github.io/flakes/flake_outputs_4.2.html&quot;&gt;Nix Flake Outputs&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The &lt;code&gt;lib&lt;/code&gt; convention The convention of using &lt;code&gt;lib&lt;/code&gt; to output functions is
+observed not just by Nixpkgs but by many other Nix projects. You’re free,
+however, to output functions via whichever attribute you prefer. –
+&lt;a href=&quot;https://zero-to-nix.com/concepts/flakes/#inputs&quot;&gt;Zero to Nix Flakes&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Some flake outputs are required to be system specific (i.e. “x86_64-linux” for
+(64-bit AMD/Intel Linux) including packages, development environments, and NixOS
+configurations)&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Variadic Attributes (…) and @-patterns&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;...&lt;/code&gt; syntax in the input arguments of the outputs function indicates
+variadic attributes, meaning the input attribute set can contain more attributes
+than just those explicitly listed (like &lt;code&gt;lib&lt;/code&gt; and &lt;code&gt;nixpkgs&lt;/code&gt;).&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Example:&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;mul = { a, b, ... }: a * b;
+mul { a = 3; b = 4; c = 2; } # &apos;c&apos; is an extra attribute
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;However, you cannot directly access these extra attributes within the function
+body unless you use the @-pattern:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;(Click for Output)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;mul = s@{ a, b, ... }: a  b  s.c; # &apos;s&apos; now refers to the entire input set
+mul { a = 3; b = 4; c = 2; } # Output: 24
+~ 24
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;When used in the outputs function argument list (e.g.,
+&lt;code&gt;outputs = { pkgs, ... } @ inputs)&lt;/code&gt;, the @-pattern binds the entire input
+attribute set to a name (in this case, &lt;code&gt;inputs&lt;/code&gt;) while also allowing you to
+destructure specific attributes like pkgs.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;What &lt;code&gt;outputs = { pkgs, ... } @ inputs: { ... };&lt;/code&gt; does:&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Destructuring:&lt;/strong&gt; It tries to extract the value associated with the key
+&lt;code&gt;pkgs&lt;/code&gt; from the input attribute set and binds it to the variable &lt;code&gt;pkgs&lt;/code&gt;. The
+&lt;code&gt;...&lt;/code&gt; allows for other keys in the input attribute set to be ignored during
+this direct destructuring.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Binding the Entire Set:&lt;/strong&gt; It binds the entire input attribute set to the
+variable inputs.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Example &lt;code&gt;flake.nix&lt;/code&gt;:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;{
+inputs.nixpkgs.url = &quot;github:NixOS/nixpkgs/nixos-unstable&quot;;
+inputs.home-manager.url = &quot;github:nix-community/home-manager&quot;;
+
+outputs = { self, nixpkgs, ... } @ attrs: { # A `packages` output for the x86_64-linux platform
+packages.x86_64-linux.hello = nixpkgs.legacyPackages.x86_64-linux.hello;
+
+    # A `nixosConfigurations` output (for a NixOS system named &quot;fnord&quot;)
+    nixosConfigurations.fnord = nixpkgs.lib.nixosSystem {
+      system = &quot;x86_64-linux&quot;;
+      specialArgs = attrs;
+      modules = [ ./configuration.nix ];
+    };
+
+};
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;Platform Specificity in Outputs&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Flakes ensure that their outputs are consistent across different evaluation
+environments. Therefore, any package-related output must explicitly specify the
+target platform (a combination of architecture and OS, &lt;code&gt;x86_64-linux&lt;/code&gt;).&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;legacyPackages Explained&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;legacyPackages&lt;/code&gt; is a way for flakes to interact with the traditional, less
+structured package organization of nixpkgs. Instead of packages being directly
+at the top level (e.g., &lt;code&gt;pkgs.hello&lt;/code&gt;), &lt;code&gt;legacyPackages&lt;/code&gt; provides a
+platform-aware way to access them within the flake’s structured output format
+(e.g., &lt;code&gt;nixpkgs.legacyPackages.x86_64-linux.hello&lt;/code&gt;). It acts as a bridge between
+the flake’s expected output structure and nixpkgs’s historical organization.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;The Sole Argument of outputs&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;It’s crucial to remember that the outputs function accepts only one argument,
+which is an attribute set. The &lt;code&gt;{ self, nixpkgs, ... }&lt;/code&gt; syntax is simply
+destructuring that single input attribute set.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Outputs of the Flake (Return Value)&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The outputs of the flake refer to the attribute set that is returned by the
+&lt;code&gt;outputs&lt;/code&gt; function. This attribute set can contain various named outputs like
+&lt;code&gt;packages&lt;/code&gt;, &lt;code&gt;nixosConfigurations&lt;/code&gt;, &lt;code&gt;devShells&lt;/code&gt;, etc.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Imports: Including Other Nix Expressions&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;import&lt;/code&gt; function in Nix is used to evaluate the Nix expression found at a
+specified path (usually a file or directory) and return its value.&lt;/p&gt;
+&lt;p&gt;Basic Usage: import &lt;code&gt;./path/to/file.nix&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Passing Arguments During Import&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;import &amp;lt;nixpkgs&amp;gt; {}&lt;/code&gt; is calling two functions, not one.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;import &amp;lt;nixpkgs&amp;gt;&lt;/code&gt;: The first function call&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;import&lt;/code&gt; is a built-in Nix function. Its job is to load and evaluate a Nix
+expression from a specified path.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;&amp;lt;nixpkgs&amp;gt;&lt;/code&gt; is a flake reference. When you use &lt;code&gt;import &amp;lt;nixpkgs&amp;gt;&lt;/code&gt;, Nix
+evaluates the &lt;code&gt;default.nix&lt;/code&gt; file (or sometimes &lt;code&gt;lib/default.nix&lt;/code&gt;) found at
+that location.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;The &lt;code&gt;default.nix&lt;/code&gt; in &lt;code&gt;nixpkgs&lt;/code&gt; evaluates to a function. This function is
+designed to be configurable, allowing you to pass arguments like &lt;code&gt;system&lt;/code&gt;,
+&lt;code&gt;config&lt;/code&gt;, etc. to customize how &lt;code&gt;nixpkgs&lt;/code&gt; behaves and what packages it
+provides.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;So, &lt;code&gt;import &amp;lt;nixpkgs&amp;gt;&lt;/code&gt; doesn’t give you the &lt;code&gt;nixpkgs&lt;/code&gt; package set directly; it
+gives you the function that generates the &lt;code&gt;nixpkgs&lt;/code&gt; package set derivation.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&quot;2&quot;&gt;
+&lt;li&gt;&lt;code&gt;{}&lt;/code&gt;: The second function call (and its argument)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;{}&lt;/code&gt; denotes an empty attribute set&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;When an attribute set immediately follows a function, it means you are calling
+that function and passing the attribute set as its single argument.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;So, the &lt;code&gt;{}&lt;/code&gt; after &lt;code&gt;import &amp;lt;nixpkgs&amp;gt;&lt;/code&gt; is not part of the &lt;code&gt;import&lt;/code&gt; function
+iteself. It’s the argument being passed to the function that &lt;code&gt;import &amp;lt;nixpkgs&amp;gt;&lt;/code&gt;
+just returned.&lt;/p&gt;
+&lt;p&gt;You can also pass an attribute set as an argument to the Nix expression being
+imported:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;let
+myHelpers = import ./lib/my-helpers.nix { pkgs = nixpkgs; };
+in
+# ... use myHelpers
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;In this case, the Nix expression in &lt;code&gt;./lib/my-helpers.nix&lt;/code&gt; is likely a function
+that expects an argument (often named &lt;code&gt;pkgs&lt;/code&gt; by convention):&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;# ./lib/my-helpers.nix
+
+{ pkgs }:
+let
+myPackage = pkgs.stdenv.mkDerivation {
+name = &quot;my-package&quot;; # ...
+};
+in
+myPackage
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;By passing &lt;code&gt;{ pkgs = nixpkgs; }&lt;/code&gt; during the import, you are providing the
+nixpkgs value from your current &lt;code&gt;flake.nix&lt;/code&gt; scope to the pkgs parameter expected
+by the code in &lt;code&gt;./lib/my-helpers.nix&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Importing Directories (&lt;code&gt;default.nix&lt;/code&gt;)&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;When you use import with a path that points to a directory, Nix automatically
+looks for a file named &lt;code&gt;default.nix&lt;/code&gt; within that directory. If found, Nix
+evaluates the expressions within &lt;code&gt;default.nix&lt;/code&gt; as if you had specified its path
+directly in the import statement.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;For more advanced examples see
+&lt;a href=&quot;https://saylesss88.github.io/flakes/flake_examples_4.3.html&quot;&gt;Nix Flake Examples&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h5&gt;Conclusion: Unifying Your Nix Experience with Flakes&lt;/h5&gt;
+&lt;p&gt;For some examples of more advanced outputs like &lt;code&gt;devShells&lt;/code&gt; and &lt;code&gt;checks&lt;/code&gt;, check
+out this blog post that I wrote:
+&lt;a href=&quot;https://tsawyer87.github.io/posts/nix_flakes_tips/&quot;&gt;Nix Flakes Tips and Tricks&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;In this chapter, we’ve explored Nix Flakes as a powerful and modern approach to
+managing Nix projects, from development environments to entire system
+configurations. We’ve seen how they provide structure, dependency management,
+and reproducibility through well-defined inputs and outputs. Flakes offer a
+cohesive way to organize your Nix code and share it with others.&lt;/p&gt;
+&lt;p&gt;As we’ve worked with the flake.nix file, you’ve likely noticed its structure – a
+top-level attribute set defining various outputs like devShells, packages,
+nixosConfigurations, and more. These top-level attributes are not arbitrary;
+they follow certain conventions and play specific roles within the Flake
+ecosystem.&lt;/p&gt;
+&lt;p&gt;In the next chapter,
+&lt;a href=&quot;https://saylesss88.github.io/Understanding_Top-Level_Attributes_5.html&quot;&gt;Understanding Top-Level Attributes&lt;/a&gt;
+we will delve deeper into the meaning and purpose of these common top-level
+attributes. We’ll explore how they are structured, what kind of expressions they
+typically contain, and how they contribute to the overall functionality and
+organization of your Nix Flakes. Understanding these attributes is key to
+effectively leveraging the full potential of Nix Flakes.&lt;/p&gt;
+&lt;h5&gt;Further Resources&lt;/h5&gt;
+&lt;details&gt;
+&lt;summary&gt; ✔️ Resources (Click to Expand)&lt;/summary&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://serokell.io/blog/practical-nix-flakes&quot;&gt;practical-nix-flakes&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://xeiaso.net/blog/nix-flakes-1-2022-02-21/&quot;&gt;Nix Flakes an Introduction&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.tweag.io/blog/2020-07-31-nixos-flakes/&quot;&gt;tweag nix-flakes&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://nixos.wiki/wiki/Flakes&quot;&gt;NixOS-wiki Flakes&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://nix.dev/concepts/flakes.html&quot;&gt;nix.dev flakes&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://vtimofeenko.com/posts/practical-nix-flake-anatomy-a-guided-tour-of-flake.nix/&quot;&gt;anatomy-of-a-flake&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://jade.fyi/blog/flakes-arent-real/&quot;&gt;flakes-arent-real&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://mhwombat.codeberg.page/nix-book/#_attribute_set_operations&quot;&gt;wombats-book-of-nix&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://zero-to-nix.com/concepts/flakes/&quot;&gt;zero-to-nix flakes&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://nixos-and-flakes.thiscute.world/&quot;&gt;nixos-and-flakes-book&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://flakehub.com/&quot;&gt;FlakeHub&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&quot;images/nixosnix.png&quot; alt=&quot;FlakeHub&quot; /&gt;&lt;/p&gt;
+&lt;/details&gt;
 </content></entry><entry><title>Understanding Nix Functions</title><id>https://saylesss88.github.io/Understanding_Nix_Functions_2.html</id><updated>2025-11-21T00:00:00+00:00</updated><link href="https://saylesss88.github.io/Understanding_Nix_Functions_2.html" rel="alternate"/><content type="html">&lt;h1&gt;Chapter 2&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Table of Contents&lt;/summary&gt;
@@ -26040,660 +26694,6 @@ isolation of your software builds through this fundamental concept.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&quot;https://nix.dev/tutorials/packaging-existing-software.html&quot;&gt;Packaging Existing Software&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
-</content></entry><entry><title>Nix Flakes Explained</title><id>https://saylesss88.github.io/Nix_Flakes_Explained_4.html</id><updated>2025-11-21T00:00:00+00:00</updated><link href="https://saylesss88.github.io/Nix_Flakes_Explained_4.html" rel="alternate"/><content type="html">&lt;h1&gt;Chapter 4&lt;/h1&gt;
-&lt;details&gt;
-&lt;summary&gt; ✔️ Click to Expand Table of Contents&lt;/summary&gt;
-&lt;!-- toc --&gt;
-&lt;/details&gt;
-&lt;p&gt;&lt;img src=&quot;images/trees3.cleaned.png&quot; alt=&quot;trees3&quot; /&gt;&lt;/p&gt;
-&lt;!-- &lt;img src=&quot;images/gruv15.png&quot; width=&quot;800&quot; height=&quot;600&quot;&gt; --&gt;
-&lt;h2&gt;Nix Flakes Explained&lt;/h2&gt;
-&lt;p&gt;If you’re completely new, take a look at
-&lt;a href=&quot;https://nixos.wiki/wiki/flakes#Installing_flakes&quot;&gt;this&lt;/a&gt; to get flakes on your
-system.&lt;/p&gt;
-&lt;p&gt;For the Nix Flake man page type &lt;code&gt;man nix3 flake&lt;/code&gt; and for a specific feature,
-type something like &lt;code&gt;man nix3 flake-lock&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;Flakes replace stateful channels (which cause much confusion among novices) and
-introduce a more intuitive and consistent CLI, making them a perfect opportunity
-to start using Nix. – Alexander Bantyev
-&lt;a href=&quot;https://serokell.io/blog/practical-nix-flakes&quot;&gt;Practical Nix Flakes&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;The “state” being remembered and updated by channels is the specific revision of
-the Nixpkgs repository that your local Nix installation considers “current” for
-a given channel. When this state changes on your machine, your builds diverge
-from others whose machines have a different, independently updated channel
-state.&lt;/p&gt;
-&lt;p&gt;Channels are also constantly updated on the remote servers. So, “nixos-unstable”
-today refers to a different set of packages and versions than “nixos-unstable”
-did yesterday or will tomorrow.&lt;/p&gt;
-&lt;p&gt;Flakes solve this by making the exact revision of &lt;code&gt;nixpkgs&lt;/code&gt; (and other
-dependencies) an explicit input within your &lt;code&gt;flake.nix&lt;/code&gt; file, pinned in the
-&lt;code&gt;flake.lock&lt;/code&gt;. This means the state is explicitly defined in the configuration
-itself, not implicitly managed by a global system setting.&lt;/p&gt;
-&lt;p&gt;Evaluation time is notoriously slow on NixOS, the problem was that in the past
-Nix evaluation wasn’t hermetic preventing effective evaluation caching. A &lt;code&gt;.nix&lt;/code&gt;
-file can import other Nix files or by looking them up in the Nix search path
-(&lt;code&gt;$NIX_PATH&lt;/code&gt;). This causes a cached result to be inconsistent unless every file
-is perfectly kept track of. Flakes solve this problem by ensuring fully hermetic
-evaluation.&lt;/p&gt;
-&lt;p&gt;“Hermetic” means that the output of an evaluation (the derivation itself)
-depends &lt;em&gt;only&lt;/em&gt; on the explicit inputs provided, not on anything external like
-environment variables or pulling in files only on your system. This is the
-problem that Nix solves and the problem that flakes are built around.&lt;/p&gt;
-&lt;h2&gt;What is a Nix Flake?&lt;/h2&gt;
-&lt;p&gt;&lt;strong&gt;Nix flakes&lt;/strong&gt; are independent components in the Nix ecosystem. They define
-their own &lt;strong&gt;dependencies&lt;/strong&gt; (inputs) and what they produce (outputs), which can
-include &lt;strong&gt;packages&lt;/strong&gt;, &lt;strong&gt;deployment configurations&lt;/strong&gt;, or &lt;strong&gt;Nix functions&lt;/strong&gt; for
-other flakes to use.&lt;/p&gt;
-&lt;p&gt;Flakes provide a standardized framework for building and managing software,
-making all project inputs explicit for greater reproducibility and
-self-containment.&lt;/p&gt;
-&lt;p&gt;At its core, a flake is a source tree (like a Git repository) that contains a
-&lt;code&gt;flake.nix&lt;/code&gt; file in its root directory. This file provides a standardized way to
-access Nix artifacts such as packages and modules.&lt;/p&gt;
-&lt;p&gt;Flakes provide a standard way to write Nix expressions (and therefore packages)
-whose dependencies are version-pinned in a lock file, improving reproducibility
-of Nix installations. – NixOS Wiki&lt;/p&gt;
-&lt;p&gt;Think of &lt;code&gt;flake.nix&lt;/code&gt; as the central entry point of a flake. It not only defines
-what the flake produces but also declares its dependencies.&lt;/p&gt;
-&lt;h3&gt;Key Concepts&lt;/h3&gt;
-&lt;p&gt;&lt;code&gt;flake.nix&lt;/code&gt;: &lt;strong&gt;The Heart of a Flake&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;The &lt;code&gt;flake.nix&lt;/code&gt; file is mandatory for any flake. It must contain an attribute
-set with at least one required attribute: &lt;code&gt;outputs&lt;/code&gt;. It can also optionally
-include &lt;code&gt;description&lt;/code&gt; and &lt;code&gt;inputs&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Basic Structure:&lt;/strong&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;{
-  description = &quot;Package description&quot;;
-  inputs = { /* Dependencies go here */ };
-  outputs = { /* What the flake produces */ };
-  nixConfig = { /* Advanced configuration options */ };
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;I typically see &lt;code&gt;nixConfig&lt;/code&gt; used for extra-substituters for cachix. This is a
-general-purpose way to define Nix configuration options that apply when this
-flake is evaluated or built. It ties into your &lt;code&gt;/etc/nix/nix.conf&lt;/code&gt; or
-&lt;code&gt;~/.config/nix/nix.conf&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;For example, create a directory and add a &lt;code&gt;flake.nix&lt;/code&gt; with the following
-contents, yes this is a complete &lt;code&gt;flake.nix&lt;/code&gt; demonstrating &lt;em&gt;outputs&lt;/em&gt; being the
-only required attribute:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;# flake.nix
-{
-  outputs = _: { multiply = 2 * 2; };
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Now evaluate it with:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;nix eval .#multiply
-4
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;In the &lt;code&gt;outputs = _: { ... };&lt;/code&gt; line, the &lt;code&gt;_&lt;/code&gt; (underscore) is a placeholder
-argument. It represents the inputs that the outputs function could receive (like
-&lt;code&gt;inputs&lt;/code&gt;, &lt;code&gt;self&lt;/code&gt;, &lt;code&gt;pkgs&lt;/code&gt;, etc.), but in this specific case, we’re not using any
-of them to define the multiply attribute. It’s a common convention in Nix to use
-&lt;code&gt;_&lt;/code&gt; when an argument is required by a function but intentionally ignored.&lt;/p&gt;
-&lt;p&gt;In the command &lt;code&gt;nix eval .#multiply&lt;/code&gt;:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;the &lt;code&gt;.&lt;/code&gt; signifies the current directory, indicating that Nix should look for a
-&lt;code&gt;flake.nix&lt;/code&gt; file in the directory where you’re running the command.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;The &lt;code&gt;#&lt;/code&gt; is used to select a specific attribute from the &lt;code&gt;outputs&lt;/code&gt; of the
-flake. In this case, it’s telling Nix to evaluate the &lt;code&gt;multiply&lt;/code&gt; attribute.&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;In the next example we will create a &lt;code&gt;devShells&lt;/code&gt; output as well as a &lt;code&gt;packages&lt;/code&gt;
-output.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&lt;code&gt;flake.lock&lt;/code&gt; auto-generated lock file&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;All flake inputs are pinned to specific revisions in a lockfile called
-&lt;code&gt;flake.lock&lt;/code&gt; This file stores the revision info as JSON.&lt;/p&gt;
-&lt;p&gt;The &lt;code&gt;flake.lock&lt;/code&gt; file ensures that Nix flakes have purely deterministic outputs.
-A &lt;code&gt;flake.nix&lt;/code&gt; file without an accompanying &lt;code&gt;flake.lock&lt;/code&gt; should be considered
-incomplete and a kind of proto-flake. Any Nix CLI command that is run against
-the flake—like &lt;code&gt;nix build&lt;/code&gt;, &lt;code&gt;nix develop&lt;/code&gt;, or even &lt;code&gt;nix flake show&lt;/code&gt;—generates a
-&lt;code&gt;flake.lock&lt;/code&gt; for you.&lt;/p&gt;
-&lt;p&gt;Here’s an example section of a &lt;code&gt;flake.lock&lt;/code&gt; file that pins Nixpkgs to a specific
-revision:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;$ cat flake.lock
-{
-  &quot;nodes&quot;: {
-    &quot;nixpkgs&quot;: {
-      &quot;info&quot;: {
-        &quot;lastModified&quot;: 1587398327,
-        &quot;narHash&quot;: &quot;sha256-mEKkeLgUrzAsdEaJ/1wdvYn0YZBAKEG3AN21koD2AgU=&quot;
-      },
-      &quot;locked&quot;: {
-        &quot;owner&quot;: &quot;NixOS&quot;,
-        &quot;repo&quot;: &quot;nixpkgs&quot;,
-        &quot;rev&quot;: &quot;5272327b81ed355bbed5659b8d303cf2979b6953&quot;,
-        &quot;type&quot;: &quot;github&quot;
-      },
-      &quot;original&quot;: {
-        &quot;owner&quot;: &quot;NixOS&quot;,
-        &quot;ref&quot;: &quot;nixos-20.03&quot;,
-        &quot;repo&quot;: &quot;nixpkgs&quot;,
-        &quot;type&quot;: &quot;github&quot;
-      }
-    },
-    &quot;root&quot;: {
-      &quot;inputs&quot;: {
-        &quot;nixpkgs&quot;: &quot;nixpkgs&quot;
-      }
-    }
-  },
-  &quot;root&quot;: &quot;root&quot;,
-  &quot;version&quot;: 5
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Any future build of this flake will use the version of &lt;code&gt;nixpkgs&lt;/code&gt; recorded in the
-lock file. If you add new inputs, they will be automatically added when you run
-a nix flake command like &lt;code&gt;nix flake show&lt;/code&gt;. But it won’t replace existing locks.&lt;/p&gt;
-&lt;p&gt;If you need to update a locked input to the latest version:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;nix flake lock --update-input nixpkgs
-nix build
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The above command allows you to update individual inputs, and &lt;code&gt;nix flake update&lt;/code&gt;
-will update the whole lock file.&lt;/p&gt;
-&lt;h3&gt;Helper functions that are good to know for working with Flakes&lt;/h3&gt;
-&lt;p&gt;&lt;code&gt;lib.genAttrs&lt;/code&gt;: A function, given the name of the attribute, returns the
-attribute’s value&lt;/p&gt;
-&lt;p&gt;Example:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;nix repl
-nix-repl&amp;gt; :l &amp;lt;nixpkgs&amp;gt;
-nix-repl&amp;gt; lib.genAttrs [ &quot;boom&quot; &quot;bash&quot; ] (name: &quot;sonic&quot; + name)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;strong&gt;Output&lt;/strong&gt;:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;{
-  bash = &quot;sonicbash&quot;;
-  boom = &quot;sonicboom&quot;;
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;You will often see the following:&lt;/p&gt;
-&lt;p&gt;A common use for this with flakes is to have a list of different systems:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;     systems = [
-       &quot;x86_64-linux&quot;
-       &quot;aarch64-linux&quot;
-       &quot;x86_64-darwin&quot;
-       &quot;aarch64-darwin&quot;
-     ];
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;And use it to generate an attribute set for each listed system:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;eachSystem = lib.genAttrs systems;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The above command creates an attribute set by mapping over a list of system
-strings. If you notice, you provide it a list (i.e. [ 1 2 3 ]) and the function
-returns a set (i.e. &lt;code&gt;{ ... }&lt;/code&gt;)&lt;/p&gt;
-&lt;p&gt;Why &lt;code&gt;genAttrs&lt;/code&gt; is useful:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;It lets you define attributes (like &lt;code&gt;packages&lt;/code&gt;, &lt;code&gt;checks&lt;/code&gt;, &lt;code&gt;devShells&lt;/code&gt;) per
-supported system in a DRY(don’t repeat yourself), structured way.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;code&gt;lib.mapAttrs&lt;/code&gt;: A function, given an attribute’s name and value, returns a new
-&lt;code&gt;nameValuePair&lt;/code&gt;.&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Example:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;nix-repl&amp;gt; builtins.mapAttrs (name: value: name + &quot;-&quot; + value) { x = &quot;foo&quot;; y = &quot;bar&quot;; }
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;strong&gt;Output&lt;/strong&gt;:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;{
-  x = &quot;x-foo&quot;;
-  y = &quot;y-bar&quot;;
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;code&gt;pkgs.mkShell&lt;/code&gt;: is a specialized &lt;code&gt;stdenv.mkDerivation&lt;/code&gt; that removes some
-repetition when using it with &lt;code&gt;nix-shell&lt;/code&gt; (or &lt;code&gt;nix develop&lt;/code&gt;)&lt;/p&gt;
-&lt;p&gt;Example:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;{ pkgs ? import &amp;lt;nixpkgs&amp;gt; {} }:
-pkgs.mkShell {
-  packages = [ pkgs.gnumake ];
-
-  inputsFrom = [ pkgs.hello pkgs.gnutar ];
-
-  shellHook = &apos;&apos;
-    export DEBUG=1
-  &apos;&apos;;
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;h4&gt;A Simple flake that outputs a devshell and a package&lt;/h4&gt;
-&lt;p&gt;In a new directory create a &lt;code&gt;flake.nix&lt;/code&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;# flake.nix
-{
-  outputs = {
-    self,
-    nixpkgs,
-  }: let
-    pkgs = nixpkgs.legacyPackages.x86_64-linux;
-  in {
-
-    packages.x86_64-linux.default = pkgs.kakoune; # You could define a meta-package here
-
-    devShells.x86_64-linux.default = pkgs.mkShell {
-      packages = [
-        pkgs.kakoune
-        pkgs.git
-        pkgs.ripgrep
-        pkgs.fzf
-      ];
-    };
-  };
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;code&gt;mkShell&lt;/code&gt; is a wrapper around &lt;code&gt;mkDerivation&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;This flake offers two main outputs for &lt;code&gt;x86_64-linux&lt;/code&gt; systems:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;A &lt;strong&gt;standard package&lt;/strong&gt; (&lt;code&gt;packages.x86_64-linux.default&lt;/code&gt;): This simple example
-just re-exports &lt;code&gt;kakoune&lt;/code&gt; from &lt;code&gt;nixpkgs&lt;/code&gt;. You could build your own apps here.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;A &lt;strong&gt;development shell&lt;/strong&gt; (&lt;code&gt;devShells.x86_64-linux.default&lt;/code&gt;): This provides a
-convenient environment where you have specific tools available without
-installing them globally on your system.&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;To use this flake you have a few options:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;code&gt;nix run&lt;/code&gt; will launch kakoune&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;code&gt;nix develop&lt;/code&gt; will activate the development environment providing all of the
-pkgs listed under &lt;code&gt;mkShell&lt;/code&gt;.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Or more explicitly &lt;code&gt;nix develop .#devShells.x86_64-linux.default&lt;/code&gt;, does the
-same thing as the command above.&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4&gt;Flake References&lt;/h4&gt;
-&lt;details&gt;
-&lt;summary&gt; ✔️ Flake References (Click to Expand) &lt;/summary&gt;
-&lt;p&gt;&lt;strong&gt;Flake references&lt;/strong&gt; (flakerefs) are a way to specify the location of a flake.
-They have two different formats:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;&lt;strong&gt;Attribute set representation&lt;/strong&gt;:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;{
-  type = &quot;github&quot;;
-  owner = &quot;NixOS&quot;;
-  repo = &quot;nixpkgs&quot;;
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;or &lt;strong&gt;URL-like syntax&lt;/strong&gt;:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;github:NixOS/nixpkgs
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;These are used on the command line as a more convenient alternative to the
-attribute set representation. For instance, in the command&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;nix build github:NixOS/nixpkgs#hello
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;code&gt;github:NixOS/nixpkgs&lt;/code&gt; is a flake reference (while &lt;code&gt;hello&lt;/code&gt; is an output
-attribute). They are also allowed in the &lt;code&gt;inputs&lt;/code&gt; attribute of a flake, e.g.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;inputs.nixpkgs.url = &quot;github:NixOS/nixpkgs&quot;;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;is equivalent to&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;inputs.nixpkgs = {
-  type = &quot;github&quot;;
-  owner = &quot;NixOS&quot;;
-  repo = &quot;nixpkgs&quot;;
-};
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;–
-&lt;a href=&quot;https://nix.dev/manual/nix/2.24/command-ref/new-cli/nix3-flake#flake-references&quot;&gt;nix.dev flake-references&lt;/a&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;/details&gt;
-&lt;h4&gt;Nix Flake Commands&lt;/h4&gt;
-&lt;details&gt;
-&lt;summary&gt; ✔️ Flake Commands (Click to Expand) &lt;/summary&gt;
-&lt;blockquote&gt;
-&lt;p&gt;&lt;code&gt;nix flake&lt;/code&gt; provides subcommands for creating, modifying and querying &lt;em&gt;Nix
-Flakes&lt;/em&gt;. Flakes are the unit for packaging Nix code in a reproducible and
-discoverable way. They can have dependencies on other flakes, making it
-possible to have multi-repository Nix projects.&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;— From
-&lt;a href=&quot;https://nix.dev/manual/nix/2.28/command-ref/new-cli/nix3-flake&quot;&gt;nix.dev Reference Manual&lt;/a&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;The main thing to note here is that &lt;code&gt;nix flake&lt;/code&gt; is used to manage Nix flakes
-and that Flake commands are whitespace separated rather than hyphen &lt;code&gt;-&lt;/code&gt;
-separated.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Flakes do provide some advantages when it comes to discoverability of outputs.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;For Example, two helpful commands to inspect a flake are:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;a href=&quot;https://nix.dev/manual/nix/2.28/command-ref/new-cli/nix3-flake-show&quot;&gt;nix flake show&lt;/a&gt;
-command: Show the outputs provided by a flake.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;a href=&quot;https://nix.dev/manual/nix/2.28/command-ref/new-cli/nix3-flake-check&quot;&gt;nix flake check&lt;/a&gt;
-command: check whether the flake evaluates and run its tests.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Any Nix CLI command that is run against a flake – like &lt;code&gt;nix build&lt;/code&gt;,
-&lt;code&gt;nix develop&lt;/code&gt;, &lt;code&gt;nix flake show&lt;/code&gt; – generate a &lt;code&gt;flake.lock&lt;/code&gt; file for you.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;The &lt;code&gt;flake.lock&lt;/code&gt; file ensures that all flake inputs are pinned to specific
-revisions and that Flakes have purely deterministic outputs.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Example:&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;nix shell nixpkgs#ponysay --command ponysay &quot;Flakes Rock!&quot;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;This works because of the [flake registry] that maps symbolic identifiers like
-&lt;code&gt;nixpkgs&lt;/code&gt; to actual locations such as &lt;code&gt;https://github.com/NixOS/nixpkgs&lt;/code&gt;. So the
-following are equivalent:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;nix shell nixpkgs#ponysay --command ponysay Flakes Rock!
-nix shell github:NixOS/nixpkgs#ponysay --command ponysay Flakes Rock!
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;To override the &lt;code&gt;nixpkgs&lt;/code&gt; registry with your own local copy you could:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;nix registry add nixpkgs ~/src/local-nixpkgs
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/details&gt;
-&lt;h3&gt;Attribute Sets: The Building Blocks&lt;/h3&gt;
-&lt;details&gt;
-&lt;summary&gt; ✔️ Attribute set Refresher (Click to Expand) &lt;/summary&gt;
-&lt;p&gt;&lt;strong&gt;Attribute sets&lt;/strong&gt; are fundamental in Nix. They are simply collections of
-name-value pairs wrapped in curly braces &lt;code&gt;{}&lt;/code&gt;.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Example, (click to see Output):&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;let
-  my_attrset = { foo = &quot;bar&quot;; };
-in
-my_attrset.foo
-~ &quot;bar&quot;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;strong&gt;Top-Level Attributes of a Flake&lt;/strong&gt;:&lt;/p&gt;
-&lt;p&gt;Flakes have specific &lt;strong&gt;top-level attributes&lt;/strong&gt; that can be accessed directly
-(without dot notation). The most common ones are &lt;code&gt;inputs&lt;/code&gt;, &lt;code&gt;outputs&lt;/code&gt;, and
-&lt;code&gt;nixConfig&lt;/code&gt;.&lt;/p&gt;
-  &lt;/details&gt;
-&lt;h3&gt;Deeper Dive into the Structure of &lt;code&gt;flake.nix&lt;/code&gt;&lt;/h3&gt;
-&lt;!-- ![Flakes](images/Flakes.png) --&gt;
-&lt;p&gt;&lt;code&gt;inputs&lt;/code&gt;: &lt;strong&gt;Declaring Dependencies&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;The &lt;code&gt;inputs&lt;/code&gt; attribute set specifies the other flakes that your current flake
-depends on.&lt;/p&gt;
-&lt;p&gt;Each key in the &lt;code&gt;inputs&lt;/code&gt; set is a name you choose for the dependency, and the
-value is a reference to that flake (usually a URL or a Git Repo).&lt;/p&gt;
-&lt;p&gt;To access something from a dependency, you generally go through the &lt;code&gt;inputs&lt;/code&gt;
-attribute (e.g., &lt;code&gt;inputs.helix.packages&lt;/code&gt;).&lt;/p&gt;
-&lt;p&gt;See
-&lt;a href=&quot;https://saylesss88.github.io/flakes/flake_inputs_4.1.html&quot;&gt;Nix Flake inputs&lt;/a&gt;
-for a flake inputs deep dive.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Example:&lt;/strong&gt; This declares dependencies on the &lt;code&gt;nixpkgs&lt;/code&gt; and &lt;code&gt;import-cargo&lt;/code&gt;
-flakes:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;inputs = {
-  import-cargo.url = &quot;github:edolstra/import-cargo&quot;;
-  nixpkgs.url = &quot;nixpkgs&quot;;
-};
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;When Nix evaluates your flake, it fetches and evaluates each input. These
-evaluated inputs are then passed as an attribute set to the outputs function,
-with the keys matching the names you gave them in the inputs set.&lt;/p&gt;
-&lt;p&gt;The special input &lt;code&gt;self&lt;/code&gt; is a reference to the &lt;code&gt;outputs&lt;/code&gt; and the source tree of
-the current flake itself.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&lt;code&gt;outputs&lt;/code&gt;: Defining What Your Flake Provides&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;The &lt;strong&gt;&lt;code&gt;outputs&lt;/code&gt;&lt;/strong&gt; attribute defines what your flake makes available. This can
-include packages, NixOS modules, development environments (&lt;code&gt;devShells&lt;/code&gt;) and
-other Nix derivations.&lt;/p&gt;
-&lt;p&gt;Flakes can output arbitrary Nix values. However, certain outputs have specific
-meanings for Nix commands and must adhere to particular types (often
-derivations, as described in the
-&lt;a href=&quot;https://nixos.wiki/wiki/Flakes&quot;&gt;output schema&lt;/a&gt;).&lt;/p&gt;
-&lt;p&gt;You can inspect the outputs of a flake using the command:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;nix flake show
-&lt;/code&gt;&lt;/pre&gt;
-&lt;blockquote&gt;
-&lt;p&gt;This command takes a flake URI and displays its outputs in a tree structure,
-showing the attribute paths and their corresponding types.&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;strong&gt;Understanding the &lt;code&gt;outputs&lt;/code&gt; Function&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Beginners often mistakenly think that self and nixpkgs within
-&lt;code&gt;outputs = { self, nixpkgs, ... }: { ... }&lt;/code&gt; are the outputs themselves. Instead,
-they are the &lt;em&gt;input arguments&lt;/em&gt; (often called &lt;em&gt;output arguments&lt;/em&gt;) to the outputs
-function.&lt;/p&gt;
-&lt;p&gt;The outputs function in &lt;code&gt;flake.nix&lt;/code&gt; always takes a single argument, which is an
-attribute set. The syntax &lt;code&gt;{ self, nixpkgs, ... }&lt;/code&gt; is Nix’s way of destructuring
-this single input attribute set to extract the values associated with the keys
-&lt;code&gt;self&lt;/code&gt; and &lt;code&gt;nixpkgs&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;Flakes output your whole system configuration, packages, as well as Nix
-functions for use elsewhere.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;For example, the &lt;code&gt;nixpkgs&lt;/code&gt; repository has its own &lt;code&gt;flake.nix&lt;/code&gt; file that
-outputs many helper functions via the &lt;code&gt;lib&lt;/code&gt; attribute.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;For a deep dive into flake outputs, see
-&lt;a href=&quot;https://saylesss88.github.io/flakes/flake_outputs_4.2.html&quot;&gt;Nix Flake Outputs&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;blockquote&gt;
-&lt;p&gt;The &lt;code&gt;lib&lt;/code&gt; convention The convention of using &lt;code&gt;lib&lt;/code&gt; to output functions is
-observed not just by Nixpkgs but by many other Nix projects. You’re free,
-however, to output functions via whichever attribute you prefer. –
-&lt;a href=&quot;https://zero-to-nix.com/concepts/flakes/#inputs&quot;&gt;Zero to Nix Flakes&lt;/a&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;Some flake outputs are required to be system specific (i.e. “x86_64-linux” for
-(64-bit AMD/Intel Linux) including packages, development environments, and NixOS
-configurations)&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Variadic Attributes (…) and @-patterns&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;The &lt;code&gt;...&lt;/code&gt; syntax in the input arguments of the outputs function indicates
-variadic attributes, meaning the input attribute set can contain more attributes
-than just those explicitly listed (like &lt;code&gt;lib&lt;/code&gt; and &lt;code&gt;nixpkgs&lt;/code&gt;).&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Example:&lt;/strong&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;mul = { a, b, ... }: a * b;
-mul { a = 3; b = 4; c = 2; } # &apos;c&apos; is an extra attribute
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;However, you cannot directly access these extra attributes within the function
-body unless you use the @-pattern:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;(Click for Output)&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;mul = s@{ a, b, ... }: a  b  s.c; # &apos;s&apos; now refers to the entire input set
-mul { a = 3; b = 4; c = 2; } # Output: 24
-~ 24
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;When used in the outputs function argument list (e.g.,
-&lt;code&gt;outputs = { pkgs, ... } @ inputs)&lt;/code&gt;, the @-pattern binds the entire input
-attribute set to a name (in this case, &lt;code&gt;inputs&lt;/code&gt;) while also allowing you to
-destructure specific attributes like pkgs.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;What &lt;code&gt;outputs = { pkgs, ... } @ inputs: { ... };&lt;/code&gt; does:&lt;/strong&gt;&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Destructuring:&lt;/strong&gt; It tries to extract the value associated with the key
-&lt;code&gt;pkgs&lt;/code&gt; from the input attribute set and binds it to the variable &lt;code&gt;pkgs&lt;/code&gt;. The
-&lt;code&gt;...&lt;/code&gt; allows for other keys in the input attribute set to be ignored during
-this direct destructuring.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Binding the Entire Set:&lt;/strong&gt; It binds the entire input attribute set to the
-variable inputs.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Example &lt;code&gt;flake.nix&lt;/code&gt;:&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;{
-inputs.nixpkgs.url = &quot;github:NixOS/nixpkgs/nixos-unstable&quot;;
-inputs.home-manager.url = &quot;github:nix-community/home-manager&quot;;
-
-outputs = { self, nixpkgs, ... } @ attrs: { # A `packages` output for the x86_64-linux platform
-packages.x86_64-linux.hello = nixpkgs.legacyPackages.x86_64-linux.hello;
-
-    # A `nixosConfigurations` output (for a NixOS system named &quot;fnord&quot;)
-    nixosConfigurations.fnord = nixpkgs.lib.nixosSystem {
-      system = &quot;x86_64-linux&quot;;
-      specialArgs = attrs;
-      modules = [ ./configuration.nix ];
-    };
-
-};
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;strong&gt;Platform Specificity in Outputs&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Flakes ensure that their outputs are consistent across different evaluation
-environments. Therefore, any package-related output must explicitly specify the
-target platform (a combination of architecture and OS, &lt;code&gt;x86_64-linux&lt;/code&gt;).&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;legacyPackages Explained&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;legacyPackages&lt;/code&gt; is a way for flakes to interact with the traditional, less
-structured package organization of nixpkgs. Instead of packages being directly
-at the top level (e.g., &lt;code&gt;pkgs.hello&lt;/code&gt;), &lt;code&gt;legacyPackages&lt;/code&gt; provides a
-platform-aware way to access them within the flake’s structured output format
-(e.g., &lt;code&gt;nixpkgs.legacyPackages.x86_64-linux.hello&lt;/code&gt;). It acts as a bridge between
-the flake’s expected output structure and nixpkgs’s historical organization.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;The Sole Argument of outputs&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;It’s crucial to remember that the outputs function accepts only one argument,
-which is an attribute set. The &lt;code&gt;{ self, nixpkgs, ... }&lt;/code&gt; syntax is simply
-destructuring that single input attribute set.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Outputs of the Flake (Return Value)&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;The outputs of the flake refer to the attribute set that is returned by the
-&lt;code&gt;outputs&lt;/code&gt; function. This attribute set can contain various named outputs like
-&lt;code&gt;packages&lt;/code&gt;, &lt;code&gt;nixosConfigurations&lt;/code&gt;, &lt;code&gt;devShells&lt;/code&gt;, etc.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Imports: Including Other Nix Expressions&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;The &lt;code&gt;import&lt;/code&gt; function in Nix is used to evaluate the Nix expression found at a
-specified path (usually a file or directory) and return its value.&lt;/p&gt;
-&lt;p&gt;Basic Usage: import &lt;code&gt;./path/to/file.nix&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Passing Arguments During Import&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;import &amp;lt;nixpkgs&amp;gt; {}&lt;/code&gt; is calling two functions, not one.&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;&lt;code&gt;import &amp;lt;nixpkgs&amp;gt;&lt;/code&gt;: The first function call&lt;/li&gt;
-&lt;/ol&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;code&gt;import&lt;/code&gt; is a built-in Nix function. Its job is to load and evaluate a Nix
-expression from a specified path.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;code&gt;&amp;lt;nixpkgs&amp;gt;&lt;/code&gt; is a flake reference. When you use &lt;code&gt;import &amp;lt;nixpkgs&amp;gt;&lt;/code&gt;, Nix
-evaluates the &lt;code&gt;default.nix&lt;/code&gt; file (or sometimes &lt;code&gt;lib/default.nix&lt;/code&gt;) found at
-that location.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;The &lt;code&gt;default.nix&lt;/code&gt; in &lt;code&gt;nixpkgs&lt;/code&gt; evaluates to a function. This function is
-designed to be configurable, allowing you to pass arguments like &lt;code&gt;system&lt;/code&gt;,
-&lt;code&gt;config&lt;/code&gt;, etc. to customize how &lt;code&gt;nixpkgs&lt;/code&gt; behaves and what packages it
-provides.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;So, &lt;code&gt;import &amp;lt;nixpkgs&amp;gt;&lt;/code&gt; doesn’t give you the &lt;code&gt;nixpkgs&lt;/code&gt; package set directly; it
-gives you the function that generates the &lt;code&gt;nixpkgs&lt;/code&gt; package set derivation.&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;ol start=&quot;2&quot;&gt;
-&lt;li&gt;&lt;code&gt;{}&lt;/code&gt;: The second function call (and its argument)&lt;/li&gt;
-&lt;/ol&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;code&gt;{}&lt;/code&gt; denotes an empty attribute set&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;When an attribute set immediately follows a function, it means you are calling
-that function and passing the attribute set as its single argument.&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;So, the &lt;code&gt;{}&lt;/code&gt; after &lt;code&gt;import &amp;lt;nixpkgs&amp;gt;&lt;/code&gt; is not part of the &lt;code&gt;import&lt;/code&gt; function
-iteself. It’s the argument being passed to the function that &lt;code&gt;import &amp;lt;nixpkgs&amp;gt;&lt;/code&gt;
-just returned.&lt;/p&gt;
-&lt;p&gt;You can also pass an attribute set as an argument to the Nix expression being
-imported:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;let
-myHelpers = import ./lib/my-helpers.nix { pkgs = nixpkgs; };
-in
-# ... use myHelpers
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;In this case, the Nix expression in &lt;code&gt;./lib/my-helpers.nix&lt;/code&gt; is likely a function
-that expects an argument (often named &lt;code&gt;pkgs&lt;/code&gt; by convention):&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;# ./lib/my-helpers.nix
-
-{ pkgs }:
-let
-myPackage = pkgs.stdenv.mkDerivation {
-name = &quot;my-package&quot;; # ...
-};
-in
-myPackage
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;By passing &lt;code&gt;{ pkgs = nixpkgs; }&lt;/code&gt; during the import, you are providing the
-nixpkgs value from your current &lt;code&gt;flake.nix&lt;/code&gt; scope to the pkgs parameter expected
-by the code in &lt;code&gt;./lib/my-helpers.nix&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Importing Directories (&lt;code&gt;default.nix&lt;/code&gt;)&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;When you use import with a path that points to a directory, Nix automatically
-looks for a file named &lt;code&gt;default.nix&lt;/code&gt; within that directory. If found, Nix
-evaluates the expressions within &lt;code&gt;default.nix&lt;/code&gt; as if you had specified its path
-directly in the import statement.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;For more advanced examples see
-&lt;a href=&quot;https://saylesss88.github.io/flakes/flake_examples_4.3.html&quot;&gt;Nix Flake Examples&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h5&gt;Conclusion: Unifying Your Nix Experience with Flakes&lt;/h5&gt;
-&lt;p&gt;For some examples of more advanced outputs like &lt;code&gt;devShells&lt;/code&gt; and &lt;code&gt;checks&lt;/code&gt;, check
-out this blog post that I wrote:
-&lt;a href=&quot;https://tsawyer87.github.io/posts/nix_flakes_tips/&quot;&gt;Nix Flakes Tips and Tricks&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;In this chapter, we’ve explored Nix Flakes as a powerful and modern approach to
-managing Nix projects, from development environments to entire system
-configurations. We’ve seen how they provide structure, dependency management,
-and reproducibility through well-defined inputs and outputs. Flakes offer a
-cohesive way to organize your Nix code and share it with others.&lt;/p&gt;
-&lt;p&gt;As we’ve worked with the flake.nix file, you’ve likely noticed its structure – a
-top-level attribute set defining various outputs like devShells, packages,
-nixosConfigurations, and more. These top-level attributes are not arbitrary;
-they follow certain conventions and play specific roles within the Flake
-ecosystem.&lt;/p&gt;
-&lt;p&gt;In the next chapter,
-&lt;a href=&quot;https://saylesss88.github.io/Understanding_Top-Level_Attributes_5.html&quot;&gt;Understanding Top-Level Attributes&lt;/a&gt;
-we will delve deeper into the meaning and purpose of these common top-level
-attributes. We’ll explore how they are structured, what kind of expressions they
-typically contain, and how they contribute to the overall functionality and
-organization of your Nix Flakes. Understanding these attributes is key to
-effectively leveraging the full potential of Nix Flakes.&lt;/p&gt;
-&lt;h5&gt;Further Resources&lt;/h5&gt;
-&lt;details&gt;
-&lt;summary&gt; ✔️ Resources (Click to Expand)&lt;/summary&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;a href=&quot;https://serokell.io/blog/practical-nix-flakes&quot;&gt;practical-nix-flakes&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;a href=&quot;https://xeiaso.net/blog/nix-flakes-1-2022-02-21/&quot;&gt;Nix Flakes an Introduction&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;a href=&quot;https://www.tweag.io/blog/2020-07-31-nixos-flakes/&quot;&gt;tweag nix-flakes&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;a href=&quot;https://nixos.wiki/wiki/Flakes&quot;&gt;NixOS-wiki Flakes&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;a href=&quot;https://nix.dev/concepts/flakes.html&quot;&gt;nix.dev flakes&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;a href=&quot;https://vtimofeenko.com/posts/practical-nix-flake-anatomy-a-guided-tour-of-flake.nix/&quot;&gt;anatomy-of-a-flake&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;a href=&quot;https://jade.fyi/blog/flakes-arent-real/&quot;&gt;flakes-arent-real&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;a href=&quot;https://mhwombat.codeberg.page/nix-book/#_attribute_set_operations&quot;&gt;wombats-book-of-nix&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;a href=&quot;https://zero-to-nix.com/concepts/flakes/&quot;&gt;zero-to-nix flakes&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;a href=&quot;https://nixos-and-flakes.thiscute.world/&quot;&gt;nixos-and-flakes-book&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;a href=&quot;https://flakehub.com/&quot;&gt;FlakeHub&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;img src=&quot;images/nixosnix.png&quot; alt=&quot;FlakeHub&quot; /&gt;&lt;/p&gt;
-&lt;/details&gt;
 </content></entry><entry><title>Nix Module System Explained</title><id>https://saylesss88.github.io/NixOS_Modules_Explained_3.html</id><updated>2025-11-21T00:00:00+00:00</updated><link href="https://saylesss88.github.io/NixOS_Modules_Explained_3.html" rel="alternate"/><content type="html">&lt;h1&gt;Chapter 3&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Click to Expand Table of Contents&lt;/summary&gt;

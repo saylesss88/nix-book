@@ -7,7 +7,7 @@
       "description": null,
       "draft": false,
       "path": "Understanding_Top-Level_Attributes_5.md",
-      "preview_html": "<p>This explanation is based on insights from Infinisil, a prominent figure in the\nNix community, to help clarify the concept of top-level attributes within NixOS\nmodules.</p><p>In a NixOS system, everything is built from a single “system derivation.” The\ncommand <code>nix-build '&lt;nixpkgs/nixos&gt;' -A system</code> initiates this build process.</p><p>The <code>-A system</code> part tells Nix to focus on the <code>system</code> attribute defined in the\n<code>'&lt;nixpkgs/nixos&gt;'</code> file (which is essentially <code>./default.nix</code> within the\nNixpkgs repository).</p>",
+      "preview_html": "<p>This explanation is based on insights from Infinisil, a prominent figure in the\nNix community, to help clarify the concept of top-level attributes within NixOS\nmodules.</p><p>“top-level attributes” here refers to the attributes at the top level of a\nmodule file (imports, options, config), not to be confused with\n<code>system.build.toplevel</code>, which is the final system derivation everything\nbuilds toward.</p><p>In a NixOS system, everything is built from a single “system derivation.” The\ncommand <code>nix-build '&lt;nixpkgs/nixos&gt;' -A system</code> initiates this build process.</p>",
       "tags": [],
       "title": "Top-Level Attributes"
     },
@@ -701,6 +701,17 @@
       "date": "2025-11-21T00:00:00+00:00",
       "description": null,
       "draft": false,
+      "path": "Nix_Flakes_Explained_4.md",
+      "preview_html": "<p><img src=\"images/trees3.cleaned.png\" alt=\"trees3\" /></p><p>If you’re completely new, take a look at\n<a href=\"https://nixos.wiki/wiki/flakes#Installing_flakes\">this</a> to get flakes on your\nsystem.</p><p>For the Nix Flake man page type <code>man nix3 flake</code> and for a specific feature,\ntype something like <code>man nix3 flake-lock</code>.</p>",
+      "tags": [],
+      "title": "Nix Flakes Explained"
+    },
+    {
+      "author": "saylesss88",
+      "collection": null,
+      "date": "2025-11-21T00:00:00+00:00",
+      "description": null,
+      "draft": false,
       "path": "Understanding_Nix_Functions_2.md",
       "preview_html": "<p><img src=\"images/trees2.cleaned.png\" alt=\"trees2\" /></p><p><strong>Functions</strong> are the building blocks of Nix, appearing everywhere in Nix\nexpressions and configurations. Mastering them is essential for writing\neffective Nix code and understanding tools like NixOS and Home Manager. This\nchapter explores how Nix functions work, focusing on their <strong>single-argument\nnature</strong>, <strong>currying</strong>, <strong>partial application</strong>, and their role in <strong>modules</strong>.</p><p>A <strong>Nix Function</strong> is a rule that takes an input (called an <strong>argument</strong>) and\nproduces an <strong>output</strong> based on that input. Unlike many programming languages,\nNix functions are designed to take exactly one argument at a time. This unique\napproach, co",
       "tags": [],
@@ -716,17 +727,6 @@
       "preview_html": "<p><img src=\"images/coding2.png\" alt=\"coding2\" /></p><p>In Nix, the concept of a <strong>package</strong> can refer to two things:</p><p>A collection of files and data that constitute a piece of software or an\nartifact.</p>",
       "tags": [],
       "title": "Package Definitions Explained"
-    },
-    {
-      "author": "saylesss88",
-      "collection": null,
-      "date": "2025-11-21T00:00:00+00:00",
-      "description": null,
-      "draft": false,
-      "path": "Nix_Flakes_Explained_4.md",
-      "preview_html": "<p><img src=\"images/trees3.cleaned.png\" alt=\"trees3\" /></p><p>If you’re completely new, take a look at\n<a href=\"https://nixos.wiki/wiki/flakes#Installing_flakes\">this</a> to get flakes on your\nsystem.</p><p>For the Nix Flake man page type <code>man nix3 flake</code> and for a specific feature,\ntype something like <code>man nix3 flake-lock</code>.</p>",
-      "tags": [],
-      "title": "Nix Flakes Explained"
     },
     {
       "author": "saylesss88",
