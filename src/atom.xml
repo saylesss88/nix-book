@@ -10,13 +10,17 @@
 &lt;p&gt;This explanation is based on insights from Infinisil, a prominent figure in the
 Nix community, to help clarify the concept of top-level attributes within NixOS
 modules.&lt;/p&gt;
-&lt;h3&gt;The Core of a NixOS System: &lt;code&gt;system.build.toplevel&lt;/code&gt;&lt;/h3&gt;
-&lt;blockquote class=&quot;markdown-alert-note&quot;&gt;
-&lt;p&gt;“top-level attributes” here refers to the attributes at the top level of a
-module file (imports, options, config), not to be confused with
+&lt;blockquote&gt;
+&lt;p&gt;[!NOTE] “top-level attributes” here refers to the attributes at the top level
+of a module file (imports, options, config), not to be confused with
 &lt;code&gt;system.build.toplevel&lt;/code&gt;, which is the final system derivation everything
 builds toward.&lt;/p&gt;
 &lt;/blockquote&gt;
+&lt;p&gt;To understand why top-level module attributes matter, it helps to first
+understand what they’re ultimately building toward: &lt;code&gt;system.build.toplevel&lt;/code&gt;, the
+final derivation that represents your entire NixOS system.&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h3&gt;The Core of a NixOS System: &lt;code&gt;system.build.toplevel&lt;/code&gt;&lt;/h3&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ `system.build.toplevel` Explained (Click to Expand) &lt;/summary&gt;
 &lt;p&gt;In a NixOS system, everything is built from a single “system derivation.” The
@@ -82,10 +86,9 @@ in (import &amp;lt;nixpkgs/lib&amp;gt;).evalModules {
 &lt;p&gt;&lt;strong&gt;You can evaluate the &lt;code&gt;config.toplevel&lt;/code&gt; option from this example using:&lt;/strong&gt;&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;nix-instantiate --eval file.nix -A config.toplevel
 &lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
 &lt;h3&gt;How the Module System Works: A Simplified Overview&lt;/h3&gt;
 &lt;p&gt;The module system processes a set of “modules” through these general steps:&lt;/p&gt;
-&lt;details&gt;
-&lt;summary&gt; ✔️ Detailed Steps (Click to Expand)&lt;/summary&gt;
 &lt;ol&gt;
 &lt;li&gt;
 &lt;p&gt;&lt;strong&gt;Importing Modules&lt;/strong&gt;: It recursively finds and includes all modules
@@ -104,11 +107,11 @@ level if no &lt;code&gt;options&lt;/code&gt; or &lt;code&gt;config&lt;/code&gt; 
 them according to the option’s defined type.&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
-&lt;blockquote class=&quot;markdown-alert-note&quot;&gt;
-&lt;p&gt;Option evaluation is lazy, meaning an option’s value is only computed when
-it’s actually needed. It can also depend on the values of other options.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;[!NOTE] Option evaluation is lazy, meaning an option’s value is only computed
+when it’s actually needed. It can also depend on the values of other options.&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;/details&gt;
+&lt;hr /&gt;
 &lt;p&gt;&lt;strong&gt;Top-Level Attributes in a Module: &lt;code&gt;imports&lt;/code&gt;, &lt;code&gt;options&lt;/code&gt;, and &lt;code&gt;config&lt;/code&gt;&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Within a NixOS module (the files that define parts of your system configuration)
 , the attributes defined directly at the top level of the module’s function have

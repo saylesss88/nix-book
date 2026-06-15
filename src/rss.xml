@@ -9,13 +9,17 @@
 <p>This explanation is based on insights from Infinisil, a prominent figure in the
 Nix community, to help clarify the concept of top-level attributes within NixOS
 modules.</p>
-<h3>The Core of a NixOS System: <code>system.build.toplevel</code></h3>
-<blockquote class="markdown-alert-note">
-<p>“top-level attributes” here refers to the attributes at the top level of a
-module file (imports, options, config), not to be confused with
+<blockquote>
+<p>[!NOTE] “top-level attributes” here refers to the attributes at the top level
+of a module file (imports, options, config), not to be confused with
 <code>system.build.toplevel</code>, which is the final system derivation everything
 builds toward.</p>
 </blockquote>
+<p>To understand why top-level module attributes matter, it helps to first
+understand what they’re ultimately building toward: <code>system.build.toplevel</code>, the
+final derivation that represents your entire NixOS system.</p>
+<hr />
+<h3>The Core of a NixOS System: <code>system.build.toplevel</code></h3>
 <details>
 <summary> ✔️ `system.build.toplevel` Explained (Click to Expand) </summary>
 <p>In a NixOS system, everything is built from a single “system derivation.” The
@@ -81,10 +85,9 @@ in (import &lt;nixpkgs/lib&gt;).evalModules {
 <p><strong>You can evaluate the <code>config.toplevel</code> option from this example using:</strong></p>
 <pre><code class="language-bash">nix-instantiate --eval file.nix -A config.toplevel
 </code></pre>
+<hr />
 <h3>How the Module System Works: A Simplified Overview</h3>
 <p>The module system processes a set of “modules” through these general steps:</p>
-<details>
-<summary> ✔️ Detailed Steps (Click to Expand)</summary>
 <ol>
 <li>
 <p><strong>Importing Modules</strong>: It recursively finds and includes all modules
@@ -103,11 +106,11 @@ level if no <code>options</code> or <code>config</code> are present) from all mo
 them according to the option’s defined type.</p>
 </li>
 </ol>
-<blockquote class="markdown-alert-note">
-<p>Option evaluation is lazy, meaning an option’s value is only computed when
-it’s actually needed. It can also depend on the values of other options.</p>
+<blockquote>
+<p>[!NOTE] Option evaluation is lazy, meaning an option’s value is only computed
+when it’s actually needed. It can also depend on the values of other options.</p>
 </blockquote>
-</details>
+<hr />
 <p><strong>Top-Level Attributes in a Module: <code>imports</code>, <code>options</code>, and <code>config</code></strong></p>
 <p>Within a NixOS module (the files that define parts of your system configuration)
 , the attributes defined directly at the top level of the module’s function have

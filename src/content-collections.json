@@ -7,7 +7,7 @@
       "description": null,
       "draft": false,
       "path": "Understanding_Top-Level_Attributes_5.md",
-      "preview_html": "<p>This explanation is based on insights from Infinisil, a prominent figure in the\nNix community, to help clarify the concept of top-level attributes within NixOS\nmodules.</p><p>“top-level attributes” here refers to the attributes at the top level of a\nmodule file (imports, options, config), not to be confused with\n<code>system.build.toplevel</code>, which is the final system derivation everything\nbuilds toward.</p><p>In a NixOS system, everything is built from a single “system derivation.” The\ncommand <code>nix-build '&lt;nixpkgs/nixos&gt;' -A system</code> initiates this build process.</p>",
+      "preview_html": "<p>This explanation is based on insights from Infinisil, a prominent figure in the\nNix community, to help clarify the concept of top-level attributes within NixOS\nmodules.</p><p>[!NOTE] “top-level attributes” here refers to the attributes at the top level\nof a module file (imports, options, config), not to be confused with\n<code>system.build.toplevel</code>, which is the final system derivation everything\nbuilds toward.</p><p>To understand why top-level module attributes matter, it helps to first\nunderstand what they’re ultimately building toward: <code>system.build.toplevel</code>, the\nfinal derivation that represents your entire NixOS system.</p>",
       "tags": [],
       "title": "Top-Level Attributes"
     },
