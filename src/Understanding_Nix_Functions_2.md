@@ -256,21 +256,21 @@ time. This is called _partial application_. When you provide only some of the
 expected arguments, you get a new function that "remembers" the provided
 arguments and waits for the rest.
 
-**Example:**
-
-Using our `greeting` function again:
-
-```nix
-nix repl
-nix-repl> greeting = prefix: name: "${prefix}, ${name}!";
-nix-repl> helloGreeting = greeting "Hello";
-nix-repl> helloGreeting "Alice"
-"Hello, Alice"
-```
-
-- `helloGreeting` is now a new function. It has already received the `prefix`
-  argument (`"Hello"`), when we provide the second argument we get
-  `"Hello, Alice!"`
+> [!EXAMPLE]
+>
+> Using our `greeting` function again:
+> 
+> ```nix
+> nix repl
+> nix-repl> greeting = prefix: name: "${prefix}, ${name}!";
+> nix-repl> helloGreeting = greeting "Hello";
+> nix-repl> helloGreeting "Alice"
+> "Hello, Alice"
+> ```
+> 
+> - `helloGreeting` is now a new function. It has already received the `prefix`
+>   argument (`"Hello"`), when we provide the second argument we get
+>   `"Hello, Alice!"`
 
 **Benefits of Partial Application:**
 
@@ -295,67 +295,68 @@ specific implications in Nix.
 - You can store a function in a variable, just like you would store a number or
   string.
 
-- Example:
-
-```nix
-greet = name: "Hello, ${name}!";
-```
-
-- Here, greet is a variable that holds a function.
+> [!EXAMPLE]
+> 
+> ```nix
+> greet = name: "Hello, ${name}!";
+> ```
+> 
+> - Here, greet is a variable that holds a function.
 
 2. Functions Can Be **Passed as Arguments**:
 
 - You can pass a function to another function as an argument, allowing for
   higher-order functions (functions that operate on other functions).
 
-- Example:
-
-```nix
-applyTwice = f: x: f (f x);
-inc = x: x + 1;
-applyTwice inc 5 # Output: 7 (increments 5 twice: 5 → 6 → 7)
-~ 7
-```
-
-- Here, applyTwice takes a function `f` (in this case, `inc`) and applies it to
-  `x` twice.
+> [!EXAMPLE]
+> 
+> ```nix
+> applyTwice = f: x: f (f x);
+> inc = x: x + 1;
+> applyTwice inc 5 # Output: 7 (increments 5 twice: 5 → 6 → 7)
+> ~ 7
+> ```
+> 
+> - Here, applyTwice takes a function `f` (in this case, `inc`) and applies it to
+>   `x` twice.
 
 3. Functions Can Be **Returned from Functions**:
 
 - Functions can produce other functions as their output, which is key to
   currying in Nix.
 
-- Example:
-
-```nix
-greeting = prefix: name: "${prefix}, ${name}!";
-helloGreeting = greeting "Hello";  # Returns a function
-helloGreeting "Alice"  # Output: "Hello, Alice!"
-~ "Hello, Alice!"
-```
-
-- The greeting function returns another function when partially applied with
-  prefix.
+> [!EXAMPLE]
+> 
+> ```nix
+> greeting = prefix: name: "${prefix}, ${name}!";
+> helloGreeting = greeting "Hello";  # Returns a function
+> helloGreeting "Alice"  # Output: "Hello, Alice!"
+> ~ "Hello, Alice!"
+> ```
+> 
+> - The greeting function returns another function when partially applied with
+>   prefix.
 
 4. Functions **Are Values in Expressions**:
 
 - Functions can be used anywhere a value is expected, such as in attribute sets
   or lists.
 
-- Example:
-
-```nix
-myFuncs = {
-  add = x: y: x + y;
-  multiply = x: y: x * y;
-};
-myFuncs.add 3 4  # Output: 7
-~ 7
-```
-
-- Here, functions are stored as values in an attribute set.
-
-- To try this in the `repl` just remove the semi-colon (`;`)
+> [!EXAMPLE]
+> 
+> 
+> ```nix
+> myFuncs = {
+>   add = x: y: x + y;
+>   multiply = x: y: x * y;
+> };
+> myFuncs.add 3 4  # Output: 7
+> ~ 7
+> ```
+> 
+> - Here, functions are stored as values in an attribute set.
+> 
+> - To try this in the `repl` just remove the semi-colon (`;`)
 
 **Why This Matters in Nix**:
 

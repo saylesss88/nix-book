@@ -1,6 +1,6 @@
 ---
 title: Hardening NixOS
-date: 2026-01-13
+date: 2026-06-17
 author: saylesss88
 collection: "blog"
 tags: ["security", "privacy", "hardening"]
@@ -25,8 +25,9 @@ it crucial to adopt security best practices early to protect your desktop from
 common attack vectors and to avoid configuration mistakes that could expose
 vulnerabilities.
 
-> ⚠️ Warning: I am not a security expert. This guide presents various options
-> for hardening NixOS, but it is your responsibility to evaluate whether each
+> [!WARNING]
+> I am not a security expert. This guide presents various options for hardening
+> NixOS, but it is your responsibility to evaluate whether each
 > adjustment suits your specific needs and environment. Security hardening and
 > process isolation can introduce stability challenges, compatibility issues, or
 > unexpected behavior. Additionally, these protections often come with
@@ -103,20 +104,29 @@ There is something to be said about the window manager you use. GNOME, KDE
 Plasma, and Sway secure privileged Wayland protocols like screencopy. This means
 that on environments outside of GNOME, KDE, and Sway, applications can access
 screen content of the entire desktop. This implicitly includes the content of
-other applications. It's primarily for this reason that Silverblue, Kinoite, and
-Sericea images are recommended. COSMIC has plans to fix this.
+other applications. It's primarily for this reason that Silverblue, Kinoite,
+Sericea, and COSMIC images are recommended. ~~COSMIC has plans to fix this.~~
 --[secureblue Images](https://secureblue.dev/images)
+
+> [!IMPORTANT]
+> This is a little misleading, hyprland takes a different approach that also
+> works. Disabling wlroots portal does not block screencopy for all apps, but
+> only with sandboxed clients. Unsandboxed apps (like `grim`) can still access
+> ext-image-copy-capture directly on Sway without going through the portal.
+
+- [Hyprland Permissions](https://wiki.hypr.land/0.50.0/Configuring/Permissions/)
 
 For example, to disable Xwayland for sway on home-manager you would add:
 
-```nix
-wayland.windowManager.sway = {
-  enable = true;
-  extraConfig = ''
-    xwayland disable
-  '';
-}
-```
+> [!EXAMPLE]
+> ```nix
+> wayland.windowManager.sway = {
+>   enable = true;
+>   extraConfig = ''
+>     xwayland disable
+>   '';
+> }
+> ```
 
 - You may get an error saying you're only able to disable xwayland at boot,
   restart your system and you'll be all set.
@@ -283,6 +293,8 @@ long as the key management scheme isn't compromised.
   encryption algorithms. Sensitive data with long-term secrecy needs is
   especially at risk.
 
+- [NSA/CSS Preparing for Post-Quantum](https://www.nsa.gov/Press-Room/News-Highlights/Article/Article/3630145/cybersecurity-speaker-series-preparing-for-post-quantum/)
+
 - This is a wake-up call to use the strongest encryption available today and to
   plan early for post-quantum security.
 
@@ -307,6 +319,15 @@ minimal disko encrypted installation:
 
 ## Installing Software
 
+- [Nixpkgs cooldowns](https://determinate.systems/blog/nixpkgs-cooldown/), this
+is a great addition after all of the AUR compromises. "[nixpkgs-weekly](https://flakehub.com/flake/DeterminateSystems/nixpkgs-weekly?view=usage) still updates once a
+week, but deliberately introduces a seven-day "cooldown" period, updating to a
+new revision of Nixpkgs released by upstream only after seven days have elapsed.
+This introduces a buffer period where major vulnerabilities or attacks can be
+identified prior to it arriving in our users’ hands."
+
+- Checkout [cooldowns.dev](https://cooldowns.dev/) for more info on cooldowns.
+
 > The 2025 Edgescan study examined full-stack applications and found that
 > one-third contained critical or severe vulnerabilities, putting them at risk.
 > Over 45% of large enterprises leave unresolved vulnerabilities for more than a
@@ -314,6 +335,7 @@ minimal disko encrypted installation:
 > possible.
 > --[edgescan Vulnerability Report](https://www.edgescan.com/stats-report/)
 
+> [!CAUTION]
 > ⚠️ For system security it is strongly advised to not install
 > [proprietary](https://en.wikipedia.org/wiki/Proprietary_software),
 > [non-freedom](https://www.gnu.org/proprietary/proprietary.html) software.
@@ -516,7 +538,8 @@ so:
 
 **Replacing sudo with run0**
 
-> NOTE: The point here is to avoid using the setuid binary (`sudo`), `run0` is a
+> [!NOTE]
+> The point here is to avoid using the setuid binary (`sudo`), `run0` is a
 > wrapper over `systemd-run` which speaks over Inter-process Communication
 > Mechanisms (IPC) to PID1 which is considered safer than running a setuid
 > binary. We separate our daily user from administration tasks and authenticate
@@ -1083,8 +1106,9 @@ security over everything else.
 
 ### The Hardened Kernel
 
-> NOTE: Expect breakage when using the hardened kernel. `linux-hardened`
-> completely disables
+> [!NOTE]
+> Expect breakage when using the hardened kernel. `linux-hardened` completely
+> disables
 > [unprivileged user namespaces](https://secureblue.dev/articles/userns), which
 > are required for Flatpak, chromium-based browsers, and more.
 
@@ -1480,7 +1504,8 @@ for more ideas.
 
 ## Hardened Memory Allocator
 
-> NOTE: There is a performance cost to enabling a hardened memory allocator, and
+> [!NOTE]
+> There is a performance cost to enabling a hardened memory allocator, and
 > some apps will not work without a workaround such as Firefox, Thunderbird,
 > Torbrowser, LibreWolf, and ZenBrowser to name a few.
 
@@ -1525,6 +1550,9 @@ supervised on modern Linux distributions, including NixOS. It provides a suite
 of basic building blocks for a Linux system as well as a system and service
 manager that runs as `PID 1` and starts the rest of the system.
 
+Stage 1 (initrd) is now based on systemd by default, the old scripted
+implimentation is deprecated.
+
 Because it launches and supervises almost all system services, hardening systemd
 means raising the baseline security of your entire system.
 
@@ -1561,8 +1589,10 @@ malicious program were to gain access to your system, one of the first things it
 might look for are core dump files to extract sensitive data. By disabling them,
 you eliminate this potential source of information leakage.
 
-`dbus-broker` is generally considered more secure and robust but isn't the
-default as of yet. To set `dbus-broker` as the default:
+~~`dbus-broker` is generally considered more secure and robust but isn't the
+default as of yet.~~
+
+`dbus-broker` is now the default, it's faster and more reliable.
 
 ```nix
   users.groups.netdev = {};
@@ -2354,11 +2384,12 @@ You can run `clamav` manually with:
 sudo clamscan -r ~/home
 ```
 
-> ❗ NOTE: You only need either the individual `pkgs.clamav` with the cron job
-> **OR** the `clamd-daemon` module. `clamdscan` is for software integration and
+> [!NOTE]
+> You only need either the individual `pkgs.clamav` with the cron job **OR** the
+> `clamd-daemon` module. `clamdscan` is for software integration and
 > uses a different user that doesn't have permission to scan your files. You can
 > use `clamdscan --fdpass /path/to/scan` to pass the necessary file permissions.
-> NOTE: `clamdscan` runs in the background, you can watch it with `top`.
+> `clamdscan` runs in the background, you can watch it with `top`.
 
 ## Securing SSH
 
@@ -2371,7 +2402,8 @@ sudo clamscan -r ~/home
 > time to comprehend the implications of your actions and ensure that any
 > changes made are done thoughtfully and with care. --NixOS Wiki
 
-> ❗ NOTE: Choose one, either `ssh-agent` or `gpg-agent`
+> [!NOTE]
+> Choose one, either `ssh-agent` or `gpg-agent`
 
 1. Use normal SSH keys generated with `ssh-keygen`, this is recommended unless
    you have a good reason for not using it.
@@ -2536,6 +2568,13 @@ with some additions of my own.
 Fail2Ban is an intrusion prevention software framework. It's designed to prevent
 brute-force attacks by scanning log files for suspicious activity, such as
 repeated failed login attempts.
+
+As of 26.05, [reaction](https://reaction.ppom.me/) was added to nixpkgs.
+"A daemon that scans program outputs for repeated patterns, and takes action."
+It labels itself as a more modern alternative to fail2ban, implemented in Rust.
+The initial rust commit was authored May 20, 2024 and it has not received an
+external security audit yet. Worth checking out, probably not a primary
+recommendation yet.
 
 OpenSSH is the primary tool for secure remote access for NixOS. Enabling it
 activates the OpenSSH server on the system, allowing incoming SSH connections.
@@ -2740,17 +2779,18 @@ Further Reading:
 <details>
 <summary> ✔️ Click to Expand Unmaintained Doas example </summary>
 
-> NOTE: I have moved to `run0` for authentication which is included by default
-> with systemd. It's actually a symlink to the existing `systemd-run` tool. It
+> [!NOTE]
+> I have moved to `run0` for authentication which is included by default with
+> systemd. It's actually a symlink to the existing `systemd-run` tool. It
 > behaves like a secure `sudo` alternative: it spawns a transient service under
 > PID 1 for privilege escalation, without relying on SUID (set user ID)
 > binaries.
 
-> ⚠️ Warning the Nixpkgs version of `doas`,
-> [OpenDoas](https://github.com/Duncaen/OpenDoas) is unmaintained and hasn't
-> been updated in 3 to 4 years. If you don't like `run0`, consider using
-> `sudo-rs`. I'm leaving this here for now, may remove it in the future to not
-> promote using unmaintained software, you've been warned.
+> [!WARNING]
+> the Nixpkgs version of `doas`,[OpenDoas](https://github.com/Duncaen/OpenDoas) 
+> is unmaintained and hasn't been updated in 3 to 4 years. If you don't like
+> `run0`, consider using `sudo-rs`. I'm leaving this here for now, may remove it
+> in the future to not promote using unmaintained software, you've been warned.
 
 - [Why run0](https://mastodon.social/@pid_eins/112353324518585654)
 
@@ -2817,7 +2857,7 @@ imports = [
 custom.security.doas.enable = true;
 ```
 
-> ❗ NOTE: Many people opt for the less secure `groups = ["wheel"];` in the
+> [!NOTE]: Many people opt for the less secure `groups = ["wheel"];` in the
 > above configuration instead of `users = ["userName"];` to give wider access,
 > the choice is yours.
 
@@ -2846,8 +2886,9 @@ custom.security.doas.enable = true;
 
 - [Arch Wiki Firejail](https://wiki.archlinux.org/title/Firejail)
 
-> ❗ WARNING: Running untrusted code is never safe, sandboxing cannot change
-> this. --Arch Wiki
+> [!WARNING]
+> Running untrusted code is never safe, sandboxing cannot change this.
+> --Arch Wiki
 
 ```nix
 # firejail.nix
@@ -2911,7 +2952,8 @@ userspace tool and can potentially be bypassed by privilege escalation exploits.
 
 ## Flatpak
 
-> ❗️NOTE: You cannot effectively use Firejail with Flatpak apps because of how
+> [!NOTE]
+> You cannot effectively use Firejail with Flatpak apps because of how
 > their sandboxing technologies operate. Flatpak also won't work with the
 > hardened kernel because they require unprivileged user namespaces which the
 > hardened kernel completely disables.
@@ -3037,9 +3079,10 @@ inputs = {
 }
 ```
 
-> NOTE: I got the above configuration to build successfully, one of the
-> hardening steps I took isn't allowing either app to launch. I'll update once I
-> find which setting it is exactly. (01-13-26)
+> [!NOTE]
+> I got the above configuration to build successfully, one of the hardening
+> steps I took isn't allowing either app to launch. I'll update once I find
+> which setting it is exactly. (01-13-26)
 
 </details>
 
@@ -3204,5 +3247,12 @@ nix-shell -p grype sbomnix --run '
 - [CIS Benchmarks](https://www.cisecurity.org/cis-benchmarks)
 
 - [NSA Cybersecurity Directorate](https://github.com/nsacyber)
+
+- [bentopdf](https://github.com/alam00000/bentopdf): looks interesting, haven't
+  checked it out yet though.
+
+- [Non-Secret Encryption a "SECRET" no longer](https://media.defense.gov/2023/Sep/08/2003296489/-1/-1/0/WHITFIELD%20DIFFIE_CRYPTOLOGIC%20ICONOCLAST.PDF)
+
+- [Post-Quantum Cybersecurity Resources](https://www.nsa.gov/Cybersecurity/Post-Quantum-Cybersecurity-Resources/)
 
 </details>

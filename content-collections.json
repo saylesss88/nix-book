@@ -2,6 +2,32 @@
   "entries": [
     {
       "author": "saylesss88",
+      "collection": "blog",
+      "date": "2026-06-17T00:00:00+00:00",
+      "description": null,
+      "draft": false,
+      "path": "nix/hardening_NixOS.md",
+      "preview_html": "<p><img src=\"../images/guy_fawks.png\" alt=\"guy fawks hacker\" /></p><p>Securing your NixOS system begins with a philosophy of minimalism, explicit\nconfiguration, and proactive control. As desktop Linux attracts more novice\nusers, it has become an increasingly valuable target for attackers. This makes\nit crucial to adopt security best practices early to protect your desktop from\ncommon attack vectors and to avoid configuration mistakes that could expose\nvulnerabilities.</p><p>I am not a security expert. This guide presents various options for hardening\nNixOS, but it is your responsibility to evaluate whether each\nadjustment suits your specific needs and environment. Security hardening and\nprocess isolation can introduce stability challenges, compatibility issues, or\nunexpected behavior. Addi",
+      "tags": [
+        "security",
+        "privacy",
+        "hardening"
+      ],
+      "title": "Hardening NixOS"
+    },
+    {
+      "author": null,
+      "collection": null,
+      "date": "2026-06-16T14:41:04.537751115+00:00",
+      "description": null,
+      "draft": false,
+      "path": "index.md",
+      "preview_html": "",
+      "tags": [],
+      "title": "index"
+    },
+    {
+      "author": "saylesss88",
       "collection": null,
       "date": "2026-05-31T00:00:00+00:00",
       "description": null,
@@ -10,17 +36,6 @@
       "preview_html": "<p>This explanation is based on insights from Infinisil, a prominent figure in the\nNix community, to help clarify the concept of top-level attributes within NixOS\nmodules.</p><p>[!NOTE] “top-level attributes” here refers to the attributes at the top level\nof a module file (imports, options, config), not to be confused with\n<code>system.build.toplevel</code>, which is the final system derivation everything\nbuilds toward.</p><p>To understand why top-level module attributes matter, it helps to first\nunderstand what they’re ultimately building toward: <code>system.build.toplevel</code>, the\nfinal derivation that represents your entire NixOS system.</p>",
       "tags": [],
       "title": "Top-Level Attributes"
-    },
-    {
-      "author": null,
-      "collection": null,
-      "date": "2026-05-12T11:38:33.116514810+00:00",
-      "description": "\n",
-      "draft": false,
-      "path": "index.md",
-      "preview_html": "",
-      "tags": [],
-      "title": "index"
     },
     {
       "author": "saylesss88",
@@ -142,21 +157,6 @@
         "security"
       ],
       "title": "GnuPG gpg-agent"
-    },
-    {
-      "author": "saylesss88",
-      "collection": "blog",
-      "date": "2026-01-13T00:00:00+00:00",
-      "description": null,
-      "draft": false,
-      "path": "nix/hardening_NixOS.md",
-      "preview_html": "<p><img src=\"../images/guy_fawks.png\" alt=\"guy fawks hacker\" /></p><p>Securing your NixOS system begins with a philosophy of minimalism, explicit\nconfiguration, and proactive control. As desktop Linux attracts more novice\nusers, it has become an increasingly valuable target for attackers. This makes\nit crucial to adopt security best practices early to protect your desktop from\ncommon attack vectors and to avoid configuration mistakes that could expose\nvulnerabilities.</p><p>⚠️ Warning: I am not a security expert. This guide presents various options\nfor hardening NixOS, but it is your responsibility to evaluate whether each\nadjustment suits your specific needs and environment. Security hardening and\nprocess isolation can introduce stability challenges, compatibility issues, or\nunexpected be",
-      "tags": [
-        "security",
-        "privacy",
-        "hardening"
-      ],
-      "title": "Hardening NixOS"
     },
     {
       "author": "saylesss88",
@@ -701,10 +701,10 @@
       "date": "2025-11-21T00:00:00+00:00",
       "description": null,
       "draft": false,
-      "path": "Nix_Flakes_Explained_4.md",
-      "preview_html": "<p><img src=\"images/trees3.cleaned.png\" alt=\"trees3\" /></p><p>If you’re completely new, take a look at\n<a href=\"https://nixos.wiki/wiki/flakes#Installing_flakes\">this</a> to get flakes on your\nsystem.</p><p>For the Nix Flake man page type <code>man nix3 flake</code> and for a specific feature,\ntype something like <code>man nix3 flake-lock</code>.</p>",
+      "path": "Getting_Started_with_Nix_1.md",
+      "preview_html": "<p><img src=\"images/trees1.cleaned.png\" alt=\"trees\" /></p><p>Welcome to <em>nix-book</em>, an introductory book about Nix. This book leans more\ntowards using Flakes but will contrast traditional Nix where beneficial.\nOriginally, this content started as a blog. I’m refining its flow to make it\nmore cohesive.</p><p>In this chapter, I will touch on the different parts of the Nix ecosystem, give\na quick example of each and explain how they fit together.</p>",
       "tags": [],
-      "title": "Nix Flakes Explained"
+      "title": "Intro to Nix"
     },
     {
       "author": "saylesss88",
@@ -734,10 +734,10 @@
       "date": "2025-11-21T00:00:00+00:00",
       "description": null,
       "draft": false,
-      "path": "NixOS_Modules_Explained_3.md",
-      "preview_html": "<p><img src=\"images/buildings1.png\" alt=\"buildings\" /></p><p><strong>TL;DR</strong>: In this chapter, we will break down the Nix module system used by\nboth NixOS and Home-Manager. We will discuss using home-manager as a module and\nthe flexibility that modules give us. We will touch on options and break down\nthe <code>vim</code> module from the Nixpkgs collection. Finally we will display how to\ntest modules with the repl.</p><p>Your <code>configuration.nix</code> is a module. For the Nixpkgs collection most modules\nare in <code>nixos/modules</code>.</p>",
+      "path": "Nix_Flakes_Explained_4.md",
+      "preview_html": "<p><img src=\"images/trees3.cleaned.png\" alt=\"trees3\" /></p><p>If you’re completely new, take a look at\n<a href=\"https://nixos.wiki/wiki/flakes#Installing_flakes\">this</a> to get flakes on your\nsystem.</p><p>For the Nix Flake man page type <code>man nix3 flake</code> and for a specific feature,\ntype something like <code>man nix3 flake-lock</code>.</p>",
       "tags": [],
-      "title": "Nix Module System Explained"
+      "title": "Nix Flakes Explained"
     },
     {
       "author": "saylesss88",
@@ -745,10 +745,10 @@
       "date": "2025-11-21T00:00:00+00:00",
       "description": null,
       "draft": false,
-      "path": "Getting_Started_with_Nix_1.md",
-      "preview_html": "<p><img src=\"images/trees1.cleaned.png\" alt=\"trees\" /></p><p>Welcome to <em>nix-book</em>, an introductory book about Nix. This book leans more\ntowards using Flakes but will contrast traditional Nix where beneficial.\nOriginally, this content started as a blog. I’m refining its flow to make it\nmore cohesive.</p><p>In this chapter, I will touch on the different parts of the Nix ecosystem, give\na quick example of each and explain how they fit together.</p>",
+      "path": "NixOS_Modules_Explained_3.md",
+      "preview_html": "<p><img src=\"images/buildings1.png\" alt=\"buildings\" /></p><p><strong>TL;DR</strong>: In this chapter, we will break down the Nix module system used by\nboth NixOS and Home-Manager. We will discuss using home-manager as a module and\nthe flexibility that modules give us. We will touch on options and break down\nthe <code>vim</code> module from the Nixpkgs collection. Finally we will display how to\ntest modules with the repl.</p><p>Your <code>configuration.nix</code> is a module. For the Nixpkgs collection most modules\nare in <code>nixos/modules</code>.</p>",
       "tags": [],
-      "title": "Intro to Nix"
+      "title": "Nix Module System Explained"
     }
   ]
 }
