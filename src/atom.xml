@@ -99,8 +99,6 @@ ext-image-copy-capture directly on Sway without going through the portal.&lt;/p&
 &lt;li&gt;&lt;a href=&quot;https://wiki.hypr.land/0.50.0/Configuring/Permissions/&quot;&gt;Hyprland Permissions&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;For example, to disable Xwayland for sway on home-manager you would add:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;[!EXAMPLE]&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;wayland.windowManager.sway = {
   enable = true;
   extraConfig = &apos;&apos;
@@ -108,7 +106,6 @@ ext-image-copy-capture directly on Sway without going through the portal.&lt;/p&
   &apos;&apos;;
 }
 &lt;/code&gt;&lt;/pre&gt;
-&lt;/blockquote&gt;
 &lt;ul&gt;
 &lt;li&gt;You may get an error saying you’re only able to disable xwayland at boot,
 restart your system and you’ll be all set.&lt;/li&gt;
@@ -25118,15 +25115,7 @@ and tools that can help you understand the evaluation process, inspect the
 values of expressions, and trace the execution of your Nix code, enabling you to
 effectively troubleshoot and resolve issues in both Flake-based and traditional
 Nix projects.&lt;/p&gt;
-</content></entry><entry><title>Intro to Nix</title><id>https://saylesss88.github.io/Getting_Started_with_Nix_1.html</id><updated>2025-11-21T00:00:00+00:00</updated><link href="https://saylesss88.github.io/Getting_Started_with_Nix_1.html" rel="alternate"/><content type="html">&lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;2 + 2
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code class=&quot;language-draw&quot;&gt;id: my-diagram
-width: 600
-height: 400
-title: My Diagram
-background: #ffcccc
-&lt;/code&gt;&lt;/pre&gt;
-&lt;h1&gt;Chapter1&lt;/h1&gt;
+</content></entry><entry><title>Intro to Nix</title><id>https://saylesss88.github.io/Getting_Started_with_Nix_1.html</id><updated>2025-11-21T00:00:00+00:00</updated><link href="https://saylesss88.github.io/Getting_Started_with_Nix_1.html" rel="alternate"/><content type="html">&lt;h1&gt;Chapter1&lt;/h1&gt;
 &lt;details&gt;
 &lt;summary&gt; ✔️ Click to Expand Table of Contents&lt;/summary&gt;
 &lt;!-- toc --&gt;
@@ -25211,14 +25200,12 @@ environment variable or something in your &lt;code&gt;$PATH&lt;/code&gt; isn’t
 &lt;h3&gt;The Nix Ecosystem&lt;/h3&gt;
 &lt;p&gt;The &lt;strong&gt;Nix Language&lt;/strong&gt; is the foundation of the ecosystem and is used to write
 &lt;strong&gt;Nix Expressions&lt;/strong&gt;.&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;[!EXAMPLE]&lt;/p&gt;
+&lt;p&gt;Example:&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;{ hello = &quot;world&quot;; }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;h1&gt;or&lt;/h1&gt;
 &lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;&quot;foo&quot; + &quot;bar&quot;
 &lt;/code&gt;&lt;/pre&gt;
-&lt;/blockquote&gt;
 &lt;p&gt;While the Nix language provides the foundation for writing expressions, it is
 only part of the ecosystem. These expressions become powerful when used within
 the Nix Package Manager, which evaluates and realizes them into tangible
@@ -25319,35 +25306,33 @@ including the next key components: package definitions and derivations.&lt;/p&gt
 &lt;h3&gt;Package Definitions &amp;amp; Derivations&lt;/h3&gt;
 &lt;p&gt;&lt;strong&gt;Package Definitions&lt;/strong&gt; are specialized expressions that tell Nix how to build
 software.&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;[!EXAMPLE]&lt;/p&gt;
+&lt;p&gt;Example package definition:&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-nix&quot;&gt;# hello.nix
-{pkgs ? import &amp;lt;nixpkgs&amp;gt; {}}:
-pkgs.stdenv.mkDerivation {
- pname = &quot;hello&quot;;
- version = &quot;2.12.1&quot;;
+ {pkgs ? import &amp;lt;nixpkgs&amp;gt; {}}:
+ pkgs.stdenv.mkDerivation {
+  pname = &quot;hello&quot;;
+  version = &quot;2.12.1&quot;;
 
- src = pkgs.fetchurl {
-   url = &quot;https://ftp.gnu.org/gnu/hello/hello-2.12.1.tar.gz&quot;;
-   sha256 = &quot;086vqwk2wl8zfs47sq2xpjc9k066ilmb8z6dn0q6ymwjzlm196cd&quot;;
- };
+  src = pkgs.fetchurl {
+    url = &quot;https://ftp.gnu.org/gnu/hello/hello-2.12.1.tar.gz&quot;;
+    sha256 = &quot;086vqwk2wl8zfs47sq2xpjc9k066ilmb8z6dn0q6ymwjzlm196cd&quot;;
+  };
 
- nativeBuildInputs = [pkgs.autoconf pkgs.automake pkgs.gcc];
+  nativeBuildInputs = [pkgs.autoconf pkgs.automake pkgs.gcc];
 
- configurePhase = &apos;&apos;
-   ./configure --prefix=$out
- &apos;&apos;;
+  configurePhase = &apos;&apos;
+    ./configure --prefix=$out
+  &apos;&apos;;
 
- buildPhase = &apos;&apos;
-   make
- &apos;&apos;;
+  buildPhase = &apos;&apos;
+    make
+  &apos;&apos;;
 
- installPhase = &apos;&apos;
-   make install
- &apos;&apos;;
-}
+  installPhase = &apos;&apos;
+    make install
+  &apos;&apos;;
+ }
 &lt;/code&gt;&lt;/pre&gt;
-&lt;/blockquote&gt;
 &lt;ol&gt;
 &lt;li&gt;&lt;strong&gt;Evaluation Phase&lt;/strong&gt;:&lt;/li&gt;
 &lt;/ol&gt;

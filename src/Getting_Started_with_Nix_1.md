@@ -4,18 +4,6 @@ date: 2025-11-21
 author: saylesss88
 ---
 
-```nix repl
-2 + 2
-```
-
-```draw
-id: my-diagram
-width: 600
-height: 400
-title: My Diagram
-background: #ffcccc
-```
-
 # Chapter1
 
 <details>
@@ -114,16 +102,17 @@ Let’s dive into the key characteristics of Nix:
 The **Nix Language** is the foundation of the ecosystem and is used to write
 **Nix Expressions**.
 
-> [!EXAMPLE]
->```nix repl
->{ hello = "world"; }
->```
->
-># or
->
->```nix repl
->"foo" + "bar"
->```
+Example:
+
+```nix repl
+{ hello = "world"; }
+```
+
+# or
+
+```nix repl
+"foo" + "bar"
+```
 
 While the Nix language provides the foundation for writing expressions, it is
 only part of the ecosystem. These expressions become powerful when used within
@@ -231,35 +220,35 @@ including the next key components: package definitions and derivations.
 **Package Definitions** are specialized expressions that tell Nix how to build
 software.
 
-> [!EXAMPLE]
->
->```nix
-># hello.nix
-> {pkgs ? import <nixpkgs> {}}:
-> pkgs.stdenv.mkDerivation {
->  pname = "hello";
->  version = "2.12.1";
->
->  src = pkgs.fetchurl {
->    url = "https://ftp.gnu.org/gnu/hello/hello-2.12.1.tar.gz";
->    sha256 = "086vqwk2wl8zfs47sq2xpjc9k066ilmb8z6dn0q6ymwjzlm196cd";
->  };
->
->  nativeBuildInputs = [pkgs.autoconf pkgs.automake pkgs.gcc];
->
->  configurePhase = ''
->    ./configure --prefix=$out
->  '';
->
->  buildPhase = ''
->    make
->  '';
->
->  installPhase = ''
->    make install
->  '';
-> }
->```
+Example package definition:
+
+```nix
+# hello.nix
+ {pkgs ? import <nixpkgs> {}}:
+ pkgs.stdenv.mkDerivation {
+  pname = "hello";
+  version = "2.12.1";
+
+  src = pkgs.fetchurl {
+    url = "https://ftp.gnu.org/gnu/hello/hello-2.12.1.tar.gz";
+    sha256 = "086vqwk2wl8zfs47sq2xpjc9k066ilmb8z6dn0q6ymwjzlm196cd";
+  };
+
+  nativeBuildInputs = [pkgs.autoconf pkgs.automake pkgs.gcc];
+
+  configurePhase = ''
+    ./configure --prefix=$out
+  '';
+
+  buildPhase = ''
+    make
+  '';
+
+  installPhase = ''
+    make install
+  '';
+ }
+```
 
 1. **Evaluation Phase**:
 

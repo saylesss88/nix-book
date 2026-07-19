@@ -118,15 +118,14 @@ Sericea, and COSMIC images are recommended. ~~COSMIC has plans to fix this.~~
 
 For example, to disable Xwayland for sway on home-manager you would add:
 
-> [!EXAMPLE]
-> ```nix
-> wayland.windowManager.sway = {
->   enable = true;
->   extraConfig = ''
->     xwayland disable
->   '';
-> }
-> ```
+ ```nix
+ wayland.windowManager.sway = {
+   enable = true;
+   extraConfig = ''
+     xwayland disable
+   '';
+ }
+ ```
 
 - You may get an error saying you're only able to disable xwayland at boot,
   restart your system and you'll be all set.

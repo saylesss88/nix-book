@@ -98,8 +98,6 @@ ext-image-copy-capture directly on Sway without going through the portal.</p>
 <li><a href="https://wiki.hypr.land/0.50.0/Configuring/Permissions/">Hyprland Permissions</a></li>
 </ul>
 <p>For example, to disable Xwayland for sway on home-manager you would add:</p>
-<blockquote>
-<p>[!EXAMPLE]</p>
 <pre><code class="language-nix">wayland.windowManager.sway = {
   enable = true;
   extraConfig = ''
@@ -107,7 +105,6 @@ ext-image-copy-capture directly on Sway without going through the portal.</p>
   '';
 }
 </code></pre>
-</blockquote>
 <ul>
 <li>You may get an error saying you’re only able to disable xwayland at boot,
 restart your system and you’ll be all set.</li>
@@ -25117,15 +25114,7 @@ and tools that can help you understand the evaluation process, inspect the
 values of expressions, and trace the execution of your Nix code, enabling you to
 effectively troubleshoot and resolve issues in both Flake-based and traditional
 Nix projects.</p>
-]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Comparing_Flakes_and_Traditional_Nix_8.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Intro to Nix</title><link>https://saylesss88.github.io/Getting_Started_with_Nix_1.html</link><description><![CDATA[<pre><code class="language-nix">2 + 2
-</code></pre>
-<pre><code class="language-draw">id: my-diagram
-width: 600
-height: 400
-title: My Diagram
-background: #ffcccc
-</code></pre>
-<h1>Chapter1</h1>
+]]></description><author>saylesss88</author><guid>https://saylesss88.github.io/Comparing_Flakes_and_Traditional_Nix_8.html</guid><pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate></item><item><title>Intro to Nix</title><link>https://saylesss88.github.io/Getting_Started_with_Nix_1.html</link><description><![CDATA[<h1>Chapter1</h1>
 <details>
 <summary> ✔️ Click to Expand Table of Contents</summary>
 <!-- toc -->
@@ -25210,14 +25199,12 @@ environment variable or something in your <code>$PATH</code> isn’t affecting y
 <h3>The Nix Ecosystem</h3>
 <p>The <strong>Nix Language</strong> is the foundation of the ecosystem and is used to write
 <strong>Nix Expressions</strong>.</p>
-<blockquote>
-<p>[!EXAMPLE]</p>
+<p>Example:</p>
 <pre><code class="language-nix">{ hello = "world"; }
 </code></pre>
 <h1>or</h1>
 <pre><code class="language-nix">"foo" + "bar"
 </code></pre>
-</blockquote>
 <p>While the Nix language provides the foundation for writing expressions, it is
 only part of the ecosystem. These expressions become powerful when used within
 the Nix Package Manager, which evaluates and realizes them into tangible
@@ -25318,35 +25305,33 @@ including the next key components: package definitions and derivations.</p>
 <h3>Package Definitions &amp; Derivations</h3>
 <p><strong>Package Definitions</strong> are specialized expressions that tell Nix how to build
 software.</p>
-<blockquote>
-<p>[!EXAMPLE]</p>
+<p>Example package definition:</p>
 <pre><code class="language-nix"># hello.nix
-{pkgs ? import &lt;nixpkgs&gt; {}}:
-pkgs.stdenv.mkDerivation {
- pname = "hello";
- version = "2.12.1";
+ {pkgs ? import &lt;nixpkgs&gt; {}}:
+ pkgs.stdenv.mkDerivation {
+  pname = "hello";
+  version = "2.12.1";
 
- src = pkgs.fetchurl {
-   url = "https://ftp.gnu.org/gnu/hello/hello-2.12.1.tar.gz";
-   sha256 = "086vqwk2wl8zfs47sq2xpjc9k066ilmb8z6dn0q6ymwjzlm196cd";
- };
+  src = pkgs.fetchurl {
+    url = "https://ftp.gnu.org/gnu/hello/hello-2.12.1.tar.gz";
+    sha256 = "086vqwk2wl8zfs47sq2xpjc9k066ilmb8z6dn0q6ymwjzlm196cd";
+  };
 
- nativeBuildInputs = [pkgs.autoconf pkgs.automake pkgs.gcc];
+  nativeBuildInputs = [pkgs.autoconf pkgs.automake pkgs.gcc];
 
- configurePhase = ''
-   ./configure --prefix=$out
- '';
+  configurePhase = ''
+    ./configure --prefix=$out
+  '';
 
- buildPhase = ''
-   make
- '';
+  buildPhase = ''
+    make
+  '';
 
- installPhase = ''
-   make install
- '';
-}
+  installPhase = ''
+    make install
+  '';
+ }
 </code></pre>
-</blockquote>
 <ol>
 <li><strong>Evaluation Phase</strong>:</li>
 </ol>
